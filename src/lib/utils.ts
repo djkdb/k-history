@@ -115,3 +115,18 @@ export const LEVEL_TITLES = [
 export function levelTitle(level: number): string {
   return LEVEL_TITLES[Math.min(level - 1, LEVEL_TITLES.length - 1)];
 }
+
+// ─── 한국사능력검정시험 등급 산정 ──────────────────────────────────
+// 심화: 1급 80점↑ · 2급 70~79 · 3급 60~69 / 기본: 4급 80점↑ · 5급 70~79 · 6급 60~69
+
+/** 예상 점수(0~100) → 한능검 예상 등급. 60점 미만은 불합격(null) */
+export function hnkGrade(
+  score: number,
+  track: "advanced" | "basic" = "advanced",
+): { grade: number; label: string } | null {
+  const base = track === "advanced" ? 0 : 3;
+  if (score >= 80) return { grade: base + 1, label: `${base + 1}급` };
+  if (score >= 70) return { grade: base + 2, label: `${base + 2}급` };
+  if (score >= 60) return { grade: base + 3, label: `${base + 3}급` };
+  return null;
+}

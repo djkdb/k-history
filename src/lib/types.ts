@@ -121,10 +121,14 @@ export type ExamType =
   | "suneung" // 수능
   | "custom"; // 직접 입력
 
+/** 한능검 응시 유형: 심화(1~3급) / 기본(4~6급) */
+export type ExamTrack = "advanced" | "basic";
+
 export interface ExamSettings {
   examType: ExamType;
   examLabel: string; // 표시용 이름
   examDate: string; // ISO yyyy-mm-dd
+  track?: ExamTrack; // 한능검 전용: 심화/기본
 }
 
 export interface StudyStats {
