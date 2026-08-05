@@ -1,0 +1,556 @@
+"use client";
+
+import { Suspense, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Brain, Check, ChevronRight, RotateCcw, X } from "lucide-react";
+import type { EraId, QuizQuestion, QuizType } from "@/lib/types";
+import { useApp } from "@/lib/store";
+import { ALL_EVENTS, eventsByEra, getEvent } from "@/data/events";
+import { ERAS, ERA_MAP } from "@/data/eras";
+import { generateQuiz, generateQuizForEvent } from "@/lib/quiz";
+import { cn } from "@/lib/utils";
+import {
+  Badge,
+  Button,
+  Card,
+  Chip,
+  EmptyState,
+  EraBadge,
+  ProgressBar,
+  SectionTitle,
+} from "@/components/ui";
+
+const TYPE_LABELS: Record<QuizType, string> = {
+  ox: "OX",
+  multiple: "객관식",
+  order: "순서 배열",
+  blank: "빈칸",
+  king: "왕 맞추기",
+  year: "연도 맞추기",
+  event: "사건 판별",
+};
+const ALL_TYPES = Object.keys(TYPE_LABELS) as QuizType[];
+
+type Answered = { question: QuizQuestion; correct: boolean };
+
+function QuizSession({
+  questions,
+  onExit,
+  onRestart,
+}: {
+  questions: QuizQuestion[];
+  onExit: () => void;
+  onRestart: (wrongOnly: boolean) => void;
+}) {
+  const recordQuizResult = useApp((s) => s.recordQuizResult);
+  const addStudyMinutes = useApp((s) => s.addStudyMinutes);
+
+  const [index, setIndex] = useState(0);
+  const [answered, setAnswered] = useState<Answered[]>([]);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [orderPicks, setOrderPicks] = useState<number[]>([]);
+  const [revealed, setRevealed] = useState(false);
+  const [finished, setFinished] = useState(false);
+
+  const q = questions[index];
+
+  const grade = (correct: boolean) => {
+    recordQuizResult({
+      questionId: q.id,
+      eventId: q.eventId,
+      era: q.era,
+      type: q.type,
+      correct,
+      answeredAt: Date.now(),
+    });
+    setAnswered((a) => [...a, { question: q, correct }]);
+    setRevealed(true);
+  };
+
+  const pick = (i: number) => {
+    if (revealed) return;
+    if (q.type === "order") {
+      setOrderPicks((p) =>
+        p.includes(i) ? p.filter((x) => x !== i) : [...p, i],
+      );
+      return;
+    }
+    setPicked(i);
+    grade(i === q.answerIndex);
+  };
+
+  const submitOrder = () => {
+    if (revealed) return;
+    const correct =
+      JSON.stringify(orderPicks) === JSON.stringify(q.answerIndex);
+    setPicked(-1);
+    grade(correct);
+  };
+
+  const nextQuestion = () => {
+    if (index + 1 >= questions.length) {
+      addStudyMinutes(Math.round(questions.length * 0.5));
+      setFinished(true);
+      return;
+    }
+    setIndex((i) => i + 1);
+    setPicked(null);
+    setOrderPicks([]);
+    setRevealed(false);
+  };
+
+  // ─── 결과 화면 ───
+  if (finished) {
+    const correctCount = answered.filter((a) => a.correct).length;
+    const pct = Math.round((correctCount / answered.length) * 100);
+    const wrongs = answered.filter((a) => !a.correct);
+
+    const weakEra = (() => {
+      const m = new Map<EraId, number>();
+      wrongs.forEach((w) => m.set(w.question.era, (m.get(w.question.era) ?? 0) + 1));
+      const top = [...m.entries()].sort((a, b) => b[1] - a[1])[0];
+      return top ? ERA_MAP[top[0]].name : null;
+    })();
+    const weakType = (() => {
+      const m = new Map<QuizType, number>();
+      wrongs.forEach((w) =>
+        m.set(w.question.type, (m.get(w.question.type) ?? 0) + 1),
+      );
+      const top = [...m.entries()].sort((a, b) => b[1] - a[1])[0];
+      return top && top[1] >= 2 ? TYPE_LABELS[top[0]] : null;
+    })();
+
+    return (
+      <div className="pt-10">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center"
+        >
+          <p className="text-sm text-zinc-500">퀴즈 완료</p>
+          <p className="mt-2 text-6xl font-black tracking-tight">
+            {pct}
+            <span className="text-2xl text-zinc-500">점</span>
+          </p>
+          <p className="mt-1 text-sm text-zinc-400">
+            {answered.length}문제 중 {correctCount}개 정답
+          </p>
+          <ProgressBar
+            value={pct}
+            max={100}
+            className="mx-auto mt-4 max-w-52"
+            color={pct >= 60 ? "#10b981" : "#ef4444"}
+          />
+        </motion.div>
+
+        <SectionTitle>AI 오답 분석</SectionTitle>
+        <Card className="border-indigo-400/30 bg-indigo-500/10">
+          {wrongs.length === 0 ? (
+            <p className="text-sm leading-relaxed text-zinc-200">
+              완벽합니다. 이 범위는 장기기억으로 넘어가는 중이에요. 망각곡선
+              복습만 놓치지 마세요. 🎯
+            </p>
+          ) : (
+            <ul className="flex list-inside flex-col gap-1.5 text-sm leading-relaxed text-zinc-200">
+              {weakEra && (
+                <li>
+                  • <b>{weakEra}</b> 파트가 약합니다. 해당 시대를 흐름 모드로
+                  다시 훑어보세요.
+                </li>
+              )}
+              {weakType && (
+                <li>
+                  • <b>{weakType}</b> 유형을 반복해서 틀리고 있어요. 같은
+                  유형만 골라 다시 풀어보세요.
+                </li>
+              )}
+              <li>
+                • 틀린 {wrongs.length}개 개념은 <b>오답노트와 복습 큐</b>에
+                자동 반영했습니다.
+              </li>
+            </ul>
+          )}
+        </Card>
+
+        {wrongs.length > 0 && (
+          <>
+            <SectionTitle>틀린 개념 바로가기</SectionTitle>
+            <div className="flex flex-col gap-2">
+              {[...new Map(wrongs.map((w) => [w.question.eventId, w])).values()].map(
+                (w) => {
+                  const ev = getEvent(w.question.eventId);
+                  if (!ev) return null;
+                  return (
+                    <Link key={ev.id} href={`/event/${ev.id}`}>
+                      <Card className="flex items-center gap-2">
+                        <EraBadge eraId={ev.era} />
+                        <span className="flex-1 truncate text-sm font-semibold">
+                          {ev.title}
+                        </span>
+                        <ChevronRight size={15} className="text-zinc-600" />
+                      </Card>
+                    </Link>
+                  );
+                },
+              )}
+            </div>
+          </>
+        )}
+
+        <div className="mt-8 flex flex-col gap-2 pb-4">
+          <Button size="lg" onClick={() => onRestart(false)}>
+            <RotateCcw size={16} /> 다시 풀기
+          </Button>
+          {wrongs.length > 0 && (
+            <Button variant="outline" size="lg" onClick={() => onRestart(true)}>
+              오답만 다시 풀기
+            </Button>
+          )}
+          <Button variant="ghost" size="lg" onClick={onExit}>
+            설정으로 돌아가기
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── 문제 화면 ───
+  return (
+    <div className="pt-6">
+      <div className="mb-4 flex items-center gap-3">
+        <ProgressBar value={index + (revealed ? 1 : 0)} max={questions.length} className="flex-1" />
+        <span className="text-xs font-semibold text-zinc-400">
+          {index + 1}/{questions.length}
+        </span>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={q.id}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          transition={{ duration: 0.22 }}
+        >
+          <Card>
+            <div className="mb-3 flex items-center gap-2">
+              <Badge className="border-indigo-400/30 bg-indigo-500/10 text-indigo-300">
+                {TYPE_LABELS[q.type]}
+              </Badge>
+              <EraBadge eraId={q.era} />
+            </div>
+            <p className="whitespace-pre-line text-[15px] font-semibold leading-relaxed">
+              {q.question}
+            </p>
+          </Card>
+
+          {/* 보기 */}
+          <div className="mt-3 flex flex-col gap-2">
+            {q.options.map((opt, i) => {
+              const isAnswer = Array.isArray(q.answerIndex)
+                ? false
+                : i === q.answerIndex;
+              const isPicked = q.type === "order" ? orderPicks.includes(i) : picked === i;
+              const orderNo = orderPicks.indexOf(i);
+              const showState = revealed && q.type !== "order";
+              return (
+                <motion.button
+                  key={`${q.id}-${i}`}
+                  type="button"
+                  onClick={() => pick(i)}
+                  animate={
+                    showState && isPicked && !isAnswer
+                      ? { x: [0, -7, 7, -4, 4, 0] }
+                      : {}
+                  }
+                  transition={{ duration: 0.35 }}
+                  className={cn(
+                    "glass flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all active:scale-[0.99]",
+                    !revealed && "hover:bg-white/10",
+                    showState && isAnswer &&
+                      "border-emerald-400/60 bg-emerald-500/15 text-emerald-200",
+                    showState && isPicked && !isAnswer &&
+                      "border-red-400/60 bg-red-500/15 text-red-200",
+                    q.type === "order" && isPicked &&
+                      "border-indigo-400/60 bg-indigo-500/15",
+                  )}
+                >
+                  {q.type === "order" && (
+                    <span
+                      className={cn(
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                        isPicked
+                          ? "bg-indigo-400 text-zinc-950"
+                          : "bg-white/10 text-zinc-500",
+                      )}
+                    >
+                      {isPicked ? orderNo + 1 : "·"}
+                    </span>
+                  )}
+                  <span className="flex-1">{opt}</span>
+                  {showState && isAnswer && <Check size={16} />}
+                  {showState && isPicked && !isAnswer && <X size={16} />}
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {q.type === "order" && !revealed && (
+            <Button
+              size="lg"
+              className="mt-3 w-full"
+              disabled={orderPicks.length !== q.options.length}
+              onClick={submitOrder}
+            >
+              제출
+            </Button>
+          )}
+
+          {/* 해설 */}
+          <AnimatePresence>
+            {revealed && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Card
+                  className={cn(
+                    "mt-3",
+                    answered[answered.length - 1]?.correct
+                      ? "border-emerald-400/30 bg-emerald-500/10"
+                      : "border-red-400/30 bg-red-500/10",
+                  )}
+                >
+                  <p className="text-xs font-bold">
+                    {answered[answered.length - 1]?.correct
+                      ? "✅ 정답!"
+                      : "❌ 오답 — 복습 큐에 등록했어요"}
+                  </p>
+                  <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-zinc-300">
+                    {q.explanation}
+                  </p>
+                </Card>
+                <Button size="lg" className="mt-3 w-full" onClick={nextQuestion}>
+                  {index + 1 >= questions.length ? "결과 보기" : "다음 문제"}
+                  <ChevronRight size={16} />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function QuizContent() {
+  const searchParams = useSearchParams();
+  const eraParam = searchParams.get("era") as EraId | null;
+  const eventParam = searchParams.get("event");
+  const modeParam = searchParams.get("mode");
+
+  const hydrated = useApp((s) => s.hydrated);
+  const wrongEventIds = useApp((s) => s.wrongEventIds);
+  const quizHistory = useApp((s) => s.quizHistory);
+
+  const [scope, setScope] = useState<"all" | "wrong" | "weak" | EraId>(
+    modeParam === "wrong" ? "wrong" : eraParam && ERA_MAP[eraParam] ? eraParam : "all",
+  );
+  const [count, setCount] = useState(10);
+  const [types, setTypes] = useState<QuizType[]>(ALL_TYPES);
+  const [session, setSession] = useState<QuizQuestion[] | null>(() => {
+    if (eventParam) {
+      const ev = getEvent(eventParam);
+      if (ev) return generateQuizForEvent(ev, ALL_EVENTS);
+    }
+    return null;
+  });
+  const [sessionKey, setSessionKey] = useState(0);
+  const [lastWrongIds, setLastWrongIds] = useState<string[]>([]);
+
+  const weakEra = useMemo(() => {
+    const byEra = new Map<EraId, { total: number; correct: number }>();
+    for (const r of quizHistory) {
+      const cur = byEra.get(r.era) ?? { total: 0, correct: 0 };
+      cur.total += 1;
+      if (r.correct) cur.correct += 1;
+      byEra.set(r.era, cur);
+    }
+    const rows = [...byEra.entries()]
+      .filter(([, v]) => v.total >= 5)
+      .sort((a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total);
+    return rows[0]?.[0] ?? null;
+  }, [quizHistory]);
+
+  const scopeEvents = useMemo(() => {
+    if (scope === "wrong")
+      return wrongEventIds
+        .map((id) => getEvent(id))
+        .filter((e): e is NonNullable<typeof e> => !!e);
+    if (scope === "weak")
+      return weakEra ? eventsByEra(weakEra) : ALL_EVENTS;
+    if (scope === "all") return ALL_EVENTS;
+    return eventsByEra(scope);
+  }, [scope, wrongEventIds, weakEra]);
+
+  const start = (events = scopeEvents) => {
+    const qs = generateQuiz({ events, count, types });
+    setSession(qs);
+    setSessionKey((k) => k + 1);
+    setLastWrongIds([]);
+  };
+
+  const restart = (wrongOnly: boolean) => {
+    if (wrongOnly && lastWrongIds.length > 0) {
+      const events = lastWrongIds
+        .map((id) => getEvent(id))
+        .filter((e): e is NonNullable<typeof e> => !!e);
+      const qs = generateQuiz({ events, count: Math.min(count, events.length * 3), types });
+      setSession(qs);
+    } else {
+      start();
+    }
+    setSessionKey((k) => k + 1);
+  };
+
+  if (session && session.length > 0) {
+    return (
+      <SessionWithWrongTracking
+        key={sessionKey}
+        questions={session}
+        onExit={() => setSession(null)}
+        onRestart={restart}
+        onWrong={setLastWrongIds}
+      />
+    );
+  }
+
+  return (
+    <div className="pt-6">
+      <h1 className="text-2xl font-bold tracking-tight">퀴즈</h1>
+      <p className="mt-1 text-sm text-zinc-500">
+        인출 연습이 곧 장기기억 — 출제위원이 데이터에서 직접 문제를 만듭니다
+      </p>
+
+      <SectionTitle>범위</SectionTitle>
+      <div className="no-scrollbar flex gap-2 overflow-x-auto">
+        <Chip active={scope === "all"} onClick={() => setScope("all")}>
+          전체
+        </Chip>
+        <Chip
+          active={scope === "wrong"}
+          onClick={() => setScope("wrong")}
+        >
+          오답노트 {hydrated ? `(${wrongEventIds.length})` : ""}
+        </Chip>
+        {weakEra && (
+          <Chip active={scope === "weak"} onClick={() => setScope("weak")}>
+            약한 시대 자동
+          </Chip>
+        )}
+      </div>
+      <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
+        {ERAS.map((era) => (
+          <Chip
+            key={era.id}
+            active={scope === era.id}
+            onClick={() => setScope(era.id)}
+          >
+            {era.symbol} {era.name}
+          </Chip>
+        ))}
+      </div>
+
+      <SectionTitle>문항 수</SectionTitle>
+      <div className="flex gap-2">
+        {[5, 10, 20].map((n) => (
+          <Chip key={n} active={count === n} onClick={() => setCount(n)}>
+            {n}문제
+          </Chip>
+        ))}
+      </div>
+
+      <SectionTitle>유형</SectionTitle>
+      <div className="flex flex-wrap gap-2">
+        {ALL_TYPES.map((t) => (
+          <Chip
+            key={t}
+            active={types.includes(t)}
+            onClick={() =>
+              setTypes((prev) =>
+                prev.includes(t)
+                  ? prev.length > 1
+                    ? prev.filter((x) => x !== t)
+                    : prev
+                  : [...prev, t],
+              )
+            }
+          >
+            {TYPE_LABELS[t]}
+          </Chip>
+        ))}
+      </div>
+
+      {scope === "wrong" && scopeEvents.length === 0 ? (
+        <Card className="mt-8">
+          <EmptyState
+            icon={<Brain size={28} />}
+            title="오답이 없어요"
+            desc="퀴즈를 풀면 틀린 개념이 자동으로 모입니다"
+          />
+        </Card>
+      ) : (
+        <Button
+          size="lg"
+          className="mt-8 w-full"
+          disabled={scopeEvents.length === 0}
+          onClick={() => start()}
+        >
+          <Brain size={18} /> 퀴즈 시작 ({scopeEvents.length}개 개념 범위)
+        </Button>
+      )}
+    </div>
+  );
+}
+
+/** 세션 래퍼: 오답 이벤트 id를 상위로 전달해 '오답만 다시'에 사용 */
+function SessionWithWrongTracking({
+  questions,
+  onExit,
+  onRestart,
+  onWrong,
+}: {
+  questions: QuizQuestion[];
+  onExit: () => void;
+  onRestart: (wrongOnly: boolean) => void;
+  onWrong: (ids: string[]) => void;
+}) {
+  const quizHistory = useApp((s) => s.quizHistory);
+  const startLen = useMemo(() => quizHistory.length, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <QuizSession
+      questions={questions}
+      onExit={onExit}
+      onRestart={(wrongOnly) => {
+        const sessionResults = useApp.getState().quizHistory.slice(startLen);
+        onWrong([
+          ...new Set(
+            sessionResults.filter((r) => !r.correct).map((r) => r.eventId),
+          ),
+        ]);
+        onRestart(wrongOnly);
+      }}
+    />
+  );
+}
+
+export default function QuizPage() {
+  return (
+    <Suspense>
+      <QuizContent />
+    </Suspense>
+  );
+}
