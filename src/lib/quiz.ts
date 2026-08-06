@@ -22,14 +22,21 @@ const ALL_TYPES: QuizType[] = [
   "order",
   "blank",
   "king",
-  "year",
+  "between",
   "event",
   "negative",
   "source",
 ];
 
 /** 보기 전부를 알아야 풀 수 있는 유형 — 학습 범위 제한이 필요하다 */
-const CROSS_KNOWLEDGE_TYPES: QuizType[] = ["order"];
+const CROSS_KNOWLEDGE_TYPES: QuizType[] = ["order", "between"];
+
+// ─── 연도를 직접 묻지 않는다 ────────────────────────────────────────
+// "청산리 대첩이 일어난 시기는?" 같은 문제는 연도 네 자리를 외웠는지만
+// 가려낼 뿐, 그 사건이 무엇인지는 아무것도 묻지 않는다. 실제 시험도
+// 연도를 직접 묻지 않고 연표의 (가) 시기처럼 순서로 묻는다.
+// year 생성기는 남겨 두되 어떤 난이도에서도 뽑지 않는다.
+// (이미 배포된 기기의 오답 기록에 type: "year"가 있어 타입 자체는 유지)
 
 // ─── 난이도 설계 ────────────────────────────────────────────────────
 // 난이도는 네 축으로 조절한다.
@@ -61,7 +68,7 @@ export const DIFFICULTY_PROFILES: Record<Difficulty, DifficultyProfile> = {
     description: "익숙한 개념 위주 · 보기가 뚜렷하게 구분됩니다",
   },
   real: {
-    types: ["ox", "multiple", "king", "year", "blank", "event", "order"],
+    types: ["ox", "multiple", "king", "between", "blank", "event", "order"],
     distractorPool: 7,
     minImportance: 2,
     spreadDistractors: false, // 같은 시대에서만 뽑는다
@@ -71,7 +78,7 @@ export const DIFFICULTY_PROFILES: Record<Difficulty, DifficultyProfile> = {
   hard: {
     types: [
       "multiple",
-      "year",
+      "between",
       "blank",
       "event",
       "order",
@@ -274,10 +281,49 @@ function leaksAnswer(
   for (const i of idx) {
     const opt = options[i];
     if (!opt) continue;
+
+    // ① 정답 문구가 통째로 들어 있다
     const needle = strip(opt);
     if (needle.length >= 2 && hay.includes(needle)) return true;
+
+    // ② 통째로는 아니어도 정답을 이루는 낱말이 전부 들어 있다.
+    //    "독립협회와 만민공동회"가 정답인데 지문에 '독립협회'와 '만민공동회'가
+    //    다 나오면, 문구가 붙어 있지 않을 뿐 답은 이미 적혀 있는 것이다.
+    const words = opt
+      .split(/[\s·,()]+/)
+      .map((w) => stripParticle(strip(w)))
+      .filter((w) => w.length >= 2);
+    if (words.length >= 1 && words.every((w) => hay.includes(w))) return true;
   }
   return false;
+}
+
+/** 조사를 떼어 낸다 — '독립협회와'와 '독립협회는'을 같은 말로 보기 위해 */
+function stripParticle(word: string): string {
+  const cut = word.replace(
+    /(과|와|의|은|는|이|가|을|를|에서|에게|에|로서|으로|로|도|만|까지|부터)$/,
+    "",
+  );
+  return cut.length >= 2 ? cut : word;
+}
+
+/**
+ * 지문에서 정답 개념의 이름을 (가)로 가린다.
+ * 실제 시험이 "(가) 단체의 활동으로 옳은 것은?"처럼 내는 방식이다.
+ * 가리고 나서도 풀 만한 단서가 남아야 하므로, 지문이 너무 깎이면 null.
+ */
+function maskTitleInPassage(passage: string, title: string): string | null {
+  let out = passage;
+  const words = title
+    .split(/[\s·,():—]+/)
+    .map((w) => w.trim())
+    .filter((w) => w.length >= 2)
+    .sort((a, b) => b.length - a.length);
+  for (const w of words) out = out.split(w).join("(가)");
+  const left = out.replace(/\(가\)/g, "");
+  // 가린 뒤 남은 글이 원문의 절반도 안 되면 문제로 쓸 수 없다
+  if (left.length < passage.length * 0.5 || left.length < 30) return null;
+  return out;
 }
 
 /**
@@ -316,6 +362,18 @@ function hasFinalConsonant(word: string): boolean {
   const code = word.charCodeAt(word.length - 1) - 0xac00;
   if (code < 0 || code > 11171) return false; // 한글이 아니면 판단 보류
   return code % 28 !== 0;
+}
+
+/**
+ * 낱말에 맞는 조사를 골라 붙인다.
+ * 해설에 "'당백전'가"처럼 나오면 공들여 쓴 설명도 대충 만든 티가 난다.
+ * 따옴표·괄호로 끝나는 경우가 있어 마지막 한글 글자를 기준으로 판단한다.
+ */
+function withParticle(word: string, withJong: string, withoutJong: string): string {
+  const hangul = word.match(/[가-힣]/g);
+  const last = hangul?.[hangul.length - 1];
+  if (!last) return `${word}${withJong}(${withoutJong})`;
+  return `${word}${hasFinalConsonant(last) ? withJong : withoutJong}`;
 }
 
 /**
@@ -388,6 +446,72 @@ const SHORT_TITLE: Map<string, string> = (() => {
   return map;
 })();
 
+// ─── 해설 ───────────────────────────────────────────────────────────
+// "정답: 환구단." 한 줄로 끝내면 왜 환구단인지는 모른 채 넘어간다.
+// 틀린 사람에게 필요한 건 정답 이름이 아니라 "무엇을 보고 골랐어야 했나"다.
+// 그래서 네 층으로 쓴다.
+//   정답 — 무엇이 답인가
+//   왜   — 이 문제에서 그 답이 되는 근거 (유형마다 다르다)
+//   함정 — 무엇과 헷갈리는가
+//   기억 — 다음에 떠올릴 고리
+// examPoint는 "이런 식으로 출제된다"는 경향 문장이라 근거가 아니다.
+// 근거 자리에 두지 않고 맨 끝에 참고로만 붙인다.
+
+interface ExplainOpts {
+  /** 오답 보기가 왜 아닌지 — 있으면 근거 바로 아래 붙는다 */
+  others?: string;
+  trap?: boolean;
+  mnemonic?: boolean;
+  point?: boolean;
+}
+
+function explain(
+  event: HistoryEvent,
+  answer: string,
+  why: string,
+  opts: ExplainOpts = {},
+): string {
+  // 화면은 "헤더\n본문" 덩어리가 빈 줄로 이어진 형태를 기대한다
+  const lines = [`정답\n${answer}`, `왜 이 답인가\n${why}`];
+  if (opts.others) lines.push(`나머지 보기\n${opts.others}`);
+  if (opts.trap !== false && event.traps.length) {
+    lines.push(
+      "헷갈리는 것\n" +
+        event.traps
+          .slice(0, 2)
+          .map((t) => `· ${t.concept} — ${t.difference}`)
+          .join("\n"),
+    );
+  }
+  if (opts.mnemonic !== false && event.memory.mnemonic)
+    lines.push(`기억 고리\n${event.memory.mnemonic}`);
+  if (opts.point !== false && event.examPoint)
+    lines.push(`시험에서는\n${event.examPoint}`);
+  return lines.join("\n\n");
+}
+
+/**
+ * 지문 안에 실제로 등장한 이 개념의 키워드.
+ * "이 단어를 보고 답을 골랐어야 한다"고 짚어 주기 위한 것이라,
+ * 지문에 없는 키워드를 대면 오히려 헷갈린다.
+ */
+function cluesIn(text: string, event: HistoryEvent, limit = 3): string[] {
+  return event.keywords.filter((k) => text.includes(k)).slice(0, limit);
+}
+
+/** 오답 보기들이 실제로는 무엇인지 한 줄씩 */
+function othersLine(
+  options: string[],
+  answerIndex: number,
+  lookup: (opt: string) => string | null,
+): string | undefined {
+  const lines = options
+    .map((opt, i) => (i === answerIndex ? null : lookup(opt)))
+    .filter((l): l is string => !!l)
+    .map((l) => `· ${l}`);
+  return lines.length ? lines.join("\n") : undefined;
+}
+
 /** 공통 필드를 붙여 완성된 문제로 만든다 */
 function finish(
   ctx: Ctx,
@@ -417,35 +541,39 @@ function makeOX(ctx: Ctx): QuizQuestion | null {
       question: `[O/X] ${event.summary10s}`,
       options: ["O", "X"],
       answerIndex: 0,
-      explanation: `옳은 설명입니다. ${event.examPoint}`,
+      explanation: explain(
+        event,
+        "O — 옳은 설명이다",
+        event.summary30s || event.summary10s,
+      ),
     });
 
   const useTrue = seed !== undefined ? seed % 2 === 0 : Math.random() < 0.5;
   if (useTrue) return trueStatement();
 
-  // 거짓 명제: 다른 사건의 왕/연도를 섞되, 실제로도 참이 되면 안 된다
+  // 거짓 명제는 다른 사건의 왕을 끼워 만든다.
+  // (연도를 바꾼 거짓 명제도 만들 수 있지만, 그건 결국 연도 암기를 묻는
+  //  문제라 더 이상 내지 않는다. 왕을 바꿀 수 없으면 참 명제로 돌아간다)
   const others = nearestOthers(event, all, Math.max(ctx.pool, 8), ctx.spread);
-  const wrongKing = event.king
-    ? others.find((e) => e.king && isSafeWrongKing(event.king!, e.king))?.king
+  const wrongSource = event.king
+    ? others.find((e) => e.king && isSafeWrongKing(event.king!, e.king))
     : undefined;
-  if (event.king && wrongKing) {
+  if (event.king && wrongSource?.king) {
     return finish(ctx, "ox", {
-      question: `[O/X] ${event.title}은(는) ${wrongKing} 때의 일이다.`,
+      question: `[O/X] ${withParticle(event.title, "은", "는")} ${wrongSource.king} 때의 일이다.`,
       options: ["O", "X"],
       answerIndex: 1,
-      explanation: `${event.title}은(는) ${event.king} 때(${event.yearDisplay})의 일입니다.`,
+      explanation: explain(
+        event,
+        "X — 왕이 바뀌었다",
+        `${withParticle(event.title, "은", "는")} ${event.king} 때의 일이다. ${event.summary10s}`,
+        {
+          others: `· ${wrongSource.king} — ${shortTitle(wrongSource.title)}의 왕(집권자)이다.`,
+        },
+      ),
     });
   }
-  const wrongYear = others.find((e) =>
-    isSafeWrongYear(event, e.yearDisplay),
-  )?.yearDisplay;
-  if (!wrongYear) return trueStatement(); // 틀린 정답을 내느니 참 명제로
-  return finish(ctx, "ox", {
-    question: `[O/X] ${event.title}은(는) ${wrongYear}의 일이다.`,
-    options: ["O", "X"],
-    answerIndex: 1,
-    explanation: `${event.title}의 시기는 ${event.yearDisplay}입니다.`,
-  });
+  return trueStatement();
 }
 
 function makeMultiple(ctx: Ctx): QuizQuestion | null {
@@ -457,13 +585,37 @@ function makeMultiple(ctx: Ctx): QuizQuestion | null {
   );
   if (!built) return null;
   // 고난도에서는 힌트가 적은 짧은 지문을 준다
-  const passage = ctx.difficulty === "hard" ? event.examPoint : event.summary30s;
+  const raw = ctx.difficulty === "hard" ? event.examPoint : event.summary30s;
+  // 지문이 정답 개념의 이름을 그대로 말하면 문제가 성립하지 않는다
+  const passage = maskTitleInPassage(raw, event.title);
+  if (!passage) return null;
+  const clues = cluesIn(passage, event);
   return finish(ctx, "multiple", {
     question: "다음 설명에 해당하는 사건(개념)은?",
     passage,
     options: built.options,
     answerIndex: built.answerIndex,
-    explanation: `정답: ${event.title} (${event.yearDisplay}). ${event.examPoint}`,
+    explanation: explain(
+      event,
+      `${event.title} (${event.yearDisplay})`,
+      clues.length
+        ? `지문의 ${withParticle(`'${clues.join("·")}'`, "이", "가")} ${event.title}만의 표지다. ${event.summary10s}`
+        : event.summary30s || event.summary10s,
+      { others: byTitle(built.options, built.answerIndex, all) },
+    ),
+  });
+}
+
+/** 보기가 개념 제목일 때, 오답 보기가 실제로 무엇인지 한 줄씩 */
+function byTitle(
+  options: string[],
+  answerIndex: number,
+  all: HistoryEvent[],
+): string | undefined {
+  const pool = [...all, ...ALL_EVENTS];
+  return othersLine(options, answerIndex, (opt) => {
+    const e = pool.find((x) => shortTitle(x.title) === opt || x.title === opt);
+    return e ? `${opt} — ${e.yearDisplay}, ${e.summary10s}` : null;
   });
 }
 
@@ -492,14 +644,32 @@ function makeKing(ctx: Ctx): QuizQuestion | null {
       ? maskName(event.summary10s, event.king)
       : null;
   if (!cue) return null;
+  // 오답으로 나온 왕이 실제로 누구인지도 짚어 준다 — 그게 다음 문제의 답이다
+  const kingOwner = (name: string) => {
+    const e = [...all, ...ALL_EVENTS].find(
+      (x) => x.king && plain(x.king) === name && x.id !== event.id,
+    );
+    return e ? `${name} — ${shortTitle(e.title)}(${e.yearDisplay})의 왕이다.` : null;
+  };
   return finish(ctx, "king", {
     question: `${cue} (${event.yearDisplay}) — (가)에 들어갈 왕(집권자)은?`,
     options: built.options,
     answerIndex: built.answerIndex,
-    explanation: `${event.title}은(는) ${event.king} 때의 일입니다. ${event.summary10s}`,
+    explanation: explain(
+      event,
+      event.king,
+      `${withParticle(event.title, "은", "는")} ${event.king} 때의 일이다. ${event.summary10s}`,
+      { others: othersLine(built.options, built.answerIndex, kingOwner) },
+    ),
   });
 }
 
+/**
+ * 연도 맞추기 — 더 이상 어떤 난이도에서도 출제하지 않는다.
+ * 연도 네 자리를 외웠는지만 가려낼 뿐 사건 자체는 아무것도 묻지 않아서다.
+ * 대신 makeBetween(연표의 (가) 시기)이 그 자리를 대신한다.
+ * 생성기를 지우지 않는 이유는 GENERATORS가 모든 유형을 갖춰야 하기 때문이다.
+ */
 function makeYear(ctx: Ctx): QuizQuestion | null {
   const { event, all, seed, pool } = ctx;
   const built = buildOptions(
@@ -509,10 +679,85 @@ function makeYear(ctx: Ctx): QuizQuestion | null {
   );
   if (!built) return null;
   return finish(ctx, "year", {
-    question: `"${maskYears(event.title)}"이(가) 일어난 시기는?`,
+    question: `"${maskYears(event.title)}"의 시기는?`,
     options: built.options,
     answerIndex: built.answerIndex,
-    explanation: `${event.title}: ${event.yearDisplay}. ${event.memory.mnemonic}`,
+    explanation: explain(event, event.yearDisplay, event.summary10s),
+  });
+}
+
+/**
+ * 연표의 (가) 시기 — 연도를 직접 묻는 대신 순서로 묻는다.
+ *
+ * 실제 시험이 연대를 다루는 방식이 이것이다. 앞뒤에 잘 알려진 사건을
+ * 못 박아 두고 그 사이에 무엇이 있었는지 고르게 하면, 네 자리 숫자가
+ * 아니라 사건들의 앞뒤 관계를 묻는 문제가 된다.
+ *
+ * 오답은 반드시 창(窓) 밖의 사건이어야 한다. 표기 기간이 창과 조금이라도
+ * 겹치면 그 보기도 정답이 될 수 있으므로 쓰지 않는다.
+ */
+function makeBetween(ctx: Ctx): QuizQuestion | null {
+  const { event, all, seed, pool, known } = ctx;
+  if (known && !known.has(event.id)) return null;
+  if (!Number.isFinite(event.year)) return null;
+
+  // 앞뒤 기둥은 널리 알려진 사건이어야 단서 구실을 한다
+  const anchors = ALL_EVENTS.filter(
+    (e) => e.id !== event.id && e.importance >= 4 && Number.isFinite(e.year),
+  );
+  const before = anchors
+    .filter((e) => e.year < event.year)
+    .sort((a, b) => b.year - a.year)[0];
+  const after = anchors
+    .filter((e) => e.year > event.year)
+    .sort((a, b) => a.year - b.year)[0];
+  if (!before || !after) return null;
+
+  const window: [number, number] = [before.year, after.year];
+  const outside = nearestOthers(event, all, pool + 10, ctx.spread).filter((e) => {
+    // 오답을 걸러 내려면 그 사건이 언제인지도 알아야 한다 —
+    // 배우지 않은 사건을 오답으로 쓰면 찍는 문제가 된다
+    if (known && !known.has(e.id)) return false;
+    if (e.year >= before.year && e.year <= after.year) return false;
+    const span = yearSpan(e.yearDisplay);
+    // 표기를 못 읽으면 안전한지 알 수 없다 — 쓰지 않는다
+    return span ? !spansOverlap(span, window) : false;
+  });
+  if (outside.length < 3) return null;
+
+  const built = buildOptions(
+    event.summary10s,
+    outside.map((e) => e.summary10s),
+    seed,
+  );
+  if (!built) return null;
+
+  const passage = [
+    `${shortTitle(before.title)} (${before.yearDisplay})`,
+    "        ↓",
+    "      ( 가 )",
+    "        ↓",
+    `${shortTitle(after.title)} (${after.yearDisplay})`,
+  ].join("\n");
+
+  const where = (opt: string) => {
+    const e = outside.find((x) => x.summary10s === opt);
+    if (!e) return null;
+    const side = e.year < before.year ? "앞" : "뒤";
+    return `${e.yearDisplay} — ${shortTitle(e.title)}. (가) 구간보다 ${side}이다.`;
+  };
+
+  return finish(ctx, "between", {
+    question: "다음 연표의 (가) 시기에 있었던 일로 옳은 것은?",
+    passage,
+    options: built.options,
+    answerIndex: built.answerIndex,
+    explanation: explain(
+      event,
+      `${event.title} (${event.yearDisplay})`,
+      `${shortTitle(before.title)}(${before.yearDisplay}) 뒤, ${shortTitle(after.title)}(${after.yearDisplay}) 앞에 있었던 일이다.`,
+      { others: othersLine(built.options, built.answerIndex, where) },
+    ),
   });
 }
 
@@ -557,7 +802,19 @@ function makeBlank(ctx: Ctx): QuizQuestion | null {
     passage: event.summary10s.replace(keyword, "  ____  "),
     options: built.options,
     answerIndex: built.answerIndex,
-    explanation: `정답: ${keyword}. ${event.examPoint}`,
+    explanation: explain(
+      event,
+      keyword,
+      `빈칸을 채우면 "${event.summary10s}" — ${event.title}(${event.yearDisplay})의 핵심 문장이다.`,
+      {
+        others: othersLine(built.options, built.answerIndex, (opt) => {
+          const owner = ALL_EVENTS.find((e) => e.keywords.includes(opt));
+          return owner
+            ? `${opt} — ${shortTitle(owner.title)}(${owner.yearDisplay})의 키워드다.`
+            : null;
+        }),
+      },
+    ),
   });
 }
 
@@ -594,12 +851,19 @@ function makeOrder(ctx: Ctx): QuizQuestion | null {
     question: "다음 사건들을 일어난 순서대로 배열하시오.",
     options: displayed.map((e) => shortTitle(e.title)),
     answerIndex: correctOrder,
-    explanation:
-      "올바른 순서: " +
+    explanation: explain(
+      event,
       [...displayed]
         .sort((a, b) => a.year - b.year)
-        .map((e) => `${e.title}(${e.yearDisplay})`)
+        .map((e) => shortTitle(e.title))
         .join(" → "),
+      [...displayed]
+        .sort((a, b) => a.year - b.year)
+        .map((e) => `${e.yearDisplay} · ${e.title} — ${e.summary10s}`)
+        .join("\n"),
+      // 순서 문제는 보기가 여러 개념이라 한 개념의 함정·경향을 붙이면 어긋난다
+      { trap: false, point: false },
+    ),
   });
 }
 
@@ -612,15 +876,23 @@ function makeEvent(ctx: Ctx): QuizQuestion | null {
     seed,
   );
   if (!built) return null;
-  const trapNote = event.traps.length
-    ? "\n함정 주의 — " +
-      event.traps.map((t) => `${t.concept}: ${t.difference}`).join(" / ")
-    : "";
   return finish(ctx, "event", {
     question: `다음 중 "${event.title}"에 대한 설명으로 옳은 것은?`,
     options: built.options,
     answerIndex: built.answerIndex,
-    explanation: `정답: ${event.summary10s}${trapNote}`,
+    explanation: explain(
+      event,
+      event.summary10s,
+      event.summary30s || `${event.title}(${event.yearDisplay})의 사실이다.`,
+      {
+        others: othersLine(built.options, built.answerIndex, (opt) => {
+          const e = [...all, ...ALL_EVENTS].find((x) => x.summary10s === opt);
+          return e
+            ? `${shortTitle(e.title)}(${e.yearDisplay})에 대한 설명이다.`
+            : null;
+        }),
+      },
+    ),
   });
 }
 
@@ -656,7 +928,18 @@ function makeNegative(ctx: Ctx): QuizQuestion | null {
     question: `다음 중 "${event.title}"에 대한 설명으로 옳지 않은 것은?`,
     options,
     answerIndex: options.indexOf(wrong.summary10s),
-    explanation: `정답(옳지 않은 것): 이 설명은 "${wrong.title}"(${wrong.yearDisplay})에 해당합니다. 나머지는 ${event.title}의 사실입니다.`,
+    explanation: explain(
+      event,
+      wrong.summary10s,
+      `이 설명은 ${event.title}이 아니라 ${wrong.title}(${wrong.yearDisplay})에 해당한다. ${wrong.summary30s || ""}`.trim(),
+      {
+        others:
+          "다음은 모두 " +
+          event.title +
+          "의 사실이라 답이 아니다.\n" +
+          picked.map((p) => `· ${p}`).join("\n"),
+      },
+    ),
   });
 }
 
@@ -707,12 +990,20 @@ function makeSource(ctx: Ctx): QuizQuestion | null {
   );
   if (!built) return null;
 
+  const clues = cluesIn(sentences, event);
   return finish(ctx, "source", {
     question: "다음 자료에서 설명하는 (가)에 해당하는 것은?",
     passage: sentences,
     options: built.options,
     answerIndex: built.answerIndex,
-    explanation: `정답: ${event.title} (${event.yearDisplay}). ${event.examPoint}`,
+    explanation: explain(
+      event,
+      `${event.title} (${event.yearDisplay})`,
+      clues.length
+        ? `자료의 ${withParticle(`'${clues.join("·")}'`, "이", "가")} (가)를 ${withParticle(event.title, "으로", "로")} 못 박는다. ${event.summary10s}`
+        : `자료는 이 개념을 서술한 것이다. ${event.summary10s}`,
+      { others: byTitle(built.options, built.answerIndex, all) },
+    ),
   });
 }
 
@@ -725,6 +1016,7 @@ const GENERATORS: Record<QuizType, Generator> = {
   blank: makeBlank,
   king: makeKing,
   year: makeYear,
+  between: makeBetween,
   event: makeEvent,
   negative: makeNegative,
   source: makeSource,

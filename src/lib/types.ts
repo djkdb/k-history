@@ -139,7 +139,8 @@ export type QuizType =
   | "order" // 순서 배열
   | "blank" // 빈칸
   | "king" // 왕 맞추기
-  | "year" // 연도 맞추기
+  | "year" // 연도 맞추기 — 더 이상 출제하지 않는다(기록 호환용으로만 남김)
+  | "between" // 연표의 (가) 시기에 있었던 일 고르기
   | "event" // 설명 보고 사건 맞추기
   | "negative" // 옳지 않은 것 고르기 (부정형)
   | "source"; // 사료 제시형

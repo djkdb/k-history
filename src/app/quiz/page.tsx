@@ -4,7 +4,14 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Check, ChevronRight, RotateCcw, X } from "lucide-react";
+import {
+  BookOpen,
+  Brain,
+  Check,
+  ChevronRight,
+  RotateCcw,
+  X,
+} from "lucide-react";
 import type { Difficulty, EraId, QuizQuestion, QuizType } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS, eventsByEra, getEvent } from "@/data/events";
@@ -24,12 +31,68 @@ import {
   EmptyState,
   EraBadge,
   ProgressBar,
+  ScrollRow,
   SectionTitle,
 } from "@/components/ui";
 
 const ALL_TYPES = Object.keys(QUIZ_TYPE_LABELS) as QuizType[];
 
 type Answered = { question: QuizQuestion; correct: boolean };
+
+/**
+ * 해설.
+ *
+ * 예전에는 "정답: 환구단. (출제 경향 한 줄)"이 전부라, 틀린 사람은
+ * 정답 이름만 확인하고 왜 틀렸는지는 모른 채 넘어갔다.
+ * 지금은 생성기가 "헤더\n본문" 덩어리를 빈 줄로 이어 붙여 넘겨 준다.
+ * 여기서는 그 덩어리를 층으로 세워, 눈이 필요한 곳부터 짚게 한다.
+ */
+const EXPLAIN_STYLE: Record<string, { color: string; strong?: boolean }> = {
+  정답: { color: "text-emerald-300", strong: true },
+  "왜 이 답인가": { color: "text-zinc-100" },
+  "나머지 보기": { color: "text-zinc-400" },
+  "헷갈리는 것": { color: "text-orange-300" },
+  "기억 고리": { color: "text-emerald-200" },
+  시험에서는: { color: "text-zinc-400" },
+};
+
+function Explanation({ text }: { text: string }) {
+  const blocks = text
+    .split("\n\n")
+    .map((b) => {
+      const nl = b.indexOf("\n");
+      // 옛 형식("정답: …")으로 저장된 해설도 그대로 읽히게 둔다
+      if (nl < 0) return { head: null, body: b.trim() };
+      return { head: b.slice(0, nl).trim(), body: b.slice(nl + 1).trim() };
+    })
+    .filter((b) => b.body.length > 0);
+
+  return (
+    <div className="mt-3 flex flex-col gap-3">
+      {blocks.map((b, i) => {
+        const style = b.head ? EXPLAIN_STYLE[b.head] : undefined;
+        return (
+          <div key={i}>
+            {b.head && (
+              <p className="mb-1 text-[10px] font-bold tracking-wide text-zinc-500">
+                {b.head}
+              </p>
+            )}
+            <p
+              className={cn(
+                "whitespace-pre-line text-[13px] leading-[1.75]",
+                style?.color ?? "text-zinc-300",
+                style?.strong && "text-[15px] font-bold",
+              )}
+            >
+              {b.body}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function QuizSession({
   questions,
@@ -353,14 +416,17 @@ function QuizSession({
                       : "border-red-400/30 bg-red-500/10",
                   )}
                 >
-                  <p className="text-xs font-bold">
+                  <p className="text-[13px] font-bold">
                     {answered[answered.length - 1]?.correct
                       ? "✅ 정답!"
                       : "❌ 오답 — 복습 큐에 등록했어요"}
                   </p>
-                  <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-zinc-300">
-                    {q.explanation}
-                  </p>
+                  <Explanation text={q.explanation} />
+                  <Link href={`/event/${q.eventId}`}>
+                    <Button variant="outline" size="sm" className="mt-3.5">
+                      <BookOpen size={14} /> 개념 전체 보기
+                    </Button>
+                  </Link>
                 </Card>
                 <Button size="lg" className="mt-3 w-full" onClick={nextQuestion}>
                   {index + 1 >= questions.length ? "결과 보기" : "다음 문제"}
@@ -385,9 +451,20 @@ function QuizContent() {
   const wrongEventIds = useApp((s) => s.wrongEventIds);
   const quizHistory = useApp((s) => s.quizHistory);
 
-  const [scope, setScope] = useState<"all" | "wrong" | "weak" | EraId>(
-    modeParam === "wrong" ? "wrong" : eraParam && ERA_MAP[eraParam] ? eraParam : "all",
+  // 범위는 두 갈래다.
+  //  · 특별 범위(전체·오답노트·약한 시대)는 서로 배타적이다
+  //  · 시대는 여러 개를 함께 고를 수 있다 — "고려+조선만" 같은 요구가 흔하다
+  // 시대를 하나라도 고르면 특별 범위는 자동으로 풀린다.
+  const [special, setSpecial] = useState<"all" | "wrong" | "weak">(
+    modeParam === "wrong" ? "wrong" : "all",
   );
+  const [eraSel, setEraSel] = useState<EraId[]>(
+    eraParam && ERA_MAP[eraParam] ? [eraParam] : [],
+  );
+  const toggleEra = (id: EraId) =>
+    setEraSel((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
   const [count, setCount] = useState(10);
   const [difficulty, setDifficulty] = useState<Difficulty>("real");
   const [types, setTypes] = useState<QuizType[]>(ALL_TYPES);
@@ -429,15 +506,25 @@ function QuizContent() {
   }, [quizHistory]);
 
   const scopeEvents = useMemo(() => {
-    if (scope === "wrong")
+    // 시대를 골랐으면 그 시대들의 합집합이 곧 범위다
+    if (eraSel.length > 0)
+      return ALL_EVENTS.filter((e) => eraSel.includes(e.era));
+    if (special === "wrong")
       return wrongEventIds
         .map((id) => getEvent(id))
         .filter((e): e is NonNullable<typeof e> => !!e);
-    if (scope === "weak")
-      return weakEra ? eventsByEra(weakEra) : ALL_EVENTS;
-    if (scope === "all") return ALL_EVENTS;
-    return eventsByEra(scope);
-  }, [scope, wrongEventIds, weakEra]);
+    if (special === "weak") return weakEra ? eventsByEra(weakEra) : ALL_EVENTS;
+    return ALL_EVENTS;
+  }, [special, eraSel, wrongEventIds, weakEra]);
+
+  const scopeLabel =
+    eraSel.length > 0
+      ? eraSel.map((id) => ERA_MAP[id].name).join(" · ")
+      : special === "wrong"
+        ? "오답노트"
+        : special === "weak"
+          ? "약한 시대"
+          : "전체";
 
   const start = (events = scopeEvents) => {
     const qs = generateQuiz({
@@ -491,33 +578,66 @@ function QuizContent() {
       </p>
 
       <SectionTitle>범위</SectionTitle>
-      <div className="no-scrollbar flex gap-2 overflow-x-auto">
-        <Chip active={scope === "all"} onClick={() => setScope("all")}>
+      <ScrollRow>
+        <Chip
+          active={eraSel.length === 0 && special === "all"}
+          onClick={() => {
+            setSpecial("all");
+            setEraSel([]);
+          }}
+        >
           전체
         </Chip>
         <Chip
-          active={scope === "wrong"}
-          onClick={() => setScope("wrong")}
+          active={eraSel.length === 0 && special === "wrong"}
+          onClick={() => {
+            setSpecial("wrong");
+            setEraSel([]);
+          }}
         >
           오답노트 {hydrated ? `(${wrongEventIds.length})` : ""}
         </Chip>
         {weakEra && (
-          <Chip active={scope === "weak"} onClick={() => setScope("weak")}>
+          <Chip
+            active={eraSel.length === 0 && special === "weak"}
+            onClick={() => {
+              setSpecial("weak");
+              setEraSel([]);
+            }}
+          >
             약한 시대 자동
           </Chip>
         )}
-      </div>
-      <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
-        {ERAS.map((era) => (
-          <Chip
-            key={era.id}
-            active={scope === era.id}
-            onClick={() => setScope(era.id)}
+      </ScrollRow>
+
+      {/* 시대는 중복 선택 — 골라 놓은 것이 몇 개인지 바로 보이게 한다 */}
+      <div className="mt-3 mb-1.5 flex items-center gap-2">
+        <span className="text-[11px] font-semibold text-zinc-500">
+          시대별 (여러 개 선택 가능)
+        </span>
+        {eraSel.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setEraSel([])}
+            className="text-[11px] font-medium text-indigo-300 underline-offset-2 hover:underline"
           >
-            {era.symbol} {era.name}
-          </Chip>
-        ))}
+            {eraSel.length}개 선택됨 · 해제
+          </button>
+        )}
       </div>
+      <ScrollRow>
+        {ERAS.map((era) => {
+          const on = eraSel.includes(era.id);
+          return (
+            <Chip key={era.id} active={on} onClick={() => toggleEra(era.id)}>
+              <span className="flex items-center gap-1.5">
+                {on && <Check size={13} strokeWidth={3} />}
+                {era.symbol} {era.name}
+              </span>
+            </Chip>
+          );
+        })}
+      </ScrollRow>
 
       <SectionTitle>난이도</SectionTitle>
       <div className="flex flex-col gap-2">
@@ -599,7 +719,7 @@ function QuizContent() {
         ))}
       </div>
 
-      {scope === "wrong" && scopeEvents.length === 0 ? (
+      {eraSel.length === 0 && special === "wrong" && scopeEvents.length === 0 ? (
         <Card className="mt-8">
           <EmptyState
             icon={<Brain size={28} />}
@@ -608,14 +728,21 @@ function QuizContent() {
           />
         </Card>
       ) : (
-        <Button
-          size="lg"
-          className="mt-8 w-full"
-          disabled={scopeEvents.length === 0}
-          onClick={() => start()}
-        >
-          <Brain size={18} /> 퀴즈 시작 ({scopeEvents.length}개 개념 범위)
-        </Button>
+        /*
+          시작 버튼은 아래 탭바에 가려지기 쉬운 자리에 있다. 설정을 만지는
+          동안에도 늘 손에 닿도록 탭바 바로 위에 붙여 둔다.
+        */
+        <div className="sticky bottom-[92px] z-40 mt-8 pb-2">
+          <Button
+            size="lg"
+            className="w-full shadow-2xl shadow-indigo-950/60"
+            disabled={scopeEvents.length === 0}
+            onClick={() => start()}
+          >
+            <Brain size={18} /> 퀴즈 시작 — {scopeLabel} ({scopeEvents.length}개
+            개념)
+          </Button>
+        </div>
       )}
     </div>
   );

@@ -24,7 +24,7 @@ import { frequencyOf, getEvent, pastExamsOf } from "@/data/events";
 import { ERA_MAP } from "@/data/eras";
 import { InfographicView, infographicsFor } from "@/components/infographic";
 import { nextDueLabel } from "@/lib/srs";
-import { cn, frequencyLabel } from "@/lib/utils";
+import { cn, frequencyLabel, splitSentences } from "@/lib/utils";
 import {
   Badge,
   Button,
@@ -33,6 +33,8 @@ import {
   EmptyState,
   EraBadge,
   ImportanceBadge,
+  Prose,
+  ScrollRow,
 } from "@/components/ui";
 
 type SummaryTab = "10s" | "30s" | "1m" | "exam";
@@ -52,7 +54,7 @@ function MemorySection({
 }: {
   icon: React.ReactNode;
   title: string;
-  children: React.ReactNode;
+  children: string;
   accent?: string;
 }) {
   return (
@@ -62,7 +64,9 @@ function MemorySection({
         <h3 className="text-sm font-bold">{title}</h3>
       </div>
       <Card>
-        <p className="text-sm leading-relaxed text-zinc-300">{children}</p>
+        <Prose size="sm" className="text-zinc-300">
+          {children}
+        </Prose>
       </Card>
     </div>
   );
@@ -78,7 +82,9 @@ export function EventDetail() {
   const markStudied = useApp((s) => s.markStudied);
   const addStudyMinutes = useApp((s) => s.addStudyMinutes);
 
-  const [tab, setTab] = useState<SummaryTab>("10s");
+  // 기본은 1분 — 10초 요약은 이미 아는 사람을 위한 확인용이고,
+  // 처음 여는 사람에게 필요한 건 앞뒤 맥락이 붙은 설명이다.
+  const [tab, setTab] = useState<SummaryTab>("1m");
   const [justDone, setJustDone] = useState(false);
 
   const isStudied = useMemo(
@@ -167,13 +173,13 @@ export function EventDetail() {
       </motion.div>
 
       {/* 레전드 요약 */}
-      <div className="no-scrollbar mt-6 flex gap-2 overflow-x-auto">
+      <ScrollRow className="mt-6">
         {TABS.map((t) => (
           <Chip key={t.key} active={tab === t.key} onClick={() => setTab(t.key)}>
             {t.label}
           </Chip>
         ))}
-      </div>
+      </ScrollRow>
       <AnimatePresence mode="wait">
         <motion.div
           key={tab}
@@ -185,31 +191,38 @@ export function EventDetail() {
         >
           {tab === "10s" && (
             <Card className="border-indigo-400/30 bg-indigo-500/10">
-              <p className="text-lg font-bold leading-relaxed">
-                {event.summary10s}
-              </p>
+              <Prose size="lg">{event.summary10s}</Prose>
             </Card>
           )}
           {tab === "30s" && (
-            <Card>
-              <p className="text-sm leading-relaxed text-zinc-200">
-                {event.summary30s}
-              </p>
+            <Card className="px-5 py-5">
+              <Prose className="text-zinc-200">{event.summary30s}</Prose>
             </Card>
           )}
           {tab === "1m" && (
-            <Card>
-              <p className="text-sm leading-relaxed text-zinc-200">
-                {event.summary1m}
-              </p>
+            <Card className="px-5 py-5">
+              {/*
+                1분 요약은 열 줄 가까이 된다. 한 덩어리로 두면 읽다가
+                자리를 놓치므로 문장 둘씩 문단으로 끊는다.
+              */}
+              <Prose className="text-zinc-200">{event.summary1m}</Prose>
             </Card>
           )}
           {tab === "exam" && (
-            <Card className="border-red-500/30 bg-red-500/5">
-              <p className="text-sm font-medium leading-relaxed text-zinc-200">
-                {event.examPoint}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
+            <Card className="border-red-500/30 bg-red-500/5 px-5 py-5">
+              {/* 시험 직전에는 문장을 세로로 세워야 눈이 짚어 간다 */}
+              <ul className="flex flex-col gap-2.5">
+                {splitSentences(event.examPoint).map((line, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-2.5 text-[14px] leading-[1.8] text-zinc-200"
+                  >
+                    <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-red-400/80" />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 flex flex-wrap gap-1.5 border-t border-white/5 pt-3.5">
                 {event.keywords.map((k) => (
                   <Badge
                     key={k}
@@ -303,7 +316,7 @@ export function EventDetail() {
             {event.traps.map((t) => (
               <Card key={t.concept} className="border-red-500/20">
                 <p className="text-sm font-bold text-red-300">{t.concept}</p>
-                <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+                <p className="mt-1.5 text-[13px] leading-[1.8] text-zinc-300">
                   {t.difference}
                 </p>
               </Card>

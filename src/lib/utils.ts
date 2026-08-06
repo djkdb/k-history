@@ -80,7 +80,13 @@ export function importanceLabel(n: number): string {
   return "참고";
 }
 
-/** 퀴즈 유형 한글 라벨 (화면 전체에서 공유) */
+/**
+ * 퀴즈 유형 한글 라벨 (화면 전체에서 공유).
+ *
+ * "연도 맞추기"는 더 이상 출제하지 않지만 라벨은 남겨 둔다.
+ * 이미 배포된 기기의 오답 기록에 type: "year"가 남아 있어서,
+ * 지우면 오답 노트 통계가 undefined로 뜬다.
+ */
 export const QUIZ_TYPE_LABELS: Record<import("./types").QuizType, string> = {
   ox: "OX",
   multiple: "객관식",
@@ -88,10 +94,40 @@ export const QUIZ_TYPE_LABELS: Record<import("./types").QuizType, string> = {
   blank: "빈칸",
   king: "왕 맞추기",
   year: "연도 맞추기",
+  between: "연표 사이",
   event: "사건 판별",
   negative: "옳지 않은 것",
   source: "사료 제시형",
 };
+
+// ─── 줄글 읽기 편하게 ───────────────────────────────────────────────
+// 한국사 요약문은 대부분 '~다.'로 끝나는 문장이 이어 붙은 형태다.
+// 화면에 그대로 부으면 다섯 줄, 열 줄짜리 벽이 되어 눈이 쉴 곳이 없다.
+// 문장으로 끊어 두면 문단으로 묶어 띄우거나 목록으로 세울 수 있다.
+
+/** 줄글을 문장 단위로 끊는다 */
+export function splitSentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map((t) => t.trim().replace(/^[·\-\s]+/, ""))
+    .filter((t) => t.length > 1);
+}
+
+/**
+ * 문장을 몇 개씩 묶어 문단으로 만든다.
+ * 마지막 문단에 한 문장만 남으면 앞 문단에 붙인다 — 외톨이 줄은 어색하다.
+ */
+export function paragraphs(text: string, per = 2): string[] {
+  const s = splitSentences(text);
+  if (s.length <= per) return [s.join(" ")];
+  const out: string[] = [];
+  for (let i = 0; i < s.length; i += per) out.push(s.slice(i, i + per).join(" "));
+  if (out.length > 1 && splitSentences(out[out.length - 1]).length === 1) {
+    const tail = out.pop()!;
+    out[out.length - 1] += " " + tail;
+  }
+  return out;
+}
 
 /** 출제 빈도(최근 20회 중 N회) → 사람이 읽는 문구 */
 export function frequencyLabel(freq: number): string {

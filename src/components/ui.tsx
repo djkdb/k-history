@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronRight } from "lucide-react";
 import type { EraId } from "@/lib/types";
 import { ERA_MAP } from "@/data/eras";
 import {
@@ -8,6 +9,7 @@ import {
   importanceBg,
   importanceLabel,
   importanceStars,
+  paragraphs,
 } from "@/lib/utils";
 
 export function Card({
@@ -229,6 +231,105 @@ export function EraBadge({ eraId }: { eraId: EraId }) {
       />
       {era.name}
     </span>
+  );
+}
+
+/**
+ * 줄글 본문.
+ *
+ * 요약문을 <p> 하나에 그대로 부으면 열 줄짜리 벽이 되어,
+ * 읽다가 어디였는지 놓치고 결국 안 읽게 된다.
+ * 문장 두 개씩 문단으로 끊고 줄 간격을 넉넉히 준다.
+ */
+export function Prose({
+  children,
+  per = 2,
+  className,
+  size = "md",
+}: {
+  children: string;
+  /** 한 문단에 넣을 문장 수 */
+  per?: number;
+  className?: string;
+  size?: "sm" | "md" | "lg";
+}) {
+  const sizes = {
+    sm: "text-[13px] leading-[1.85]",
+    md: "text-[15px] leading-[1.9]",
+    lg: "text-lg leading-[1.75] font-bold",
+  };
+  return (
+    <div className={cn("flex flex-col gap-3.5", sizes[size], className)}>
+      {paragraphs(children, per).map((p, i) => (
+        <p key={i}>{p}</p>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * 가로로 넘기는 칩 줄.
+ *
+ * 스크롤바를 숨겨 두면 오른쪽에 더 있다는 걸 알 방법이 없어서
+ * 화면에 보이는 것만 전부인 줄 안다. 넘길 게 남아 있는 동안만
+ * 오른쪽 끝에 그림자와 화살표를 띄운다.
+ */
+export function ScrollRow({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [more, setMore] = useState(false);
+
+  const measure = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    setMore(el.scrollWidth - el.clientWidth - el.scrollLeft > 8);
+  }, []);
+
+  useEffect(() => {
+    measure();
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    for (const c of Array.from(el.children)) ro.observe(c);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [measure, children]);
+
+  const nudge = () =>
+    ref.current?.scrollBy({ left: ref.current.clientWidth * 0.7, behavior: "smooth" });
+
+  return (
+    <div className={cn("relative", className)}>
+      <div
+        ref={ref}
+        onScroll={measure}
+        className="no-scrollbar flex gap-2 overflow-x-auto scroll-smooth"
+      >
+        {children}
+      </div>
+      {more && (
+        <>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-zinc-950 to-transparent" />
+          <button
+            type="button"
+            aria-label="오른쪽으로 넘기기"
+            onClick={nudge}
+            className="absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-zinc-900/90 text-zinc-300 shadow-lg backdrop-blur transition-transform active:scale-90"
+          >
+            <ChevronRight size={15} />
+          </button>
+        </>
+      )}
+    </div>
   );
 }
 

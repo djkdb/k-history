@@ -18,6 +18,7 @@ import {
   EmptyState,
   ImportanceBadge,
   ProgressBar,
+  ScrollRow,
 } from "@/components/ui";
 
 type Filter = "all" | "todo" | "must" | "high" | "done";
@@ -87,7 +88,7 @@ export function EraDetail() {
       </div>
 
       {/* 필터 */}
-      <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
+      <ScrollRow className="mt-4">
         {(
           [
             ["all", "전체"],
@@ -101,7 +102,7 @@ export function EraDetail() {
             {label}
           </Chip>
         ))}
-      </div>
+      </ScrollRow>
 
       {/* 이벤트 리스트 */}
       <div className="mt-4 flex flex-col gap-2">

@@ -17,6 +17,7 @@ import {
   EmptyState,
   EraBadge,
   ImportanceBadge,
+  ScrollRow,
   SectionTitle,
 } from "@/components/ui";
 
@@ -121,7 +122,7 @@ export default function WrongNotePage() {
       ) : (
         <>
           {erasWithWrong.length > 1 && (
-            <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
+            <ScrollRow className="mt-4">
               <Chip active={!eraFilter} onClick={() => setEraFilter(null)}>
                 전체
               </Chip>
@@ -134,7 +135,7 @@ export default function WrongNotePage() {
                   {era.symbol} {era.name}
                 </Chip>
               ))}
-            </div>
+            </ScrollRow>
           )}
 
           <div className="mt-4 flex flex-col gap-2">
