@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   ExamSettings,
+  MockExamAttempt,
   QuizResult,
   ReviewCard,
   StudyStats,
@@ -18,7 +19,9 @@ export interface AppState {
   reviewCards: ReviewCard[];
   quizHistory: QuizResult[];
   wrongEventIds: string[];
+  mockAttempts: MockExamAttempt[];
   setExam: (exam: ExamSettings) => void;
+  recordMockAttempt: (attempt: MockExamAttempt, wrongEventIds: string[]) => void;
   markStudied: (eventId: string) => void;
   recordQuizResult: (r: QuizResult) => void;
   reviewEvent: (eventId: string, correct: boolean) => void;
@@ -74,8 +77,37 @@ export const useApp = create<AppState>()(
       reviewCards: [],
       quizHistory: [],
       wrongEventIds: [],
+      mockAttempts: [],
 
       setExam: (exam) => set({ exam }),
+
+      recordMockAttempt: (attempt, wrongIds) =>
+        set((s) => {
+          // 틀린 문항이 다루던 개념을 오답노트와 복습 큐에 반영한다
+          const wrongEventIds = [
+            ...wrongIds,
+            ...s.wrongEventIds.filter((id) => !wrongIds.includes(id)),
+          ];
+          const reviewCards = s.reviewCards.map((c) =>
+            wrongIds.includes(c.eventId) ? gradeCard(c, false) : c,
+          );
+          const minutes = Math.round(
+            (attempt.finishedAt - attempt.startedAt) / 60000,
+          );
+          const stats = bumpStreak({
+            ...s.stats,
+            xp: s.stats.xp + 50, // 모의고사 1회 완주 보상
+            totalStudyMinutes: s.stats.totalStudyMinutes + Math.max(0, minutes),
+          });
+          const next = {
+            ...s,
+            mockAttempts: [...s.mockAttempts, attempt].slice(-50),
+            wrongEventIds,
+            reviewCards,
+            stats,
+          };
+          return { ...next, stats: { ...stats, badges: grantBadges(next) } };
+        }),
 
       markStudied: (eventId) =>
         set((s) => {
@@ -141,6 +173,7 @@ export const useApp = create<AppState>()(
           reviewCards: [],
           quizHistory: [],
           wrongEventIds: [],
+          mockAttempts: [],
         }),
     }),
     {
@@ -153,6 +186,7 @@ export const useApp = create<AppState>()(
         reviewCards: s.reviewCards,
         quizHistory: s.quizHistory,
         wrongEventIds: s.wrongEventIds,
+        mockAttempts: s.mockAttempts,
       }),
       onRehydrateStorage: () => () => {
         useApp.setState({ hydrated: true });

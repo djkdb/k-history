@@ -186,6 +186,46 @@ export type FrequencySource =
   | "measured" // 기출 데이터를 집계한 실측값
   | "estimated"; // 출제 경향에 근거한 추정값
 
+// ─── 기출 모의고사 ──────────────────────────────────────────────────
+// 실제 시험지를 그대로 푸는 모드. 문항은 이미지(캡처) 또는 텍스트로 담는다.
+
+export interface MockExamQuestion {
+  number: number; // 문항 번호 (1~50)
+  points: number; // 배점
+  /** 문항 캡처 이미지 경로 (public 기준, 예: /exams/68-advanced/q01.png) */
+  image?: string;
+  /** 이미지가 없을 때 쓰는 텍스트 문항 */
+  text?: string;
+  options?: string[];
+  /** 정답 번호 (1~5) */
+  answer: number;
+  /** 이 문항이 다루는 개념 id — 오답 시 해당 개념이 복습 큐에 들어간다 */
+  eventIds?: string[];
+  explanation?: string;
+}
+
+export interface MockExam {
+  id: string; // "68-advanced"
+  round: number; // 회차
+  level: ExamTrack; // 심화 / 기본
+  date?: string; // 시행일 yyyy-mm-dd
+  timeLimitMin: number; // 제한 시간 (심화 80분, 기본 70분)
+  /** 문항 이미지의 출처 표기 (필수 — 공공저작물 이용 시 출처 명시) */
+  attribution: string;
+  questions: MockExamQuestion[];
+}
+
+/** 모의고사 응시 기록 */
+export interface MockExamAttempt {
+  examId: string;
+  startedAt: number;
+  finishedAt: number;
+  /** 문항 번호 → 선택한 번호(1~5), 미응답은 없음 */
+  answers: Record<number, number>;
+  score: number; // 획득 점수
+  total: number; // 만점
+}
+
 export interface QuizResult {
   questionId: string;
   eventId: string;
