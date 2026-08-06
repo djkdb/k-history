@@ -158,8 +158,12 @@ for (const ex of MOCK_EXAMS) {
         `${tag} ${q.number}번: 해설이 ${cited[0]}을 가리키는데 정답은 ${CIRCLED[q.answer - 1]}`,
       );
   }
+  // 자료가 그림뿐이거나 추출되지 않은 문항은 지어내지 않고 비워 둔다.
+  // 다만 몇 문항이 비었는지는 늘 드러나 있어야 한다.
   if (explained.length && explained.length !== ex.questions.length)
-    warns.push(`${tag}: 해설 ${explained.length}/${ex.questions.length}문항`);
+    warns.push(
+      `${tag}: 해설 ${explained.length}/${ex.questions.length}문항 (나머지는 자료가 그림뿐이라 비워 둠)`,
+    );
 }
 
 // ─── 결과 ───────────────────────────────────────────────────────────
