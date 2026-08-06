@@ -3,6 +3,12 @@ import { shuffle } from "./utils";
 
 // ─── 데이터 기반 퀴즈 자동 생성기 ───────────────────────────────────
 // 모든 문제는 HistoryEvent 필드만으로 만들어진다.
+//
+// 설계 원칙 — "아직 배우지 않은 내용을 알아야 풀리는 문제"는 절대 만들지 않는다.
+//  · 단일 개념 유형(ox·multiple·blank·king·year·event)은 정답 개념 하나만 알면 풀린다.
+//    오답 보기는 몰라도 되므로 범위 밖 이벤트를 써도 안전하다.
+//  · 교차 지식 유형(order)은 보기 전부를 알아야 풀린다.
+//    따라서 knownEventIds(학습 완료 범위) 안에서만 출제하고, 출처 개념을 반드시 포함한다.
 
 const ALL_TYPES: QuizType[] = [
   "ox",
@@ -13,6 +19,18 @@ const ALL_TYPES: QuizType[] = [
   "year",
   "event",
 ];
+
+/** 보기 전부를 알아야 풀 수 있는 유형 — 학습 범위 제한이 필요하다 */
+const CROSS_KNOWLEDGE_TYPES: QuizType[] = ["order"];
+
+export interface QuizScope {
+  /**
+   * 이미 학습한 개념 id 집합. 지정하면 교차 지식 유형(순서 배열)을
+   * 이 범위 안에서만 출제한다. 생략하면 제한 없음(시험 직전 모드 등).
+   */
+  knownEventIds?: string[];
+  seed?: number;
+}
 
 let uid = 0;
 function qid(eventId: string, type: QuizType): string {
@@ -29,7 +47,10 @@ function buildOptions(
   const wrongs = [...new Set(wrongPool.filter((w) => w && w !== answer))];
   if (wrongs.length < 3) return null;
   const picked = shuffle(wrongs, seed).slice(0, 3);
-  const options = shuffle([answer, ...picked], seed === undefined ? undefined : seed + 1);
+  const options = shuffle(
+    [answer, ...picked],
+    seed === undefined ? undefined : seed + 1,
+  );
   return { options, answerIndex: options.indexOf(answer) };
 }
 
@@ -37,10 +58,31 @@ function sameEra(event: HistoryEvent, all: HistoryEvent[]): HistoryEvent[] {
   return all.filter((e) => e.era === event.era && e.id !== event.id);
 }
 
+/** 같은 시대 우선, 부족하면 전체로 보충 */
 function othersFirst(event: HistoryEvent, all: HistoryEvent[]): HistoryEvent[] {
   const near = sameEra(event, all);
-  const far = all.filter((e) => e.era !== event.era);
+  const far = all.filter((e) => e.era !== event.era && e.id !== event.id);
   return [...near, ...far];
+}
+
+/**
+ * 변별력 있는 오답 후보 — 같은 시대·연도가 가까운 순으로 좁힌다.
+ * 전부 다른 시대에서 뽑히면 "시대만 알면 찍히는" 문제가 되므로
+ * 근접 후보 limit개로 풀을 제한한 뒤 그 안에서 셔플한다.
+ */
+function nearestOthers(
+  event: HistoryEvent,
+  all: HistoryEvent[],
+  limit = 6,
+): HistoryEvent[] {
+  const near = sameEra(event, all);
+  const base = near.length >= 3 ? near : othersFirst(event, all);
+  return [...base]
+    .sort(
+      (a, b) =>
+        Math.abs(a.year - event.year) - Math.abs(b.year - event.year),
+    )
+    .slice(0, limit);
 }
 
 // ─── 유형별 생성기 (생성 불가 시 null) ──────────────────────────────
@@ -64,8 +106,8 @@ function makeOX(
       importance: event.importance,
     };
   }
-  // 거짓 명제: 다른 이벤트의 왕 또는 연도를 섞는다
-  const pool = othersFirst(event, all);
+  // 거짓 명제: 다른 이벤트의 왕 또는 연도를 섞는다 (오답 요소는 몰라도 풀린다)
+  const pool = nearestOthers(event, all, 8);
   const wrongKing = pool.find((e) => e.king && e.king !== event.king)?.king;
   if (event.king && wrongKing) {
     return {
@@ -76,11 +118,13 @@ function makeOX(
       question: `[O/X] ${event.title}은(는) ${wrongKing} 때의 일이다.`,
       options: ["O", "X"],
       answerIndex: 1,
-      explanation: `${event.title}은(는) ${event.king} 때(${event.yearDisplay})의 일입니다. ${wrongKing}과 혼동하지 마세요.`,
+      explanation: `${event.title}은(는) ${event.king} 때(${event.yearDisplay})의 일입니다.`,
       importance: event.importance,
     };
   }
-  const wrongYear = pool.find((e) => e.yearDisplay !== event.yearDisplay)?.yearDisplay;
+  const wrongYear = pool.find(
+    (e) => e.yearDisplay !== event.yearDisplay,
+  )?.yearDisplay;
   if (!wrongYear) return null;
   return {
     id: qid(event.id, "ox"),
@@ -100,9 +144,10 @@ function makeMultiple(
   all: HistoryEvent[],
   seed?: number,
 ): QuizQuestion | null {
+  // 같은 시대·인접 시기에서 오답을 뽑아야 변별력이 생긴다
   const built = buildOptions(
     event.title,
-    othersFirst(event, all).map((e) => e.title),
+    nearestOthers(event, all, 7).map((e) => e.title),
     seed,
   );
   if (!built) return null;
@@ -125,7 +170,7 @@ function makeKing(
   seed?: number,
 ): QuizQuestion | null {
   if (!event.king) return null;
-  const kings = othersFirst(event, all)
+  const kings = nearestOthers(event, all, 10)
     .map((e) => e.king)
     .filter((k): k is string => !!k);
   const built = buildOptions(event.king, kings, seed);
@@ -148,10 +193,10 @@ function makeYear(
   all: HistoryEvent[],
   seed?: number,
 ): QuizQuestion | null {
-  // 주변(같은 시대 우선) 이벤트들의 연도를 오답으로
+  // 연도가 가까운 사건들의 연도를 오답으로 — 시대가 다르면 너무 쉬워진다
   const built = buildOptions(
     event.yearDisplay,
-    othersFirst(event, all).map((e) => e.yearDisplay),
+    nearestOthers(event, all, 7).map((e) => e.yearDisplay),
     seed,
   );
   if (!built) return null;
@@ -176,7 +221,7 @@ function makeBlank(
   const keyword = event.keywords.find((k) => event.summary10s.includes(k));
   if (!keyword) return null;
   const sentence = event.summary10s.replace(keyword, "____");
-  const wrongPool = othersFirst(event, all)
+  const wrongPool = nearestOthers(event, all, 10)
     .flatMap((e) => e.keywords)
     .filter((k) => !event.summary10s.includes(k));
   const built = buildOptions(keyword, wrongPool, seed);
@@ -194,23 +239,47 @@ function makeBlank(
   };
 }
 
+/**
+ * 순서 배열 — 보기 전부를 알아야 풀리는 유일한 유형.
+ *  · 출처 개념을 반드시 보기에 포함한다 (오답이 엉뚱한 개념에 기록되는 것 방지)
+ *  · known이 주어지면 학습 완료한 개념으로만 구성한다 (스포일러 차단)
+ *  · 연대가 가까운 사건끼리 묶어야 변별력이 생긴다
+ */
 function makeOrder(
   event: HistoryEvent,
   all: HistoryEvent[],
   seed?: number,
+  known?: Set<string>,
 ): QuizQuestion | null {
-  const pool = [event, ...sameEra(event, all)];
-  if (pool.length < 3) return null;
-  const chosen = shuffle(pool, seed).slice(0, Math.min(4, pool.length));
-  // 연도 중복 제거 (동률이면 순서 판정 불가)
-  const unique = chosen.filter(
-    (e, i) => chosen.findIndex((x) => x.year === e.year) === i,
+  // 출처 개념은 항상 보기에 들어가므로, 그것부터 학습 범위 안이어야 한다
+  if (known && !known.has(event.id)) return null;
+
+  let pool = sameEra(event, all).filter((e) => e.year !== event.year);
+  if (known) pool = pool.filter((e) => known.has(e.id));
+  if (pool.length < 2) return null; // 출처 + 최소 2개 = 3개 보기
+
+  // 연대 인접 후보로 좁힌 뒤 그 안에서 선택
+  const candidates = [...pool]
+    .sort(
+      (a, b) => Math.abs(a.year - event.year) - Math.abs(b.year - event.year),
+    )
+    .slice(0, 5);
+  const picked = shuffle(candidates, seed).slice(0, 3);
+
+  // 출처 개념은 항상 포함 + 연도 중복 제거(동률이면 순서 판정 불가)
+  const chosen = [event, ...picked].filter(
+    (e, i, arr) => arr.findIndex((x) => x.year === e.year) === i,
   );
-  if (unique.length < 3) return null;
-  const displayed = shuffle(unique, seed === undefined ? undefined : seed + 2);
+  if (chosen.length < 3) return null;
+
+  const displayed = shuffle(
+    chosen,
+    seed === undefined ? undefined : seed + 2,
+  );
   const correctOrder = [...displayed]
     .sort((a, b) => a.year - b.year)
     .map((e) => displayed.indexOf(e));
+
   return {
     id: qid(event.id, "order"),
     type: "order",
@@ -229,41 +298,47 @@ function makeOrder(
   };
 }
 
+/**
+ * 사건 판별 — "옳은 설명 고르기".
+ * 오답은 같은 시대 다른 사건의 요약문을 쓴다. 정답 개념만 알면 풀리고,
+ * 해설에서 함정(traps)까지 짚어 준다.
+ */
 function makeEvent(
   event: HistoryEvent,
-  _all: HistoryEvent[],
+  all: HistoryEvent[],
   seed?: number,
 ): QuizQuestion | null {
-  if (event.traps.length < 1) return null;
-  const correct = event.summary10s;
-  const wrongs = event.traps
-    .slice(0, 3)
-    .map(
-      (t) => `${event.title}은(는) '${t.concept}'에 해당하는 사실과 같은 사건이다.`,
-    );
-  while (wrongs.length < 3) {
-    wrongs.push(`${event.title}은(는) ${event.yearDisplay}보다 한 시대 뒤의 일이다.`);
-  }
-  const options = shuffle([correct, ...wrongs.slice(0, 3)], seed);
+  const built = buildOptions(
+    event.summary10s,
+    nearestOthers(event, all, 8).map((e) => e.summary10s),
+    seed,
+  );
+  if (!built) return null;
+  const trapNote = event.traps.length
+    ? "\n함정 주의 — " +
+      event.traps.map((t) => `${t.concept}: ${t.difference}`).join(" / ")
+    : "";
   return {
     id: qid(event.id, "event"),
     type: "event",
     eventId: event.id,
     era: event.era,
     question: `다음 중 "${event.title}"에 대한 설명으로 옳은 것은?`,
-    options,
-    answerIndex: options.indexOf(correct),
-    explanation:
-      `정답: ${correct}\n함정 주의 — ` +
-      event.traps.map((t) => `${t.concept}: ${t.difference}`).join(" / "),
+    options: built.options,
+    answerIndex: built.answerIndex,
+    explanation: `정답: ${event.summary10s}${trapNote}`,
     importance: event.importance,
   };
 }
 
-const GENERATORS: Record<
-  QuizType,
-  (e: HistoryEvent, all: HistoryEvent[], seed?: number) => QuizQuestion | null
-> = {
+type Generator = (
+  e: HistoryEvent,
+  all: HistoryEvent[],
+  seed?: number,
+  known?: Set<string>,
+) => QuizQuestion | null;
+
+const GENERATORS: Record<QuizType, Generator> = {
   ox: makeOX,
   multiple: makeMultiple,
   order: makeOrder,
@@ -280,14 +355,24 @@ export function generateQuiz(opts: {
   count: number;
   types?: QuizType[];
   seed?: number;
+  knownEventIds?: string[];
 }): QuizQuestion[] {
-  const { events, count, seed } = opts;
+  const { events, count, seed, knownEventIds } = opts;
   const types = opts.types?.length ? opts.types : ALL_TYPES;
   if (events.length === 0) return [];
 
-  // 중요도 가중 샘플링: importance 높은 이벤트가 앞에 오도록
+  const known = knownEventIds ? new Set(knownEventIds) : undefined;
+
+  // 학습한 개념이 3개 미만이면 순서 배열은 아예 만들 수 없다
+  const usableTypes =
+    known && known.size < 3
+      ? types.filter((t) => !CROSS_KNOWLEDGE_TYPES.includes(t))
+      : types;
+  if (usableTypes.length === 0) return [];
+
+  // 중요도 높은 개념 우선 샘플링
   const weighted = shuffle(events, seed).sort(
-    (a, b) => b.importance - a.importance + (Math.abs(a.year % 3) - Math.abs(b.year % 3)) * 0.1,
+    (a, b) => b.importance - a.importance,
   );
 
   const questions: QuizQuestion[] = [];
@@ -300,7 +385,7 @@ export function generateQuiz(opts: {
     guard += 1;
     const event = weighted[cursor % weighted.length];
     cursor += 1;
-    const type = types[typeCursor % types.length];
+    const type = usableTypes[typeCursor % usableTypes.length];
     typeCursor += 1;
 
     const used = usedPerEvent.get(event.id) ?? new Set<QuizType>();
@@ -310,6 +395,7 @@ export function generateQuiz(opts: {
       event,
       events,
       seed === undefined ? undefined : seed + guard,
+      known,
     );
     if (!q) continue;
     used.add(type);
@@ -322,11 +408,24 @@ export function generateQuiz(opts: {
 export function generateQuizForEvent(
   event: HistoryEvent,
   all: HistoryEvent[],
-  seed?: number,
+  scope: QuizScope = {},
 ): QuizQuestion[] {
+  const { seed } = scope;
+  // 방금 학습한 개념 자체는 항상 아는 것으로 취급
+  const known = scope.knownEventIds
+    ? new Set([...scope.knownEventIds, event.id])
+    : undefined;
+
   const out: QuizQuestion[] = [];
   for (const type of ALL_TYPES) {
-    const q = GENERATORS[type](event, all, seed);
+    if (
+      CROSS_KNOWLEDGE_TYPES.includes(type) &&
+      known &&
+      known.size < 3
+    ) {
+      continue;
+    }
+    const q = GENERATORS[type](event, all, seed, known);
     if (q) out.push(q);
     if (out.length >= 4) break;
   }

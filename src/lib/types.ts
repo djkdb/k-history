@@ -43,6 +43,68 @@ export interface ComparisonTrap {
   difference: string; // 구분 포인트 한 줄
 }
 
+// ─── 인포그래픽 (시각 학습) ─────────────────────────────────────────
+// 글만 읽는 암기를 막기 위해, 구조를 가진 정보는 그림으로 보여준다.
+// 각 spec은 전용 애니메이션 컴포넌트로 렌더링된다.
+
+/** 연표: 사건이 시간축 위에 순서대로 놓인다 */
+export interface TimelineSpec {
+  kind: "timeline";
+  title: string;
+  items: {
+    year: string;
+    label: string;
+    note?: string;
+    highlight?: boolean; // 현재 보고 있는 사건
+  }[];
+}
+
+/** 피라미드: 신분 구조처럼 위계가 있는 계층 */
+export interface PyramidSpec {
+  kind: "pyramid";
+  title: string;
+  /** 위(소수·상층)에서 아래(다수·하층) 순서 */
+  levels: { label: string; desc?: string }[];
+}
+
+/** 조직도: 중앙 정치 기구, 행정 조직 */
+export interface OrgChartSpec {
+  kind: "orgchart";
+  title: string;
+  root: string;
+  branches: { label: string; children?: string[] }[];
+}
+
+/** 비교표: 헷갈리는 두 개념을 나란히 */
+export interface CompareSpec {
+  kind: "compare";
+  title: string;
+  left: { title: string; items: string[] };
+  right: { title: string; items: string[] };
+}
+
+/** 흐름도: 인과관계·전개 과정 */
+export interface FlowSpec {
+  kind: "flow";
+  title: string;
+  steps: { label: string; note?: string }[];
+}
+
+/** 수치: 카운트업으로 규모를 체감 */
+export interface StatSpec {
+  kind: "stat";
+  title: string;
+  items: { label: string; value: number; suffix?: string; note?: string }[];
+}
+
+export type Infographic =
+  | TimelineSpec
+  | PyramidSpec
+  | OrgChartSpec
+  | CompareSpec
+  | FlowSpec
+  | StatSpec;
+
 export interface HistoryEvent {
   id: string; // slug 예) "hunminjeongeum"
   era: EraId;
@@ -61,6 +123,8 @@ export interface HistoryEvent {
   keywords: string[]; // 핵심 키워드 3~6개
   memory: MemoryAids;
   traps: ComparisonTrap[]; // 오답 유발 비교 개념들
+  /** 전용 인포그래픽. 없으면 데이터에서 자동 생성된 것만 표시된다. */
+  infographics?: Infographic[];
   relatedFigures: string[]; // 관련 인물
   relatedHeritage: string[]; // 관련 문화재/유물
   prevEventId?: string; // 흐름 모드: 이전 사건

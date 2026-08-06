@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  BarChart3,
   BookHeart,
   Brain,
   CheckCircle2,
@@ -21,6 +22,7 @@ import {
 import { useApp } from "@/lib/store";
 import { getEvent } from "@/data/events";
 import { ERA_MAP } from "@/data/eras";
+import { InfographicView, infographicsFor } from "@/components/infographic";
 import { nextDueLabel } from "@/lib/srs";
 import { cn } from "@/lib/utils";
 import {
@@ -105,6 +107,7 @@ export function EventDetail() {
   const era = ERA_MAP[event.era];
   const prev = event.prevEventId ? getEvent(event.prevEventId) : undefined;
   const next = event.nextEventId ? getEvent(event.nextEventId) : undefined;
+  const graphics = infographicsFor(event);
 
   const complete = () => {
     markStudied(event.id);
@@ -212,6 +215,25 @@ export function EventDetail() {
           </span>
         ))}
       </div>
+
+      {/* 한눈에 보는 그림 — 글만 읽고 외우지 않도록 */}
+      {graphics.length > 0 && (
+        <>
+          <div className="mb-2 mt-6 flex items-center gap-2">
+            <BarChart3 size={16} className="text-cyan-300" />
+            <h3 className="text-sm font-bold">한눈에 보기</h3>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {graphics.map((spec, i) => (
+              <InfographicView
+                key={`${spec.kind}-${i}`}
+                spec={spec}
+                color={era.color}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {/* 기억 강화 */}
       <MemorySection icon={<Drama size={16} />} title="스토리텔링" accent="#a5b4fc">

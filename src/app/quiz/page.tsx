@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -360,13 +360,23 @@ function QuizContent() {
   );
   const [count, setCount] = useState(10);
   const [types, setTypes] = useState<QuizType[]>(ALL_TYPES);
-  const [session, setSession] = useState<QuizQuestion[] | null>(() => {
-    if (eventParam) {
-      const ev = getEvent(eventParam);
-      if (ev) return generateQuizForEvent(ev, ALL_EVENTS);
-    }
-    return null;
-  });
+  const studiedEventIds = useApp((s) => s.studiedEventIds);
+  const [session, setSession] = useState<QuizQuestion[] | null>(null);
+
+  // 학습 직후 "이 개념 퀴즈 풀기"로 진입한 경우 — 학습 범위를 넘겨
+  // 아직 배우지 않은 내용을 알아야 풀리는 문제가 나오지 않게 한다.
+  const eventSessionStarted = useRef(false);
+  useEffect(() => {
+    if (!eventParam || !hydrated || eventSessionStarted.current) return;
+    const ev = getEvent(eventParam);
+    if (!ev) return;
+    eventSessionStarted.current = true;
+    setSession(
+      generateQuizForEvent(ev, ALL_EVENTS, {
+        knownEventIds: studiedEventIds,
+      }),
+    );
+  }, [eventParam, hydrated, studiedEventIds]);
   const [sessionKey, setSessionKey] = useState(0);
   const [lastWrongIds, setLastWrongIds] = useState<string[]>([]);
 
@@ -396,7 +406,12 @@ function QuizContent() {
   }, [scope, wrongEventIds, weakEra]);
 
   const start = (events = scopeEvents) => {
-    const qs = generateQuiz({ events, count, types });
+    const qs = generateQuiz({
+      events,
+      count,
+      types,
+      knownEventIds: studiedEventIds,
+    });
     setSession(qs);
     setSessionKey((k) => k + 1);
     setLastWrongIds([]);
@@ -407,7 +422,12 @@ function QuizContent() {
       const events = lastWrongIds
         .map((id) => getEvent(id))
         .filter((e): e is NonNullable<typeof e> => !!e);
-      const qs = generateQuiz({ events, count: Math.min(count, events.length * 3), types });
+      const qs = generateQuiz({
+        events,
+        count: Math.min(count, events.length * 3),
+        types,
+        knownEventIds: studiedEventIds,
+      });
       setSession(qs);
     } else {
       start();
