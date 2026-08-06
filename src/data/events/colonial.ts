@@ -223,7 +223,7 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     relatedFigures: ["이승만", "이동휘", "안창호", "김구"],
     relatedHeritage: ["상하이 임시정부 청사", "독립공채", "독립신문(임정 기관지)", "한일관계사료집"],
     prevEventId: "samil",
-    nextEventId: "munhwa",
+    nextEventId: "uiyeoldan",
   },
   {
     id: "munhwa",
@@ -279,8 +279,8 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     ],
     relatedFigures: ["사이토 마코토"],
     relatedHeritage: ["조선일보·동아일보 창간호", "군산항 뜬다리 부두", "치안유지법 문서"],
-    prevEventId: "imsi-jeongbu",
-    nextEventId: "uiyeoldan",
+    prevEventId: "uiyeoldan",
+    nextEventId: "bongo-cheongsan",
   },
   {
     id: "uiyeoldan",
@@ -335,8 +335,8 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     ],
     relatedFigures: ["김원봉", "신채호", "김익상", "김상옥", "나석주"],
     relatedHeritage: ["조선혁명선언", "의열단 창립지(지린)", "조선혁명간부학교 터"],
-    prevEventId: "munhwa",
-    nextEventId: "bongo-cheongsan",
+    prevEventId: "imsi-jeongbu",
+    nextEventId: "munhwa",
   },
   {
     id: "bongo-cheongsan",
@@ -391,7 +391,7 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     ],
     relatedFigures: ["홍범도", "김좌진", "최진동", "안무", "서일"],
     relatedHeritage: ["봉오동 전적지", "청산리 전적지", "북로군정서 사진"],
-    prevEventId: "uiyeoldan",
+    prevEventId: "munhwa",
     nextEventId: "singanhoe",
   },
   {
@@ -650,7 +650,7 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     },
     traps: [
       {
-        concept: "조선의용대와 한국광복군",
+        concept: "조선의용대 vs 한국광복군",
         difference:
           "조선의용대는 1938년 김원봉이 우한에서 만든 중국 관내 최초의 한인 부대, 한국광복군은 1940년 임시정부가 충칭에서 창설한 정규군(총사령 지청천)이다. 창설 주체와 연도로 구분한다.",
       },

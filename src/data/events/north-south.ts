@@ -48,7 +48,8 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
     ],
     relatedFigures: ["대조영", "걸사비우", "고왕"],
     relatedHeritage: ["동모산 성터", "이불병좌상", "발해 온돌 유적"],
-    nextEventId: "sinmun",
+    prevEventId: "sinmun",
+    nextEventId: "wonhyo-uisang",
   },
   {
     id: "sinmun",
@@ -97,8 +98,7 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
     ],
     relatedFigures: ["신문왕", "김흠돌", "문무왕"],
     relatedHeritage: ["감은사지 3층 석탑", "만파식적 설화", "국학 터"],
-    prevEventId: "balhae-founding",
-    nextEventId: "wonhyo-uisang",
+    nextEventId: "balhae-founding",
   },
   {
     id: "wonhyo-uisang",
@@ -142,7 +142,7 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
     ],
     relatedFigures: ["원효", "의상", "요석공주", "설총"],
     relatedHeritage: ["부석사 무량수전", "화엄일승법계도", "대승기신론소"],
-    prevEventId: "sinmun",
+    prevEventId: "balhae-founding",
     nextEventId: "balhae-mun",
   },
   {

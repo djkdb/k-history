@@ -22,8 +22,11 @@ import { DAEHAN_EMPIRE_EVENTS } from "./daehan-empire";
 import { COLONIAL_EVENTS } from "./colonial";
 import { MODERN_EVENTS } from "./modern";
 
-/** 전체 이벤트: 연대순 정렬 보장 */
-export const ALL_EVENTS: HistoryEvent[] = [
+import { ERAS } from "../eras";
+
+const ERA_ORDER = new Map(ERAS.map((e) => [e.id, e.order]));
+
+const RAW_EVENTS: HistoryEvent[] = [
   ...PREHISTORIC_EVENTS,
   ...GOJOSEON_EVENTS,
   ...PROTO_THREE_EVENTS,
@@ -37,6 +40,17 @@ export const ALL_EVENTS: HistoryEvent[] = [
   ...COLONIAL_EVENTS,
   ...MODERN_EVENTS,
 ];
+
+/**
+ * 전체 이벤트 — 시대순 → 연대순으로 정렬한다.
+ * 데이터 파일의 배열 순서에 의존하지 않아야 흐름 모드와 진도 계산이
+ * 항상 실제 연대를 따른다. (파일 안에서 순서가 어긋나도 여기서 바로잡힌다)
+ */
+export const ALL_EVENTS: HistoryEvent[] = [...RAW_EVENTS].sort(
+  (a, b) =>
+    (ERA_ORDER.get(a.era) ?? 0) - (ERA_ORDER.get(b.era) ?? 0) ||
+    a.year - b.year,
+);
 
 export const EVENT_MAP: Map<string, HistoryEvent> = new Map(
   ALL_EVENTS.map((e) => [e.id, e]),
