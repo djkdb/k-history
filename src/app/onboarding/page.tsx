@@ -276,10 +276,9 @@ export default function OnboardingPage() {
             </label>
 
             <p className="mt-3 text-[11px] leading-relaxed text-zinc-600">
-              회차와 시행 연도는 기출 문제지로 확인했지만, 정확한 시행일은
-              공식 발표를 따릅니다. &lsquo;예상&rsquo;으로 표시된 날짜는 통상적인
-              시행 시기(연 4회 · 2·5·8·10월경 토요일)로 추정한 값이니,
-              공고된 날짜와 다르면 직접 선택해 주세요.
+              {upcoming.length > 0
+                ? "공고된 시행 일정입니다. 이후 회차는 국사편찬위원회 공지에 따라 추가됩니다."
+                : "등록된 다음 회차 일정이 없습니다. 시험일을 직접 선택해 주세요."}
             </p>
 
             {dday !== null && dday > 0 && (

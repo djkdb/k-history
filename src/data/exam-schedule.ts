@@ -3,19 +3,14 @@ import type { ExamTrack } from "@/lib/types";
 /**
  * 한국사능력검정시험 회차별 시행 일정.
  *
- * ⚠️ 확인된 것과 예상을 구분합니다.
- *  · confirmed: true  — 시행일이 확인된 회차
- *  · confirmed: false — 회차·시기만 알고 정확한 날짜는 미확인. 그 달 마지막
- *    토요일을 잠정 날짜로 두고 화면에 '예상'으로 표시합니다.
+ * 공고된 일정만 담습니다. 추정 날짜는 넣지 않습니다 —
+ * 틀린 날짜는 D-Day와 학습 계획을 통째로 어긋나게 만들기 때문입니다.
  *
- * 회차와 시행 연도는 기출 문제지에 인쇄된 정보로 확인했습니다
- * (69~72회 2024년도 · 73~76회 2025년도 · 77~78회 2026년도).
- * 최근에는 연 4회(2·5·8·10월경) 시행되고 있습니다.
+ * 새 회차 일정이 공개되면 EXAM_SCHEDULE에 한 줄 추가하세요.
+ * 공식 공지: https://www.historyexam.go.kr
  *
- * 공식 일정은 국사편찬위원회 공지에서 확인하세요.
- *   https://www.historyexam.go.kr
- *
- * 날짜를 확인하면 date를 고치고 confirmed를 true로 바꾸면 됩니다.
+ * confirmed는 앞으로 미확정 일정을 다루게 될 경우를 위해 남겨 둔 필드입니다.
+ * false면 화면에 '예상'으로 표시됩니다.
  */
 export interface ExamSession {
   round: number;
@@ -27,32 +22,21 @@ export interface ExamSession {
   tracks: ExamTrack[];
 }
 
-/** 그 달의 마지막 토요일 (한능검은 통상 토요일 시행) */
-function lastSaturday(year: number, month: number): string {
-  const d = new Date(year, month, 0); // 그 달 마지막 날
-  d.setDate(d.getDate() - ((d.getDay() + 1) % 7));
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${m}-${day}`;
-}
+const session = (round: number, date: string): ExamSession => ({
+  round,
+  date,
+  confirmed: true,
+  tracks: ["advanced", "basic"],
+});
 
-/** 예상 회차 (연 4회 · 2·5·8·10월 시행 패턴) */
-function estimated(round: number, year: number, month: number): ExamSession {
-  return {
-    round,
-    date: lastSaturday(year, month),
-    confirmed: false,
-    tracks: ["advanced", "basic"],
-  };
-}
-
+/**
+ * 공고된 시행 일정.
+ * 이후 회차는 일정이 공개되면 아래에 추가하세요 — 추정 날짜는 넣지 않습니다.
+ */
 export const EXAM_SCHEDULE: ExamSession[] = [
-  estimated(79, 2026, 8),
-  estimated(80, 2026, 10),
-  estimated(81, 2027, 2),
-  estimated(82, 2027, 5),
-  estimated(83, 2027, 8),
-  estimated(84, 2027, 10),
+  session(79, "2026-08-09"),
+  session(80, "2026-10-17"),
+  session(81, "2026-11-28"),
 ];
 
 /** 오늘 이후에 시행되는 회차만, 가까운 순으로 */
