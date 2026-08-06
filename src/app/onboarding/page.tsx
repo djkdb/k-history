@@ -8,6 +8,7 @@ import {
   Brain,
   CalendarDays,
   ChevronLeft,
+  FileText,
   Flame,
   GraduationCap,
   RotateCcw,
@@ -17,8 +18,9 @@ import {
 import type { ExamTrack } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS } from "@/data/events";
-import { cn, daysUntil, todayISO } from "@/lib/utils";
-import { Button, Card, ProgressBar } from "@/components/ui";
+import { MOCK_EXAMS } from "@/data/mock-exams";
+import { cn, daysUntil } from "@/lib/utils";
+import { Badge, Button, Card, ProgressBar } from "@/components/ui";
 
 const PRESETS = [3, 7, 14, 30, 60];
 
@@ -71,6 +73,24 @@ export default function OnboardingPage() {
           한국사 레전드 마스터
         </h1>
         <p className="mt-1 text-sm text-zinc-400">외우지 말고, 기억하세요</p>
+
+        {/* 앱이 무엇을 주는지 — 특히 실제 기출이 들어 있다는 점 */}
+        <div className="mt-5 flex flex-wrap justify-center gap-1.5">
+          {[
+            { icon: "📚", label: `핵심 개념 ${ALL_EVENTS.length}개` },
+            { icon: "🧠", label: "망각곡선 복습" },
+            { icon: "📄", label: `실제 기출 ${MOCK_EXAMS.length}회차` },
+          ].map((b) => (
+            <Badge key={b.label}>
+              {b.icon} {b.label}
+            </Badge>
+          ))}
+        </div>
+        <p className="mx-auto mt-3 max-w-xs text-[11px] leading-relaxed text-zinc-500">
+          국사편찬위원회가 공개한 심화 기출 {MOCK_EXAMS.length}회차를 그대로
+          담았습니다. 실제 시험지로 제한 시간 안에 풀고 바로 채점·등급까지
+          확인할 수 있어요.
+        </p>
       </motion.div>
 
       <ProgressBar value={step + 1} max={3} className="mb-8" />
@@ -262,6 +282,11 @@ export default function OnboardingPage() {
                   icon: <Target size={18} />,
                   title: "취약 파트 보강",
                   desc: "오답 분석으로 약한 시대·유형 집중 공략",
+                },
+                {
+                  icon: <FileText size={18} />,
+                  title: `기출 모의고사 ${MOCK_EXAMS.length}회차`,
+                  desc: "실제 시험지를 제한 시간 안에 — 주 1회 실전 감각 유지",
                 },
                 ...(plan.days <= 7
                   ? [

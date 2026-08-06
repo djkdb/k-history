@@ -10,6 +10,7 @@ import {
   Brain,
   ChevronRight,
   Clock3,
+  FileText,
   Flame,
   NotebookPen,
   RotateCcw,
@@ -19,6 +20,7 @@ import {
 import type { EraId, QuizType } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS } from "@/data/events";
+import { MOCK_EXAMS } from "@/data/mock-exams";
 import { ERAS, ERA_MAP } from "@/data/eras";
 import { dueCards, retentionRate } from "@/lib/srs";
 import {
@@ -62,6 +64,7 @@ export default function DashboardPage() {
   const reviewCards = useApp((s) => s.reviewCards);
   const quizHistory = useApp((s) => s.quizHistory);
   const wrongEventIds = useApp((s) => s.wrongEventIds);
+  const mockAttempts = useApp((s) => s.mockAttempts);
 
   useEffect(() => {
     if (hydrated && !exam) router.replace("/onboarding");
@@ -119,6 +122,11 @@ export default function DashboardPage() {
       ),
     [studied],
   );
+
+  const bestMock = useMemo(() => {
+    const s = mockAttempts.map((a) => a.score);
+    return s.length ? Math.max(...s) : null;
+  }, [mockAttempts]);
 
   const todayRecommend = useMemo(
     () =>
@@ -208,6 +216,16 @@ export default function DashboardPage() {
             title: "데일리 퀴즈",
             desc: "인출 연습이 곧 장기기억입니다",
             count: score !== null ? `최근 정답률 ${score}%` : "시작하기",
+          },
+          {
+            href: "/mock",
+            icon: <FileText size={20} />,
+            color: "#ec4899",
+            title: "기출 모의고사",
+            desc: bestMock
+              ? `최고 ${bestMock}점 · 실제 시험지로 다시 도전`
+              : "국사편찬위원회 공개 기출을 실제 시험처럼",
+            count: `${MOCK_EXAMS.length}회차`,
           },
         ].map((item, i) => (
           <motion.div
