@@ -10,7 +10,7 @@
     "lint": "next lint",
     "preview": "npm run build && npx wrangler dev",
     "deploy": "npm run audit && npm run build && npx wrangler deploy",
-    "audit": "npx tsx --tsconfig tsconfig.json scripts/audit-storage.ts && npx tsx --tsconfig tsconfig.json scripts/audit-content.ts && npx tsx --tsconfig tsconfig.json scripts/audit-quiz.ts"
+    "audit": "npx tsc --noEmit -p tsconfig.json && npx tsx --tsconfig tsconfig.json scripts/audit-storage.ts && npx tsx --tsconfig tsconfig.json scripts/audit-content.ts && npx tsx --tsconfig tsconfig.json scripts/audit-quiz.ts"
   },
   "dependencies": {
     "animejs": "^4.5.0",

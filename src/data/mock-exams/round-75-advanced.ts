@@ -18,8 +18,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 4,
       explanation:
         "부여 송국리 유적과 송국리형 토기·비파형 동검은 청동기 시대를 대표한다. 계급이 생긴 이 시대에는 많은 인력을 동원해 지배층의 무덤인 고인돌을 세웠다.",
-      explanation:
-        "부여 송국리 유적과 송국리형 토기·비파형 동검은 청동기 시대를 대표한다. 계급이 생긴 이 시대에는 많은 인력을 동원해 지배층의 무덤인 고인돌을 세웠다.",
       options: [
         "주먹도끼 등 뗀석기를 처음 제작하였다.",
         "소를 이용한 깊이갈이가 널리 보급되었다.",
@@ -34,8 +32,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q02.webp",
       answer: 1,
-      explanation:
-        "(가)는 중국의 혼란으로 유이민이 준왕에게 망명해 온 상황, (나)는 한 무제가 왕검성을 포위한 기원전 108년이다. 그 사이인 기원전 194년 무렵 위만이 준왕을 몰아내고 왕위를 빼앗았다.",
       explanation:
         "(가)는 중국의 혼란으로 유이민이 준왕에게 망명해 온 상황, (나)는 한 무제가 왕검성을 포위한 기원전 108년이다. 그 사이인 기원전 194년 무렵 위만이 준왕을 몰아내고 왕위를 빼앗았다.",
       options: [
@@ -53,16 +49,12 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 5,
       explanation:
         "금관총 금관과 황남대총 금관이 나온 경주는 신라의 수도이므로 (가)는 신라다. 신라의 문화유산을 고르면 된다.",
-      explanation:
-        "금관총 금관과 황남대총 금관이 나온 경주는 신라의 수도이므로 (가)는 신라다. 신라의 문화유산을 고르면 된다.",
     },
     {
       number: 4,
       points: 2,
       image: "/exams/75-advanced/q04.webp",
       answer: 1,
-      explanation:
-        "고령의 지산동 고분군과 주산성을 남긴 (가)는 대가야다. 대가야는 562년 신라 진흥왕에게 복속되었다.",
       explanation:
         "고령의 지산동 고분군과 주산성을 남긴 (가)는 대가야다. 대가야는 562년 신라 진흥왕에게 복속되었다.",
       options: [
@@ -81,8 +73,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "토졸(대대로)과 욕살·처려근지를 둔 나라는 고구려다. 고구려에서는 집집마다 부경이라는 창고를 두었다.",
-      explanation:
-        "토졸(대대로)과 욕살·처려근지를 둔 나라는 고구려다. 고구려에서는 집집마다 부경이라는 창고를 두었다.",
       options: [
         "수도에 동시전이 설치되었다.",
         "집집마다 부경이라는 창고가 있었다.",
@@ -96,8 +86,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q06.webp",
       answer: 4,
-      explanation:
-        "혜공왕이 피살된 뒤 진골 귀족이 왕위를 다투고 양길 같은 호족이 성장한 시기는 신라 하대다. 이 시기인 822년 김헌창이 웅천주에서 반란을 일으켰다.",
       explanation:
         "혜공왕이 피살된 뒤 진골 귀족이 왕위를 다투고 양길 같은 호족이 성장한 시기는 신라 하대다. 이 시기인 822년 김헌창이 웅천주에서 반란을 일으켰다.",
       options: [
@@ -115,8 +103,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 4,
       explanation:
         "당이 경관을 허물자 고구려가 천리장성을 쌓기 시작한 것은 631년이다. 그 이후인 642년 연개소문이 정변을 일으켜 권력을 잡았다.",
-      explanation:
-        "당이 경관을 허물자 고구려가 천리장성을 쌓기 시작한 것은 631년이다. 그 이후인 642년 연개소문이 정변을 일으켜 권력을 잡았다.",
       options: [
         "을지문덕이 살수에서 대승을 거두었다.",
         "고구려가 신라에 침입한 왜를 물리쳤다.",
@@ -130,8 +116,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q08.webp",
       answer: 2,
-      explanation:
-        "고왕 대조영에 이어 무왕(인안)·문왕(대흥)·선왕(건흥)이 연호를 쓴 나라는 발해다. 발해는 유학 교육 기관으로 주자감을 두었다.",
       explanation:
         "고왕 대조영에 이어 무왕(인안)·문왕(대흥)·선왕(건흥)이 연호를 쓴 나라는 발해다. 발해는 유학 교육 기관으로 주자감을 두었다.",
       options: [
@@ -149,8 +133,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 3,
       explanation:
         "백제역사유적지구에서 공주와 익산을 뺀 (가)는 부여다. 부여는 성왕이 538년에 새 도읍으로 정한 사비다.",
-      explanation:
-        "백제역사유적지구에서 공주와 익산을 뺀 (가)는 부여다. 부여는 성왕이 538년에 새 도읍으로 정한 사비다.",
       options: [
         "정약전이 자산어보를 저술한 곳을 알아본다.",
         "비담과 염종이 반란을 일으킨 곳을 찾아본다.",
@@ -166,8 +148,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 1,
       explanation:
         "(가)는 견훤이 경주를 습격해 경애왕이 죽은 927년, (나)는 고창 전투가 벌어진 930년이다. 그 사이인 927년 공산 전투에서 신숭겸이 왕건을 대신해 전사했다.",
-      explanation:
-        "(가)는 견훤이 경주를 습격해 경애왕이 죽은 927년, (나)는 고창 전투가 벌어진 930년이다. 그 사이인 927년 공산 전투에서 신숭겸이 왕건을 대신해 전사했다.",
       options: [
         "신숭겸이 공산 전투에서 전사하였다.",
         "안승이 보덕국의 왕으로 책봉되었다.",
@@ -181,8 +161,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q11.webp",
       answer: 5,
-      explanation:
-        "처음으로 12목을 두고 경학박사·의학박사를 보낸 왕은 고려 성종이다. 성종은 최승로의 시무 28조를 받아들여 통치 체제를 정비했다.",
       explanation:
         "처음으로 12목을 두고 경학박사·의학박사를 보낸 왕은 고려 성종이다. 성종은 최승로의 시무 28조를 받아들여 통치 체제를 정비했다.",
       options: [
@@ -201,8 +179,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 5,
       explanation:
         "고려 정부와 강화를 맺자 삼별초가 진도로 내려가 항쟁한 (가)는 몽골이다. 고려는 몽골의 침입을 부처의 힘으로 물리치려 대장도감을 두고 팔만대장경을 새겼다.",
-      explanation:
-        "고려 정부와 강화를 맺자 삼별초가 진도로 내려가 항쟁한 (가)는 몽골이다. 고려는 몽골의 침입을 부처의 힘으로 물리치려 대장도감을 두고 팔만대장경을 새겼다.",
       options: [
         "윤관을 보내 동북 9성을 개척하였다.",
         "상비군으로 구성된 훈련도감을 설치하였다.",
@@ -217,8 +193,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q13.webp",
       answer: 3,
-      explanation:
-        "해동공자라 불린 고려의 학자는 최충이다. 최충은 과거를 주관하는 지공거를 지낸 뒤 9재 학당을 세워 사학을 일으켰다.",
       explanation:
         "해동공자라 불린 고려의 학자는 최충이다. 최충은 과거를 주관하는 지공거를 지낸 뒤 9재 학당을 세워 사학을 일으켰다.",
       options: [
@@ -236,8 +210,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 3,
       explanation:
         "서경 반란군과 대화궁이 나오는 이 상황은 1135년 묘청의 서경 천도 운동이다. 연표에서 이자겸의 난(1126)과 무신정변(1170) 사이인 (다) 시기에 해당한다.",
-      explanation:
-        "서경 반란군과 대화궁이 나오는 이 상황은 1135년 묘청의 서경 천도 운동이다. 연표에서 이자겸의 난(1126)과 무신정변(1170) 사이인 (다) 시기에 해당한다.",
       options: [
         "(가)",
         "(나)",
@@ -251,8 +223,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q15.webp",
       answer: 5,
-      explanation:
-        "신축년 홍건적의 침입으로 공민왕이 복주로 피란한 것은 1361년이다. 그 이후인 1388년 이성계가 위화도에서 회군해 정권을 잡았다.",
       explanation:
         "신축년 홍건적의 침입으로 공민왕이 복주로 피란한 것은 1361년이다. 그 이후인 1388년 이성계가 위화도에서 회군해 정권을 잡았다.",
       options: [
@@ -270,8 +240,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 5,
       explanation:
         "여러 소(所)의 별공과 해동통보 주조가 나오는 이 나라는 고려다. 고려에서는 예성강 하구의 벽란도가 국제 무역항으로 번성했다.",
-      explanation:
-        "여러 소(所)의 별공과 해동통보 주조가 나오는 이 나라는 고려다. 고려에서는 예성강 하구의 벽란도가 국제 무역항으로 번성했다.",
       options: [
         "청해진을 설치하여 해상 무역을 전개하였다.",
         "재정 문제를 해결하기 위한 당백전이 발행되었다.",
@@ -285,8 +253,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q17.webp",
       answer: 4,
-      explanation:
-        "제1강은 원의 수시력, 제3강은 화통도감, 제4강은 상감청자로 모두 고려의 과학 기술이다. 고려의 금속활자로 찍은 직지심체요절이 제2강에 들어간다.",
       explanation:
         "제1강은 원의 수시력, 제3강은 화통도감, 제4강은 상감청자로 모두 고려의 과학 기술이다. 고려의 금속활자로 찍은 직지심체요절이 제2강에 들어간다.",
       options: [
@@ -304,16 +270,12 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 3,
       explanation:
         "논산 관촉사 석조미륵보살입상(은진 미륵)은 고려 초의 불상이므로 (가)는 고려다. 고려의 탑을 고르면 된다.",
-      explanation:
-        "논산 관촉사 석조미륵보살입상(은진 미륵)은 고려 초의 불상이므로 (가)는 고려다. 고려의 탑을 고르면 된다.",
     },
     {
       number: 19,
       points: 2,
       image: "/exams/75-advanced/q19.webp",
       answer: 1,
-      explanation:
-        "태조 이성계가 막내 이방석을 세자로 삼은 이 결정이 왕자들의 불만을 샀다. 이것이 1398년 제1차 왕자의 난의 직접적인 배경이 되었다.",
       explanation:
         "태조 이성계가 막내 이방석을 세자로 삼은 이 결정이 왕자들의 불만을 샀다. 이것이 1398년 제1차 왕자의 난의 직접적인 배경이 되었다.",
       options: [
@@ -332,8 +294,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 5,
       explanation:
         "상대라 불리며 백관을 규찰하고 탄핵한 (가)는 사헌부다. 사헌부는 대사헌을 수장으로 집의·장령·감찰 등의 관직을 두었다.",
-      explanation:
-        "상대라 불리며 백관을 규찰하고 탄핵한 (가)는 사헌부다. 사헌부는 대사헌을 수장으로 집의·장령·감찰 등의 관직을 두었다.",
       options: [
         "수도의 행정과 치안을 담당하였다.",
         "을묘왜변을 계기로 상설 기구화되었다.",
@@ -349,8 +309,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "경성과 경원에 무역소를 두어 회유하고 이일이 정벌한 (가)는 여진이다. 조선은 세종 때 김종서를 보내 두만강 일대에 6진을 설치했다.",
-      explanation:
-        "경성과 경원에 무역소를 두어 회유하고 이일이 정벌한 (가)는 여진이다. 조선은 세종 때 김종서를 보내 두만강 일대에 6진을 설치했다.",
       options: [
         "사신 접대를 위해 한성에 동평관을 두었다.",
         "두만강 일대를 개척하여 6진을 설치하였다.",
@@ -364,8 +322,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q22.webp",
       answer: 2,
-      explanation:
-        "(가)는 중종이 조광조의 복권을 유언한 1544년, (나)는 양재역 벽서 사건이 일어난 1547년이다. 그 사이인 1545년 외척 간의 다툼인 을사사화로 윤임이 제거되었다.",
       explanation:
         "(가)는 중종이 조광조의 복권을 유언한 1544년, (나)는 양재역 벽서 사건이 일어난 1547년이다. 그 사이인 1545년 외척 간의 다툼인 을사사화로 윤임이 제거되었다.",
       options: [
@@ -384,8 +340,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "삼학사가 척화론을 펴다 심양으로 끌려간 (가)는 병자호란이다. 이 전쟁 중 김준룡이 광교산에서 청군을 물리쳤다.",
-      explanation:
-        "삼학사가 척화론을 펴다 심양으로 끌려간 (가)는 병자호란이다. 이 전쟁 중 김준룡이 광교산에서 청군을 물리쳤다.",
       options: [
         "송상현이 동래성에서 항전하였다.",
         "김준룡이 광교산 전투에서 승리하였다.",
@@ -400,8 +354,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q24.webp",
       answer: 3,
-      explanation:
-        "이인좌의 난을 평정한 뒤 그 원인을 붕당에서 찾은 왕은 영조다. 영조는 탕평 교서를 반포하고 성균관 앞에 탕평비를 세웠다.",
       explanation:
         "이인좌의 난을 평정한 뒤 그 원인을 붕당에서 찾은 왕은 영조다. 영조는 탕평 교서를 반포하고 성균관 앞에 탕평비를 세웠다.",
       options: [
@@ -419,8 +371,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 1,
       explanation:
         "장용영이 있던 시기는 정조 대의 조선 후기다. 이 무렵에는 세책가에서 한글 소설을 빌려 읽는 모습을 볼 수 있었다.",
-      explanation:
-        "장용영이 있던 시기는 정조 대의 조선 후기다. 이 무렵에는 세책가에서 한글 소설을 빌려 읽는 모습을 볼 수 있었다.",
       options: [
         "세책가에서 춘향전을 빌리는 부녀자",
         "동국정운을 편찬하는 집현전의 학자",
@@ -436,8 +386,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 1,
       explanation:
         "화성부와 고구마·메밀이 나오는 이 상황은 정조 대의 조선 후기다. 염포를 비롯한 삼포의 왜관은 조선 전기의 일이므로 이 시기의 모습이 아니다.",
-      explanation:
-        "화성부와 고구마·메밀이 나오는 이 상황은 정조 대의 조선 후기다. 염포를 비롯한 삼포의 왜관은 조선 전기의 일이므로 이 시기의 모습이 아니다.",
       options: [
         "염포의 왜관을 통해 일본과 교역하였다.",
         "상평통보를 발행하여 화폐로 사용하였다.",
@@ -451,8 +399,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q27.webp",
       answer: 4,
-      explanation:
-        "김조순의 사위인 (가)는 순조다. 순조 때인 1811년 홍경래 등이 봉기해 정주성을 점령했다.",
       explanation:
         "김조순의 사위인 (가)는 순조다. 순조 때인 1811년 홍경래 등이 봉기해 정주성을 점령했다.",
       options: [
@@ -471,8 +417,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 5,
       explanation:
         "김옥균 등 급진 개화파가 일본 공사와 함께 일으킨 (가)는 갑신정변이다. 갑신정변 뒤 청과 일본은 톈진 조약을 맺어 조선에서 함께 군대를 뺐다.",
-      explanation:
-        "김옥균 등 급진 개화파가 일본 공사와 함께 일으킨 (가)는 갑신정변이다. 갑신정변 뒤 청과 일본은 톈진 조약을 맺어 조선에서 함께 군대를 뺐다.",
       options: [
         "개혁 추진 기구로 교정청이 설치되었다.",
         "전개 과정에서 홍범 14조가 반포되었다.",
@@ -486,8 +430,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q29.webp",
       answer: 1,
-      explanation:
-        "제2대 교주 최시형과 교조 신원 운동이 나오는 (가)는 동학이다. 동학은 포와 접이라는 조직(포접제)으로 교세를 넓혔다.",
       explanation:
         "제2대 교주 최시형과 교조 신원 운동이 나오는 (가)는 동학이다. 동학은 포와 접이라는 조직(포접제)으로 교세를 넓혔다.",
       options: [
@@ -506,8 +448,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "포츠머스 조약으로 끝난 이 전쟁은 러일 전쟁(1904~1905)이다. 전쟁 중이던 1905년 2월 일본이 독도를 자국 영토로 불법 편입했다.",
-      explanation:
-        "포츠머스 조약으로 끝난 이 전쟁은 러일 전쟁(1904~1905)이다. 전쟁 중이던 1905년 2월 일본이 독도를 자국 영토로 불법 편입했다.",
       options: [
         "고종이 아관 파천을 단행하였다.",
         "일본이 독도를 불법 편입하였다.",
@@ -521,8 +461,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q31.webp",
       answer: 3,
-      explanation:
-        "면암집에 실린 지부복궐척화의소를 올린 (가)는 최익현이다. 최익현은 1905년 을사늑약이 맺어지자 태인에서 의병을 일으켰다.",
       explanation:
         "면암집에 실린 지부복궐척화의소를 올린 (가)는 최익현이다. 최익현은 1905년 을사늑약이 맺어지자 태인에서 의병을 일으켰다.",
       options: [
@@ -540,8 +478,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "㉡ 보안회는 1904년 일제의 황무지 개간권 요구를 여론으로 막아 냈다. ㉢ 헌정 연구회가 아니라 신민회가 105인 사건으로 무너졌고, 대성 학교와 건국 강령도 신민회·임시 정부의 일이다.",
-      explanation:
-        "㉡ 보안회는 1904년 일제의 황무지 개간권 요구를 여론으로 막아 냈다. ㉢ 헌정 연구회가 아니라 신민회가 105인 사건으로 무너졌고, 대성 학교와 건국 강령도 신민회·임시 정부의 일이다.",
       options: [
         "㉠ - 고종 강제 퇴위 반대 운동을 전개하였다.",
         "㉡ - 일제의 황무지 개간권 요구를 저지시켰다.",
@@ -557,8 +493,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 3,
       explanation:
         "하얼빈에서 의거를 일으키고 뤼순에서 재판을 받은 인물은 안중근이다. 안중근은 초대 통감을 지낸 이토 히로부미를 사살했다.",
-      explanation:
-        "하얼빈에서 의거를 일으키고 뤼순에서 재판을 받은 인물은 안중근이다. 안중근은 초대 통감을 지낸 이토 히로부미를 사살했다.",
       options: [
         "샌프란시스코에서 흥사단을 창립하였다.",
         "황준헌이 쓴 조선책략을 국내에 들여왔다.",
@@ -572,8 +506,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q34.webp",
       answer: 5,
-      explanation:
-        "헌병이 일반 경찰 업무를 맡고 조선 태형령이 시행된 시기는 1910년대 무단 통치기다. 같은 시기 회사를 세울 때 총독의 허가를 받게 한 회사령이 시행되었다.",
       explanation:
         "헌병이 일반 경찰 업무를 맡고 조선 태형령이 시행된 시기는 1910년대 무단 통치기다. 같은 시기 회사를 세울 때 총독의 허가를 받게 한 회사령이 시행되었다.",
       options: [
@@ -592,8 +524,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "관동 대지진(1923)이 재작년이라 했으므로 을축년 대홍수가 난 1925년이다. 경성 제국 대학은 1924년에 세워졌으므로 이때 볼 수 있다.",
-      explanation:
-        "관동 대지진(1923)이 재작년이라 했으므로 을축년 대홍수가 난 1925년이다. 경성 제국 대학은 1924년에 세워졌으므로 이때 볼 수 있다.",
       options: [
         "영선사 일행으로 청에 가는 생도",
         "경성 제국 대학에서 공부하는 학생",
@@ -607,8 +537,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q36.webp",
       answer: 5,
-      explanation:
-        "파리 강화 회의 중에 일어난 일제 강점기 최대 규모의 독립운동은 3·1 운동이다. 그 배경으로 미국 대통령 윌슨이 제창한 민족 자결주의가 작용했다.",
       explanation:
         "파리 강화 회의 중에 일어난 일제 강점기 최대 규모의 독립운동은 3·1 운동이다. 그 배경으로 미국 대통령 윌슨이 제창한 민족 자결주의가 작용했다.",
       options: [
@@ -626,8 +554,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 1,
       explanation:
         "1915년 대구에서 박상진 등이 만든 (가)는 대한 광복회다. 대한 광복회는 총사령·지부장을 둔 군대식 조직의 비밀 결사였다.",
-      explanation:
-        "1915년 대구에서 박상진 등이 만든 (가)는 대한 광복회다. 대한 광복회는 총사령·지부장을 둔 군대식 조직의 비밀 결사였다.",
       options: [
         "군대식 조직을 갖춘 비밀 결사였다.",
         "정우회 선언의 영향으로 결성되었다.",
@@ -641,8 +567,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q38.webp",
       answer: 3,
-      explanation:
-        "(나) 중추원 관제 개편안(1898) → (가) 대한국 국제(1899) → (라) 대동단결 선언(1917) → (다) 제헌 헌법(1948) 순이다.",
       explanation:
         "(나) 중추원 관제 개편안(1898) → (가) 대한국 국제(1899) → (라) 대동단결 선언(1917) → (다) 제헌 헌법(1948) 순이다.",
       options: [
@@ -660,8 +584,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 4,
       explanation:
         "유카탄 반도의 에네켄 농장으로 이주한 곳은 멕시코다. 멕시코 한인들은 숭무 학교를 세워 독립군을 길렀다.",
-      explanation:
-        "유카탄 반도의 에네켄 농장으로 이주한 곳은 멕시코다. 멕시코 한인들은 숭무 학교를 세워 독립군을 길렀다.",
       options: [
         "한인 자치 기구인 경학사를 조직하였다.",
         "권업회를 조직하고 권업신문을 발간하였다.",
@@ -675,8 +597,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q40.webp",
       answer: 3,
-      explanation:
-        "지주 문재철에 맞선 이 사건은 1923~1924년 암태도 소작 쟁의다. 그 이후인 1927년 전국 단위 조직인 조선 농민 총동맹이 결성되었다.",
       explanation:
         "지주 문재철에 맞선 이 사건은 1923~1924년 암태도 소작 쟁의다. 그 이후인 1927년 전국 단위 조직인 조선 농민 총동맹이 결성되었다.",
       options: [
@@ -694,8 +614,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 4,
       explanation:
         "잡지 『한글』을 내고 한글 맞춤법 통일안을 만든 (가)는 조선어 학회다. 조선어 학회는 조선말(우리말) 큰 사전 편찬을 추진하다 1942년 일제에 탄압받았다.",
-      explanation:
-        "잡지 『한글』을 내고 한글 맞춤법 통일안을 만든 (가)는 조선어 학회다. 조선어 학회는 조선말(우리말) 큰 사전 편찬을 추진하다 1942년 일제에 탄압받았다.",
       options: [
         "최초로 한글에 띄어쓰기를 도입하였다.",
         "국어 문법서인 대한문전을 편찬하였다.",
@@ -709,8 +627,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q42.webp",
       answer: 1,
-      explanation:
-        "모던 걸과 백화점이 나오는 이 시기는 일제 강점기다. 나운규가 만든 영화 아리랑은 1926년에 상영되었다.",
       explanation:
         "모던 걸과 백화점이 나오는 이 시기는 일제 강점기다. 나운규가 만든 영화 아리랑은 1926년에 상영되었다.",
       options: [
@@ -728,8 +644,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 2,
       explanation:
         "1940년 충칭에서 지청천을 총사령으로 창설된 (가)는 한국광복군이다. 한국광복군은 미국 전략 정보국(OSS)과 함께 국내 진공 작전을 준비하다 광복을 맞았다.",
-      explanation:
-        "1940년 충칭에서 지청천을 총사령으로 창설된 (가)는 한국광복군이다. 한국광복군은 미국 전략 정보국(OSS)과 함께 국내 진공 작전을 준비하다 광복을 맞았다.",
       options: [
         "청산리에서 일본군에 맞서 승리를 거두었다.",
         "미국과 연계하여 국내 진공 작전을 준비하였다.",
@@ -743,8 +657,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q44.webp",
       answer: 2,
-      explanation:
-        "중일 전쟁 이후 금속류 회수령이 시행된 이 시기는 민족 말살 통치기다. 일제는 애국반을 만들어 한국인의 일상까지 통제했다.",
       explanation:
         "중일 전쟁 이후 금속류 회수령이 시행된 이 시기는 민족 말살 통치기다. 일제는 애국반을 만들어 한국인의 일상까지 통제했다.",
       options: [
@@ -762,8 +674,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 4,
       explanation:
         "단독 정부 수립에 협력하지 않겠다는 이 성명은 1948년 2월 김구의 「삼천만 동포에게 읍고함」이다. 그 뒤인 1948년 5월 최초의 보통 선거인 5·10 총선거가 실시되었다.",
-      explanation:
-        "단독 정부 수립에 협력하지 않겠다는 이 성명은 1948년 2월 김구의 「삼천만 동포에게 읍고함」이다. 그 뒤인 1948년 5월 최초의 보통 선거인 5·10 총선거가 실시되었다.",
       options: [
         "모스크바 3국 외상 회의가 개최되었다.",
         "송진우, 김성수 등이 한국 민주당을 창당하였다.",
@@ -777,8 +687,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q46.webp",
       answer: 2,
-      explanation:
-        "6·25 전쟁 중 부산에서 계엄을 펴고 통과시킨 이 개헌은 1952년 발췌 개헌이므로 이승만 정부다. 이승만 정부 때인 1953년 한미 상호 방위 조약이 체결되었다.",
       explanation:
         "6·25 전쟁 중 부산에서 계엄을 펴고 통과시킨 이 개헌은 1952년 발췌 개헌이므로 이승만 정부다. 이승만 정부 때인 1953년 한미 상호 방위 조약이 체결되었다.",
       options: [
@@ -796,8 +704,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       answer: 5,
       explanation:
         "동일방직 사건과 YH 무역 사건이 일어난 (가)는 박정희 정부의 유신 체제 시기다. 이 시기인 1976년 긴급 조치 철폐를 요구하는 3·1 민주 구국 선언이 발표되었다.",
-      explanation:
-        "동일방직 사건과 YH 무역 사건이 일어난 (가)는 박정희 정부의 유신 체제 시기다. 이 시기인 1976년 긴급 조치 철폐를 요구하는 3·1 민주 구국 선언이 발표되었다.",
       options: [
         "부천 경찰서 성 고문 사건이 발생하였다.",
         "정부에 비판적인 경향신문이 폐간되었다.",
@@ -811,8 +717,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q48.webp",
       answer: 3,
-      explanation:
-        "이한열이 최루탄에 맞아 확산된 이 민주화 운동은 1987년 6월 민주 항쟁이다. 그 결과 5년 단임의 대통령 직선제 개헌을 이끌어 냈다.",
       explanation:
         "이한열이 최루탄에 맞아 확산된 이 민주화 운동은 1987년 6월 민주 항쟁이다. 그 결과 5년 단임의 대통령 직선제 개헌을 이끌어 냈다.",
       options: [
@@ -829,8 +733,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q49.webp",
       answer: 5,
-      explanation:
-        "하나회를 청산한 문민정부는 김영삼 정부다. 김영삼 정부 때인 1996년 거창 사건 관련자의 명예 회복에 관한 특별 조치법이 제정되었다.",
       explanation:
         "하나회를 청산한 문민정부는 김영삼 정부다. 김영삼 정부 때인 1996년 거창 사건 관련자의 명예 회복에 관한 특별 조치법이 제정되었다.",
       options: [
