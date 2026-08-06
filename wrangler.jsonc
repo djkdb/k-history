@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "korea-history-legend-master",
+  "compatibility_date": "2025-01-01",
+  // 정적 익스포트 결과(out/)를 Cloudflare가 그대로 서빙한다. 서버 런타임 불필요.
+  "assets": {
+    "directory": "./out",
+    // 없는 경로는 Next가 만든 404 페이지로 (SPA 폴백 대신 정적 404)
+    "not_found_handling": "404-page"
+  }
+}

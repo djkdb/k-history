@@ -30,8 +30,48 @@ Next.js 15 (App Router) · React 19 · TypeScript · TailwindCSS v4 · Framer Mo
 ```bash
 npm install
 npm run dev    # http://localhost:3000
-npm run build  # 프로덕션 빌드
+npm run build  # 정적 빌드 → out/
+npm start      # 빌드 결과 로컬 서빙
 ```
+
+## Cloudflare 배포
+
+서버 로직이 전혀 없는 순수 클라이언트 앱이라 `output: "export"`로 완전 정적 빌드됩니다.
+`npm run build` 하나로 `out/`에 120개 페이지(개념 108 + 시대 12 + 기능 화면)가 프리렌더됩니다.
+
+### 방법 1 — Workers (`wrangler`)
+
+`wrangler.jsonc`가 `out/`을 정적 자산으로 서빙하도록 이미 설정돼 있습니다.
+
+```bash
+npx wrangler login
+npm run preview   # 로컬에서 Cloudflare 런타임으로 미리보기
+npm run deploy    # 빌드 + 배포
+```
+
+### 방법 2 — Pages (Git 연동, 자동 배포)
+
+Cloudflare 대시보드 → **Workers & Pages → Create → Pages → Connect to Git**에서 이 저장소를 연결하고:
+
+| 항목 | 값 |
+| --- | --- |
+| Framework preset | `Next.js (Static HTML Export)` |
+| Build command | `npm run build` |
+| Build output directory | `out` |
+| Node version | `20` 이상 (환경변수 `NODE_VERSION=20`) |
+
+이후 브랜치에 푸시할 때마다 자동 배포됩니다.
+
+### 방법 3 — 직접 업로드
+
+```bash
+npm run build
+npx wrangler pages deploy out --project-name=korea-history-legend-master
+```
+
+> **참고** — 서버 렌더링이나 API 라우트를 추가하게 되면 정적 익스포트로는 처리할 수 없습니다.
+> 그때는 `next.config.ts`의 `output: "export"`를 제거하고
+> [`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare) 어댑터로 전환하면 됩니다.
 
 ## 구조
 
