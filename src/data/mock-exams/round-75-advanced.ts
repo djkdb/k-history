@@ -16,12 +16,14 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q01.webp",
       answer: 4,
+      eventIds: ["bronze-age"],
     },
     {
       number: 2,
       points: 2,
       image: "/exams/75-advanced/q02.webp",
       answer: 1,
+      eventIds: ["wiman"],
     },
     {
       number: 3,
@@ -34,6 +36,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q04.webp",
       answer: 1,
+      eventIds: ["daegaya"],
     },
     {
       number: 5,
@@ -82,6 +85,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q12.webp",
       answer: 5,
+      eventIds: ["sambyeolcho"],
     },
     {
       number: 13,
@@ -94,6 +98,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q14.webp",
       answer: 3,
+      eventIds: ["won-interference"],
     },
     {
       number: 15,
@@ -142,12 +147,14 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q22.webp",
       answer: 2,
+      eventIds: ["jo-gwangjo"],
     },
     {
       number: 23,
       points: 2,
       image: "/exams/75-advanced/q23.webp",
       answer: 2,
+      eventIds: ["byeongja-horan"],
     },
     {
       number: 24,
@@ -160,6 +167,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q25.webp",
       answer: 1,
+      eventIds: ["taejo-joseon"],
     },
     {
       number: 26,
@@ -172,6 +180,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q27.webp",
       answer: 4,
+      eventIds: ["sedo"],
     },
     {
       number: 28,
@@ -184,6 +193,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q29.webp",
       answer: 1,
+      eventIds: ["donghak"],
     },
     {
       number: 30,
@@ -214,6 +224,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q34.webp",
       answer: 5,
+      eventIds: ["mudan"],
     },
     {
       number: 35,
@@ -256,6 +267,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q41.webp",
       answer: 4,
+      eventIds: ["sejong"],
     },
     {
       number: 42,
@@ -286,6 +298,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q46.webp",
       answer: 2,
+      eventIds: ["korean-war"],
     },
     {
       number: 47,

@@ -16,6 +16,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/72-advanced/q01.webp",
       answer: 2,
+      eventIds: ["bronze-age"],
     },
     {
       number: 2,
@@ -34,6 +35,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/72-advanced/q04.webp",
       answer: 4,
+      eventIds: ["muryeong"],
     },
     {
       number: 5,
@@ -70,18 +72,21 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/72-advanced/q10.webp",
       answer: 5,
+      eventIds: ["nadang-war"],
     },
     {
       number: 11,
       points: 2,
       image: "/exams/72-advanced/q11.webp",
       answer: 5,
+      eventIds: ["seongjong-goryeo"],
     },
     {
       number: 12,
       points: 2,
       image: "/exams/72-advanced/q12.webp",
       answer: 3,
+      eventIds: ["khitan-war"],
     },
     {
       number: 13,
@@ -94,6 +99,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/72-advanced/q14.webp",
       answer: 4,
+      eventIds: ["musin"],
     },
     {
       number: 15,
@@ -124,18 +130,21 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/72-advanced/q19.webp",
       answer: 4,
+      eventIds: ["sejong"],
     },
     {
       number: 20,
       points: 2,
       image: "/exams/72-advanced/q20.webp",
       answer: 2,
+      eventIds: ["seongjong-joseon"],
     },
     {
       number: 21,
       points: 2,
       image: "/exams/72-advanced/q21.webp",
       answer: 4,
+      eventIds: ["sahwa"],
     },
     {
       number: 22,
@@ -160,6 +169,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/72-advanced/q25.webp",
       answer: 5,
+      eventIds: ["gwanghae"],
     },
     {
       number: 26,
@@ -178,6 +188,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/72-advanced/q28.webp",
       answer: 4,
+      eventIds: ["jeongjo"],
     },
     {
       number: 29,
@@ -220,6 +231,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/72-advanced/q35.webp",
       answer: 5,
+      eventIds: ["daehan-proclaim"],
     },
     {
       number: 36,
@@ -232,6 +244,7 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/72-advanced/q37.webp",
       answer: 5,
+      eventIds: ["bongo-cheongsan"],
     },
     {
       number: 38,
@@ -262,12 +275,14 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/72-advanced/q42.webp",
       answer: 1,
+      eventIds: ["aeguk"],
     },
     {
       number: 43,
       points: 3,
       image: "/exams/72-advanced/q43.webp",
       answer: 5,
+      eventIds: ["korean-war"],
     },
     {
       number: 44,
@@ -280,12 +295,14 @@ export const ROUND_72_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/72-advanced/q45.webp",
       answer: 5,
+      eventIds: ["yusin"],
     },
     {
       number: 46,
       points: 2,
       image: "/exams/72-advanced/q46.webp",
       answer: 2,
+      eventIds: ["gwangju"],
     },
     {
       number: 47,

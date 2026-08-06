@@ -16,18 +16,21 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/77-advanced/q01.webp",
       answer: 3,
+      eventIds: ["bronze-age"],
     },
     {
       number: 2,
       points: 2,
       image: "/exams/77-advanced/q02.webp",
       answer: 5,
+      eventIds: ["gojoseon-fall"],
     },
     {
       number: 3,
       points: 2,
       image: "/exams/77-advanced/q03.webp",
       answer: 2,
+      eventIds: ["jecheon"],
     },
     {
       number: 4,
@@ -46,6 +49,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/77-advanced/q06.webp",
       answer: 2,
+      eventIds: ["nadang-war"],
     },
     {
       number: 7,
@@ -64,18 +68,21 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q09.webp",
       answer: 2,
+      eventIds: ["later-three"],
     },
     {
       number: 10,
       points: 2,
       image: "/exams/77-advanced/q10.webp",
       answer: 4,
+      eventIds: ["jangbogo"],
     },
     {
       number: 11,
       points: 2,
       image: "/exams/77-advanced/q11.webp",
       answer: 4,
+      eventIds: ["khitan-war"],
     },
     {
       number: 12,
@@ -94,6 +101,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q14.webp",
       answer: 5,
+      eventIds: ["taejo-wanggeon"],
     },
     {
       number: 15,
@@ -106,6 +114,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q16.webp",
       answer: 4,
+      eventIds: ["ganghwa-treaty"],
     },
     {
       number: 17,
@@ -118,6 +127,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/77-advanced/q18.webp",
       answer: 5,
+      eventIds: ["wihwado"],
     },
     {
       number: 19,
@@ -130,18 +140,21 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/77-advanced/q20.webp",
       answer: 5,
+      eventIds: ["sejong"],
     },
     {
       number: 21,
       points: 2,
       image: "/exams/77-advanced/q21.webp",
       answer: 4,
+      eventIds: ["imjin-war"],
     },
     {
       number: 22,
       points: 2,
       image: "/exams/77-advanced/q22.webp",
       answer: 5,
+      eventIds: ["byeongja-horan"],
     },
     {
       number: 23,
@@ -154,6 +167,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/77-advanced/q24.webp",
       answer: 3,
+      eventIds: ["yesong-hwanguk"],
     },
     {
       number: 25,
@@ -166,6 +180,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q26.webp",
       answer: 4,
+      eventIds: ["silhak"],
     },
     {
       number: 27,
@@ -184,18 +199,21 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q29.webp",
       answer: 4,
+      eventIds: ["yangyo"],
     },
     {
       number: 30,
       points: 3,
       image: "/exams/77-advanced/q30.webp",
       answer: 3,
+      eventIds: ["eulmi"],
     },
     {
       number: 31,
       points: 2,
       image: "/exams/77-advanced/q31.webp",
       answer: 2,
+      eventIds: ["imo"],
     },
     {
       number: 32,
@@ -232,6 +250,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/77-advanced/q37.webp",
       answer: 1,
+      eventIds: ["toji"],
     },
     {
       number: 38,
@@ -262,6 +281,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/77-advanced/q42.webp",
       answer: 5,
+      eventIds: ["imsi-jeongbu"],
     },
     {
       number: 43,
@@ -286,6 +306,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q46.webp",
       answer: 1,
+      eventIds: ["gwangbok"],
     },
     {
       number: 47,
@@ -310,6 +331,7 @@ export const ROUND_77_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/77-advanced/q50.webp",
       answer: 3,
+      eventIds: ["taejong"],
     },
   ],
 };

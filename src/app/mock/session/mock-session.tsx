@@ -357,7 +357,13 @@ export function MockSession() {
 
         {wrong.length > 0 && (
           <>
-            <SectionTitle>틀린 문항의 개념</SectionTitle>
+            <SectionTitle>복습할 개념</SectionTitle>
+            {wrongEvents.length > 0 && (
+              <p className="mb-2 -mt-1 text-[11px] leading-relaxed text-zinc-600">
+                틀린 문항의 자료·발문에서 자동으로 찾아낸 개념입니다. 모든 문항이
+                연결되지는 않으며, 드물게 어긋날 수 있습니다.
+              </p>
+            )}
             <div className="flex flex-col gap-2">
               {wrongEvents.map((id) => {
                 const ev = getEvent(id);
@@ -377,9 +383,8 @@ export function MockSession() {
               {wrongEvents.length === 0 && (
                 <Card>
                   <p className="text-xs leading-relaxed text-zinc-500">
-                    이 회차는 문항별 개념 연결(eventIds)이 아직 등록되지
-                    않았습니다. 데이터 파일에 개념 id를 넣으면 틀린 문항이
-                    복습 큐로 연결됩니다.
+                    이 회차는 스캔 시험지라 문항 텍스트를 읽을 수 없어 개념
+                    연결이 없습니다. 오답노트에서 시대별로 복습해 보세요.
                   </p>
                 </Card>
               )}

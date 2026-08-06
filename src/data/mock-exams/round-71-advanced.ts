@@ -16,6 +16,7 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/71-advanced/q01.webp",
       answer: 1,
+      eventIds: ["paleolithic"],
     },
     {
       number: 2,
@@ -58,12 +59,14 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/71-advanced/q08.webp",
       answer: 1,
+      eventIds: ["goguryeo-fall"],
     },
     {
       number: 9,
       points: 2,
       image: "/exams/71-advanced/q09.webp",
       answer: 2,
+      eventIds: ["balhae-mun"],
     },
     {
       number: 10,
@@ -94,6 +97,7 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/71-advanced/q14.webp",
       answer: 4,
+      eventIds: ["musin"],
     },
     {
       number: 15,
@@ -118,6 +122,7 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/71-advanced/q18.webp",
       answer: 1,
+      eventIds: ["dolmen"],
     },
     {
       number: 19,
@@ -172,12 +177,14 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q27.webp",
       answer: 5,
+      eventIds: ["sedo"],
     },
     {
       number: 28,
       points: 1,
       image: "/exams/71-advanced/q28.webp",
       answer: 3,
+      eventIds: ["yangyo"],
     },
     {
       number: 29,
@@ -196,12 +203,14 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q31.webp",
       answer: 3,
+      eventIds: ["eulmi"],
     },
     {
       number: 32,
       points: 2,
       image: "/exams/71-advanced/q32.webp",
       answer: 1,
+      eventIds: ["gaehwa"],
     },
     {
       number: 33,
@@ -232,12 +241,14 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/71-advanced/q37.webp",
       answer: 2,
+      eventIds: ["gukgwon-pital"],
     },
     {
       number: 38,
       points: 2,
       image: "/exams/71-advanced/q38.webp",
       answer: 5,
+      eventIds: ["mudan"],
     },
     {
       number: 39,
@@ -268,18 +279,21 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q43.webp",
       answer: 4,
+      eventIds: ["gwangbokgun"],
     },
     {
       number: 44,
       points: 2,
       image: "/exams/71-advanced/q44.webp",
       answer: 3,
+      eventIds: ["minjok-malsal"],
     },
     {
       number: 45,
       points: 3,
       image: "/exams/71-advanced/q45.webp",
       answer: 2,
+      eventIds: ["seongjong-goryeo"],
     },
     {
       number: 46,
@@ -310,6 +324,7 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q50.webp",
       answer: 3,
+      eventIds: ["nambuk"],
     },
   ],
 };

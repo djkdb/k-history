@@ -22,6 +22,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q02.webp",
       answer: 3,
+      eventIds: ["okjeo-dongye"],
     },
     {
       number: 3,
@@ -46,6 +47,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q06.webp",
       answer: 3,
+      eventIds: ["wonhyo-uisang"],
     },
     {
       number: 7,
@@ -64,12 +66,14 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/70-advanced/q09.webp",
       answer: 4,
+      eventIds: ["silla-end"],
     },
     {
       number: 10,
       points: 2,
       image: "/exams/70-advanced/q10.webp",
       answer: 3,
+      eventIds: ["taejo-wanggeon"],
     },
     {
       number: 11,
@@ -94,6 +98,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q14.webp",
       answer: 4,
+      eventIds: ["musin"],
     },
     {
       number: 15,
@@ -112,12 +117,14 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q17.webp",
       answer: 4,
+      eventIds: ["taejong"],
     },
     {
       number: 18,
       points: 2,
       image: "/exams/70-advanced/q18.webp",
       answer: 1,
+      eventIds: ["sejo"],
     },
     {
       number: 19,
@@ -130,6 +137,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q20.webp",
       answer: 3,
+      eventIds: ["jo-gwangjo"],
     },
     {
       number: 21,
@@ -148,12 +156,14 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q23.webp",
       answer: 2,
+      eventIds: ["gwanghae"],
     },
     {
       number: 24,
       points: 2,
       image: "/exams/70-advanced/q24.webp",
       answer: 2,
+      eventIds: ["jeongjo"],
     },
     {
       number: 25,
@@ -166,6 +176,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q26.webp",
       answer: 4,
+      eventIds: ["silhak"],
     },
     {
       number: 27,
@@ -178,6 +189,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/70-advanced/q28.webp",
       answer: 2,
+      eventIds: ["yangyo"],
     },
     {
       number: 29,
@@ -190,12 +202,14 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q30.webp",
       answer: 3,
+      eventIds: ["gapsin"],
     },
     {
       number: 31,
       points: 3,
       image: "/exams/70-advanced/q31.webp",
       answer: 1,
+      eventIds: ["agwan"],
     },
     {
       number: 32,
@@ -238,6 +252,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q38.webp",
       answer: 1,
+      eventIds: ["bongo-cheongsan"],
     },
     {
       number: 39,
@@ -256,18 +271,21 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/70-advanced/q41.webp",
       answer: 5,
+      eventIds: ["imsi-jeongbu"],
     },
     {
       number: 42,
       points: 2,
       image: "/exams/70-advanced/q42.webp",
       answer: 5,
+      eventIds: ["jeongbu-surip"],
     },
     {
       number: 43,
       points: 2,
       image: "/exams/70-advanced/q43.webp",
       answer: 3,
+      eventIds: ["nambuk"],
     },
     {
       number: 44,
@@ -286,6 +304,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/70-advanced/q46.webp",
       answer: 4,
+      eventIds: ["economy"],
     },
     {
       number: 47,
@@ -310,6 +329,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q50.webp",
       answer: 2,
+      eventIds: ["sailgu"],
     },
   ],
 };
