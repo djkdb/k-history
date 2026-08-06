@@ -26,6 +26,7 @@ import {
 } from "@/data/exam-schedule";
 import { cn, daysUntil } from "@/lib/utils";
 import { Badge, Button, Card, ProgressBar } from "@/components/ui";
+import { InstallGuide } from "@/components/install-guide";
 
 const PRESETS = [3, 7, 14, 30, 60];
 
@@ -171,6 +172,11 @@ export default function OnboardingPage() {
             <Button size="lg" className="mt-8 w-full" onClick={() => setStep(1)}>
               다음
             </Button>
+
+            {/* 홈 화면에 추가하면 앱처럼 쓸 수 있다는 안내 (설치 전에만 뜬다) */}
+            <div className="mt-4">
+              <InstallGuide />
+            </div>
           </motion.div>
         )}
 

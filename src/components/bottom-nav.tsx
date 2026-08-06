@@ -23,11 +23,13 @@ const TABS = [
 
 export function BottomNav() {
   const pathname = usePathname();
-  // 온보딩과 모의고사 응시 중에는 탭바를 숨긴다.
-  // 시험 도중 실수로 다른 탭을 눌러 이탈하는 것을 막기 위해서다.
+  // 온보딩·모의고사 응시·시험 직전 모드에서는 탭바를 숨긴다.
+  // 집중이 필요한 화면에서 실수로 다른 탭을 눌러 이탈하는 것을 막기 위해서다.
+  // (각 화면에는 나가는 버튼이 따로 있다)
   if (
     pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/mock/session")
+    pathname.startsWith("/mock/session") ||
+    pathname.startsWith("/cram")
   ) {
     return null;
   }

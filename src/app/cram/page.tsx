@@ -103,7 +103,7 @@ export default function CramPage() {
     const event = deck[idx];
     const era = ERA_MAP[event.era];
     return (
-      <div className="flex min-h-[85dvh] flex-col pt-4">
+      <div className="flex flex-col pt-4">
         <div className="mb-4 flex items-center gap-3">
           <button
             type="button"
@@ -129,7 +129,7 @@ export default function CramPage() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -60 }}
             transition={{ duration: 0.2 }}
-            className="glass flex-1 cursor-grab rounded-3xl p-5 active:cursor-grabbing"
+            className="glass cursor-grab rounded-3xl p-5 active:cursor-grabbing"
             style={{ borderTop: `2px solid ${era.color}` }}
           >
             <EraBadge eraId={event.era} />
@@ -149,6 +149,12 @@ export default function CramPage() {
             <div className="mt-3 rounded-xl border border-red-400/30 bg-red-500/10 p-3">
               <p className="text-xs font-medium leading-relaxed text-red-100">
                 🎯 {event.examPoint}
+              </p>
+            </div>
+            {/* 시험 직전에 가장 잘 먹히는 건 두문자 암기다 */}
+            <div className="mt-3 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3">
+              <p className="text-xs font-semibold leading-relaxed text-emerald-100">
+                🧠 {event.memory.mnemonic}
               </p>
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
@@ -174,7 +180,7 @@ export default function CramPage() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="mt-4 flex gap-2 pb-2">
+        <div className="mt-4 flex gap-2">
           <Button variant="ghost" size="lg" onClick={prevCard} disabled={idx === 0}>
             <ChevronLeft size={18} />
           </Button>
@@ -183,6 +189,9 @@ export default function CramPage() {
             <ChevronRight size={18} />
           </Button>
         </div>
+        <p className="pb-6 pt-2 text-center text-[11px] text-zinc-600">
+          카드를 좌우로 밀어도 넘길 수 있어요
+        </p>
       </div>
     );
   }
