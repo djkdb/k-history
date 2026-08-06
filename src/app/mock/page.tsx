@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronRight, FileText, Timer, Trophy } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { MOCK_EXAMS, totalPoints } from "@/data/mock-exams";
+import { MOCK_EXAMS, isPageMode, totalPoints } from "@/data/mock-exams";
 import { hnkGrade } from "@/lib/utils";
 import { Badge, Button, Card, EmptyState, SectionTitle } from "@/components/ui";
 
@@ -108,6 +108,9 @@ export default function MockExamListPage() {
                       <span className="mt-0.5 flex items-center gap-2 text-[11px] text-zinc-500">
                         <Timer size={11} /> {exam.timeLimitMin}분
                         <span>· {totalPoints(exam)}점 만점</span>
+                        <span className="text-zinc-600">
+                          · {isPageMode(exam) ? "시험지 넘겨보기" : "문항별"}
+                        </span>
                       </span>
                     </span>
                     {best !== null && (

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { MockExamQuestion } from "@/lib/types";
 import { useApp } from "@/lib/store";
-import { getMockExam, totalPoints } from "@/data/mock-exams";
+import { getMockExam, isPageMode, totalPoints } from "@/data/mock-exams";
 import { getEvent } from "@/data/events";
 import { cn, hnkGrade } from "@/lib/utils";
 import {
@@ -34,6 +34,69 @@ function fmtClock(sec: number): string {
   const s = Math.max(0, sec);
   const m = Math.floor(s / 60);
   return `${String(m).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+
+/**
+ * 쪽 뷰어 — 시험지를 넘겨 보며 푸는 방식.
+ * 스캔 PDF라 문항별로 자를 수 없는 회차에서 쓴다.
+ */
+function PageViewer({
+  pages,
+  page,
+  onPage,
+}: {
+  pages: string[];
+  page: number;
+  onPage: (p: number) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={page === 0}
+          onClick={() => onPage(page - 1)}
+        >
+          <ChevronLeft size={15} />
+        </Button>
+        <div className="no-scrollbar flex flex-1 gap-1 overflow-x-auto">
+          {pages.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onPage(i)}
+              className={cn(
+                "h-7 w-7 shrink-0 rounded-md text-[11px] font-bold transition-colors",
+                i === page
+                  ? "bg-white text-zinc-900"
+                  : "bg-white/5 text-zinc-500",
+              )}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={page >= pages.length - 1}
+          onClick={() => onPage(page + 1)}
+        >
+          <ChevronRight size={15} />
+        </Button>
+      </div>
+      <div className="overflow-hidden rounded-xl bg-white">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={pages[page]}
+          alt={`시험지 ${page + 1}쪽`}
+          className="w-full"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  );
 }
 
 /** 문항 본문 — 기출 시험지 캡처 이미지 또는 텍스트 */
@@ -84,6 +147,7 @@ export function MockSession() {
   const [remain, setRemain] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [page, setPage] = useState(0); // 쪽 모드에서 보고 있는 시험지 쪽
   const startedAt = useRef(0);
   const saved = useRef(false);
 
@@ -155,6 +219,16 @@ export function MockSession() {
 
   const q = exam.questions[idx];
   const answeredCount = Object.keys(answers).length;
+  const pageMode = isPageMode(exam);
+
+  const pick = (num: number, c: number) =>
+    setAnswers((a) => {
+      if (a[num] === c) {
+        const { [num]: _drop, ...rest } = a;
+        return rest;
+      }
+      return { ...a, [num]: c };
+    });
 
   // ─── 시작 전 ───
   if (!started) {
@@ -356,6 +430,50 @@ export function MockSession() {
         </div>
       </div>
 
+      {/* 쪽 모드: 시험지를 넘겨 보며 OMR에 답한다 */}
+      {pageMode ? (
+        <>
+          <PageViewer
+            pages={exam.pageImages!}
+            page={page}
+            onPage={setPage}
+          />
+          <SectionTitle>답안지</SectionTitle>
+          <div className="flex flex-col gap-1 pb-4">
+            {exam.questions.map((x) => (
+              <div key={x.number} className="flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "w-7 shrink-0 text-right text-[11px] font-bold tabular-nums",
+                    answers[x.number] ? "text-indigo-300" : "text-zinc-600",
+                  )}
+                >
+                  {x.number}
+                </span>
+                {CHOICES.map((c) => {
+                  const on = answers[x.number] === c;
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => pick(x.number, c)}
+                      className={cn(
+                        "h-7 flex-1 rounded-md border text-[11px] font-bold transition-all active:scale-95",
+                        on
+                          ? "border-indigo-400 bg-indigo-500 text-white"
+                          : "border-white/10 bg-white/[0.03] text-zinc-600",
+                      )}
+                    >
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
       {/* 문항 */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -403,15 +521,7 @@ export function MockSession() {
                 <button
                   key={c}
                   type="button"
-                  onClick={() =>
-                    setAnswers((a) => {
-                      if (a[q.number] === c) {
-                        const { [q.number]: _drop, ...rest } = a;
-                        return rest;
-                      }
-                      return { ...a, [q.number]: c };
-                    })
-                  }
+                  onClick={() => pick(q.number, c)}
                   className={cn(
                     "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
                     picked
@@ -473,6 +583,8 @@ export function MockSession() {
           );
         })}
       </div>
+        </>
+      )}
 
       {/* 제출 확인 */}
       <AnimatePresence>

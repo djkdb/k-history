@@ -213,6 +213,12 @@ export interface MockExam {
   /** 문항 이미지의 출처 표기 (필수 — 공공저작물 이용 시 출처 명시) */
   attribution: string;
   questions: MockExamQuestion[];
+  /**
+   * 쪽 단위 시험지 이미지.
+   * 문항별로 자를 수 없는 스캔 PDF는 시험지를 넘겨 보며 OMR에 답하는 방식으로 제공한다.
+   * 이 값이 있으면 문항 이미지 대신 쪽 뷰어가 뜬다.
+   */
+  pageImages?: string[];
 }
 
 /** 모의고사 응시 기록 */
