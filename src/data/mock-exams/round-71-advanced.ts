@@ -66,7 +66,6 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q09.webp",
       answer: 2,
-      eventIds: ["balhae-mun"],
     },
     {
       number: 10,
@@ -79,6 +78,7 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/71-advanced/q11.webp",
       answer: 2,
+      eventIds: ["jeonsigwa"],
     },
     {
       number: 12,
@@ -122,7 +122,6 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/71-advanced/q18.webp",
       answer: 1,
-      eventIds: ["dolmen"],
     },
     {
       number: 19,
@@ -177,7 +176,6 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q27.webp",
       answer: 5,
-      eventIds: ["sedo"],
     },
     {
       number: 28,
@@ -241,7 +239,6 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/71-advanced/q37.webp",
       answer: 2,
-      eventIds: ["gukgwon-pital"],
     },
     {
       number: 38,
@@ -279,7 +276,6 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/71-advanced/q43.webp",
       answer: 4,
-      eventIds: ["gwangbokgun"],
     },
     {
       number: 44,
@@ -293,7 +289,6 @@ export const ROUND_71_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/71-advanced/q45.webp",
       answer: 2,
-      eventIds: ["seongjong-goryeo"],
     },
     {
       number: 46,

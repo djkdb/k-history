@@ -65,6 +65,7 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q09.webp",
       answer: 2,
+      eventIds: ["silla-end"],
     },
     {
       number: 10,
@@ -103,7 +104,6 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q15.webp",
       answer: 3,
-      eventIds: ["taejo-wanggeon"],
     },
     {
       number: 16,
@@ -164,7 +164,6 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q25.webp",
       answer: 2,
-      eventIds: ["taejong"],
     },
     {
       number: 26,
@@ -223,13 +222,13 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q34.webp",
       answer: 3,
-      eventIds: ["gabo"],
     },
     {
       number: 35,
       points: 2,
       image: "/exams/76-advanced/q35.webp",
       answer: 5,
+      eventIds: ["eulsa"],
     },
     {
       number: 36,
@@ -249,6 +248,7 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q38.webp",
       answer: 4,
+      eventIds: ["uiyeoldan"],
     },
     {
       number: 39,
@@ -267,7 +267,6 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q41.webp",
       answer: 1,
-      eventIds: ["gwangbokgun"],
     },
     {
       number: 42,
@@ -305,13 +304,13 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q47.webp",
       answer: 1,
-      eventIds: ["yusin"],
     },
     {
       number: 48,
       points: 2,
       image: "/exams/76-advanced/q48.webp",
       answer: 1,
+      eventIds: ["parkchunghee"],
     },
     {
       number: 49,
@@ -324,7 +323,6 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q50.webp",
       answer: 5,
-      eventIds: ["eulmi"],
     },
   ],
 };

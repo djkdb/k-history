@@ -329,7 +329,7 @@ Cloudflare 대시보드 → **Workers & Pages → Create → Pages → Connect t
 | `npm run preview` | Cloudflare 런타임 로컬 미리보기 |
 | `npm run deploy` | 빌드 후 Cloudflare 배포 |
 | `python3 scripts/import-exam.py` | 기출 PDF 임포트 |
-| `python3 scripts/match-concepts.py` | 기출 문항 → 개념 자동 연결 |
+| `python3 scripts/match-concepts.py <개념.json> <PDF 폴더>` | 기출 문항 → 개념 자동 연결 |
 
 ---
 
@@ -341,7 +341,10 @@ Cloudflare 대시보드 → **Workers & Pages → Create → Pages → Connect t
   `src/data/past-exams.ts` 에 회차·문항 번호를 채우면 해당 개념의 빈도가
   자동으로 **실측값**으로 전환됩니다(`frequencyOf()`).
 
-- **기출 문항의 개념 연결은 102/500(20%)이고 정확도는 약 85%입니다.**
+- **기출 문항의 개념 연결은 77/500(15%)입니다.** 표본 검토 기준 정확도는 약 97%로,
+  연결된 문항은 거의 틀리지 않지만 연결되지 않은 문항이 많습니다.
+  매처는 고유명사·연도·시대 단서가 서로 뒷받침될 때만 연결하고, 근거가 하나뿐이면
+  비워 둡니다 — 틀린 연결은 없는 것보다 나쁘기 때문입니다.
   텍스트 레이어가 있는 6개 회차만 자동 매칭이 가능하며, 스캔 회차 4개(200문항)는
   대상에서 빠집니다. 결과 화면에도 "자동으로 찾아낸 개념"임을 밝힙니다.
 

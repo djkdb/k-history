@@ -23,7 +23,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q02.webp",
       answer: 1,
-      eventIds: ["wiman"],
     },
     {
       number: 3,
@@ -79,6 +78,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q11.webp",
       answer: 5,
+      eventIds: ["seongjong-goryeo"],
     },
     {
       number: 12,
@@ -98,7 +98,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q14.webp",
       answer: 3,
-      eventIds: ["won-interference"],
     },
     {
       number: 15,
@@ -129,6 +128,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q19.webp",
       answer: 1,
+      eventIds: ["wihwado"],
     },
     {
       number: 20,
@@ -167,7 +167,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q25.webp",
       answer: 1,
-      eventIds: ["taejo-joseon"],
     },
     {
       number: 26,
@@ -267,7 +266,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/75-advanced/q41.webp",
       answer: 4,
-      eventIds: ["sejong"],
     },
     {
       number: 42,
@@ -298,7 +296,6 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/75-advanced/q46.webp",
       answer: 2,
-      eventIds: ["korean-war"],
     },
     {
       number: 47,
@@ -311,6 +308,7 @@ export const ROUND_75_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/75-advanced/q48.webp",
       answer: 3,
+      eventIds: ["yukwol"],
     },
     {
       number: 49,

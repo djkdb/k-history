@@ -66,7 +66,6 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/70-advanced/q09.webp",
       answer: 4,
-      eventIds: ["silla-end"],
     },
     {
       number: 10,
@@ -105,6 +104,7 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q15.webp",
       answer: 4,
+      eventIds: ["sambyeolcho"],
     },
     {
       number: 16,
@@ -117,7 +117,6 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/70-advanced/q17.webp",
       answer: 4,
-      eventIds: ["taejong"],
     },
     {
       number: 18,
@@ -189,7 +188,6 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/70-advanced/q28.webp",
       answer: 2,
-      eventIds: ["yangyo"],
     },
     {
       number: 29,
@@ -209,7 +207,6 @@ export const ROUND_70_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/70-advanced/q31.webp",
       answer: 1,
-      eventIds: ["agwan"],
     },
     {
       number: 32,
