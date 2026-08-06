@@ -144,6 +144,22 @@ for (const ex of MOCK_EXAMS) {
   }
   if (!ex.attribution?.includes("국사편찬위원회"))
     errors.push(`${tag}: 출처 표기 없음`);
+
+  // 해설은 공식 정답표와 어긋나면 안 된다.
+  // 해설이 ①~⑤를 직접 언급했다면 그것이 정답 번호와 같아야 한다.
+  const CIRCLED = ["①", "②", "③", "④", "⑤"];
+  const explained = ex.questions.filter((q) => q.explanation);
+  for (const q of explained) {
+    const t = q.explanation!;
+    if (t.length < 25) errors.push(`${tag} ${q.number}번: 해설 너무 짧음`);
+    const cited = CIRCLED.filter((c) => t.includes(c));
+    if (cited.length === 1 && cited[0] !== CIRCLED[q.answer - 1])
+      errors.push(
+        `${tag} ${q.number}번: 해설이 ${cited[0]}을 가리키는데 정답은 ${CIRCLED[q.answer - 1]}`,
+      );
+  }
+  if (explained.length && explained.length !== ex.questions.length)
+    warns.push(`${tag}: 해설 ${explained.length}/${ex.questions.length}문항`);
 }
 
 // ─── 결과 ───────────────────────────────────────────────────────────

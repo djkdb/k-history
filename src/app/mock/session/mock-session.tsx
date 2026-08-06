@@ -29,6 +29,8 @@ import {
 } from "@/components/ui";
 
 const CHOICES = [1, 2, 3, 4, 5];
+/** 해설에서 정답 번호를 시험지와 같은 모양으로 보여 준다 */
+const CIRCLED = ["①", "②", "③", "④", "⑤"];
 
 function fmtClock(sec: number): string {
   const s = Math.max(0, sec);
@@ -146,6 +148,7 @@ export function MockSession() {
   const [flagged, setFlagged] = useState<Set<number>>(new Set());
   const [remain, setRemain] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [showAllExp, setShowAllExp] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [page, setPage] = useState(0); // 쪽 모드에서 보고 있는 시험지 쪽
   const startedAt = useRef(0);
@@ -289,6 +292,13 @@ export function MockSession() {
     const mins = Math.round((Date.now() - startedAt.current) / 60000);
     const wrongEvents = [...new Set(wrong.flatMap((x) => x.eventIds ?? []))];
 
+    // 해설은 틀린 문항부터 보여 준다. 맞힌 문항은 눌러서 펼친다.
+    const withExp = exam.questions.filter((x) => x.explanation);
+    const hasAllExplanations = withExp.length === exam.questions.length;
+    const explained = showAllExp
+      ? withExp
+      : withExp.filter((x) => answers[x.number] !== x.answer);
+
     return (
       <div className="pt-8">
         <motion.div
@@ -354,6 +364,61 @@ export function MockSession() {
         <p className="mt-2 text-[11px] text-zinc-600">
           문항을 누르면 시험지를 다시 볼 수 있어요
         </p>
+
+        {explained.length > 0 && (
+          <>
+            <SectionTitle>해설</SectionTitle>
+            <p className="mb-2 -mt-1 text-[11px] leading-relaxed text-zinc-600">
+              공식 정답표를 기준으로 자료의 단서와 정답 근거만 짧게 정리했습니다.
+            </p>
+            <div className="flex flex-col gap-2">
+              {explained.map((q) => {
+                const mine = answers[q.number];
+                const ok = mine === q.answer;
+                return (
+                  <Card key={q.number} className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={cn(
+                          "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-bold",
+                          ok
+                            ? "bg-emerald-500/20 text-emerald-300"
+                            : "bg-red-500/20 text-red-300",
+                        )}
+                      >
+                        {q.number}
+                      </span>
+                      <span className="text-[11px] text-zinc-500">
+                        정답 {CIRCLED[q.answer - 1]}
+                        {!ok && (
+                          <>
+                            {" · "}
+                            <span className="text-red-400">
+                              내 답{" "}
+                              {mine === undefined ? "미표기" : CIRCLED[mine - 1]}
+                            </span>
+                          </>
+                        )}
+                      </span>
+                    </div>
+                    <p className="text-xs leading-relaxed text-zinc-300">
+                      {q.explanation}
+                    </p>
+                  </Card>
+                );
+              })}
+            </div>
+            {hasAllExplanations && (
+              <button
+                type="button"
+                onClick={() => setShowAllExp((v) => !v)}
+                className="mt-2 w-full rounded-lg bg-white/6 py-2 text-[11px] font-semibold text-zinc-400 transition-colors active:bg-white/10"
+              >
+                {showAllExp ? "틀린 문항만 보기" : "맞힌 문항 해설도 보기"}
+              </button>
+            )}
+          </>
+        )}
 
         {wrong.length > 0 && (
           <>
