@@ -101,7 +101,7 @@ body {
  * 레이아웃을 갈아엎는 대신, 이 클래스가 붙은 페이지만 컨테이너 밖으로
  * 대칭으로 넓힌다. (margin-left의 50%는 부모 컨테이너 기준이라 가운데가 유지된다)
  */
-@media (min-width: 820px) {
+@media (min-width: 740px) {
   .wide-page {
     width: min(1120px, calc(100vw - 3rem));
     margin-left: calc(50% - min(1120px, 100vw - 3rem) / 2);

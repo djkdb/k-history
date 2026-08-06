@@ -152,7 +152,7 @@ function SplitHandle({
       onPointerUp={end}
       onPointerCancel={end}
       onDoubleClick={() => onWidth(null)}
-      className="hidden cursor-col-resize touch-none select-none self-stretch min-[820px]:flex min-[820px]:items-center min-[820px]:justify-center"
+      className="hidden cursor-col-resize touch-none select-none self-stretch min-[740px]:flex min-[740px]:items-center min-[740px]:justify-center"
     >
       <span
         className={cn(
@@ -595,16 +595,16 @@ export function MockSession() {
               ? { gridTemplateColumns: `minmax(0,1fr) 20px ${splitW}px` }
               : undefined
           }
-          className="min-[820px]:grid min-[820px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[820px]:items-start">
+          className="min-[740px]:grid min-[740px]:grid-cols-[minmax(0,1fr)_20px_220px] min-[900px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[740px]:items-start">
           <PageViewer
             pages={exam.pageImages!}
             page={page}
             onPage={setPage}
           />
           <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
-          <div className="min-[820px]:sticky min-[820px]:top-20">
+          <div className="min-[740px]:sticky min-[740px]:top-20">
           {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
-          <div className="mb-2 mt-5 flex items-baseline justify-between min-[820px]:mt-0">
+          <div className="mb-2 mt-5 flex items-baseline justify-between min-[740px]:mt-0">
             <h2 className="text-base font-bold tracking-tight">
               {page + 1}쪽 답안
             </h2>
@@ -680,7 +680,7 @@ export function MockSession() {
               ? { gridTemplateColumns: `minmax(0,1fr) 20px ${splitW}px` }
               : undefined
           }
-          className="min-[820px]:grid min-[820px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[820px]:items-start">
+          className="min-[740px]:grid min-[740px]:grid-cols-[minmax(0,1fr)_20px_220px] min-[900px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[740px]:items-start">
       {/* 문항 */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -725,14 +725,14 @@ export function MockSession() {
       <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
 
       {/* 오른쪽 열: 답안 · 이동 — 데스크톱에서는 스크롤을 따라온다 */}
-      <div className="min-[820px]:sticky min-[820px]:top-20">
+      <div className="min-[740px]:sticky min-[740px]:top-20">
       {/*
         OMR 답안.
         좁은 화면에서는 번호만 한 줄로 놓는다 — 선택지 글은 시험지 이미지에 이미 있고,
         화면을 차지하면 정작 문제가 밀린다.
         넓은 화면에서는 오른쪽 열에 선택지 글까지 펼쳐 눌러서 고르게 한다.
       */}
-      <div className="mt-4 flex gap-2 min-[820px]:mt-0 min-[820px]:flex-col min-[820px]:gap-1.5">
+      <div className="mt-4 flex gap-2 min-[740px]:mt-0 min-[740px]:flex-col min-[740px]:gap-1.5">
         {CHOICES.map((c) => {
           const picked = answers[q.number] === c;
           const label = q.options?.[c - 1];
@@ -743,16 +743,16 @@ export function MockSession() {
               onClick={() => pick(q.number, c)}
               className={cn(
                 "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
-                "min-[820px]:h-auto min-[820px]:flex-none min-[820px]:justify-start min-[820px]:gap-2.5 min-[820px]:px-3 min-[820px]:py-2.5 min-[820px]:text-left",
+                "min-[740px]:h-auto min-[740px]:flex-none min-[740px]:justify-start min-[740px]:gap-2.5 min-[740px]:px-3 min-[740px]:py-2.5 min-[740px]:text-left",
                 picked
                   ? "border-indigo-400 bg-indigo-500 text-white"
-                  : "border-white/12 bg-white/5 text-zinc-400 min-[820px]:hover:border-white/25 min-[820px]:hover:bg-white/8",
+                  : "border-white/12 bg-white/5 text-zinc-400 min-[740px]:hover:border-white/25 min-[740px]:hover:bg-white/8",
               )}
             >
               <span
                 className={cn(
-                  "shrink-0 min-[820px]:flex min-[820px]:h-6 min-[820px]:w-6 min-[820px]:items-center min-[820px]:justify-center min-[820px]:rounded-md min-[820px]:text-[11px]",
-                  picked ? "min-[820px]:bg-white/20" : "min-[820px]:bg-white/8",
+                  "shrink-0 min-[740px]:flex min-[740px]:h-6 min-[740px]:w-6 min-[740px]:items-center min-[740px]:justify-center min-[740px]:rounded-md min-[740px]:text-[11px]",
+                  picked ? "min-[740px]:bg-white/20" : "min-[740px]:bg-white/8",
                 )}
               >
                 {c}
@@ -760,7 +760,7 @@ export function MockSession() {
               {label && (
                 <span
                   className={cn(
-                    "hidden flex-1 text-[13px] font-medium leading-snug min-[820px]:block",
+                    "hidden flex-1 text-[13px] font-medium leading-snug min-[740px]:block",
                     picked ? "text-white" : "text-zinc-300",
                   )}
                 >
