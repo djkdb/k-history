@@ -70,7 +70,7 @@ export function CompareGraphic({
           >
             <p
               {...{ [`data-${side}`]: true }}
-              style={{ opacity: 0, color: accent }}
+              style={{ opacity: 1, color: accent }}
               className="mb-1.5 text-xs font-black leading-tight"
             >
               {data.title}
@@ -80,7 +80,7 @@ export function CompareGraphic({
                 <li
                   key={item}
                   {...{ [`data-${side}`]: true }}
-                  style={{ opacity: 0 }}
+                  style={{ opacity: 1 }}
                   className="flex gap-1 text-[11px] leading-snug text-zinc-300"
                 >
                   <span style={{ color: accent }}>·</span>
@@ -94,7 +94,7 @@ export function CompareGraphic({
         {/* 가운데 VS 배지 */}
         <span
           data-vs
-          style={{ opacity: 0 }}
+          style={{ opacity: 1 }}
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-zinc-900 px-2 py-0.5 text-[10px] font-black text-zinc-400"
         >
           VS

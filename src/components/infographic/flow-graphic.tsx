@@ -51,7 +51,7 @@ export function FlowGraphic({
             <div
               data-step
               style={{
-                opacity: 0,
+                opacity: 1,
                 background: `color-mix(in srgb, ${color} ${i === spec.steps.length - 1 ? 22 : 10}%, transparent)`,
                 borderColor: `color-mix(in srgb, ${color} ${i === spec.steps.length - 1 ? 55 : 28}%, transparent)`,
               }}

@@ -61,7 +61,7 @@ export function StatGraphic({
             key={item.label}
             data-stat
             style={{
-              opacity: 0,
+              opacity: 1,
               background: `color-mix(in srgb, ${color} 10%, transparent)`,
               borderColor: `color-mix(in srgb, ${color} 30%, transparent)`,
             }}

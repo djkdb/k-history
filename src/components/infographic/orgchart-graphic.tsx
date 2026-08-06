@@ -67,7 +67,7 @@ export function OrgChartGraphic({
           <div
             data-root
             style={{
-              opacity: 0,
+              opacity: 1,
               background: `color-mix(in srgb, ${color} 26%, transparent)`,
               borderColor: `color-mix(in srgb, ${color} 60%, transparent)`,
             }}
@@ -107,7 +107,7 @@ export function OrgChartGraphic({
           style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
         >
           {spec.branches.map((b) => (
-            <div key={b.label} data-branch style={{ opacity: 0 }}>
+            <div key={b.label} data-branch style={{ opacity: 1 }}>
               <div
                 className="rounded-lg border px-1.5 py-1.5 text-center"
                 style={{
@@ -125,7 +125,7 @@ export function OrgChartGraphic({
                     <li
                       key={c}
                       data-child
-                      style={{ opacity: 0 }}
+                      style={{ opacity: 1 }}
                       className="rounded-md bg-white/5 px-1 py-0.5 text-center text-[9px] leading-tight text-zinc-400"
                     >
                       {c}

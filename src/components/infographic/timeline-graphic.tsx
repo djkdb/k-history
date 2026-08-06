@@ -79,7 +79,7 @@ export function TimelineGraphic({
                   boxShadow: item.highlight ? `0 0 10px ${color}` : undefined,
                 }}
               />
-              <div data-node style={{ opacity: 0 }}>
+              <div data-node style={{ opacity: 1 }}>
                 <div className="flex items-baseline gap-2">
                   <span
                     className="text-[11px] font-bold tabular-nums"

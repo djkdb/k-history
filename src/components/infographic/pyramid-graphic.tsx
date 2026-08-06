@@ -45,7 +45,7 @@ export function PyramidGraphic({
             <div
               key={level.label}
               data-level
-              style={{ width: `${width}%`, opacity: 0 }}
+              style={{ width: `${width}%`, opacity: 1 }}
               className="rounded-lg px-3 py-2 text-center"
             >
               <div
