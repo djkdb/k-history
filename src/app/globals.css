@@ -92,3 +92,18 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/*
+ * 넓은 화면 전용 페이지.
+ *
+ * 앱 전체는 모바일 기준 max-w-2xl 한 단으로 놓는다. 그런데 시험 화면만은
+ * 시험지와 답안을 나란히 놓아야 편해서 그 폭으로는 좁다.
+ * 레이아웃을 갈아엎는 대신, 이 클래스가 붙은 페이지만 컨테이너 밖으로
+ * 대칭으로 넓힌다. (margin-left의 50%는 부모 컨테이너 기준이라 가운데가 유지된다)
+ */
+@media (min-width: 1024px) {
+  .wide-page {
+    width: min(1120px, calc(100vw - 3rem));
+    margin-left: calc(50% - min(1120px, 100vw - 3rem) / 2);
+  }
+}

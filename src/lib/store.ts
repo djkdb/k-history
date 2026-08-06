@@ -91,17 +91,31 @@ export const useApp = create<AppState>()(
           const reviewCards = s.reviewCards.map((c) =>
             wrongIds.includes(c.eventId) ? gradeCard(c, false) : c,
           );
+          // 채점 뒤 되돌아가 다시 풀고 제출하면 같은 응시를 두 번 세면 안 된다.
+          // 시작 시각이 같으면 한 번의 응시이므로 마지막 채점 결과로 덮어쓴다.
+          const prev = s.mockAttempts.findIndex(
+            (a) => a.examId === attempt.examId && a.startedAt === attempt.startedAt,
+          );
+          const again = prev >= 0;
+          const mockAttempts = again
+            ? s.mockAttempts.map((a, i) => (i === prev ? attempt : a))
+            : [...s.mockAttempts, attempt].slice(-50);
+
           const minutes = Math.round(
             (attempt.finishedAt - attempt.startedAt) / 60000,
           );
-          const stats = bumpStreak({
-            ...s.stats,
-            xp: s.stats.xp + 50, // 모의고사 1회 완주 보상
-            totalStudyMinutes: s.stats.totalStudyMinutes + Math.max(0, minutes),
-          });
+          // 재채점에는 완주 보상과 학습 시간을 다시 주지 않는다
+          const stats = again
+            ? s.stats
+            : bumpStreak({
+                ...s.stats,
+                xp: s.stats.xp + 50, // 모의고사 1회 완주 보상
+                totalStudyMinutes:
+                  s.stats.totalStudyMinutes + Math.max(0, minutes),
+              });
           const next = {
             ...s,
-            mockAttempts: [...s.mockAttempts, attempt].slice(-50),
+            mockAttempts,
             wrongEventIds,
             reviewCards,
             stats,

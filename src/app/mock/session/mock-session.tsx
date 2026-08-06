@@ -344,8 +344,13 @@ export function MockSession() {
                 type="button"
                 title={`${x.number}번 — 정답 ${x.answer}`}
                 onClick={() => {
+                  // 다시 풀고 제출할 수 있어야 한다.
+                  // 중복 저장을 막는 빗장을 여기서 풀지 않으면 제출이 먹지 않는다.
+                  saved.current = false;
                   setSubmitted(false);
+                  setShowAllExp(false);
                   setIdx(i);
+                  if (pageMode) setPage((exam.questions[i].page ?? 1) - 1);
                 }}
                 className={cn(
                   "aspect-square rounded-md text-[10px] font-bold transition-colors",
@@ -477,7 +482,8 @@ export function MockSession() {
   const low = remain <= 600; // 10분 이하
 
   return (
-    <div className="pt-4">
+    // 데스크톱에서는 컨테이너 폭을 넘어 넓게 쓴다 — 시험지와 답안을 나란히 놓기 위해
+    <div className="wide-page pt-4">
       {/* 상단 고정: 타이머 + 진행 + 제출 */}
       <div className="glass-strong sticky top-2 z-30 mb-3 rounded-2xl px-3 py-2">
         <div className="flex items-center gap-2">
@@ -506,14 +512,15 @@ export function MockSession() {
 
       {/* 쪽 모드: 시험지를 넘겨 보며 OMR에 답한다 */}
       {pageMode ? (
-        <>
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-6">
           <PageViewer
             pages={exam.pageImages!}
             page={page}
             onPage={setPage}
           />
+          <div className="lg:sticky lg:top-20">
           {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
-          <div className="mb-2 mt-5 flex items-baseline justify-between">
+          <div className="mb-2 mt-5 flex items-baseline justify-between lg:mt-0">
             <h2 className="text-base font-bold tracking-tight">
               {page + 1}쪽 답안
             </h2>
@@ -580,9 +587,10 @@ export function MockSession() {
               다음 쪽 <ChevronRight size={18} />
             </Button>
           </div>
-        </>
+          </div>
+        </div>
       ) : (
-        <>
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-6">
       {/* 문항 */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -621,30 +629,56 @@ export function MockSession() {
           </div>
 
           <QuestionBody q={q} />
-
-          {/* OMR 답안 */}
-          <div className="mt-4 flex gap-2">
-            {CHOICES.map((c) => {
-              const picked = answers[q.number] === c;
-              return (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => pick(q.number, c)}
-                  className={cn(
-                    "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
-                    picked
-                      ? "border-indigo-400 bg-indigo-500 text-white"
-                      : "border-white/12 bg-white/5 text-zinc-400",
-                  )}
-                >
-                  {c}
-                </button>
-              );
-            })}
-          </div>
         </motion.div>
       </AnimatePresence>
+
+      {/* 오른쪽 열: 답안 · 이동 — 데스크톱에서는 스크롤을 따라온다 */}
+      <div className="lg:sticky lg:top-20">
+      {/*
+        OMR 답안.
+        좁은 화면에서는 번호만 한 줄로 놓는다 — 선택지 글은 시험지 이미지에 이미 있고,
+        화면을 차지하면 정작 문제가 밀린다.
+        넓은 화면에서는 오른쪽 열에 선택지 글까지 펼쳐 눌러서 고르게 한다.
+      */}
+      <div className="mt-4 flex gap-2 lg:mt-0 lg:flex-col lg:gap-1.5">
+        {CHOICES.map((c) => {
+          const picked = answers[q.number] === c;
+          const label = q.options?.[c - 1];
+          return (
+            <button
+              key={c}
+              type="button"
+              onClick={() => pick(q.number, c)}
+              className={cn(
+                "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
+                "lg:h-auto lg:flex-none lg:justify-start lg:gap-2.5 lg:px-3 lg:py-2.5 lg:text-left",
+                picked
+                  ? "border-indigo-400 bg-indigo-500 text-white"
+                  : "border-white/12 bg-white/5 text-zinc-400 lg:hover:border-white/25 lg:hover:bg-white/8",
+              )}
+            >
+              <span
+                className={cn(
+                  "shrink-0 lg:flex lg:h-6 lg:w-6 lg:items-center lg:justify-center lg:rounded-md lg:text-[11px]",
+                  picked ? "lg:bg-white/20" : "lg:bg-white/8",
+                )}
+              >
+                {c}
+              </span>
+              {label && (
+                <span
+                  className={cn(
+                    "hidden flex-1 text-[13px] font-medium leading-snug lg:block",
+                    picked ? "text-white" : "text-zinc-300",
+                  )}
+                >
+                  {label}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
 
       {/* 이동 */}
       <div className="mt-4 flex gap-2">
@@ -692,7 +726,8 @@ export function MockSession() {
           );
         })}
       </div>
-        </>
+      </div>
+        </div>
       )}
 
       {/* 제출 확인 */}
