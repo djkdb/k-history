@@ -42,26 +42,43 @@ export function importanceStars(n: number): string {
   return "★".repeat(n) + "☆".repeat(5 - n);
 }
 
-/** 중요도 → 색상 클래스 (빨강=반드시, 주황=매우, 노랑=자주, 초록=참고) */
+// ─── 출제 중요도 5단계 ──────────────────────────────────────────────
+// 한국사능력검정시험 심화 출제 경향 기준.
+// examFrequency는 "최근 20회 중 출제된 횟수"를 뜻한다.
+//   ★5 14회 이상(거의 매회) · ★4 9~13회 · ★3 5~8회 · ★2 3~4회 · ★1 2회 이하
+
+/** 중요도 → 색상 클래스 (빨강=반드시, 주황=매우, 노랑=자주, 초록=알아두기, 회색=참고) */
 export function importanceColor(n: number): string {
   if (n >= 5) return "text-red-400";
   if (n === 4) return "text-orange-400";
   if (n === 3) return "text-yellow-400";
-  return "text-emerald-400";
+  if (n === 2) return "text-emerald-400";
+  return "text-zinc-400";
 }
 
 export function importanceBg(n: number): string {
   if (n >= 5) return "bg-red-500/15 text-red-300 border-red-500/30";
   if (n === 4) return "bg-orange-500/15 text-orange-300 border-orange-500/30";
   if (n === 3) return "bg-yellow-500/15 text-yellow-300 border-yellow-500/30";
-  return "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+  if (n === 2) return "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+  return "bg-white/5 text-zinc-400 border-white/10";
 }
 
 export function importanceLabel(n: number): string {
   if (n >= 5) return "반드시 암기";
   if (n === 4) return "매우 중요";
   if (n === 3) return "자주 출제";
+  if (n === 2) return "알아두기";
   return "참고";
+}
+
+/** 출제 빈도(최근 20회 중 N회) → 사람이 읽는 문구 */
+export function frequencyLabel(freq: number): string {
+  if (freq >= 14) return "거의 매회 출제";
+  if (freq >= 9) return "2회 중 1회꼴 출제";
+  if (freq >= 5) return "3회 중 1회꼴 출제";
+  if (freq >= 3) return "가끔 출제";
+  return "드물게 출제";
 }
 
 /** 배열 셔플 (불변) */

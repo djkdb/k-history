@@ -17,9 +17,9 @@ export const PREHISTORIC_EVENTS: HistoryEvent[] = [
       "한능검 1번 단골 문제. 유적 사진(주먹도끼, 막집 복원 모형)이나 연천 전곡리·공주 석장리 발굴 기사문을 제시하고, 해당 시대의 생활 모습을 고르게 한다. 정답 선지는 주로 '주먹도끼를 사용하였다', '동굴이나 막집에서 살았다'이고, 오답 선지로 빗살무늬 토기(신석기)·비파형 동검(청동기) 등 다른 시대 유물을 섞어 낸다. 뗀석기와 간석기의 구분이 핵심 함정.",
     significance:
       "한반도에 인류가 살기 시작한 역사의 출발점이며, 도구 제작과 불의 사용으로 인간이 자연에 적응해 간 과정을 보여 준다. 연천 전곡리 주먹도끼는 동아시아에는 정교한 주먹도끼 문화가 없다는 모비우스 학설을 뒤집은 세계사적 발견이다.",
-    importance: 5,
-    examFrequency: 60,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 7,
+    mustMemorize: false,
     keywords: ["뗀석기", "주먹도끼", "막집", "연천 전곡리", "공주 석장리", "슴베찌르개"],
     memory: {
       story:
@@ -73,7 +73,7 @@ export const PREHISTORIC_EVENTS: HistoryEvent[] = [
     significance:
       "식량 채집 단계에서 식량 생산 단계로 넘어간 인류사적 대전환(신석기 혁명)이다. 농경과 정착 생활은 이후 인구 증가, 잉여 생산, 나아가 청동기 시대의 계급 발생과 국가 성립의 토대가 되었다.",
     importance: 5,
-    examFrequency: 65,
+    examFrequency: 14,
     mustMemorize: true,
     keywords: ["빗살무늬 토기", "농경과 목축", "움집", "가락바퀴", "서울 암사동", "간석기"],
     memory: {
@@ -134,7 +134,7 @@ export const PREHISTORIC_EVENTS: HistoryEvent[] = [
     significance:
       "잉여 생산 → 사유재산 → 계급 발생으로 이어지는 사회 구조의 대변혁이 일어난 시대다. 평등 사회가 끝나고 지배와 피지배가 나뉘었으며, 군장 사회의 성장은 최초의 국가 고조선 건국의 토대가 되었다.",
     importance: 5,
-    examFrequency: 55,
+    examFrequency: 13,
     mustMemorize: true,
     keywords: ["비파형 동검", "민무늬 토기", "반달 돌칼", "벼농사", "계급 발생", "군장"],
     memory: {
@@ -194,9 +194,9 @@ export const PREHISTORIC_EVENTS: HistoryEvent[] = [
       "단독 문항보다는 청동기 시대 문제의 핵심 정답 선지로 출제된다. '지배층의 무덤으로 고인돌을 축조하였다'가 청동기 시대 정답 선지의 최다 단골. 탁자식 고인돌 사진(강화 부근리)을 제시하고 시대나 사회 모습(계급 발생)을 묻는 유형, 유네스코 세계유산(고창·화순·강화)과 연결하는 유형이 나온다. 신석기 무덤이나 철기의 널무덤·독무덤과 혼동시키는 함정에 주의.",
     significance:
       "고인돌은 계급과 군장의 존재를 보여 주는 가장 확실한 고고학적 증거다. 대규모 노동력 동원은 강한 지배 권력과 조직화된 사회를 의미하며, 이러한 군장 사회가 성장·통합되면서 고조선이라는 국가로 발전했다.",
-    importance: 4,
-    examFrequency: 40,
-    mustMemorize: true,
+    importance: 2,
+    examFrequency: 4,
+    mustMemorize: false,
     keywords: ["고인돌", "군장 사회", "계급 사회의 증거", "탁자식", "바둑판식", "유네스코 세계유산"],
     memory: {
       story:
@@ -250,9 +250,9 @@ export const PREHISTORIC_EVENTS: HistoryEvent[] = [
       "한능검 1~2번 빈출. 세형 동검·거푸집·명도전 사진이나 창원 다호리 유적 발굴 자료를 제시하고 시대상을 묻는다. 정답 선지 단골은 '거푸집을 이용하여 세형 동검을 제작하였다', '명도전, 반량전 등의 화폐를 사용하였다', '철제 농기구로 농사를 지었다'. 최대 함정은 비파형 동검(청동기)과 세형 동검(철기)의 시대 구분이며, '붓 = 한자 사용 = 중국 교류'의 연결 고리를 묻는 고난도 선지도 나온다.",
     significance:
       "철제 농기구는 농업 생산력을, 철제 무기는 정복 전쟁을 폭발적으로 키워 연맹 왕국(부여·고구려·삼한 등) 성립의 물질적 기반이 되었다. 세형 동검과 거푸집은 한반도의 독자적 청동기 문화를, 명도전과 붓은 중국과의 교류와 한자 문화 수용을 증명한다.",
-    importance: 5,
-    examFrequency: 45,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 6,
+    mustMemorize: false,
     keywords: ["세형 동검", "거푸집", "명도전", "반량전", "창원 다호리 붓", "철제 농기구"],
     memory: {
       story:

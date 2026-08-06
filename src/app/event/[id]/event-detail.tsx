@@ -24,7 +24,7 @@ import { getEvent } from "@/data/events";
 import { ERA_MAP } from "@/data/eras";
 import { InfographicView, infographicsFor } from "@/components/infographic";
 import { nextDueLabel } from "@/lib/srs";
-import { cn } from "@/lib/utils";
+import { cn, frequencyLabel } from "@/lib/utils";
 import {
   Badge,
   Button,
@@ -139,7 +139,9 @@ export function EventDetail() {
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {event.king && <Badge>👑 {event.king}</Badge>}
           <ImportanceBadge importance={event.importance} />
-          <Badge>누적 출제 {event.examFrequency}회</Badge>
+          <Badge title="한국사능력검정시험 심화 최근 20회 기준">
+            최근 20회 중 {event.examFrequency}회 · {frequencyLabel(event.examFrequency)}
+          </Badge>
         </div>
       </motion.div>
 

@@ -18,9 +18,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '헌병 경찰', '조선 태형령', '교사의 제복과 착검' 같은 키워드를 제시하고 이 시기(1910년대)에 있었던 사실을 고르는 문제가 반복 출제된다. 105인 사건과 신민회 해체를 연결하는 문제, 1920년대 보통 경찰제와 시기를 구분하는 문제가 대표 유형이다.",
     significance:
       "세계적으로도 유례없는 헌병 경찰 통치로, 식민 지배의 폭력성을 상징한다. 억압은 저항을 낳아 3·1 운동이라는 거족적 항쟁의 원인이 되었다.",
-    importance: 5,
-    examFrequency: 38,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 12,
+    mustMemorize: false,
     keywords: ["조선총독부", "헌병 경찰", "조선 태형령", "105인 사건", "즉결 처분"],
     memory: {
       story:
@@ -73,9 +73,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '기한부 신고제', '동양척식주식회사', '지세 수입 증가', '경작권 부정' 키워드로 1910년대 경제 정책을 고르는 문제가 출제된다. 산미 증식 계획(1920년대)과의 시기 구분, 회사령 허가제(1910)와 회사령 폐지 후 신고제(1920)의 비교가 단골 함정이다.",
     significance:
       "식민지 경제 수탈의 토대를 놓은 사업으로, 조선의 농민층을 해체하고 식민지 지주제를 강화했다. 삶의 터전을 잃은 농민의 국외 이주는 만주·연해주 독립운동의 인적 기반이 되기도 했다.",
-    importance: 5,
-    examFrequency: 32,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["토지조사령", "기한부 신고제", "동양척식주식회사", "회사령", "지세 수입"],
     memory: {
       story:
@@ -130,7 +130,7 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     significance:
       "신분·종교·지역을 초월한 최대 규모의 거족적 민족 운동으로, 독립운동의 주체가 전 민족임을 증명했다. 공화주의에 기반한 임시정부 수립의 직접적 계기가 되었고 세계 약소민족 해방 운동에 영향을 미쳤다.",
     importance: 5,
-    examFrequency: 45,
+    examFrequency: 14,
     mustMemorize: true,
     keywords: ["민족대표 33인", "2·8 독립선언", "탑골공원", "유관순", "제암리 학살", "민족자결주의"],
     memory: {
@@ -186,7 +186,7 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
     significance:
       "군주제가 아닌 민주 공화제를 채택한 최초의 정부로, 현행 대한민국 헌법 전문이 계승을 명시한 법통의 뿌리다. 분산된 독립운동을 하나의 정부 아래 결집시킨 구심점이었다.",
     importance: 5,
-    examFrequency: 42,
+    examFrequency: 13,
     mustMemorize: true,
     keywords: ["상하이", "민주 공화제", "연통제", "교통국", "독립공채", "구미위원부"],
     memory: {
@@ -242,9 +242,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 문화 통치의 '표면(보통 경찰·신문 허용)과 실상(경찰 증원·검열·치안유지법)'을 대비시키는 문제가 핵심이다. 치안유지법 제정 연도(1925)와 시기 구분, 산미 증식 계획에서 '증산은 미달, 수탈은 초과'라는 포인트, 1인당 쌀 소비 감소 그래프 자료 문제가 출제된다.",
     significance:
       "친일파 양성을 통한 민족 분열 통치의 원형으로, 이때 길러진 친일 세력이 이후 한국 사회에 깊은 상처를 남겼다. 산미 증식 계획은 식민지 조선을 일본의 식량 공급 기지로 재편했다.",
-    importance: 5,
-    examFrequency: 36,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 10,
+    mustMemorize: false,
     keywords: ["보통 경찰", "치안유지법", "민족 분열 통치", "산미 증식 계획", "쌀 수탈"],
     memory: {
       story:
@@ -298,9 +298,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '김원봉', '조선혁명선언(신채호)'을 제시하고 의열단의 활동을 고르는 문제가 빈출된다. 단원별 의거 대상 매칭(김익상-총독부, 김상옥-종로경찰서, 나석주-동척)이 핵심이며, 김구의 한인 애국단(이봉창·윤봉길)과 소속을 혼동시키는 함정이 매번 나온다.",
     significance:
       "개인 의열 투쟁으로 일제 통치 기관에 직접 타격을 가해 무장 투쟁의 불씨를 이어갔다. 조선혁명선언은 민중 중심 혁명론을 제시한 독립운동 사상사의 명문이다.",
-    importance: 5,
-    examFrequency: 34,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["김원봉", "조선혁명선언", "신채호", "김익상", "김상옥", "나석주"],
     memory: {
       story:
@@ -354,9 +354,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '봉오동=홍범도 대한독립군, 청산리=김좌진 북로군정서'의 부대·인물 매칭이 핵심 출제 포인트다. '봉오동 → 훈춘 사건 → 청산리 → 간도 참변 → 자유시 참변 → 3부 성립'의 사건 순서 배열 문제가 반복 출제되며, 홍범도 장군 유해 봉환 이슈와 연계된 인물 문제도 나온다.",
     significance:
       "독립군의 조직적 무장 투쟁이 정규 일본군을 이길 수 있음을 증명한 독립 전쟁의 금자탑이다. 참변의 시련 속에서도 무장 투쟁의 명맥은 3부와 이후 한국광복군으로 이어졌다.",
-    importance: 5,
-    examFrequency: 35,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 9,
+    mustMemorize: false,
     keywords: ["홍범도", "대한독립군", "김좌진", "북로군정서", "간도 참변", "자유시 참변"],
     memory: {
       story:
@@ -410,9 +410,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 6·10 만세 운동의 배경이 '순종 인산일'임을 묻는 문제(3·1 운동의 고종과 대비), 신간회의 강령 중 '기회주의 배격' 사료 제시 문제가 빈출된다. '정우회 선언 → 신간회 창립 → 광주 학생 운동 지원 → 해소'의 흐름과 자매단체 근우회를 묻는 문제도 자주 출제된다.",
     significance:
       "이념을 초월한 민족 협동 전선의 결실로, 좌우 합작 운동의 역사적 원형이 되었다. 합법 공간에서 전국 조직을 갖추고 민족 운동을 지도한 유일한 사례였다.",
-    importance: 5,
-    examFrequency: 33,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 12,
+    mustMemorize: false,
     keywords: ["순종 인산일", "정우회 선언", "민족 유일당", "기회주의 배격", "근우회"],
     memory: {
       story:
@@ -466,9 +466,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '3·1 운동 이후 최대 규모의 민족 운동'이라는 수식어와 '신간회의 조사단 파견'이 핵심 출제 포인트다. 나주역 충돌이라는 발단, 1929년이라는 연도를 제시하고 6·10 만세 운동(1926)과 순서를 배열하거나 지원 단체를 묻는 문제가 출제된다.",
     significance:
       "학생이 민족 운동의 당당한 주역임을 보여 준 사건으로, 항일 운동의 저변을 전국 청년층으로 넓혔다. 신간회 활동과 맞물려 1920년대 민족 협동 전선의 실천 사례가 되었다.",
-    importance: 4,
-    examFrequency: 26,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 7,
+    mustMemorize: false,
     keywords: ["나주역", "식민지 차별 교육", "신간회 조사단", "학생독립운동기념일", "동맹 휴학"],
     memory: {
       story:
@@ -518,9 +518,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '황국신민서사·창씨개명·신사참배·국가총동원법' 키워드로 1930년대 이후 시기임을 판별하는 문제가 매회 출제된다. 무단 통치(1910년대)·문화 통치(1920년대)와의 시기 구분이 핵심이며, 공출·배급, 국민학교 개칭, 조선어 교육 금지 등을 보기로 제시하는 유형이 많다.",
     significance:
       "언어와 이름, 역사까지 지우려 한 민족 말살 정책은 식민 지배의 가장 폭력적인 본질을 드러냈다. 강제 동원과 일본군 위안부 문제는 오늘날까지 이어지는 과거사 청산의 핵심 과제다.",
-    importance: 5,
-    examFrequency: 40,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 10,
+    mustMemorize: false,
     keywords: ["내선일체", "황국신민서사", "창씨개명", "신사참배", "국가총동원법", "병참기지화"],
     memory: {
       story:
@@ -574,9 +574,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '이봉창=도쿄 일왕 투탄, 윤봉길=훙커우 공원 투탄'의 인물-의거 매칭과 '중국 국민당의 임정 지원 계기'라는 결과가 핵심 출제 포인트다. 김원봉의 의열단 소속 의거(김익상·나석주 등)와 섞어 내는 함정이 매회 수준으로 출제되며, 양손에 수류탄과 권총을 든 이봉창 사진 사료도 자주 나온다.",
     significance:
       "두 의거는 한국 독립 의지를 전 세계에 알리고 중국 국민당 정부의 지원을 이끌어내 이후 한국광복군 창설의 토대를 놓았다. 절망에 빠졌던 임시정부를 기사회생시킨 결정적 사건이다.",
-    importance: 5,
-    examFrequency: 37,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["김구", "이봉창", "윤봉길", "훙커우 공원", "중국 국민당 지원"],
     memory: {
       story:
@@ -630,9 +630,9 @@ export const COLONIAL_EVENTS: HistoryEvent[] = [
       "한능검에서는 '조선의용대(1938, 김원봉, 중국 관내 최초)'와 '한국광복군(1940, 충칭, 지청천)'의 비교가 핵심이다. 광복군의 3대 활동인 대일 선전 포고(1941), 인도·미얀마 전선 파견, OSS 국내 진공 작전 준비를 고르는 문제가 매회 수준으로 출제되며, 조선의용대의 광복군 합류(1942)도 자주 나온다.",
     significance:
       "임시정부가 정규군을 갖추고 연합국의 일원으로 대일전에 참전함으로써 무장 독립 전쟁의 대미를 장식했다. 비록 국내 진공은 무산되었지만 광복이 우리 스스로의 투쟁 위에 서 있음을 보여 주는 근거다.",
-    importance: 5,
-    examFrequency: 38,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["조선의용대", "김원봉", "한국광복군", "지청천", "대일 선전 포고", "OSS"],
     memory: {
       story:

@@ -83,12 +83,15 @@ export function Button({
 export function Badge({
   className,
   children,
+  title,
 }: {
   className?: string;
   children: ReactNode;
+  title?: string;
 }) {
   return (
     <span
+      title={title}
       className={cn(
         "inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-zinc-300",
         className,

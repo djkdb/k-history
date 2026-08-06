@@ -18,9 +18,9 @@ import {
 } from "@/components/ui";
 
 const MODES = [
-  { label: "30분", desc: "반드시 암기만", minImportance: 5 },
-  { label: "1시간", desc: "매우 중요까지", minImportance: 4 },
-  { label: "3시간", desc: "자주 출제까지", minImportance: 3 },
+  { label: "30분", desc: "★5 반드시 암기 — 거의 매회 출제되는 것만", minImportance: 5 },
+  { label: "1시간", desc: "★4 이상 — 2회 중 1회꼴로 나오는 것까지", minImportance: 4 },
+  { label: "3시간", desc: "★3 이상 — 자주 출제되는 것까지", minImportance: 3 },
 ];
 
 export default function CramPage() {

@@ -20,7 +20,7 @@ import {
   ProgressBar,
 } from "@/components/ui";
 
-type Filter = "all" | "todo" | "must" | "done";
+type Filter = "all" | "todo" | "must" | "high" | "done";
 
 export function EraDetail() {
   const params = useParams<{ era: string }>();
@@ -46,6 +46,7 @@ export function EraDetail() {
   const filtered = events.filter((e) => {
     if (filter === "todo") return !studied.has(e.id);
     if (filter === "must") return e.importance === 5;
+    if (filter === "high") return e.importance >= 4;
     if (filter === "done") return studied.has(e.id);
     return true;
   });
@@ -91,7 +92,8 @@ export function EraDetail() {
           [
             ["all", "전체"],
             ["todo", "미학습"],
-            ["must", "반드시 암기"],
+            ["must", "★5 반드시 암기"],
+            ["high", "★4 이상"],
             ["done", "완료"],
           ] as [Filter, string][]
         ).map(([key, label]) => (

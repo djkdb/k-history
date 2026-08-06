@@ -18,9 +18,9 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "환구단 사진이나 지계 자료를 제시하고 광무개혁 시기의 사실을 고르는 문제가 단골이다. 구본신참·양전 지계·원수부·대한국 국제가 정답 키워드로 출제되며, 갑오개혁이나 을미개혁의 내용(군국기무처, 단발령, 태양력)과 섞은 오답 선지를 걸러내야 한다. 연호 순서(건양→광무)를 묻는 문제도 나온다.",
     significance:
       "조선이 중국 중심 사대 질서에서 벗어나 황제국임을 선포한 사건으로, 자주 독립 의지를 대내외에 천명하고 근대 국가 수립을 시도한 마지막 개혁이었다.",
-    importance: 5,
-    examFrequency: 32,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 10,
+    mustMemorize: false,
     keywords: ["환구단", "연호 광무", "구본신참", "양전 사업·지계", "원수부", "대한국 국제"],
     memory: {
       story:
@@ -74,9 +74,9 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "독립문 사진이나 독립신문 자료를 주고 이 단체의 활동을 고르는 유형이 반복 출제된다. 정답 선지는 만민공동회 개최, 러시아 절영도 조차 저지, 헌의 6조 결의, 중추원 개편 의회 설립 운동이다. 독립문은 영은문 자리에 세웠다는 점, 해산 배경이 황국협회 보부상 동원이라는 점이 세부 포인트로 나온다.",
     significance:
       "민중이 스스로 정치에 참여한 최초의 근대적 민권 운동이자 의회 설립을 시도한 선구적 사건으로, 이후 애국계몽운동으로 계승되었다.",
-    importance: 5,
-    examFrequency: 30,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 10,
+    mustMemorize: false,
     keywords: ["서재필", "독립문", "만민공동회", "헌의 6조", "중추원 관제", "황국협회"],
     memory: {
       story:
@@ -131,9 +131,9 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "조약 원문이나 시일야방성대곡 자료를 제시하고 이 조약의 결과 또는 저항을 묻는 유형이 매년 나온다. 정답 키워드는 외교권 박탈·통감부 설치이며, 1904년 한일의정서·제1차 한일협약(고문 정치), 1907년 정미 7조약(군대 해산)과의 순서 배열 문제가 최다 빈출이다. 헤이그 특사 파견이 을사늑약에 대한 저항이자 고종 퇴위의 계기라는 인과도 자주 출제된다.",
     significance:
       "외교권을 빼앗겨 국제 사회에서 국가로서의 지위를 상실한 사건으로, 이후 항일 의병과 애국계몽운동 등 전 민족적 국권 수호 운동을 촉발했다.",
-    importance: 5,
-    examFrequency: 38,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 12,
+    mustMemorize: false,
     keywords: ["외교권 박탈", "통감부", "이토 히로부미", "을사오적", "시일야방성대곡", "헤이그 특사"],
     memory: {
       story:
@@ -188,9 +188,9 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "신민회는 비밀 결사·공화정 지향·오산학교와 대성학교·태극서관·105인 사건 해산이 정답 선지로 출제되며, 특히 다른 계몽 단체와 달리 공화정을 지향했다는 점을 묻는다. 국채보상운동은 1907년 대구에서 시작·서상돈·대한매일신보 지원·통감부 탄압이 핵심이고, 1920년대 물산장려운동과 구분하는 문제가 최다 빈출이다.",
     significance:
       "교육·산업·언론을 통한 실력 양성 노선과 전 국민적 경제 구국 운동의 출발점으로, 국외 독립운동 기지 건설과 이후 민족 운동의 인적 토대를 마련했다.",
-    importance: 4,
-    examFrequency: 27,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["신민회", "안창호·양기탁", "오산학교·대성학교", "태극서관", "서상돈", "대한매일신보"],
     memory: {
       story:
@@ -245,9 +245,9 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "세 차례 의병의 계기와 특징을 짝짓는 문제가 매년 출제된다. 을미의병은 을미사변·단발령과 유생 주도, 을사의병은 최익현·신돌석(평민 의병장 등장), 정미의병은 군대 해산·해산 군인 합류·13도 창의군 서울 진공 작전이 각각의 정답 키워드다. 순서 배열 문제와 함께, 13도 창의군이 각국 영사관에 교전 단체 승인을 요구한 사실도 심화 선지로 나온다.",
     significance:
       "유생에서 평민·군인까지 전 계층이 무장 투쟁으로 국권 수호에 나선 구국 운동으로, 만주·연해주 독립군과 무장 독립 전쟁의 원류가 되었다.",
-    importance: 5,
-    examFrequency: 29,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["을미의병", "최익현", "신돌석", "정미의병", "13도 창의군", "서울 진공 작전"],
     memory: {
       story:
@@ -302,9 +302,9 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "국권 피탈 과정의 순서 배열이 최다 빈출이다. 을사늑약(1905, 외교)→정미 7조약(1907, 군대 해산)→기유각서(1909, 사법권)→경찰권 박탈·한일병합(1910) 순서를 반드시 암기해야 한다. 안중근은 하얼빈역 이토 사살·뤼순 감옥·동양평화론이 정답 키워드이며, 장인환·전명운의 스티븐스 사살(1908)이나 이재명의 이완용 습격(1909)과 바꿔 낸 오답 선지를 구분해야 한다.",
     significance:
       "500년 조선 왕조와 대한제국이 막을 내리고 국권을 상실한 민족사 최대의 비극이자, 이후 모든 독립운동이 국권 회복이라는 하나의 목표로 수렴하게 된 출발점이다.",
-    importance: 4,
-    examFrequency: 26,
-    mustMemorize: true,
+    importance: 2,
+    examFrequency: 4,
+    mustMemorize: false,
     keywords: ["안중근", "하얼빈", "기유각서", "한일병합조약", "경술국치", "동양평화론"],
     memory: {
       story:

@@ -17,9 +17,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "발해의 '고구려 계승 의식' 근거(일본에 보낸 국서의 고려 국왕 칭호, 온돌, 굴식 돌방무덤, 이불병좌상 등)를 고르는 문제가 단골. 대조영·동모산·천문령 전투 키워드를 제시하고 발해에 대한 설명으로 옳은 것을 고르게 한다.",
     significance:
       "고구려 멸망 후 그 땅과 사람과 문화를 이어받은 국가가 다시 세워지며 남북국 시대가 시작되었다. 발해사를 우리 역사로 자리매김하는 근거가 되는 사건이다.",
-    importance: 5,
-    examFrequency: 38,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 11,
+    mustMemorize: false,
     keywords: ["대조영", "동모산", "천문령 전투", "고구려 계승", "남북국 시대", "말갈족"],
     memory: {
       story:
@@ -67,7 +67,7 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
     significance:
       "통일 이후 신라 중대 전제 왕권의 기틀을 완성한 개혁. 왕권-귀족 관계와 토지 제도 변천사의 기준점이 된다.",
     importance: 5,
-    examFrequency: 45,
+    examFrequency: 13,
     mustMemorize: true,
     keywords: ["김흠돌의 난", "국학", "관료전", "녹읍 폐지", "9주 5소경", "만파식적"],
     memory: {
@@ -115,9 +115,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "원효(일심·화쟁·무애가·아미타 신앙·대승기신론소)와 의상(화엄·부석사·화엄일승법계도·관음 신앙)의 업적을 서로 바꿔 내는 문제가 단골. '해골물' 일화나 저서 제목을 제시하고 인물을 고르게 한다.",
     significance:
       "왕실·귀족의 전유물이던 불교가 민중 종교로 확산되었고, 통일 직후 사회 통합의 사상적 기반이 되었다.",
-    importance: 4,
-    examFrequency: 30,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["원효", "일심 사상", "아미타 신앙", "의상", "화엄종", "부석사"],
     memory: {
       story:
@@ -161,9 +161,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "무왕(인안·장문휴 등주 공격)과 문왕(대흥·3성 6부·상경 천도·신라도)의 업적 매칭 문제가 핵심. '독자 연호 사용=당과 대등 의식'이라는 의미를 묻고, 3성 6부가 당 제도를 수용하되 독자적으로 운영된 점을 선지로 낸다.",
     significance:
       "무왕의 강경책으로 생존을 확보하고 문왕의 정비로 국가 체제를 완성해, 발해가 동북아 강국으로 도약하는 기반을 만들었다.",
-    importance: 4,
-    examFrequency: 26,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 7,
+    mustMemorize: false,
     keywords: ["무왕", "인안", "장문휴", "문왕", "대흥", "3성 6부", "상경 천도"],
     memory: {
       story:
@@ -211,9 +211,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "청해진(완도)·법화원·해상 무역 장악이 핵심 키워드. 신라 하대 지방 세력 성장의 사례로 출제되며, '완도'라는 위치와 '흥덕왕 대 설치'를 바꿔 내는 선지에 주의.",
     significance:
       "국가가 아닌 개인이 동아시아 무역망을 장악한 신라 하대의 상징적 사건으로, 중앙의 통제력 약화와 지방(호족) 세력 성장의 신호탄이었다.",
-    importance: 4,
-    examFrequency: 22,
-    mustMemorize: true,
+    importance: 2,
+    examFrequency: 4,
+    mustMemorize: false,
     keywords: ["장보고", "청해진", "완도", "법화원", "해상 무역", "신라 하대"],
     memory: {
       story:
@@ -257,9 +257,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "'해동성국'과 '5경 15부 62주'가 선왕의 시그니처 키워드. 발해 지도(최대 영토)를 제시하고 이 시기 사실을 고르게 하거나, 통일신라 9주 5소경과 숫자를 교차시켜 함정을 판다. 멸망(926, 거란)과 대광현의 고려 망명도 세트로 출제.",
     significance:
       "발해가 고구려 옛 영토를 사실상 회복하며 동북아 강국의 위상을 입증한 전성기. '해동성국'이라는 타칭 자체가 국제적 인정의 증거다.",
-    importance: 4,
-    examFrequency: 24,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 8,
+    mustMemorize: false,
     keywords: ["선왕", "해동성국", "5경 15부 62주", "최대 영토", "거란", "대광현"],
     memory: {
       story:
@@ -303,9 +303,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "신라 하대의 특징(왕위 쟁탈전·원종과 애노의 난·호족·6두품 최치원 시무 10여 조·선종 9산·풍수지리설)을 종합적으로 묻는다. '신라 하대의 사실로 옳은 것' 유형에서 상대(중대)의 사실(녹읍 폐지 등)을 섞어 낸다.",
     significance:
       "골품제 중심 고대 사회의 해체와 중세로의 이행을 보여주는 전환기. 호족·6두품·선종은 그대로 고려 건국의 3대 기반이 된다.",
-    importance: 5,
-    examFrequency: 34,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 9,
+    mustMemorize: false,
     keywords: ["원종과 애노의 난", "호족", "6두품", "최치원", "선종 9산", "풍수지리설"],
     memory: {
       story:
@@ -352,9 +352,9 @@ export const NORTH_SOUTH_EVENTS: HistoryEvent[] = [
       "견훤(완산주·후백제·900)과 궁예(송악·후고구려·901·마진/태봉·철원 천도·광평성·미륵 신앙)의 키워드 매칭이 핵심. 두 인물의 행적을 서로 바꾸거나, 왕건의 고려 건국(918)과 시점을 섞어 순서를 묻는다.",
     significance:
       "신라 중심 질서가 완전히 해체되고 새 통일 왕조를 향한 경쟁이 시작되었다. 후삼국의 승자가 고려가 되면서 중세 사회로의 문이 열린다.",
-    importance: 4,
-    examFrequency: 28,
-    mustMemorize: true,
+    importance: 3,
+    examFrequency: 7,
+    mustMemorize: false,
     keywords: ["견훤", "후백제", "완산주", "궁예", "후고구려", "태봉", "철원"],
     memory: {
       story:
