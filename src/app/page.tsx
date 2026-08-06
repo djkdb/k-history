@@ -43,6 +43,7 @@ import {
   SectionTitle,
   StatCard,
 } from "@/components/ui";
+import { InstallPrompt } from "@/components/install-guide";
 
 
 function Skeleton() {
@@ -144,6 +145,9 @@ export default function DashboardPage() {
 
   return (
     <div className="pt-6">
+      {/* 학습을 시작한 뒤 한 번만 뜨는 홈 화면 추가 안내 */}
+      <InstallPrompt />
+
       {/* 헤더 */}
       <motion.header
         initial={{ opacity: 0, y: -8 }}
