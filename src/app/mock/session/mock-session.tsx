@@ -101,6 +101,69 @@ function PageViewer({
   );
 }
 
+/** 시험지와 답안의 너비를 기억해 둔다 — 사람마다 편한 비율이 다르다 */
+const SPLIT_KEY = "khlm:exam-split";
+const MIN_RIGHT = 200; // 선택지 글이 읽히는 최소 폭
+const MIN_LEFT = 340; // 시험지가 알아볼 만한 최소 폭
+
+/**
+ * 두 단 사이의 드래그 손잡이.
+ *
+ * 시험지를 크게 보고 싶은 사람과 선택지를 편히 읽고 싶은 사람이 다르다.
+ * 좁은 화면에서는 애초에 한 단이라 손잡이도 숨긴다.
+ */
+function SplitHandle({
+  containerRef,
+  onWidth,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  onWidth: (w: number | null) => void;
+}) {
+  const [dragging, setDragging] = useState(false);
+
+  const move = (e: React.PointerEvent) => {
+    const el = containerRef.current;
+    if (!dragging || !el) return;
+    const r = el.getBoundingClientRect();
+    const max = Math.max(MIN_RIGHT, r.width - MIN_LEFT);
+    onWidth(Math.min(Math.max(Math.round(r.right - e.clientX), MIN_RIGHT), max));
+  };
+
+  const end = () => {
+    if (!dragging) return;
+    setDragging(false);
+    document.body.style.userSelect = "";
+  };
+
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="시험지와 답안의 너비 조절"
+      title="드래그해서 너비 조절 · 두 번 누르면 원래대로"
+      onPointerDown={(e) => {
+        e.preventDefault();
+        e.currentTarget.setPointerCapture(e.pointerId);
+        // 끄는 동안 시험지 글이 파랗게 잡히는 걸 막는다
+        document.body.style.userSelect = "none";
+        setDragging(true);
+      }}
+      onPointerMove={move}
+      onPointerUp={end}
+      onPointerCancel={end}
+      onDoubleClick={() => onWidth(null)}
+      className="hidden cursor-col-resize touch-none select-none self-stretch min-[820px]:flex min-[820px]:items-center min-[820px]:justify-center"
+    >
+      <span
+        className={cn(
+          "h-full w-[3px] rounded-full transition-colors",
+          dragging ? "bg-indigo-400" : "bg-white/10 hover:bg-white/30",
+        )}
+      />
+    </div>
+  );
+}
+
 /** 문항 본문 — 기출 시험지 캡처 이미지 또는 텍스트 */
 function QuestionBody({ q }: { q: MockExamQuestion }) {
   if (q.image) {
@@ -149,6 +212,8 @@ export function MockSession() {
   const [remain, setRemain] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [showAllExp, setShowAllExp] = useState(false);
+  const [splitW, setSplitW] = useState<number | null>(null); // 오른쪽 열 폭(px)
+  const splitRef = useRef<HTMLDivElement>(null);
   const [confirming, setConfirming] = useState(false);
   const [page, setPage] = useState(0); // 쪽 모드에서 보고 있는 시험지 쪽
   const startedAt = useRef(0);
@@ -188,6 +253,18 @@ export function MockSession() {
     setConfirming(false);
     setSubmitted(true);
   }, [exam, answers, score, total, recordMockAttempt]);
+
+  // 지난번에 맞춰 둔 너비를 되살린다
+  useEffect(() => {
+    const v = Number(localStorage.getItem(SPLIT_KEY));
+    if (v >= MIN_RIGHT) setSplitW(v);
+  }, []);
+
+  const changeWidth = useCallback((w: number | null) => {
+    setSplitW(w);
+    if (w === null) localStorage.removeItem(SPLIT_KEY);
+    else localStorage.setItem(SPLIT_KEY, String(w));
+  }, []);
 
   // 제한 시간 카운트다운 — 0이 되면 자동 제출
   useEffect(() => {
@@ -512,12 +589,19 @@ export function MockSession() {
 
       {/* 쪽 모드: 시험지를 넘겨 보며 OMR에 답한다 */}
       {pageMode ? (
-        <div className="min-[820px]:grid min-[820px]:grid-cols-[minmax(0,1fr)_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_300px] min-[820px]:items-start min-[820px]:gap-5 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-6">
+        <div ref={splitRef}
+          style={
+            splitW
+              ? { gridTemplateColumns: `minmax(0,1fr) 20px ${splitW}px` }
+              : undefined
+          }
+          className="min-[820px]:grid min-[820px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[820px]:items-start">
           <PageViewer
             pages={exam.pageImages!}
             page={page}
             onPage={setPage}
           />
+          <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
           <div className="min-[820px]:sticky min-[820px]:top-20">
           {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
           <div className="mb-2 mt-5 flex items-baseline justify-between min-[820px]:mt-0">
@@ -590,7 +674,13 @@ export function MockSession() {
           </div>
         </div>
       ) : (
-        <div className="min-[820px]:grid min-[820px]:grid-cols-[minmax(0,1fr)_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_300px] min-[820px]:items-start min-[820px]:gap-5 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-6">
+        <div ref={splitRef}
+          style={
+            splitW
+              ? { gridTemplateColumns: `minmax(0,1fr) 20px ${splitW}px` }
+              : undefined
+          }
+          className="min-[820px]:grid min-[820px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[820px]:items-start">
       {/* 문항 */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -631,6 +721,8 @@ export function MockSession() {
           <QuestionBody q={q} />
         </motion.div>
       </AnimatePresence>
+
+      <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
 
       {/* 오른쪽 열: 답안 · 이동 — 데스크톱에서는 스크롤을 따라온다 */}
       <div className="min-[820px]:sticky min-[820px]:top-20">
