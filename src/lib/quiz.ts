@@ -38,6 +38,86 @@ function qid(eventId: string, type: QuizType): string {
   return `${eventId}-${type}-${uid}`;
 }
 
+// ─── 연도 표기 → 실제 기간 ──────────────────────────────────────────
+// "1920년대"는 1920~1929년을 뜻하므로 1920년의 사건에도 참이다.
+// 거짓 명제를 만들 때 이런 포함 관계를 놓치면 정답이 뒤집힌다.
+// 파싱할 수 없는 표기는 null을 돌려 오답 보기에서 제외한다.
+function yearSpan(display: string): [number, number] | null {
+  const d = display.trim();
+  const bc = d.startsWith("기원전");
+  const nums = [...d.matchAll(/\d+/g)].map((m) => Number(m[0]));
+  const sign = bc ? -1 : 1;
+
+  // 약 70만 년 전 — 구석기
+  if (/약\s*\d+만\s*년\s*전/.test(d)) {
+    const man = nums[0] ?? 70;
+    return [-man * 10000, -Math.round((man * 10000) / 2)];
+  }
+  if (/기원\s*전후/.test(d)) return [-50, 50];
+
+  // N~M세기 / N세기 (후반·말·경·초 포함)
+  if (/세기/.test(d)) {
+    const centuryRange = (c: number): [number, number] =>
+      bc ? [-c * 100, -((c - 1) * 100 + 1)] : [(c - 1) * 100 + 1, c * 100];
+    if (nums.length >= 2 && /\d+\s*~\s*\d+\s*세기/.test(d)) {
+      const [a] = centuryRange(nums[0]);
+      const [, b] = centuryRange(nums[1]);
+      return bc ? [a, b] : [a, b];
+    }
+    const c = nums[0];
+    if (!c) return null;
+    const [lo, hi] = centuryRange(c);
+    if (/후반|말/.test(d)) return bc ? [lo, Math.round((lo + hi) / 2)] : [Math.round((lo + hi) / 2), hi];
+    if (/전반|초/.test(d)) return bc ? [Math.round((lo + hi) / 2), hi] : [lo, Math.round((lo + hi) / 2)];
+    return [lo, hi];
+  }
+
+  // N년대 (이후)
+  if (/년대/.test(d)) {
+    const y = nums[0];
+    if (y === undefined) return null;
+    return /이후/.test(d) ? [y, y + 19] : [y, y + 9];
+  }
+
+  // N~M년 / N년~M년 / N년·M년
+  if (nums.length >= 2) {
+    const a = sign * nums[0];
+    const b = sign * nums[1];
+    return [Math.min(a, b), Math.max(a, b)];
+  }
+
+  // N년 (경)
+  if (nums.length === 1) {
+    const y = sign * nums[0];
+    // "기원전 8000년경"처럼 대략적인 표기는 여유를 준다
+    const slack = /경/.test(d) ? Math.max(50, Math.abs(y) * 0.02) : 0;
+    return [y - slack, y + slack];
+  }
+  return null;
+}
+
+function spansOverlap(a: [number, number], b: [number, number]): boolean {
+  return a[0] <= b[1] && b[0] <= a[1];
+}
+
+/**
+ * "이 사건은 {other}의 일이다"를 확실한 거짓으로 쓸 수 있는가.
+ * 두 기간이 조금이라도 겹치면 참일 수 있으므로 쓰지 않는다.
+ */
+function isSafeWrongYear(event: HistoryEvent, otherDisplay: string): boolean {
+  if (otherDisplay === event.yearDisplay) return false;
+  const mine = yearSpan(event.yearDisplay);
+  const theirs = yearSpan(otherDisplay);
+  if (!mine || !theirs) return false;
+  return !spansOverlap(mine, theirs);
+}
+
+/** 왕 표기가 서로를 포함하면(예: "문왕" ⊂ "무왕·문왕") 거짓이 아닐 수 있다 */
+function isSafeWrongKing(myKing: string, otherKing: string): boolean {
+  if (myKing === otherKing) return false;
+  return !myKing.includes(otherKing) && !otherKing.includes(myKing);
+}
+
 /** 정답 1개 + 오답 후보에서 3개 → 셔플된 options와 answerIndex 반환 */
 function buildOptions(
   answer: string,
@@ -107,8 +187,11 @@ function makeOX(
     };
   }
   // 거짓 명제: 다른 이벤트의 왕 또는 연도를 섞는다 (오답 요소는 몰라도 풀린다)
-  const pool = nearestOthers(event, all, 8);
-  const wrongKing = pool.find((e) => e.king && e.king !== event.king)?.king;
+  // 단, 바꿔 넣은 값이 실제로도 참이 되어 버리면 안 된다.
+  const pool = nearestOthers(event, all, 12);
+  const wrongKing = event.king
+    ? pool.find((e) => e.king && isSafeWrongKing(event.king!, e.king))?.king
+    : undefined;
   if (event.king && wrongKing) {
     return {
       id: qid(event.id, "ox"),
@@ -122,10 +205,23 @@ function makeOX(
       importance: event.importance,
     };
   }
-  const wrongYear = pool.find(
-    (e) => e.yearDisplay !== event.yearDisplay,
+  const wrongYear = pool.find((e) =>
+    isSafeWrongYear(event, e.yearDisplay),
   )?.yearDisplay;
-  if (!wrongYear) return null;
+  // 안전한 거짓 연도를 못 찾으면 참 명제로 대체한다 (틀린 정답을 내느니 낫다)
+  if (!wrongYear) {
+    return {
+      id: qid(event.id, "ox"),
+      type: "ox",
+      eventId: event.id,
+      era: event.era,
+      question: `[O/X] ${event.summary10s}`,
+      options: ["O", "X"],
+      answerIndex: 0,
+      explanation: `옳은 설명입니다. ${event.examPoint}`,
+      importance: event.importance,
+    };
+  }
   return {
     id: qid(event.id, "ox"),
     type: "ox",

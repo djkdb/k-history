@@ -44,8 +44,16 @@ export function importanceStars(n: number): string {
 
 // ─── 출제 중요도 5단계 ──────────────────────────────────────────────
 // 한국사능력검정시험 심화 출제 경향 기준.
-// examFrequency는 "최근 20회 중 출제된 횟수"를 뜻한다.
-//   ★5 14회 이상(거의 매회) · ★4 9~13회 · ★3 5~8회 · ★2 3~4회 · ★1 2회 이하
+// examFrequency는 "최근 20회 중 출제된 횟수"를 뜻하고, 등급은 여기서 파생된다.
+
+/** 출제 빈도 → 중요도 등급. 데이터의 importance는 이 규칙으로 산출된 값이다. */
+export function gradeFromFrequency(freq: number): 1 | 2 | 3 | 4 | 5 {
+  if (freq >= 14) return 5; // 거의 매회
+  if (freq >= 10) return 4; // 2회 중 1회꼴
+  if (freq >= 7) return 3; // 3회 중 1회꼴
+  if (freq >= 3) return 2; // 가끔
+  return 1; // 드물게
+}
 
 /** 중요도 → 색상 클래스 (빨강=반드시, 주황=매우, 노랑=자주, 초록=알아두기, 회색=참고) */
 export function importanceColor(n: number): string {
@@ -75,8 +83,8 @@ export function importanceLabel(n: number): string {
 /** 출제 빈도(최근 20회 중 N회) → 사람이 읽는 문구 */
 export function frequencyLabel(freq: number): string {
   if (freq >= 14) return "거의 매회 출제";
-  if (freq >= 9) return "2회 중 1회꼴 출제";
-  if (freq >= 5) return "3회 중 1회꼴 출제";
+  if (freq >= 10) return "2회 중 1회꼴 출제";
+  if (freq >= 7) return "3회 중 1회꼴 출제";
   if (freq >= 3) return "가끔 출제";
   return "드물게 출제";
 }

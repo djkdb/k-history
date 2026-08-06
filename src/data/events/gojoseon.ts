@@ -17,8 +17,8 @@ export const GOJOSEON_EVENTS: HistoryEvent[] = [
       "『삼국유사』·『제왕운기』에 단군 건국 이야기가 실렸다는 사료 문제, 단군왕검 칭호에서 제정일치 사회를 추론하는 문제, 비파형 동검·탁자식 고인돌로 고조선의 문화 범위를 묻는 지도 문제가 단골로 출제된다. 특히 『삼국사기』에는 단군 신화가 없다는 점을 이용한 오답 선지가 자주 나온다.",
     significance:
       "우리 역사상 최초의 국가 성립이자 민족 공동체 의식의 뿌리. 홍익인간 이념은 오늘날 대한민국 교육 이념으로 계승되었다.",
-    importance: 3,
-    examFrequency: 7,
+    importance: 2,
+    examFrequency: 6,
     mustMemorize: false,
     keywords: ["단군왕검", "홍익인간", "제정일치", "삼국유사", "비파형 동검", "탁자식 고인돌"],
     memory: {
@@ -71,9 +71,9 @@ export const GOJOSEON_EVENTS: HistoryEvent[] = [
       "8조법 3개 조항의 사료를 제시하고 당시 사회 모습(계급 사회·사유재산·노비·화폐 사용·농경)을 고르게 하는 유형이 압도적으로 많다. 출전이 『한서』 지리지라는 점, 현재 3개 조항만 전한다는 점, 한 군현 설치 후 60여 조로 증가했다는 점이 선지로 반복 출제된다.",
     significance:
       "고조선이 법으로 통치되는 계급 사회였음을 보여 주는 결정적 자료로, 우리 역사 최초의 성문 법 전통을 증언한다.",
-    importance: 5,
-    examFrequency: 13,
-    mustMemorize: true,
+    importance: 4,
+    examFrequency: 10,
+    mustMemorize: false,
     keywords: ["범금 8조", "한서 지리지", "사유재산", "노비", "50만 전", "계급 사회"],
     memory: {
       story:
@@ -128,7 +128,7 @@ export const GOJOSEON_EVENTS: HistoryEvent[] = [
     significance:
       "고조선이 철기 문화를 기반으로 정복 국가로 성장하고 동북아 중계 무역의 허브가 된 전환점. 토착 세력과 유이민 세력이 결합한 연합 정권의 성격을 보여 준다.",
     importance: 2,
-    examFrequency: 4,
+    examFrequency: 3,
     mustMemorize: false,
     keywords: ["위만", "기원전 194년", "준왕", "철기 수용", "중계 무역", "왕검성"],
     memory: {

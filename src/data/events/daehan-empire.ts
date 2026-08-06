@@ -18,8 +18,8 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "환구단 사진이나 지계 자료를 제시하고 광무개혁 시기의 사실을 고르는 문제가 단골이다. 구본신참·양전 지계·원수부·대한국 국제가 정답 키워드로 출제되며, 갑오개혁이나 을미개혁의 내용(군국기무처, 단발령, 태양력)과 섞은 오답 선지를 걸러내야 한다. 연호 순서(건양→광무)를 묻는 문제도 나온다.",
     significance:
       "조선이 중국 중심 사대 질서에서 벗어나 황제국임을 선포한 사건으로, 자주 독립 의지를 대내외에 천명하고 근대 국가 수립을 시도한 마지막 개혁이었다.",
-    importance: 4,
-    examFrequency: 10,
+    importance: 3,
+    examFrequency: 9,
     mustMemorize: false,
     keywords: ["환구단", "연호 광무", "구본신참", "양전 사업·지계", "원수부", "대한국 국제"],
     memory: {
@@ -74,8 +74,8 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
       "독립문 사진이나 독립신문 자료를 주고 이 단체의 활동을 고르는 유형이 반복 출제된다. 정답 선지는 만민공동회 개최, 러시아 절영도 조차 저지, 헌의 6조 결의, 중추원 개편 의회 설립 운동이다. 독립문은 영은문 자리에 세웠다는 점, 해산 배경이 황국협회 보부상 동원이라는 점이 세부 포인트로 나온다.",
     significance:
       "민중이 스스로 정치에 참여한 최초의 근대적 민권 운동이자 의회 설립을 시도한 선구적 사건으로, 이후 애국계몽운동으로 계승되었다.",
-    importance: 4,
-    examFrequency: 10,
+    importance: 3,
+    examFrequency: 9,
     mustMemorize: false,
     keywords: ["서재필", "독립문", "만민공동회", "헌의 6조", "중추원 관제", "황국협회"],
     memory: {
@@ -132,7 +132,7 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
     significance:
       "외교권을 빼앗겨 국제 사회에서 국가로서의 지위를 상실한 사건으로, 이후 항일 의병과 애국계몽운동 등 전 민족적 국권 수호 운동을 촉발했다.",
     importance: 4,
-    examFrequency: 12,
+    examFrequency: 11,
     mustMemorize: false,
     keywords: ["외교권 박탈", "통감부", "이토 히로부미", "을사오적", "시일야방성대곡", "헤이그 특사"],
     memory: {
@@ -189,7 +189,7 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
     significance:
       "교육·산업·언론을 통한 실력 양성 노선과 전 국민적 경제 구국 운동의 출발점으로, 국외 독립운동 기지 건설과 이후 민족 운동의 인적 토대를 마련했다.",
     importance: 3,
-    examFrequency: 8,
+    examFrequency: 7,
     mustMemorize: false,
     keywords: ["신민회", "안창호·양기탁", "오산학교·대성학교", "태극서관", "서상돈", "대한매일신보"],
     memory: {
@@ -246,7 +246,7 @@ export const DAEHAN_EMPIRE_EVENTS: HistoryEvent[] = [
     significance:
       "유생에서 평민·군인까지 전 계층이 무장 투쟁으로 국권 수호에 나선 구국 운동으로, 만주·연해주 독립군과 무장 독립 전쟁의 원류가 되었다.",
     importance: 3,
-    examFrequency: 8,
+    examFrequency: 7,
     mustMemorize: false,
     keywords: ["을미의병", "최익현", "신돌석", "정미의병", "13도 창의군", "서울 진공 작전"],
     memory: {

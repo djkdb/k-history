@@ -19,7 +19,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "세도 정치를 끝내고 국가 기강을 다시 세운 마지막 전통적 개혁이었으나, 대외적으로는 통상 수교 거부로 이어져 근대화의 갈림길에서 문을 닫는 선택의 출발점이 되었다.",
     importance: 5,
-    examFrequency: 14,
+    examFrequency: 16,
     mustMemorize: true,
     keywords: ["서원 철폐", "경복궁 중건", "당백전", "호포제", "사창제", "비변사 혁파"],
     memory: {
@@ -74,8 +74,8 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
       "병인양요와 신미양요를 뒤섞는 문제가 핵심 유형이다. '프랑스-병인박해-외규장각 의궤-양헌수·한성근'과 '미국-제너럴셔먼호-어재연-광성보-수자기' 조합을 정확히 매칭시켜야 한다. 제너럴셔먼호 사건(1866)→오페르트 도굴(1868)→신미양요(1871)→척화비 순서 배열 문제와, 외규장각 의궤의 프랑스 반환(2011) 관련 사료 문제도 출제된다.",
     significance:
       "서양 열강의 침략을 두 차례 격퇴하며 통상 수교 거부 정책이 강화되었으나, 결과적으로 근대 문물 수용이 늦어져 이후 준비 없는 개항을 맞게 되는 배경이 되었다.",
-    importance: 4,
-    examFrequency: 10,
+    importance: 3,
+    examFrequency: 9,
     mustMemorize: false,
     keywords: ["병인박해", "외규장각 의궤", "양헌수", "제너럴셔먼호", "어재연", "척화비"],
     memory: {
@@ -131,9 +131,9 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
       "'최초의 근대적 조약이자 불평등 조약'이라는 성격 규정, 그리고 조항 사료 제시 후 조약 이름 맞추기가 대표 유형이다. '조선국은 자주의 나라'(청 종주권 부정 의도), 해안 측량권, 영사 재판권 조항이 사료로 출제된다. 개항장 3곳(부산→원산→인천 순서), 운요호 사건이 배경이라는 점, 조미 수호 통상 조약(최혜국 대우·거중 조정)과의 구분이 필수다.",
     significance:
       "조선이 문호를 개방하고 세계 질서에 편입된 역사적 전환점이지만, 불평등 조약 체제의 시작으로 이후 열강과의 조약에서 연쇄적인 주권 침해를 낳았다.",
-    importance: 5,
+    importance: 4,
     examFrequency: 13,
-    mustMemorize: true,
+    mustMemorize: false,
     keywords: ["운요호 사건", "최초의 근대적 조약", "치외법권", "해안 측량권", "부산·원산·인천 개항"],
     memory: {
       story:
@@ -189,7 +189,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "근대 국가로 나아가려는 개화의 흐름과 전통 질서를 지키려는 척사의 흐름이 정면충돌한 시기로, 이 갈등 구도가 이후 개항기 정치 변동 전체를 규정했다.",
     importance: 3,
-    examFrequency: 8,
+    examFrequency: 7,
     mustMemorize: false,
     keywords: ["통리기무아문", "별기군", "영선사", "조사 시찰단", "조선책략", "영남 만인소"],
     memory: {
@@ -246,7 +246,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "개화 정책에 대한 최초의 대규모 반발로, 이를 진압한 청의 내정 간섭이 본격화되어 조선의 자주적 개화가 좌절되고 갑신정변의 원인이 되었다.",
     importance: 4,
-    examFrequency: 11,
+    examFrequency: 10,
     mustMemorize: false,
     keywords: ["구식 군인 차별", "별기군", "제물포 조약", "조청 상민 수륙 무역 장정", "청 내정 간섭"],
     memory: {
@@ -303,7 +303,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "근대 국가 수립을 목표로 한 최초의 위로부터의 정치 개혁 운동으로, 이후 갑오개혁과 독립 협회 활동으로 이어지는 근대화 운동의 선구가 되었으나 외세 의존이라는 뼈아픈 교훈도 남겼다.",
     importance: 4,
-    examFrequency: 12,
+    examFrequency: 11,
     mustMemorize: false,
     keywords: ["김옥균", "우정총국", "14개조 정강", "3일 천하", "톈진 조약", "급진 개화파"],
     memory: {
@@ -360,7 +360,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "반봉건·반외세를 내건 우리 역사상 최대 규모의 농민 운동으로, 아래로부터의 개혁 요구가 갑오개혁에 반영되었고 그 정신은 항일 의병과 3·1 운동으로 계승되었다.",
     importance: 5,
-    examFrequency: 13,
+    examFrequency: 15,
     mustMemorize: true,
     keywords: ["전봉준", "고부 봉기", "황토현", "전주 화약", "집강소", "우금치"],
     memory: {
@@ -417,7 +417,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "수백 년간 이어진 신분제를 법적으로 폐지하고 국가 체제를 근대적으로 재편한 대개혁으로, 위로부터의 개혁과 아래로부터의 요구가 만난 지점이지만 타율성 논란이라는 그림자도 함께 남겼다.",
     importance: 5,
-    examFrequency: 13,
+    examFrequency: 15,
     mustMemorize: true,
     keywords: ["군국기무처", "신분제 폐지", "과거제 폐지", "과부 재가 허용", "홍범 14조", "탁지아문"],
     memory: {
@@ -474,7 +474,7 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
     significance:
       "일본의 침략 본질이 국모 시해라는 극단적 형태로 드러난 사건으로, 반일 감정을 폭발시켜 최초의 대규모 항일 의병 운동을 낳았고 고종의 아관파천을 초래했다.",
     importance: 3,
-    examFrequency: 8,
+    examFrequency: 7,
     mustMemorize: false,
     keywords: ["명성황후 시해", "단발령", "태양력", "건양", "을미의병", "삼국 간섭"],
     memory: {
@@ -530,8 +530,8 @@ export const OPEN_PORT_EVENTS: HistoryEvent[] = [
       "'국왕이 러시아 공사관에 머물던 시기'를 제시하고 당시 상황(열강 이권 침탈, 독립신문 창간)을 고르는 유형이 대표적이다. 이권 침탈 매칭(러시아-삼림 채벌권, 미국-운산 금광·경인선, 일본-경부선)과 최혜국 대우가 이권 침탈의 법적 근거였다는 점이 핵심 선지다. 아관파천의 배경(을미사변)과 결과(대한제국 수립)를 잇는 순서 문제, 독립신문(1896)이 독립 협회 창립보다 먼저라는 세부 순서도 출제된다.",
     significance:
       "국왕이 외국 공사관에 피신한 초유의 사태로 국가 위신이 추락하고 열강의 이권 침탈이 본격화되었으나, 역설적으로 자주 독립에 대한 각성을 불러 독립 협회 운동과 대한제국 수립의 계기가 되었다.",
-    importance: 3,
-    examFrequency: 7,
+    importance: 2,
+    examFrequency: 5,
     mustMemorize: false,
     keywords: ["러시아 공사관", "이권 침탈", "최혜국 대우", "독립신문", "서재필"],
     memory: {
