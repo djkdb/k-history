@@ -30,13 +30,16 @@ export function reviewCard(
       nextDueAt: now + REVIEW_INTERVALS_DAYS[stage] * DAY_MS,
     };
   }
-  // 오답: 한 단계 후퇴, 12시간 뒤 재복습
+  // 오답: 한 단계 후퇴하고 곧바로 다시 복습 대상이 된다.
+  // 틀린 것을 몇 시간 뒤로 미루면 "복습 큐에 넣었다"는 말이 체감되지 않고,
+  // 지금 바로 다시 보고 싶은 마음도 갈 곳이 없다. 맞힐 때까지 남겨 둔다.
+  // (진행 중인 복습 세션은 시작 시점의 목록으로 돌아가므로 무한 반복은 없다)
   return {
     ...card,
     stage: Math.max(0, card.stage - 1),
     lastReviewedAt: now,
     lapses: card.lapses + 1,
-    nextDueAt: now + DAY_MS / 2,
+    nextDueAt: now,
   };
 }
 
