@@ -29,6 +29,7 @@ import {
   hnkGrade,
   levelFromXp,
   levelTitle,
+  QUIZ_TYPE_LABELS,
 } from "@/lib/utils";
 import {
   Badge,
@@ -41,15 +42,6 @@ import {
   StatCard,
 } from "@/components/ui";
 
-const TYPE_LABELS: Record<QuizType, string> = {
-  ox: "OX",
-  multiple: "객관식",
-  order: "순서 배열",
-  blank: "빈칸",
-  king: "왕 맞추기",
-  year: "연도 맞추기",
-  event: "사건 판별",
-};
 
 function Skeleton() {
   return (
@@ -349,7 +341,7 @@ export default function DashboardPage() {
               <span className="text-xs text-zinc-400">
                 취약 유형:{" "}
                 <Badge className="border-orange-500/30 bg-orange-500/10 text-orange-300">
-                  {TYPE_LABELS[weakType.t]} {Math.round(weakType.rate * 100)}%
+                  {QUIZ_TYPE_LABELS[weakType.t]} {Math.round(weakType.rate * 100)}%
                 </Badge>
               </span>
             </div>

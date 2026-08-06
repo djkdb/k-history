@@ -20,7 +20,7 @@ import {
   Users,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { getEvent } from "@/data/events";
+import { frequencyOf, getEvent, pastExamsOf } from "@/data/events";
 import { ERA_MAP } from "@/data/eras";
 import { InfographicView, infographicsFor } from "@/components/infographic";
 import { nextDueLabel } from "@/lib/srs";
@@ -108,6 +108,8 @@ export function EventDetail() {
   const prev = event.prevEventId ? getEvent(event.prevEventId) : undefined;
   const next = event.nextEventId ? getEvent(event.nextEventId) : undefined;
   const graphics = infographicsFor(event);
+  const freq = frequencyOf(event);
+  const exams = pastExamsOf(event.id);
 
   const complete = () => {
     markStudied(event.id);
@@ -139,9 +141,28 @@ export function EventDetail() {
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {event.king && <Badge>👑 {event.king}</Badge>}
           <ImportanceBadge importance={event.importance} />
-          <Badge title="한국사능력검정시험 심화 최근 20회 기준">
-            최근 20회 중 {event.examFrequency}회 · {frequencyLabel(event.examFrequency)}
+          <Badge
+            title={
+              freq.source === "measured"
+                ? "등록된 기출 데이터를 집계한 실측값입니다"
+                : "기출 데이터가 아직 등록되지 않아 출제 경향에 근거한 추정값입니다"
+            }
+          >
+            {freq.source === "estimated" && (
+              <span className="text-zinc-500">추정 ·</span>
+            )}
+            최근 {freq.base}회 중 {freq.count}회 · {frequencyLabel(freq.count)}
           </Badge>
+          {exams.length > 0 &&
+            exams.slice(0, 3).map((r) => (
+              <Badge
+                key={`${r.round}-${r.number}`}
+                className="border-amber-400/30 bg-amber-500/10 text-amber-300"
+              >
+                {r.round}회 {r.level === "advanced" ? "심화" : "기본"}{" "}
+                {r.number}번
+              </Badge>
+            ))}
         </div>
       </motion.div>
 

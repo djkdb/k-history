@@ -80,6 +80,19 @@ export function importanceLabel(n: number): string {
   return "참고";
 }
 
+/** 퀴즈 유형 한글 라벨 (화면 전체에서 공유) */
+export const QUIZ_TYPE_LABELS: Record<import("./types").QuizType, string> = {
+  ox: "OX",
+  multiple: "객관식",
+  order: "순서 배열",
+  blank: "빈칸",
+  king: "왕 맞추기",
+  year: "연도 맞추기",
+  event: "사건 판별",
+  negative: "옳지 않은 것",
+  source: "사료 제시형",
+};
+
 /** 출제 빈도(최근 20회 중 N회) → 사람이 읽는 문구 */
 export function frequencyLabel(freq: number): string {
   if (freq >= 14) return "거의 매회 출제";

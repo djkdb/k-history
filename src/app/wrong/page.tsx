@@ -8,7 +8,7 @@ import type { EraId, QuizType } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { getEvent } from "@/data/events";
 import { ERAS, ERA_MAP } from "@/data/eras";
-import { cn } from "@/lib/utils";
+import { cn, QUIZ_TYPE_LABELS } from "@/lib/utils";
 import {
   Badge,
   Button,
@@ -20,15 +20,6 @@ import {
   SectionTitle,
 } from "@/components/ui";
 
-const TYPE_LABELS: Record<QuizType, string> = {
-  ox: "OX",
-  multiple: "객관식",
-  order: "순서 배열",
-  blank: "빈칸",
-  king: "왕 맞추기",
-  year: "연도 맞추기",
-  event: "사건 판별",
-};
 
 export default function WrongNotePage() {
   const hydrated = useApp((s) => s.hydrated);
@@ -51,7 +42,7 @@ export default function WrongNotePage() {
           return {
             event,
             wrongCount: wrongs.length,
-            lastType: last ? TYPE_LABELS[last.type] : null,
+            lastType: last ? QUIZ_TYPE_LABELS[last.type] : null,
           };
         })
         .filter((e): e is NonNullable<typeof e> => !!e),
@@ -223,7 +214,7 @@ export default function WrongNotePage() {
                 <Card>
                   <p className="text-xs text-zinc-500">가장 많이 틀린 유형</p>
                   <p className="mt-1 text-sm font-bold">
-                    {TYPE_LABELS[stats.topType[0]]}
+                    {QUIZ_TYPE_LABELS[stats.topType[0]]}
                   </p>
                   <Badge className="mt-1">{stats.topType[1]}회</Badge>
                 </Card>

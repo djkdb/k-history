@@ -1,4 +1,14 @@
-import type { EraId, HistoryEvent } from "@/lib/types";
+import type {
+  EraId,
+  FrequencySource,
+  HistoryEvent,
+  PastExamRef,
+} from "@/lib/types";
+import {
+  ESTIMATE_BASE_ROUNDS,
+  MEASURED_ROUNDS,
+  PAST_EXAMS,
+} from "../past-exams";
 import { PREHISTORIC_EVENTS } from "./prehistoric";
 import { GOJOSEON_EVENTS } from "./gojoseon";
 import { PROTO_THREE_EVENTS } from "./proto-three";
@@ -34,6 +44,32 @@ export const EVENT_MAP: Map<string, HistoryEvent> = new Map(
 
 export function getEvent(id: string): HistoryEvent | undefined {
   return EVENT_MAP.get(id);
+}
+
+/** 이 개념의 확인된 기출 이력 (없으면 빈 배열) */
+export function pastExamsOf(eventId: string): PastExamRef[] {
+  return PAST_EXAMS[eventId] ?? [];
+}
+
+/**
+ * 출제 빈도와 그 근거.
+ * 기출 데이터가 등록돼 있으면 실측값을, 없으면 데이터의 추정값을 쓴다.
+ * UI는 이 구분을 그대로 사용자에게 보여 준다 — 추정을 실측처럼 보이게 하지 않는다.
+ */
+export function frequencyOf(event: HistoryEvent): {
+  count: number;
+  base: number;
+  source: FrequencySource;
+} {
+  const refs = pastExamsOf(event.id);
+  if (MEASURED_ROUNDS > 0 && refs.length > 0) {
+    return { count: refs.length, base: MEASURED_ROUNDS, source: "measured" };
+  }
+  return {
+    count: event.examFrequency,
+    base: ESTIMATE_BASE_ROUNDS,
+    source: "estimated",
+  };
 }
 
 export function eventsByEra(era: EraId): HistoryEvent[] {

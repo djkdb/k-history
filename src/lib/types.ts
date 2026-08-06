@@ -140,7 +140,17 @@ export type QuizType =
   | "blank" // 빈칸
   | "king" // 왕 맞추기
   | "year" // 연도 맞추기
-  | "event"; // 설명 보고 사건 맞추기
+  | "event" // 설명 보고 사건 맞추기
+  | "negative" // 옳지 않은 것 고르기 (부정형)
+  | "source"; // 사료 제시형
+
+/**
+ * 난이도.
+ *  basic  — 기초 다지기: 익숙한 개념, 오답이 다른 시대라 소거가 쉽다
+ *  real   — 실전: 같은 시대에서 오답을 뽑는다. 실제 시험 체감 난이도
+ *  hard   — 고난도: 인접 연도 오답, 부정형·사료형, 생소한 개념까지
+ */
+export type Difficulty = "basic" | "real" | "hard";
 
 export interface QuizQuestion {
   id: string;
@@ -154,7 +164,27 @@ export interface QuizQuestion {
   answerIndex: number | number[];
   explanation: string; // 해설 (오답 이유 포함)
   importance: Importance;
+  difficulty: Difficulty;
+  /** 사료·발문 등 문제 위에 따로 제시되는 지문 */
+  passage?: string;
+  /** 이 개념이 실제로 출제된 기출 (있을 때만 표시) */
+  pastExams?: PastExamRef[];
 }
+
+// ─── 기출 출처 ──────────────────────────────────────────────────────
+
+/** 실제 출제 이력. 회차·문항 번호를 확인할 수 있는 경우에만 채운다. */
+export interface PastExamRef {
+  round: number; // 회차 (예: 68)
+  level: "advanced" | "basic"; // 심화 / 기본
+  number: number; // 문항 번호
+  date?: string; // 시행일 yyyy-mm-dd
+}
+
+/** 출제 빈도 수치의 근거 */
+export type FrequencySource =
+  | "measured" // 기출 데이터를 집계한 실측값
+  | "estimated"; // 출제 경향에 근거한 추정값
 
 export interface QuizResult {
   questionId: string;

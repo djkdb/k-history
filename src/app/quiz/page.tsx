@@ -5,12 +5,17 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Check, ChevronRight, RotateCcw, X } from "lucide-react";
-import type { EraId, QuizQuestion, QuizType } from "@/lib/types";
+import type { Difficulty, EraId, QuizQuestion, QuizType } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS, eventsByEra, getEvent } from "@/data/events";
 import { ERAS, ERA_MAP } from "@/data/eras";
-import { generateQuiz, generateQuizForEvent } from "@/lib/quiz";
-import { cn } from "@/lib/utils";
+import {
+  DIFFICULTY_ORDER,
+  DIFFICULTY_PROFILES,
+  generateQuiz,
+  generateQuizForEvent,
+} from "@/lib/quiz";
+import { cn, QUIZ_TYPE_LABELS } from "@/lib/utils";
 import {
   Badge,
   Button,
@@ -22,16 +27,7 @@ import {
   SectionTitle,
 } from "@/components/ui";
 
-const TYPE_LABELS: Record<QuizType, string> = {
-  ox: "OX",
-  multiple: "객관식",
-  order: "순서 배열",
-  blank: "빈칸",
-  king: "왕 맞추기",
-  year: "연도 맞추기",
-  event: "사건 판별",
-};
-const ALL_TYPES = Object.keys(TYPE_LABELS) as QuizType[];
+const ALL_TYPES = Object.keys(QUIZ_TYPE_LABELS) as QuizType[];
 
 type Answered = { question: QuizQuestion; correct: boolean };
 
@@ -119,7 +115,7 @@ function QuizSession({
         m.set(w.question.type, (m.get(w.question.type) ?? 0) + 1),
       );
       const top = [...m.entries()].sort((a, b) => b[1] - a[1])[0];
-      return top && top[1] >= 2 ? TYPE_LABELS[top[0]] : null;
+      return top && top[1] >= 2 ? QUIZ_TYPE_LABELS[top[0]] : null;
     })();
 
     return (
@@ -235,12 +231,37 @@ function QuizSession({
           transition={{ duration: 0.22 }}
         >
           <Card>
-            <div className="mb-3 flex items-center gap-2">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
               <Badge className="border-indigo-400/30 bg-indigo-500/10 text-indigo-300">
-                {TYPE_LABELS[q.type]}
+                {QUIZ_TYPE_LABELS[q.type]}
               </Badge>
               <EraBadge eraId={q.era} />
+              <Badge
+                className={cn(
+                  q.difficulty === "hard" &&
+                    "border-red-400/30 bg-red-500/10 text-red-300",
+                  q.difficulty === "basic" &&
+                    "border-emerald-400/30 bg-emerald-500/10 text-emerald-300",
+                )}
+              >
+                {DIFFICULTY_PROFILES[q.difficulty].label}
+              </Badge>
+              {q.pastExams?.length ? (
+                <Badge className="border-amber-400/30 bg-amber-500/10 text-amber-300">
+                  기출 {q.pastExams[0].round}회{" "}
+                  {q.pastExams[0].level === "advanced" ? "심화" : "기본"}{" "}
+                  {q.pastExams[0].number}번
+                </Badge>
+              ) : null}
             </div>
+            {/* 사료·지문은 문제와 분리해 보여 준다 */}
+            {q.passage && (
+              <div className="mb-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                <p className="whitespace-pre-line text-[13px] leading-relaxed text-zinc-300">
+                  {q.passage}
+                </p>
+              </div>
+            )}
             <p className="whitespace-pre-line text-[15px] font-semibold leading-relaxed">
               {q.question}
             </p>
@@ -359,7 +380,11 @@ function QuizContent() {
     modeParam === "wrong" ? "wrong" : eraParam && ERA_MAP[eraParam] ? eraParam : "all",
   );
   const [count, setCount] = useState(10);
+  const [difficulty, setDifficulty] = useState<Difficulty>("real");
   const [types, setTypes] = useState<QuizType[]>(ALL_TYPES);
+
+  // 난이도를 바꾸면 그 난이도에서 낼 수 있는 유형만 남긴다
+  const availableTypes = DIFFICULTY_PROFILES[difficulty].types;
   const studiedEventIds = useApp((s) => s.studiedEventIds);
   const [session, setSession] = useState<QuizQuestion[] | null>(null);
 
@@ -409,8 +434,9 @@ function QuizContent() {
     const qs = generateQuiz({
       events,
       count,
-      types,
+      types: types.filter((t) => availableTypes.includes(t)),
       knownEventIds: studiedEventIds,
+      difficulty,
     });
     setSession(qs);
     setSessionKey((k) => k + 1);
@@ -425,8 +451,9 @@ function QuizContent() {
       const qs = generateQuiz({
         events,
         count: Math.min(count, events.length * 3),
-        types,
+        types: types.filter((t) => availableTypes.includes(t)),
         knownEventIds: studiedEventIds,
+        difficulty,
       });
       setSession(qs);
     } else {
@@ -483,6 +510,56 @@ function QuizContent() {
         ))}
       </div>
 
+      <SectionTitle>난이도</SectionTitle>
+      <div className="flex flex-col gap-2">
+        {DIFFICULTY_ORDER.map((d) => {
+          const p = DIFFICULTY_PROFILES[d];
+          const active = difficulty === d;
+          const accent =
+            d === "hard" ? "#ef4444" : d === "real" ? "#6366f1" : "#10b981";
+          return (
+            <button
+              key={d}
+              type="button"
+              onClick={() => {
+                setDifficulty(d);
+                setTypes(DIFFICULTY_PROFILES[d].types);
+              }}
+              className={cn(
+                "glass rounded-2xl p-3 text-left transition-all active:scale-[0.99]",
+                active && "ring-1",
+              )}
+              style={
+                active
+                  ? {
+                      background: `color-mix(in srgb, ${accent} 12%, transparent)`,
+                      borderColor: `color-mix(in srgb, ${accent} 45%, transparent)`,
+                      // @ts-expect-error CSS 변수로 ring 색 지정
+                      "--tw-ring-color": `color-mix(in srgb, ${accent} 45%, transparent)`,
+                    }
+                  : undefined
+              }
+            >
+              <span className="flex items-center gap-2">
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: active ? accent : undefined }}
+                >
+                  {p.label}
+                </span>
+                <span className="text-[10px] text-zinc-600">
+                  {"●".repeat(DIFFICULTY_ORDER.indexOf(d) + 1)}
+                  {"○".repeat(2 - DIFFICULTY_ORDER.indexOf(d))}
+                </span>
+              </span>
+              <span className="mt-0.5 block text-[11px] leading-relaxed text-zinc-500">
+                {p.description}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       <SectionTitle>문항 수</SectionTitle>
       <div className="flex gap-2">
         {[5, 10, 20].map((n) => (
@@ -494,7 +571,7 @@ function QuizContent() {
 
       <SectionTitle>유형</SectionTitle>
       <div className="flex flex-wrap gap-2">
-        {ALL_TYPES.map((t) => (
+        {availableTypes.map((t) => (
           <Chip
             key={t}
             active={types.includes(t)}
@@ -508,7 +585,7 @@ function QuizContent() {
               )
             }
           >
-            {TYPE_LABELS[t]}
+            {QUIZ_TYPE_LABELS[t]}
           </Chip>
         ))}
       </div>
