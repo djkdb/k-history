@@ -3,7 +3,15 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
-import { AlertTriangle, ChevronLeft, ChevronRight, Flame, X } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Flame,
+  X,
+} from "lucide-react";
 import type { HistoryEvent } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS } from "@/data/events";
@@ -16,6 +24,18 @@ import {
   EraBadge,
   ProgressBar,
 } from "@/components/ui";
+
+/**
+ * 줄글을 문장 단위로 끊는다.
+ * 시험 직전에는 긴 문단을 읽을 여유가 없다. 한 줄에 한 사실만 보여야 눈에 든다.
+ */
+function sentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+|(?<=다)\.\s*/)
+    .map((t) => t.trim().replace(/^[·\-\s]+/, ""))
+    .filter((t) => t.length > 1)
+    .map((t) => (/[.!?]$/.test(t) ? t : t + "."));
+}
 
 const MODES = [
   { label: "30분", desc: "★5 반드시 암기 — 거의 매회 출제되는 것만", minImportance: 5 },
@@ -32,6 +52,7 @@ export default function CramPage() {
   const [deck, setDeck] = useState<HistoryEvent[] | null>(null);
   const [idx, setIdx] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [detail, setDetail] = useState(false);
 
   const counts = useMemo(
     () =>
@@ -129,58 +150,101 @@ export default function CramPage() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -60 }}
             transition={{ duration: 0.2 }}
-            className="glass cursor-grab rounded-3xl p-5 active:cursor-grabbing"
+            className="glass cursor-grab rounded-3xl px-5 py-6 active:cursor-grabbing"
             style={{ borderTop: `2px solid ${era.color}` }}
           >
-            <EraBadge eraId={event.era} />
-            <p
-              className="mt-3 text-sm font-bold"
-              style={{ color: era.color }}
-            >
-              {event.yearDisplay}
-              {event.king ? ` · ${event.king}` : ""}
-            </p>
-            <h2 className="mt-1 text-2xl font-black leading-tight tracking-tight">
+            <div className="flex items-center gap-2">
+              <EraBadge eraId={event.era} />
+              <span
+                className="text-xs font-bold tabular-nums"
+                style={{ color: era.color }}
+              >
+                {event.yearDisplay}
+              </span>
+              {event.king && (
+                <span className="truncate text-xs text-zinc-500">
+                  {event.king}
+                </span>
+              )}
+            </div>
+
+            <h2 className="mt-2.5 text-[26px] font-black leading-tight tracking-tight">
               {event.title}
             </h2>
-            <p className="mt-3 text-sm font-semibold leading-relaxed">
+
+            {/* 직전에 가장 잘 먹히는 건 두문자다. 가장 크게, 가장 먼저. */}
+            <div className="mt-4 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3.5">
+              <p className="text-[15px] font-bold leading-relaxed text-emerald-100">
+                {event.memory.mnemonic}
+              </p>
+            </div>
+
+            <p className="mt-4 text-[15px] leading-[1.75] text-zinc-200">
               {event.summary10s}
             </p>
-            <div className="mt-3 rounded-xl border border-red-400/30 bg-red-500/10 p-3">
-              <p className="text-xs font-medium leading-relaxed text-red-100">
-                🎯 {event.examPoint}
-              </p>
-            </div>
-            {/* 시험 직전에 가장 잘 먹히는 건 두문자 암기다 */}
-            <div className="mt-3 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3">
-              <p className="text-xs font-semibold leading-relaxed text-emerald-100">
-                🧠 {event.memory.mnemonic}
-              </p>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {event.keywords.map((k) => (
+
+            <div className="mt-3.5 flex flex-wrap gap-1.5">
+              {event.keywords.slice(0, 6).map((k) => (
                 <Badge key={k}>{k}</Badge>
               ))}
             </div>
-            {event.traps.length > 0 && (
-              <div className="mt-3 flex flex-col gap-1">
-                {event.traps.slice(0, 2).map((t) => (
-                  <p
-                    key={t.concept}
-                    className="flex items-start gap-1.5 text-[11px] leading-relaxed text-orange-300/90"
-                  >
-                    <AlertTriangle size={11} className="mt-0.5 shrink-0" />
-                    <span>
-                      <b>{t.concept}</b> — {t.difference}
-                    </span>
-                  </p>
-                ))}
+
+            {/* 나머지는 접어 둔다 — 76장을 넘겨야 하는 화면에 줄글을 다 펼치면 읽히지 않는다 */}
+            {detail && (
+              <div className="mt-4 flex flex-col gap-3 border-t border-white/8 pt-4">
+                <section>
+                  <h3 className="mb-1.5 text-[11px] font-bold tracking-wide text-red-300">
+                    출제 포인트
+                  </h3>
+                  <ul className="flex flex-col gap-1.5">
+                    {sentences(event.examPoint).map((line, i) => (
+                      <li
+                        key={i}
+                        className="flex gap-2 text-[13px] leading-[1.7] text-zinc-300"
+                      >
+                        <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-red-400/70" />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                {event.traps.length > 0 && (
+                  <section>
+                    <h3 className="mb-1.5 text-[11px] font-bold tracking-wide text-orange-300">
+                      헷갈리는 것
+                    </h3>
+                    <ul className="flex flex-col gap-2">
+                      {event.traps.slice(0, 3).map((t) => (
+                        <li key={t.concept} className="text-[13px] leading-[1.7]">
+                          <span className="flex items-center gap-1.5 font-bold text-orange-200">
+                            <AlertTriangle size={12} className="shrink-0" />
+                            {t.concept}
+                          </span>
+                          <span className="mt-0.5 block pl-[18px] text-zinc-400">
+                            {t.difference}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
               </div>
             )}
           </motion.div>
         </AnimatePresence>
 
-        <div className="mt-4 flex gap-2">
+        {/* 자세히 보기는 한 번 켜면 계속 켜져 있다 — 카드마다 다시 누르게 하지 않는다 */}
+        <button
+          type="button"
+          onClick={() => setDetail((d) => !d)}
+          className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-white/6 py-2.5 text-xs font-semibold text-zinc-400 transition-colors active:bg-white/10"
+        >
+          {detail ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {detail ? "핵심만 보기" : "출제 포인트·함정 보기"}
+        </button>
+
+        <div className="mt-3 flex gap-2">
           <Button variant="ghost" size="lg" onClick={prevCard} disabled={idx === 0}>
             <ChevronLeft size={18} />
           </Button>
