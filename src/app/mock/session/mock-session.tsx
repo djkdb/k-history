@@ -220,6 +220,10 @@ export function MockSession() {
   const q = exam.questions[idx];
   const answeredCount = Object.keys(answers).length;
   const pageMode = isPageMode(exam);
+  // 쪽 모드: 지금 보고 있는 쪽에 실린 문항들
+  const pageQuestions = pageMode
+    ? exam.questions.filter((x) => (x.page ?? 1) === page + 1)
+    : [];
 
   const pick = (num: number, c: number) =>
     setAnswers((a) => {
@@ -438,14 +442,23 @@ export function MockSession() {
             page={page}
             onPage={setPage}
           />
-          <SectionTitle>답안지</SectionTitle>
-          <div className="flex flex-col gap-1 pb-4">
-            {exam.questions.map((x) => (
+          {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
+          <div className="mb-2 mt-5 flex items-baseline justify-between">
+            <h2 className="text-base font-bold tracking-tight">
+              {page + 1}쪽 답안
+            </h2>
+            <span className="text-[11px] text-zinc-500">
+              {pageQuestions.filter((x) => answers[x.number]).length}/
+              {pageQuestions.length} 응답
+            </span>
+          </div>
+          <div className="flex flex-col gap-1.5 pb-4">
+            {pageQuestions.map((x) => (
               <div key={x.number} className="flex items-center gap-1.5">
                 <span
                   className={cn(
-                    "w-7 shrink-0 text-right text-[11px] font-bold tabular-nums",
-                    answers[x.number] ? "text-indigo-300" : "text-zinc-600",
+                    "w-8 shrink-0 text-right text-sm font-bold tabular-nums",
+                    answers[x.number] ? "text-indigo-300" : "text-zinc-500",
                   )}
                 >
                   {x.number}
@@ -458,10 +471,10 @@ export function MockSession() {
                       type="button"
                       onClick={() => pick(x.number, c)}
                       className={cn(
-                        "h-7 flex-1 rounded-md border text-[11px] font-bold transition-all active:scale-95",
+                        "h-10 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95",
                         on
                           ? "border-indigo-400 bg-indigo-500 text-white"
-                          : "border-white/10 bg-white/[0.03] text-zinc-600",
+                          : "border-white/10 bg-white/[0.03] text-zinc-500",
                       )}
                     >
                       {c}
@@ -470,6 +483,32 @@ export function MockSession() {
                 })}
               </div>
             ))}
+          </div>
+
+          {/* 쪽 이동 */}
+          <div className="flex gap-2 pb-4">
+            <Button
+              variant="ghost"
+              size="lg"
+              disabled={page === 0}
+              onClick={() => {
+                setPage(page - 1);
+                window.scrollTo({ top: 0 });
+              }}
+            >
+              <ChevronLeft size={18} />
+            </Button>
+            <Button
+              size="lg"
+              className="flex-1"
+              disabled={page >= exam.pageImages!.length - 1}
+              onClick={() => {
+                setPage(page + 1);
+                window.scrollTo({ top: 0 });
+              }}
+            >
+              다음 쪽 <ChevronRight size={18} />
+            </Button>
           </div>
         </>
       ) : (

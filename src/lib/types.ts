@@ -202,6 +202,11 @@ export interface MockExamQuestion {
   /** 이 문항이 다루는 개념 id — 오답 시 해당 개념이 복습 큐에 들어간다 */
   eventIds?: string[];
   explanation?: string;
+  /**
+   * 쪽 이미지형에서 이 문항이 실린 시험지 쪽 번호(1부터).
+   * 지금 보고 있는 쪽의 문항만 답안지에 띄우는 데 쓴다.
+   */
+  page?: number;
 }
 
 export interface MockExam {
