@@ -267,8 +267,13 @@ function QuizSession({
             </p>
           </Card>
 
-          {/* 보기 */}
-          <div className="mt-3 flex flex-col gap-2">
+          {/* 보기 — O/X는 글자가 한 자뿐이라 세로 목록이면 화면이 텅 빈다 */}
+          <div
+            className={cn(
+              "mt-3 gap-2",
+              q.type === "ox" ? "grid grid-cols-2" : "flex flex-col",
+            )}
+          >
             {q.options.map((opt, i) => {
               const isAnswer = Array.isArray(q.answerIndex)
                 ? false
@@ -289,6 +294,8 @@ function QuizSession({
                   transition={{ duration: 0.35 }}
                   className={cn(
                     "glass flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all active:scale-[0.99]",
+                    q.type === "ox" &&
+                      "flex-col justify-center gap-1.5 py-7 text-3xl font-black",
                     !revealed && "hover:bg-white/10",
                     showState && isAnswer &&
                       "border-emerald-400/60 bg-emerald-500/15 text-emerald-200",
@@ -310,9 +317,11 @@ function QuizSession({
                       {isPicked ? orderNo + 1 : "·"}
                     </span>
                   )}
-                  <span className="flex-1">{opt}</span>
-                  {showState && isAnswer && <Check size={16} />}
-                  {showState && isPicked && !isAnswer && <X size={16} />}
+                  <span className={q.type === "ox" ? "" : "flex-1"}>{opt}</span>
+                  {showState && isAnswer && <Check size={q.type === "ox" ? 20 : 16} />}
+                  {showState && isPicked && !isAnswer && (
+                    <X size={q.type === "ox" ? 20 : 16} />
+                  )}
                 </motion.button>
               );
             })}

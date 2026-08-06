@@ -381,12 +381,20 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-2">
             {hotEvents.map((e) => (
               <Link key={e.id} href={`/event/${e.id}`}>
+                {/* 제목이 배지 둘 사이에 끼어 잘리지 않도록 층을 나눈다 */}
                 <Card className="flex items-center gap-3">
-                  <EraBadge eraId={e.era} />
-                  <span className="min-w-0 flex-1 truncate text-sm font-semibold">
-                    {e.title}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold">
+                      {e.title}
+                    </span>
+                    <span className="mt-1 flex items-center gap-1.5">
+                      <EraBadge eraId={e.era} />
+                      <span className="truncate text-[11px] text-zinc-500">
+                        {e.yearDisplay}
+                      </span>
+                    </span>
                   </span>
-                  <ImportanceBadge importance={e.importance} />
+                  <ImportanceBadge importance={e.importance} compact />
                 </Card>
               </Link>
             ))}
@@ -439,7 +447,7 @@ export default function DashboardPage() {
           <span className="flex-1">
             <span className="block text-sm font-semibold">학습 기록 백업</span>
             <span className="mt-0.5 block text-[11px] text-zinc-500">
-              기록은 이 기기에만 있어요. 파일로 저장해 두면 안전합니다
+              기록은 이 기기에만 있어요. 파일로 저장해 두세요
             </span>
           </span>
           <ChevronRight size={15} className="shrink-0 text-zinc-600" />

@@ -93,11 +93,17 @@ export default function WrongNotePage() {
         </div>
       </div>
 
-      <Link href="/quiz?mode=wrong" className="mt-4 block">
-        <Button size="lg" className="w-full" disabled={entries.length === 0}>
-          <Brain size={18} /> 틀린 것만 다시 풀기
-        </Button>
-      </Link>
+      {/*
+        비활성 버튼을 Link로 감싸면 pointer-events-none이 버튼에만 걸려
+        클릭이 링크로 새어 나간다. 풀 것이 없으면 아예 내보내지 않는다.
+      */}
+      {entries.length > 0 && (
+        <Link href="/quiz?mode=wrong" className="mt-4 block">
+          <Button size="lg" className="w-full">
+            <Brain size={18} /> 틀린 것만 다시 풀기
+          </Button>
+        </Link>
+      )}
 
       {entries.length === 0 ? (
         <Card className="mt-6">
@@ -141,18 +147,21 @@ export default function WrongNotePage() {
                     className="flex w-full items-center gap-2 text-left"
                     onClick={() => setExpanded(open ? null : event.id)}
                   >
-                    <EraBadge eraId={event.era} />
                     <span className="min-w-0 flex-1">
+                      {/* 제목이 배지들에 밀려 줄이 깨지지 않도록 층을 나눈다 */}
                       <span className="block truncate text-sm font-bold">
                         {event.title}
                       </span>
-                      <span className="block text-[11px] text-zinc-500">
-                        {event.yearDisplay}
-                        {wrongCount > 0 && ` · ${wrongCount}회 틀림`}
-                        {lastType && ` · 최근: ${lastType}`}
+                      <span className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-500">
+                        <EraBadge eraId={event.era} />
+                        <ImportanceBadge importance={event.importance} compact />
+                        <span className="truncate">
+                          {event.yearDisplay}
+                          {wrongCount > 0 && ` · ${wrongCount}회 틀림`}
+                          {lastType && ` · 최근 ${lastType}`}
+                        </span>
                       </span>
                     </span>
-                    <ImportanceBadge importance={event.importance} />
                     <ChevronDown
                       size={15}
                       className={cn(

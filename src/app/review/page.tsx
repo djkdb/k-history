@@ -45,15 +45,37 @@ function Flashcard({
   if (!event) return null;
   const era = ERA_MAP[event.era];
 
+  // 뒷면 내용은 개념마다 길이가 달라, 카드 높이를 고정하면 암기법이 잘린다.
+  // 보이지 않는 사본을 깔아 두 면 중 큰 쪽에 높이를 맞춘다.
+  const back = (
+    <>
+      <p className="text-[15px] font-bold leading-[1.7]">{event.summary10s}</p>
+      <p className="mt-3 text-[13px] leading-[1.75] text-zinc-400">
+        {event.examPoint}
+      </p>
+      <div className="mt-3.5 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3.5">
+        <p className="text-[13px] font-semibold leading-[1.7] text-emerald-200">
+          🧠 {event.memory.mnemonic}
+        </p>
+      </div>
+    </>
+  );
+
   return (
     <div style={{ perspective: 1200 }}>
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
         transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
         style={{ transformStyle: "preserve-3d" }}
-        className="relative min-h-[380px]"
+        className="relative min-h-[360px]"
         onClick={() => !flipped && setFlipped(true)}
       >
+        {/* 높이 결정용 사본 — 화면에는 보이지 않는다 */}
+        <div aria-hidden className="invisible px-5 py-5">
+          {back}
+          <div className="mt-3 h-4" />
+          <div className="mt-3 h-11" />
+        </div>
         {/* 앞면 */}
         <div
           className="glass absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl p-6 text-center"
@@ -72,25 +94,13 @@ function Flashcard({
 
         {/* 뒷면 */}
         <div
-          className="glass absolute inset-0 flex flex-col rounded-3xl p-5"
+          className="glass absolute inset-0 flex flex-col rounded-3xl px-5 py-5"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-          <div className="flex-1 overflow-y-auto">
-            <p className="text-sm font-bold leading-relaxed">
-              {event.summary10s}
-            </p>
-            <p className="mt-3 text-xs leading-relaxed text-zinc-400">
-              {event.examPoint}
-            </p>
-            <div className="mt-3 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3">
-              <p className="text-xs font-semibold leading-relaxed text-emerald-200">
-                🧠 {event.memory.mnemonic}
-              </p>
-            </div>
-          </div>
+          <div className="flex-1">{back}</div>
 
           {/* 스테이지 표시 */}
           <div className="mt-3 flex items-center justify-center gap-1.5">

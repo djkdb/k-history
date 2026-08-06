@@ -102,16 +102,27 @@ export function Badge({
   );
 }
 
-export function ImportanceBadge({ importance }: { importance: number }) {
+/**
+ * 중요도 배지.
+ * compact는 별만 보여 준다 — 좁은 목록에서 "반드시 암기"까지 넣으면
+ * 옆의 제목을 밀어내 줄이 깨진다.
+ */
+export function ImportanceBadge({
+  importance,
+  compact = false,
+}: {
+  importance: number;
+  compact?: boolean;
+}) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
+        "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
         importanceBg(importance),
       )}
     >
       <span className="tracking-tighter">{importanceStars(importance)}</span>
-      {importanceLabel(importance)}
+      {!compact && importanceLabel(importance)}
     </span>
   );
 }

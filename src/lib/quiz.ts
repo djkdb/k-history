@@ -430,7 +430,7 @@ function makeOX(ctx: Ctx): QuizQuestion | null {
     : undefined;
   if (event.king && wrongKing) {
     return finish(ctx, "ox", {
-      question: `[O/X] ${maskName(event.title, event.king)}은(는) ${wrongKing} 때의 일이다.`,
+      question: `[O/X] ${event.title}은(는) ${wrongKing} 때의 일이다.`,
       options: ["O", "X"],
       answerIndex: 1,
       explanation: `${event.title}은(는) ${event.king} 때(${event.yearDisplay})의 일입니다.`,
@@ -441,7 +441,7 @@ function makeOX(ctx: Ctx): QuizQuestion | null {
   )?.yearDisplay;
   if (!wrongYear) return trueStatement(); // 틀린 정답을 내느니 참 명제로
   return finish(ctx, "ox", {
-    question: `[O/X] ${maskYears(event.title)}은(는) ${wrongYear}의 일이다.`,
+    question: `[O/X] ${event.title}은(는) ${wrongYear}의 일이다.`,
     options: ["O", "X"],
     answerIndex: 1,
     explanation: `${event.title}의 시기는 ${event.yearDisplay}입니다.`,
