@@ -16,6 +16,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q01.webp",
       answer: 5,
+      explanation:
+        "연천 전곡리 주먹도끼와 찍개·찌르개는 구석기 시대의 뗀석기다. 구석기인은 사냥·채집을 하며 이동했으므로 동굴이나 강가의 막집에서 살았다.",
       options: [
         "민무늬 토기에 식량을 저장하였다.",
         "가락바퀴를 이용하여 실을 만들었다.",
@@ -30,6 +32,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q02.webp",
       answer: 2,
+      explanation:
+        "계루부에서 왕이 나오고 상가·대로·패자를 두었으며 서옥을 지었다는 것은 모두 고구려의 특징이다. 고구려는 10월에 동맹이라는 제천 행사를 열었다.",
       options: [
         "신성 구역인 소도가 존재하였다.",
         "10월에 동맹이라는 제천 행사를 열었다.",
@@ -43,6 +47,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q03.webp",
       answer: 3,
+      explanation:
+        "(나)는 백제 근초고왕이 평양성을 쳐 고국원왕(사유)이 전사한 371년, (가)는 장수왕(거련)이 한성을 함락해 개로왕(경)이 죽은 475년, (다)는 성왕(명농)이 전사한 554년 관산성 전투다.",
       options: [
         "(가) - (나) - (다)",
         "(가) - (다) - (나)",
@@ -56,12 +62,16 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q04.webp",
       answer: 1,
+      explanation:
+        "부여 능산리에서 나온 금동 대향로는 백제를 대표하는 문화유산이므로 (가)는 백제다. 백제의 문화유산을 고르면 된다.",
     },
     {
       number: 5,
       points: 2,
       image: "/exams/76-advanced/q05.webp",
       answer: 4,
+      explanation:
+        "일본 도다이사 쇼소인에서 발견되고 서원경 부근 촌락을 기록한 이 문서는 통일 신라의 민정 문서다. 통일 신라는 장보고가 세운 청해진을 중심으로 해상 무역이 번성했다.",
       options: [
         "경성과 경원에 무역소를 두었다.",
         "솔빈부의 말을 특산품으로 수출하였다.",
@@ -75,6 +85,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q06.webp",
       answer: 2,
+      explanation:
+        "국학 설치, 전국 9주 정비, 고구려·백제·말갈인을 아우른 9서당은 모두 신문왕의 업적이다. 신문왕은 관료전을 주고 귀족의 경제 기반인 녹읍을 폐지했다.",
       options: [
         "병부를 설치하고 율령을 반포하였다.",
         "관료전을 지급하고 녹읍을 폐지하였다.",
@@ -88,6 +100,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q07.webp",
       answer: 4,
+      explanation:
+        "부석사와 낙산사를 세우고 백화도량발원문을 지은 승려는 의상이다. 의상은 화엄 사상을 압축한 화엄일승법계도를 지었다.",
       options: [
         "보현십원가를 지었다.",
         "세속 5계를 제시하였다.",
@@ -101,6 +115,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q08.webp",
       answer: 3,
+      explanation:
+        "왕자 대봉예가 신라보다 윗자리를 달라고 다툰 쟁장 사건의 (가)는 발해다. 발해는 5경 15부 62주의 지방 행정 제도를 갖추었다.",
       options: [
         "역사서인 유기와 신집을 편찬하였다.",
         "내신좌평, 내두좌평 등 6좌평이 있었다.",
@@ -114,6 +130,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q09.webp",
       answer: 2,
+      explanation:
+        "(가)는 김지정의 난으로 혜공왕이 시해된 780년과 원종·애노의 난이 일어난 889년 사이다. 그 사이인 822년에 김헌창이 웅천주에서 반란을 일으켰다.",
       options: [
         "비담과 염종의 난이 진압되었다.",
         "김헌창이 웅천주에서 반란을 일으켰다.",
@@ -128,6 +146,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q10.webp",
       answer: 2,
+      explanation:
+        "견훤이 금산사를 빠져나와 왕건에게 몸을 맡긴 것은 935년이다. 이듬해인 936년 고려군이 일리천에서 신검의 후백제군을 무찔러 후삼국을 통일했다.",
       options: [
         "신숭겸이 공산 전투에서 전사하였다.",
         "신검의 군대가 일리천 전투에서 패배하였다.",
@@ -141,6 +161,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q11.webp",
       answer: 1,
+      explanation:
+        "청연각·보문각을 세우고 양현고를 둔 왕은 고려 예종이다. 예종은 국자감에 7재라는 전문 강좌를 두어 관학을 진흥했다.",
       options: [
         "국자감에 7재라는 전문 강좌를 개설하였다.",
         "지방 12목에 경학 박사를 처음 파견하였다.",
@@ -154,6 +176,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q12.webp",
       answer: 3,
+      explanation:
+        "야별초를 좌별초와 우별초로 나눈 인물은 최우다. 최우는 인사 행정을 자기 집에서 처리하려고 정방을 설치했다.",
       options: [
         "원종을 폐위하고 안경공 창을 즉위시켰다.",
         "9재 학당을 설립하여 유교 교육에 힘썼다.",
@@ -168,6 +192,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q13.webp",
       answer: 5,
+      explanation:
+        "송·일본은 물론 아라비아 상인과도 교역했다는 (가)는 고려다. 고려는 주전도감을 두어 해동통보 등 화폐를 발행했다.",
       options: [
         "초량 왜관을 통해 일본과 무역하였다.",
         "덕대가 광산을 전문적으로 경영하였다.",
@@ -181,6 +207,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q14.webp",
       answer: 4,
+      explanation:
+        "(나)는 왕규의 난(945), (다)는 강조의 정변(1009), (가)는 이자겸의 난(1126)이다.",
       options: [
         "(가) - (나) - (다)",
         "(가) - (다) - (나)",
@@ -195,6 +223,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q15.webp",
       answer: 3,
+      explanation:
+        "만월대와 성균관, 태조의 현릉, 만부교, 숭양서원은 모두 개경(개성)에 있다. 개경에는 거란의 침입에 대비해 강감찬의 건의로 쌓은 나성이 있다.",
       options: [
         "몽골의 사신 저고여가 피살된 곳을 조사한다.",
         "서희가 외교 담판을 통해 획득한 곳을 찾아본다.",
@@ -208,6 +238,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q16.webp",
       answer: 1,
+      explanation:
+        "1253년 김윤후가 충주산성에서 막아 낸 (가)는 몽골이다. 고려는 몽골의 침입에 맞서 강화도로 도읍을 옮기고 항전했다.",
       options: [
         "강화도로 도읍을 옮겨 항전하였다.",
         "광군을 조직하여 침입에 대비하였다.",
@@ -221,12 +253,16 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q17.webp",
       answer: 1,
+      explanation:
+        "상형자기는 사람이나 동물의 모양을 본떠 만든 청자로 고려 공예의 정수다. 고려 상형청자를 고르면 된다.",
     },
     {
       number: 18,
       points: 1,
       image: "/exams/76-advanced/q18.webp",
       answer: 3,
+      explanation:
+        "세자 때 원의 황녀와 혼인하고 변발을 강요한 왕은 충렬왕이다. 원 간섭기에는 원에 보낼 매를 기르는 응방이 설치되었다.",
       options: [
         "쌍기의 건의로 과거제가 도입되었다.",
         "빈민 구제를 위해 흑창이 설립되었다.",
@@ -240,6 +276,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q19.webp",
       answer: 4,
+      explanation:
+        "박연이 편경을 만들고 아악을 정비한 것은 세종 때의 일이다. 세종 대에 유교 윤리를 널리 알리기 위해 삼강행실도를 편찬했다.",
       options: [
         "훈련 교범인 무예도보통지가 간행되었다.",
         "전통 한의학을 정리한 동의보감이 저술되었다.",
@@ -253,6 +291,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q20.webp",
       answer: 5,
+      explanation:
+        "폐비 윤씨 사사를 빌미로 신하를 숙청하다 반정으로 쫓겨나 교동도에 유배된 왕은 연산군이다. 연산군 때 김종직의 조의제문이 발단이 되어 김일손 등이 화를 입은 무오사화가 일어났다.",
       options: [
         "유자광의 고변으로 남이가 처형되었다.",
         "기사환국으로 송시열이 죽임을 당하였다.",
@@ -266,6 +306,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q21.webp",
       answer: 1,
+      explanation:
+        "권율이 이치에서 적의 진격을 막은 것은 임진왜란 때다. 같은 전쟁 중 정문부가 함경도에서 의병을 이끌어 북관대첩을 거두었다.",
       options: [
         "정문부가 북관대첩을 이끌었다.",
         "정봉수가 용골산성에서 항쟁하였다.",
@@ -279,6 +321,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q22.webp",
       answer: 2,
+      explanation:
+        "옥당이라 불리며 궁중 도서를 관리하고 왕의 자문을 맡은 (가)는 홍문관이다. 홍문관은 사헌부·사간원과 함께 3사로 불렸다.",
       options: [
         "수도의 행정과 치안을 담당하였다.",
         "사헌부, 사간원과 함께 3사로 불렸다.",
@@ -292,6 +336,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q23.webp",
       answer: 5,
+      explanation:
+        "김육의 건의로 충청도(호서)에서 먼저 시행한 (가)는 대동법이다. 대동법으로 국가가 필요한 물품을 사들이게 되면서 관청에 물품을 조달하는 공인이 등장했다.",
       options: [
         "전시과에서 전지 지급 기준의 변화를 찾아본다.",
         "일부 상류층에게 선무군관포를 거둔 목적을 알아본다.",
@@ -305,6 +351,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q24.webp",
       answer: 4,
+      explanation:
+        "곽우록을 쓰고 영업전의 매매를 금하는 한전론을 주장한 인물은 이익이다. 이익은 성호사설에서 나라를 좀먹는 여섯 가지 폐단을 꼽았다.",
       options: [
         "의산문답에서 무한 우주론을 주장하였다.",
         "북학의에서 절약보다 적절한 소비를 권장하였다.",
@@ -318,6 +366,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q25.webp",
       answer: 2,
+      explanation:
+        "준천사를 두어 청계천을 준설하고 신문고를 되살린 왕은 영조다. 영조는 경국대전 이후의 법령을 정리한 속대전을 편찬했다.",
       options: [
         "나선 정벌에 조총 부대를 파견하였다.",
         "통치 규범을 재정비한 속대전을 편찬하였다.",
@@ -331,6 +381,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q26.webp",
       answer: 3,
+      explanation:
+        "이승훈과 정약종이 화를 입은 사학 단속은 1801년 신유박해로 조선 후기의 일이다. 계미자는 1403년 태종 때 주조되었으므로 이 시기에는 볼 수 없다.",
       options: [
         "상평통보로 물건을 거래하는 객주",
         "인삼 무역으로 크게 수익을 본 송상",
@@ -344,12 +396,16 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q27.webp",
       answer: 3,
+      explanation:
+        "연소답청을 그린 혜원은 신윤복이다. 신윤복의 다른 작품을 고르면 된다.",
     },
     {
       number: 28,
       points: 3,
       image: "/exams/76-advanced/q28.webp",
       answer: 2,
+      explanation:
+        "최익현이 왜양일체론을 내세워 개항에 반대한 상소는 1876년의 것이다. 연표에서 신미양요(1871)와 갑신정변(1884) 사이인 (나) 시기에 해당한다.",
       options: [
         "(가)",
         "(나)",
@@ -363,6 +419,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q29.webp",
       answer: 5,
+      explanation:
+        "원납전을 걷어 치른 경복궁 중건은 1865~1868년의 일이다. 그 사이인 1866년 병인양요 때 한성근 부대가 문수산성에서 프랑스군에 맞섰다.",
       options: [
         "청일 전쟁이 발발하였다.",
         "삼정이정청이 설치되었다.",
@@ -377,6 +435,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q30.webp",
       answer: 1,
+      explanation:
+        "청 상인이 양화진과 한성에 점포를 열 수 있게 한 이 장정은 조청 상민 수륙 무역 장정이다. 임오군란을 진압한 청이 그 대가로 체결을 강요했다.",
       options: [
         "임오군란을 계기로 체결되었다.",
         "거중 조정의 조항을 포함하였다.",
@@ -390,6 +450,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q31.webp",
       answer: 3,
+      explanation:
+        "전봉준 공초와 사발통문이 남은 (가)는 동학 농민 운동이다. 농민군은 전주 화약 이후 집강소를 두어 폐정 개혁안을 실천했다.",
       options: [
         "일본의 황무지 개간권 요구를 저지하였다.",
         "조선 총독부의 방해와 탄압으로 중단되었다.",
@@ -404,6 +466,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q32.webp",
       answer: 4,
+      explanation:
+        "1897년 독립관에서 토론회를 열고 이상재가 위원으로 활동한 (가)는 독립협회다. 독립협회는 관민 공동회를 열어 헌의 6조를 결의했다.",
       options: [
         "고종 강제 퇴위 반대 운동을 주도하였다.",
         "만세보를 발행하여 민족의식을 고취하였다.",
@@ -418,6 +482,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q33.webp",
       answer: 4,
+      explanation:
+        "구본신참을 내세우고 원수부를 설치한 이 개혁은 광무개혁이다. 광무개혁 때 양전 사업을 벌여 토지 소유권을 증명하는 지계를 발급했다.",
       options: [
         "개혁을 추진하기 위해 군국기무처를 두었다.",
         "행정 기구를 6조에서 8아문으로 개편하였다.",
@@ -432,6 +498,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q34.webp",
       answer: 3,
+      explanation:
+        "ㄴ은 알렌의 건의로 세워진 최초의 서양식 병원 광혜원, ㄷ은 서대문~청량리 전차를 운영한 한성 전기 회사로 옳다. 배재 학당은 교육입국조서(1895)보다 앞선 1885년에 세워졌고, 영화 아리랑(1926)은 단성사에서 상영되었다.",
       options: [
         "ㄱ, ㄴ",
         "ㄱ, ㄷ",
@@ -445,6 +513,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q35.webp",
       answer: 5,
+      explanation:
+        "외교권을 빼앗고 통감부를 설치한 것은 1905년 을사늑약이다. 그 이후의 국권 수호 노력이므로 1907년 헤이그 특사로 간 이상설이 들어간다.",
       options: [
         "김홍집, 조선책략을 가져오다",
         "김옥균, 개화당 정부를 수립하다",
@@ -459,6 +529,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q36.webp",
       answer: 2,
+      explanation:
+        "조선 태형령과 헌병 경찰이 시행된 이 시기는 1910년대 무단 통치기다. 이때는 교사도 제복을 입고 칼을 찬 채 수업했다.",
       options: [
         "암태도 소작 쟁의에 참여하는 농민",
         "제복을 입고 칼을 찬 채 수업하는 교사",
@@ -473,6 +545,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q37.webp",
       answer: 5,
+      explanation:
+        "보통학교 수업 연한을 6년으로 한 이 법령은 1922년 제2차 조선 교육령이다. 그 이듬해인 1923년 조선 민립 대학 기성회 창립 총회가 열렸다.",
       options: [
         "국권 회복을 위해 해조신문이 창간되었다.",
         "평양 숭의 여학교에서 송죽회가 결성되었다.",
@@ -486,6 +560,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q38.webp",
       answer: 4,
+      explanation:
+        "김원봉이 1919년 지린성에서 윤세주 등과 만든 (가)는 의열단이다. 의열단은 신채호가 쓴 조선 혁명 선언을 활동 지침으로 삼았다.",
       options: [
         "신흥 강습소를 세워 독립군을 양성하였다.",
         "구미 위원부를 설치하여 외교 활동을 전개하였다.",
@@ -500,6 +576,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q39.webp",
       answer: 3,
+      explanation:
+        "평양에서 조만식이 시작하고 ‘내 살림 내 것으로’를 내건 이 운동은 물산 장려 운동이다. 자작회와 토산 애용 부인회 등이 이에 호응해 활동했다.",
       options: [
         "대한매일신보의 후원을 받아 확산되었다.",
         "순종의 인산일을 기회로 삼아 추진하였다.",
@@ -513,6 +591,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q40.webp",
       answer: 3,
+      explanation:
+        "1927년에 결성된 여성 운동 단체 (가)는 근우회다. 근우회는 신간회와 짝을 이루어 좌우를 아우른 민족 협동 전선으로 만들어졌다.",
       options: [
         "개벽, 신여성 등의 잡지를 발행하였다.",
         "여성 교육을 위해 이화 학당을 설립하였다.",
@@ -526,6 +606,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q41.webp",
       answer: 1,
+      explanation:
+        "한국광복군을 창설하고 삼균주의 건국 강령을 낸 (가)는 대한민국 임시 정부다. 경학사는 신민회 인사들이 서간도에 세운 자치 기관이므로 임시 정부의 활동이 아니다.",
       options: [
         "한인 자치 기관인 경학사를 조직하였다.",
         "자금 마련을 위해 독립 공채를 발행하였다.",
@@ -539,6 +621,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q42.webp",
       answer: 4,
+      explanation:
+        "중일 전쟁(1937년 7월)과 황국 신민 서사 제정(1937년 10월)이 담긴 일기이므로 그 이후를 고른다. 여자 정신 근로령은 1944년에 공포되었다.",
       options: [
         "미쓰야 협정이 체결되었다.",
         "치안 유지법이 제정되었다.",
@@ -553,6 +637,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q43.webp",
       answer: 4,
+      explanation:
+        "나머지는 모두 일제 강점기의 문화와 일상이다. 새마을 운동은 1970년대의 일이므로 강좌 주제로 맞지 않는다.",
       options: [
         "몸뻬, 전시 체제의 의생활",
         "라디오 방송, 연예 오락의 유행",
@@ -566,6 +652,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q44.webp",
       answer: 5,
+      explanation:
+        "여운형이 엔도 정무총감과 회담한 뒤 이끈 (가)는 조선 건국 준비 위원회다. 건준은 조선 인민 공화국 수립을 선포한 뒤 해산했다.",
       options: [
         "신한공사를 설립하였다.",
         "좌우 합작 7원칙을 제시하였다.",
@@ -579,6 +667,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 1,
       image: "/exams/76-advanced/q45.webp",
       answer: 5,
+      explanation:
+        "남한만의 단독 선거에 반대하는 세력을 진압한다는 명분으로 제주도민이 희생된 이 사건은 제주 4·3 사건이다. 2000년에 진상 규명과 희생자 명예 회복을 위한 특별법이 제정되었다.",
       options: [
         "향토 예비군 창설의 계기가 되었다.",
         "조봉암이 간첩 혐의를 받아 사형되었다.",
@@ -592,6 +682,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q46.webp",
       answer: 5,
+      explanation:
+        "(마) 추사 고택은 김정희의 집이다. 이황과 사단칠정 논쟁을 벌인 인물은 기대승이므로 추사 고택의 탐구 활동으로 맞지 않는다.",
       options: [
         "(가) - 오페르트 도굴 미수 사건에 대해 찾아본다.",
         "(나) - 한인 애국단의 활동을 조사한다.",
@@ -605,6 +697,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q47.webp",
       answer: 1,
+      explanation:
+        "(가)는 초대 대통령의 중임 제한을 없앤 1954년 사사오입 개헌, (나)는 통일 주체 국민 회의를 둔 1972년 유신 헌법, (다)는 대통령 직선제와 5년 단임을 정한 1987년 개헌이다.",
       options: [
         "(가) - (나) - (다)",
         "(가) - (다) - (나)",
@@ -618,6 +712,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q48.webp",
       answer: 1,
+      explanation:
+        "경부 고속 국도 준공(1970)과 개발 제한 구역 설정(1971)으로 보아 박정희 정부다. 서울 지하철 1호선은 1974년에 개통되었다.",
       options: [
         "서울 지하철 1호선 개통식을 취재하는 기자",
         "반민족 행위 처벌법을 통과시키는 국회의원",
@@ -632,6 +728,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 2,
       image: "/exams/76-advanced/q49.webp",
       answer: 2,
+      explanation:
+        "서울 올림픽 이후 7·7 선언과 북방 정책을 편 정부는 노태우 정부다. 노태우 정부 때인 1991년 남북한이 유엔에 동시 가입했다.",
       options: [
         "남북 조절위원회가 구성되었다.",
         "남북한이 유엔에 동시 가입하였다.",
@@ -645,6 +743,8 @@ export const ROUND_76_ADVANCED: MockExam = {
       points: 3,
       image: "/exams/76-advanced/q50.webp",
       answer: 5,
+      explanation:
+        "(마)는 융희 연호를 쓴 순종이다. 대한국 국제를 반포한 것은 광무 연호를 쓴 고종이므로 순종에 대한 설명으로 옳지 않다.",
       options: [
         "(가) - 군대를 보내 신라에 침입한 왜를 격퇴하였다.",
         "(나) - 금관가야를 복속하여 영토를 확대하였다.",
