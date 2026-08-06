@@ -37,6 +37,32 @@ const initialStats: StudyStats = {
   badges: [],
 };
 
+/**
+ * 저장된 기록을 현재 초기값 위에 깊게 덮어쓴다.
+ *
+ * zustand 기본 병합은 한 겹만 본다. 그래서 나중에 stats 같은 중첩 객체에
+ * 필드를 하나 더하면, 저장본의 stats가 초기값을 통째로 덮어 새 필드가
+ * undefined가 된다(= 화면에 NaN이 뜬다).
+ * 여기서 겹겹이 병합해 두면 필드를 더해도 기존 기록은 그대로 남고
+ * 새 필드만 기본값으로 채워진다.
+ *
+ * 배열(학습한 개념·복습 카드 등)은 저장본을 그대로 쓴다 — 사용자의 기록이다.
+ */
+function mergeSaved<T>(base: T, saved: unknown): T {
+  if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+    return saved === undefined ? base : (saved as T);
+  }
+  if (!base || typeof base !== "object" || Array.isArray(base)) {
+    return saved as T;
+  }
+  const out: Record<string, unknown> = { ...(base as Record<string, unknown>) };
+  for (const [k, v] of Object.entries(saved as Record<string, unknown>)) {
+    if (v === undefined) continue;
+    out[k] = mergeSaved((base as Record<string, unknown>)[k], v);
+  }
+  return out as T;
+}
+
 /** 오늘 첫 활동 기준으로 스트릭 갱신 */
 function bumpStreak(stats: StudyStats): StudyStats {
   const today = todayISO();
@@ -191,8 +217,12 @@ export const useApp = create<AppState>()(
         }),
     }),
     {
+      // ⚠️ name을 바꾸면 이미 쓰고 있는 사람들의 기록을 찾지 못한다. 절대 바꾸지 말 것.
+      //    version도 두지 않는다 — 값을 올리는 순간 zustand가 저장본을 버릴 수 있다.
+      //    스키마가 바뀌어도 아래 merge가 흡수한다. (scripts/audit-storage.ts 가 감시)
       name: "khlm-state",
       storage: createJSONStorage(() => idbStorage),
+      merge: (persisted, current) => mergeSaved(current, persisted),
       partialize: (s) => ({
         exam: s.exam,
         stats: s.stats,
@@ -202,7 +232,10 @@ export const useApp = create<AppState>()(
         wrongEventIds: s.wrongEventIds,
         mockAttempts: s.mockAttempts,
       }),
-      onRehydrateStorage: () => () => {
+      // 불러오기에 실패해도 화면은 떠야 한다. 다만 그때는 빈 상태를 저장하지 않는다
+      // — 잘못 덮어써서 기록을 지우는 것이 최악이다.
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) console.warn("[khlm] 저장된 기록을 불러오지 못했습니다", error);
         useApp.setState({ hydrated: true });
       },
     },

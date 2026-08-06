@@ -14,6 +14,7 @@ import {
   Flame,
   NotebookPen,
   RotateCcw,
+  ShieldCheck,
   Target,
   TrendingUp,
 } from "lucide-react";
@@ -428,6 +429,20 @@ export default function DashboardPage() {
           );
         })}
       </Card>
+
+      {/* 기록 보관 — 기기에만 있는 기록이라 스스로 지킬 방법을 열어 둔다 */}
+      <Link href="/backup" className="mt-3 block">
+        <Card className="flex items-center gap-2.5">
+          <ShieldCheck size={16} className="shrink-0 text-emerald-400" />
+          <span className="flex-1">
+            <span className="block text-sm font-semibold">학습 기록 백업</span>
+            <span className="mt-0.5 block text-[11px] text-zinc-500">
+              기록은 이 기기에만 있어요. 파일로 저장해 두면 안전합니다
+            </span>
+          </span>
+          <ChevronRight size={15} className="shrink-0 text-zinc-600" />
+        </Card>
+      </Link>
     </div>
   );
 }
