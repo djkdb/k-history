@@ -5,7 +5,7 @@ import type {
   QuizType,
 } from "./types";
 import { shuffle } from "./utils";
-import { pastExamsOf } from "@/data/events";
+import { ALL_EVENTS, pastExamsOf } from "@/data/events";
 
 // ─── 데이터 기반 퀴즈 자동 생성기 ───────────────────────────────────
 // 모든 문제는 HistoryEvent 필드만으로 만들어진다.
@@ -255,12 +255,148 @@ interface Ctx {
   spread: boolean;
 }
 
+/**
+ * 발문이나 지문이 정답을 그대로 말하고 있는가.
+ *
+ * 개념 제목에 왕 이름이 들어 있는 경우가 많아("근초고왕, 백제의 4세기 전성기")
+ * 제목을 그대로 인용하면 왕을 묻는 문제의 답이 발문에 노출된다.
+ * 유형마다 따로 막지 않고 마지막 관문에서 한 번에 걸러 낸다.
+ */
+function leaksAnswer(
+  question: string,
+  passage: string | undefined,
+  options: string[],
+  answerIndex: number | number[],
+): boolean {
+  const strip = (t: string) => t.replace(/[\s.·,'"“”‘’()]/g, "");
+  const hay = strip(`${question} ${passage ?? ""}`);
+  const idx = Array.isArray(answerIndex) ? answerIndex : [answerIndex];
+  for (const i of idx) {
+    const opt = options[i];
+    if (!opt) continue;
+    const needle = strip(opt);
+    if (needle.length >= 2 && hay.includes(needle)) return true;
+  }
+  return false;
+}
+
+/**
+ * 보기의 갈래.
+ *
+ * "금관가야는 누구에게 멸망했나?"의 정답이 인물인데 보기에 '덩이쇠'(유물),
+ * '김해'(지명)가 섞이면 문제가 성립하지 않는다. 정답과 같은 갈래끼리만
+ * 보기를 만들기 위해 낱말을 거칠게 나눈다.
+ */
+type WordKind = "year" | "person" | "place" | "thing";
+
+const PERSON_TAIL = /(왕|제|공|군|후|비|대사|국사|선사|스님|장군|대군|대왕)$/;
+/** 시험에 자주 나오는 지명 — 낱말만 봐서는 사물과 구분되지 않아 따로 적어 둔다 */
+const PLACES = new Set([
+  "김해", "고령", "경주", "평양", "개경", "개성", "한양", "한성", "웅진", "사비",
+  "국내성", "왕검성", "강화도", "진도", "제주", "부산", "원산", "인천", "대구",
+  "광주", "전주", "청주", "충주", "상경", "동경", "서경", "남경", "요동", "만주",
+  "간도", "연해주", "상하이", "충칭", "하와이", "울산", "나주", "진주", "안동",
+]);
+
+function wordKind(word: string, all: HistoryEvent[]): WordKind {
+  if (/\d/.test(word) && /(년|세기|년대)/.test(word)) return "year";
+  if (PLACES.has(word)) return "place";
+  for (const e of all) {
+    if (e.relatedFigures.includes(word)) return "person";
+    if (e.king && e.king.split(/[·,()\s]+/).includes(word)) return "person";
+    // 문화재가 먼저다 — '지산동 고분군'의 끝 글자에 속아 인물로 보면 안 된다
+    if (e.relatedHeritage.includes(word)) return "thing";
+  }
+  if (PERSON_TAIL.test(word) && !word.includes(" ")) return "person";
+  return "thing";
+}
+
+/** 받침이 있는가 — 조사가 붙는 모양을 정한다 */
+function hasFinalConsonant(word: string): boolean {
+  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  if (code < 0 || code > 11171) return false; // 한글이 아니면 판단 보류
+  return code % 28 !== 0;
+}
+
+/**
+ * 빈칸 뒤 조사와 어울리는 낱말만 남긴다.
+ * "____이 금관가야를 세웠다"의 빈칸에 '대가야'가 들어가면 "대가야이"가 되어
+ * 읽는 순간 답이 아님을 알게 된다. 이런 보기는 문제를 무의미하게 만든다.
+ */
+function fitsParticle(word: string, after: string): boolean {
+  const m = after.match(/^\s*(이|가|은|는|을|를|과|와|으로|로)(?![가-힣])/);
+  if (!m) return true;
+  const need = hasFinalConsonant(word);
+  switch (m[1]) {
+    case "이": case "은": case "을": case "과": case "으로":
+      return need;
+    case "가": case "는": case "를": case "와": case "로":
+      return !need;
+    default:
+      return true;
+  }
+}
+
+/** 정답인 이름을 발문에서 (가)로 가린다 — 실제 시험도 이렇게 낸다 */
+function maskName(text: string, name: string): string {
+  let out = text;
+  for (const token of name.split(/[·,()\s]+/).filter((t) => t.length >= 2)) {
+    out = out.split(token).join("(가)");
+  }
+  return out;
+}
+
+/** 가린 뒤에도 무엇을 묻는지 알 수 있을 만큼 남았는가 */
+function hasSubstance(masked: string): boolean {
+  return masked.replace(/\(가\)/g, "").replace(/[\s,·—:()]/g, "").length >= 3;
+}
+
+/** 연도를 묻는 문제에서 발문에 섞인 연도를 가린다 */
+function maskYears(text: string): string {
+  return text.replace(/\d{1,4}\s*년/g, "○○○년");
+}
+
+/**
+ * 보기용 짧은 제목.
+ * "신석기 혁명: 농경과 정착의 시작"처럼 부제가 붙으면 보기 길이가 들쭉날쭉해져
+ * 유독 짧거나 긴 것이 정답처럼 보인다. 앞머리만 쓴다.
+ */
+function shortTitle(title: string): string {
+  return SHORT_TITLE.get(title) ?? title;
+}
+
+/**
+ * 부제를 떼어 낸 짧은 제목 표. 앱이 뜰 때 한 번만 만든다.
+ * 떼어 낸 결과가 둘 이상 겹치면 구분이 안 되므로 그때는 원제목을 쓴다.
+ * ('·'는 "봉오동·청산리 대첩"처럼 제목 안에서 쓰이므로 구분자로 보지 않는다)
+ */
+const SHORT_TITLE: Map<string, string> = (() => {
+  const head = (t: string) => {
+    const h = t.split(/\s*[—:]\s*/)[0].trim();
+    return h.length >= 2 ? h : t;
+  };
+  const count = new Map<string, number>();
+  for (const e of ALL_EVENTS) {
+    const h = head(e.title);
+    count.set(h, (count.get(h) ?? 0) + 1);
+  }
+  const map = new Map<string, string>();
+  for (const e of ALL_EVENTS) {
+    const h = head(e.title);
+    map.set(e.title, (count.get(h) ?? 0) === 1 ? h : e.title);
+  }
+  return map;
+})();
+
 /** 공통 필드를 붙여 완성된 문제로 만든다 */
 function finish(
   ctx: Ctx,
   type: QuizType,
   q: Omit<QuizQuestion, "id" | "eventId" | "era" | "importance" | "difficulty" | "type" | "pastExams">,
-): QuizQuestion {
+): QuizQuestion | null {
+  // 순서 배열은 정답이 '순서'라 보기 글자가 발문에 있어도 누출이 아니다
+  if (type !== "order" && leaksAnswer(q.question, q.passage, q.options, q.answerIndex))
+    return null;
   const refs = pastExamsOf(ctx.event.id);
   return {
     id: qid(ctx.event.id, type),
@@ -294,7 +430,7 @@ function makeOX(ctx: Ctx): QuizQuestion | null {
     : undefined;
   if (event.king && wrongKing) {
     return finish(ctx, "ox", {
-      question: `[O/X] ${event.title}은(는) ${wrongKing} 때의 일이다.`,
+      question: `[O/X] ${maskName(event.title, event.king)}은(는) ${wrongKing} 때의 일이다.`,
       options: ["O", "X"],
       answerIndex: 1,
       explanation: `${event.title}은(는) ${event.king} 때(${event.yearDisplay})의 일입니다.`,
@@ -305,7 +441,7 @@ function makeOX(ctx: Ctx): QuizQuestion | null {
   )?.yearDisplay;
   if (!wrongYear) return trueStatement(); // 틀린 정답을 내느니 참 명제로
   return finish(ctx, "ox", {
-    question: `[O/X] ${event.title}은(는) ${wrongYear}의 일이다.`,
+    question: `[O/X] ${maskYears(event.title)}은(는) ${wrongYear}의 일이다.`,
     options: ["O", "X"],
     answerIndex: 1,
     explanation: `${event.title}의 시기는 ${event.yearDisplay}입니다.`,
@@ -315,8 +451,8 @@ function makeOX(ctx: Ctx): QuizQuestion | null {
 function makeMultiple(ctx: Ctx): QuizQuestion | null {
   const { event, all, seed, pool } = ctx;
   const built = buildOptions(
-    event.title,
-    nearestOthers(event, all, pool, ctx.spread).map((e) => e.title),
+    shortTitle(event.title),
+    nearestOthers(event, all, pool, ctx.spread).map((e) => shortTitle(e.title)),
     seed,
   );
   if (!built) return null;
@@ -334,13 +470,30 @@ function makeMultiple(ctx: Ctx): QuizQuestion | null {
 function makeKing(ctx: Ctx): QuizQuestion | null {
   const { event, all, seed, pool } = ctx;
   if (!event.king) return null;
+  // 괄호 설명을 떼어 보기 길이를 고르게 한다 ("동명성왕(주몽)" → "동명성왕")
+  const plain = (k: string) => {
+    const head = k.split("(")[0].trim();
+    return head.length >= 2 ? head : k;
+  };
+  const answer = plain(event.king);
   const kings = nearestOthers(event, all, pool + 4, ctx.spread)
     .map((e) => e.king)
-    .filter((k): k is string => !!k);
-  const built = buildOptions(event.king, kings, seed);
+    .filter((k): k is string => !!k)
+    .map(plain)
+    .filter((k) => k !== answer);
+  const built = buildOptions(answer, kings, seed);
   if (!built) return null;
+  // 제목에 왕 이름이 들어 있으면 (가)로 가린다. 가리고 나서도 무엇을
+  // 묻는지 알 수 있어야 하고, 그렇지 못하면 요약문으로 대신한다.
+  const maskedTitle = maskName(event.title, event.king);
+  const cue = hasSubstance(maskedTitle)
+    ? `"${maskedTitle}"`
+    : hasSubstance(maskName(event.summary10s, event.king))
+      ? maskName(event.summary10s, event.king)
+      : null;
+  if (!cue) return null;
   return finish(ctx, "king", {
-    question: `"${event.title}" (${event.yearDisplay}) — 이 사건 당시의 왕(집권자)은?`,
+    question: `${cue} (${event.yearDisplay}) — (가)에 들어갈 왕(집권자)은?`,
     options: built.options,
     answerIndex: built.answerIndex,
     explanation: `${event.title}은(는) ${event.king} 때의 일입니다. ${event.summary10s}`,
@@ -356,7 +509,7 @@ function makeYear(ctx: Ctx): QuizQuestion | null {
   );
   if (!built) return null;
   return finish(ctx, "year", {
-    question: `"${event.title}"이(가) 일어난 시기는?`,
+    question: `"${maskYears(event.title)}"이(가) 일어난 시기는?`,
     options: built.options,
     answerIndex: built.answerIndex,
     explanation: `${event.title}: ${event.yearDisplay}. ${event.memory.mnemonic}`,
@@ -367,9 +520,36 @@ function makeBlank(ctx: Ctx): QuizQuestion | null {
   const { event, all, seed, pool } = ctx;
   const keyword = event.keywords.find((k) => event.summary10s.includes(k));
   if (!keyword) return null;
-  const wrongPool = nearestOthers(event, all, pool + 4, ctx.spread)
+
+  // 정답과 같은 갈래(인물·연도·지명·사물)에서만 오답을 뽑는다.
+  // 갈래가 섞이면 정답이 혼자 튀어 문제가 되지 않는다.
+  const kind = wordKind(keyword, all);
+  // 빈칸 바로 뒤에 붙는 조사 — 보기가 이 조사와 어울려야 한다
+  const after = event.summary10s.slice(
+    event.summary10s.indexOf(keyword) + keyword.length,
+  );
+  let wrongPool = nearestOthers(event, all, pool + 6, ctx.spread)
     .flatMap((e) => e.keywords)
-    .filter((k) => !event.summary10s.includes(k));
+    .filter(
+      (k) =>
+        !event.summary10s.includes(k) &&
+        wordKind(k, all) === kind &&
+        fitsParticle(k, after),
+    );
+
+  // 길이도 비슷하게 — 유독 짧거나 긴 보기는 그 자체로 단서가 된다.
+  // 가까운 순으로 줄 세워 buildOptions가 앞쪽에서 고르게 한다.
+  wrongPool = [...new Set(wrongPool)].sort(
+    (a, b) =>
+      Math.abs(a.length - keyword.length) - Math.abs(b.length - keyword.length),
+  );
+  const close = wrongPool.filter(
+    (k) => Math.abs(k.length - keyword.length) <= Math.max(2, keyword.length / 2),
+  );
+  if (close.length >= 3) wrongPool = close;
+  else wrongPool = wrongPool.slice(0, 6);
+  if (wrongPool.length < 3) return null;
+
   const built = buildOptions(keyword, wrongPool, seed);
   if (!built) return null;
   return finish(ctx, "blank", {
@@ -412,7 +592,7 @@ function makeOrder(ctx: Ctx): QuizQuestion | null {
 
   return finish(ctx, "order", {
     question: "다음 사건들을 일어난 순서대로 배열하시오.",
-    options: displayed.map((e) => e.title),
+    options: displayed.map((e) => shortTitle(e.title)),
     answerIndex: correctOrder,
     explanation:
       "올바른 순서: " +
@@ -521,8 +701,8 @@ function makeSource(ctx: Ctx): QuizQuestion | null {
   if (sentences.length < 40) return null;
 
   const built = buildOptions(
-    event.title,
-    nearestOthers(event, all, pool, ctx.spread).map((e) => e.title),
+    shortTitle(event.title),
+    nearestOthers(event, all, pool, ctx.spread).map((e) => shortTitle(e.title)),
     seed,
   );
   if (!built) return null;
