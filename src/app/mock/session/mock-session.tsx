@@ -512,15 +512,15 @@ export function MockSession() {
 
       {/* 쪽 모드: 시험지를 넘겨 보며 OMR에 답한다 */}
       {pageMode ? (
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-6">
+        <div className="min-[900px]:grid min-[900px]:grid-cols-[minmax(0,1fr)_300px] min-[900px]:items-start min-[900px]:gap-5 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-6">
           <PageViewer
             pages={exam.pageImages!}
             page={page}
             onPage={setPage}
           />
-          <div className="lg:sticky lg:top-20">
+          <div className="min-[900px]:sticky min-[900px]:top-20">
           {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
-          <div className="mb-2 mt-5 flex items-baseline justify-between lg:mt-0">
+          <div className="mb-2 mt-5 flex items-baseline justify-between min-[900px]:mt-0">
             <h2 className="text-base font-bold tracking-tight">
               {page + 1}쪽 답안
             </h2>
@@ -590,7 +590,7 @@ export function MockSession() {
           </div>
         </div>
       ) : (
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-6">
+        <div className="min-[900px]:grid min-[900px]:grid-cols-[minmax(0,1fr)_300px] min-[900px]:items-start min-[900px]:gap-5 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-6">
       {/* 문항 */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -633,14 +633,14 @@ export function MockSession() {
       </AnimatePresence>
 
       {/* 오른쪽 열: 답안 · 이동 — 데스크톱에서는 스크롤을 따라온다 */}
-      <div className="lg:sticky lg:top-20">
+      <div className="min-[900px]:sticky min-[900px]:top-20">
       {/*
         OMR 답안.
         좁은 화면에서는 번호만 한 줄로 놓는다 — 선택지 글은 시험지 이미지에 이미 있고,
         화면을 차지하면 정작 문제가 밀린다.
         넓은 화면에서는 오른쪽 열에 선택지 글까지 펼쳐 눌러서 고르게 한다.
       */}
-      <div className="mt-4 flex gap-2 lg:mt-0 lg:flex-col lg:gap-1.5">
+      <div className="mt-4 flex gap-2 min-[900px]:mt-0 min-[900px]:flex-col min-[900px]:gap-1.5">
         {CHOICES.map((c) => {
           const picked = answers[q.number] === c;
           const label = q.options?.[c - 1];
@@ -651,16 +651,16 @@ export function MockSession() {
               onClick={() => pick(q.number, c)}
               className={cn(
                 "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
-                "lg:h-auto lg:flex-none lg:justify-start lg:gap-2.5 lg:px-3 lg:py-2.5 lg:text-left",
+                "min-[900px]:h-auto min-[900px]:flex-none min-[900px]:justify-start min-[900px]:gap-2.5 min-[900px]:px-3 min-[900px]:py-2.5 min-[900px]:text-left",
                 picked
                   ? "border-indigo-400 bg-indigo-500 text-white"
-                  : "border-white/12 bg-white/5 text-zinc-400 lg:hover:border-white/25 lg:hover:bg-white/8",
+                  : "border-white/12 bg-white/5 text-zinc-400 min-[900px]:hover:border-white/25 min-[900px]:hover:bg-white/8",
               )}
             >
               <span
                 className={cn(
-                  "shrink-0 lg:flex lg:h-6 lg:w-6 lg:items-center lg:justify-center lg:rounded-md lg:text-[11px]",
-                  picked ? "lg:bg-white/20" : "lg:bg-white/8",
+                  "shrink-0 min-[900px]:flex min-[900px]:h-6 min-[900px]:w-6 min-[900px]:items-center min-[900px]:justify-center min-[900px]:rounded-md min-[900px]:text-[11px]",
+                  picked ? "min-[900px]:bg-white/20" : "min-[900px]:bg-white/8",
                 )}
               >
                 {c}
@@ -668,7 +668,7 @@ export function MockSession() {
               {label && (
                 <span
                   className={cn(
-                    "hidden flex-1 text-[13px] font-medium leading-snug lg:block",
+                    "hidden flex-1 text-[13px] font-medium leading-snug min-[900px]:block",
                     picked ? "text-white" : "text-zinc-300",
                   )}
                 >
