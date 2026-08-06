@@ -274,6 +274,8 @@ export interface ExamSettings {
   examLabel: string; // 표시용 이름
   examDate: string; // ISO yyyy-mm-dd
   track?: ExamTrack; // 한능검 전용: 심화/기본
+  /** 응시 회차 (일정표에서 고른 경우). 날짜를 직접 넣었으면 없음 */
+  round?: number;
 }
 
 export interface StudyStats {

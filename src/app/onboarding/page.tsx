@@ -19,6 +19,11 @@ import type { ExamTrack } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS } from "@/data/events";
 import { MOCK_EXAMS } from "@/data/mock-exams";
+import {
+  formatExamDate,
+  formatShortDate,
+  upcomingSessions,
+} from "@/data/exam-schedule";
 import { cn, daysUntil } from "@/lib/utils";
 import { Badge, Button, Card, ProgressBar } from "@/components/ui";
 
@@ -40,6 +45,11 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [track, setTrack] = useState<ExamTrack>(exam?.track ?? "advanced");
   const [date, setDate] = useState<string>(exam?.examDate ?? "");
+  // 회차를 골랐으면 회차 번호, 날짜를 직접 넣었으면 null
+  const [round, setRound] = useState<number | null>(exam?.round ?? null);
+
+  // 오늘 이후 시행되는 회차만
+  const upcoming = useMemo(() => upcomingSessions().slice(0, 4), []);
 
   const dday = date ? daysUntil(date) : null;
 
@@ -52,9 +62,12 @@ export default function OnboardingPage() {
   const finish = () => {
     setExam({
       examType: "korean-history-test",
-      examLabel: `한국사능력검정시험 ${track === "advanced" ? "심화" : "기본"}`,
+      examLabel: round
+        ? `제${round}회 한국사능력검정시험 ${track === "advanced" ? "심화" : "기본"}`
+        : `한국사능력검정시험 ${track === "advanced" ? "심화" : "기본"}`,
       examDate: date,
       track,
+      ...(round ? { round } : {}),
     });
     router.replace("/");
   };
@@ -170,42 +183,104 @@ export default function OnboardingPage() {
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.25 }}
           >
-            <h2 className="mb-1 text-lg font-bold">시험이 언제인가요?</h2>
-            <p className="mb-5 text-sm text-zinc-500">
+            <h2 className="mb-1 text-lg font-bold">몇 회차에 응시하시나요?</h2>
+            <p className="mb-4 text-sm text-zinc-500">
               남은 날짜에 맞춰 학습 계획을 설계합니다
             </p>
-            <div className="grid grid-cols-3 gap-2">
-              {PRESETS.map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setDate(addDays(n))}
-                  className={cn(
-                    "glass rounded-xl py-3 text-center text-sm font-semibold transition-all active:scale-95",
-                    date === addDays(n) &&
-                      "border-indigo-400/60 bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-400/40",
-                  )}
-                >
-                  D-{n}
-                </button>
-              ))}
-              <label
-                className={cn(
-                  "glass flex cursor-pointer items-center justify-center gap-1 rounded-xl py-3 text-sm font-semibold",
-                  date && !PRESETS.some((n) => addDays(n) === date) &&
-                    "border-indigo-400/60 bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-400/40",
-                )}
-              >
-                <CalendarDays size={15} />
-                직접
-                <input
-                  type="date"
-                  min={addDays(1)}
-                  className="absolute h-0 w-0 opacity-0"
-                  onChange={(e) => e.target.value && setDate(e.target.value)}
-                />
-              </label>
+
+            {/* 다가오는 회차 */}
+            <div className="flex flex-col gap-2">
+              {upcoming.map((s) => {
+                const active = date === s.date && round === s.round;
+                const left = daysUntil(s.date);
+                return (
+                  <button
+                    key={s.round}
+                    type="button"
+                    onClick={() => {
+                      setRound(s.round);
+                      setDate(s.date);
+                    }}
+                    className={cn(
+                      "glass flex items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all active:scale-[0.99]",
+                      active &&
+                        "border-indigo-400/60 bg-indigo-500/10 ring-1 ring-indigo-400/40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl",
+                        active
+                          ? "bg-indigo-500/25 text-indigo-200"
+                          : "bg-white/5 text-zinc-400",
+                      )}
+                    >
+                      <span className="text-sm font-black leading-none">
+                        {s.round}
+                      </span>
+                      <span className="text-[9px] leading-none">회</span>
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-sm font-bold">
+                          제{s.round}회 · {formatShortDate(s.date)}
+                        </span>
+                        {!s.confirmed && (
+                          <Badge className="border-amber-400/25 bg-amber-500/10 px-1.5 py-0 text-[9px] text-amber-300/90">
+                            예상
+                          </Badge>
+                        )}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] text-zinc-500">
+                        {formatExamDate(s.date)}
+                      </span>
+                    </span>
+                    <span
+                      className={cn(
+                        "shrink-0 text-sm font-bold",
+                        active ? "text-indigo-300" : "text-zinc-500",
+                      )}
+                    >
+                      D-{left}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
+
+            {/* 직접 입력 */}
+            <label
+              className={cn(
+                "glass mt-2 flex cursor-pointer items-center gap-2 rounded-2xl px-4 py-3",
+                date && round === null &&
+                  "border-indigo-400/60 bg-indigo-500/10 ring-1 ring-indigo-400/40",
+              )}
+            >
+              <CalendarDays size={16} className="shrink-0 text-zinc-400" />
+              <span className="flex-1 text-sm font-medium text-zinc-300">
+                날짜 직접 선택
+              </span>
+              <span className="text-xs text-zinc-500">
+                {date && round === null ? formatShortDate(date) : "탭하세요"}
+              </span>
+              <input
+                type="date"
+                min={addDays(1)}
+                className="absolute h-0 w-0 opacity-0"
+                onChange={(e) => {
+                  if (!e.target.value) return;
+                  setRound(null);
+                  setDate(e.target.value);
+                }}
+              />
+            </label>
+
+            <p className="mt-3 text-[11px] leading-relaxed text-zinc-600">
+              회차와 시행 연도는 기출 문제지로 확인했지만, 정확한 시행일은
+              공식 발표를 따릅니다. &lsquo;예상&rsquo;으로 표시된 날짜는 통상적인
+              시행 시기(연 4회 · 2·5·8·10월경 토요일)로 추정한 값이니,
+              공고된 날짜와 다르면 직접 선택해 주세요.
+            </p>
 
             {dday !== null && dday > 0 && (
               <motion.div
