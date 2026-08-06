@@ -211,7 +211,9 @@ export default function DashboardPage() {
             desc:
               dueCount > 0
                 ? "망각곡선이 잊기 직전이라고 알려왔어요"
-                : "지금은 복습할 카드가 없어요",
+                : reviewCards.length > 0
+                  ? `${reviewCards.length}장이 대기 중 — 아직 복습할 때가 아니에요`
+                  : "학습하거나 퀴즈를 풀면 일정이 잡혀요",
             count: `${dueCount}건`,
           },
           {

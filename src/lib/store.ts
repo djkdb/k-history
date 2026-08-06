@@ -114,9 +114,17 @@ export const useApp = create<AppState>()(
             ...wrongIds,
             ...s.wrongEventIds.filter((id) => !wrongIds.includes(id)),
           ];
-          const reviewCards = s.reviewCards.map((c) =>
+          // 기출에서 틀린 개념도 마찬가지로 복습 큐에 넣는다
+          const graded = s.reviewCards.map((c) =>
             wrongIds.includes(c.eventId) ? gradeCard(c, false) : c,
           );
+          const missing = wrongIds.filter(
+            (id) => !s.reviewCards.some((c) => c.eventId === id),
+          );
+          const reviewCards = [
+            ...graded,
+            ...missing.map((id) => gradeCard(createCard(id), false)),
+          ];
           // 채점 뒤 되돌아가 다시 풀고 제출하면 같은 응시를 두 번 세면 안 된다.
           // 시작 시각이 같으면 한 번의 응시이므로 마지막 채점 결과로 덮어쓴다.
           const prev = s.mockAttempts.findIndex(
@@ -173,9 +181,18 @@ export const useApp = create<AppState>()(
           } else if (wrongEventIds.includes(r.eventId)) {
             wrongEventIds = wrongEventIds.filter((id) => id !== r.eventId);
           }
-          const reviewCards = s.reviewCards.map((c) =>
-            c.eventId === r.eventId ? gradeCard(c, r.correct) : c,
-          );
+          // 틀린 개념은 복습 큐에 반드시 들어가야 한다.
+          // 결과 화면이 "복습 큐에 자동 반영했습니다"라고 약속하는데,
+          // 개념 화면을 거치지 않고 퀴즈부터 푼 사람에게는 카드가 없어
+          // 아무 일도 일어나지 않고 있었다.
+          const hasCard = s.reviewCards.some((c) => c.eventId === r.eventId);
+          const reviewCards = hasCard
+            ? s.reviewCards.map((c) =>
+                c.eventId === r.eventId ? gradeCard(c, r.correct) : c,
+              )
+            : r.correct
+              ? s.reviewCards // 맞힌 것까지 큐에 넣으면 학습하지도 않은 개념이 쌓인다
+              : [...s.reviewCards, gradeCard(createCard(r.eventId), false)];
           const stats = bumpStreak({
             ...s.stats,
             xp: s.stats.xp + (r.correct ? 10 : 2),

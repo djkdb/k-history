@@ -53,3 +53,8 @@ export function totalPoints(exam: MockExam): number {
 export function isPageMode(exam: MockExam): boolean {
   return !!exam.pageImages?.length;
 }
+
+/** 해설이 달린 문항 수 — 목록에서 미리 알려 주기 위해 쓴다 */
+export function explainedCount(exam: MockExam): number {
+  return exam.questions.filter((q) => q.explanation).length;
+}

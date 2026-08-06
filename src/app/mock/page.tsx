@@ -4,7 +4,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronRight, FileText, Timer, Trophy } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { MOCK_EXAMS, isPageMode, totalPoints } from "@/data/mock-exams";
+import {
+  MOCK_EXAMS,
+  explainedCount,
+  isPageMode,
+  totalPoints,
+} from "@/data/mock-exams";
 import { hnkGrade } from "@/lib/utils";
 import { Badge, Button, Card, EmptyState, SectionTitle } from "@/components/ui";
 
@@ -85,6 +90,7 @@ export default function MockExamListPage() {
               : null;
             const grade =
               best !== null ? hnkGrade(best, exam.level) : null;
+            const explained = explainedCount(exam);
             return (
               <motion.div
                 key={exam.id}
@@ -101,16 +107,32 @@ export default function MockExamListPage() {
                       <span className="text-[9px] leading-none">회</span>
                     </span>
                     <span className="min-w-0 flex-1">
+                      {/* 회차가 제목에 있어야 목록에서 구분된다 */}
                       <span className="block text-sm font-bold">
-                        {exam.level === "advanced" ? "심화" : "기본"} ·{" "}
-                        {exam.questions.length}문항
+                        제{exam.round}회{" "}
+                        {exam.level === "advanced" ? "심화" : "기본"}
                       </span>
-                      <span className="mt-0.5 flex items-center gap-2 text-[11px] text-zinc-500">
-                        <Timer size={11} /> {exam.timeLimitMin}분
-                        <span>· {totalPoints(exam)}점 만점</span>
+                      <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[11px] text-zinc-500">
+                        <span className="flex items-center gap-1">
+                          <Timer size={11} /> {exam.timeLimitMin}분
+                        </span>
+                        <span>· {exam.questions.length}문항</span>
+                        <span>· {totalPoints(exam)}점</span>
                         <span className="text-zinc-600">
                           · {isPageMode(exam) ? "시험지 넘겨보기" : "문항별"}
                         </span>
+                      </span>
+                      {/* 해설 유무는 고르기 전에 알아야 한다 */}
+                      <span className="mt-1 block text-[10px]">
+                        {explained > 0 ? (
+                          <span className="text-emerald-400/90">
+                            해설 {explained}문항
+                          </span>
+                        ) : (
+                          <span className="text-zinc-600">
+                            스캔 시험지 — 해설 없음
+                          </span>
+                        )}
                       </span>
                     </span>
                     {best !== null && (
@@ -164,9 +186,14 @@ export default function MockExamListPage() {
       )}
 
       <div className="pb-4">
+        <p className="mb-2 text-[11px] leading-relaxed text-zinc-600">
+          해설은 국사편찬위원회가 공개하지 않아 문항 원문에 근거해 직접
+          작성했습니다. 스캔 시험지 회차는 문항을 텍스트로 읽을 수 없어 해설을
+          붙이지 못했습니다.
+        </p>
         <Link href="/quiz">
           <Button variant="outline" className="w-full">
-            대신 개념 퀴즈 풀기
+            {MOCK_EXAMS.length === 0 ? "대신 개념 퀴즈 풀기" : "개념 퀴즈 풀기"}
           </Button>
         </Link>
       </div>

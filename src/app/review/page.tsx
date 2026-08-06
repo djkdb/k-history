@@ -3,7 +3,14 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, Brain, Check, RotateCcw, X } from "lucide-react";
+import {
+  BookOpen,
+  Brain,
+  Check,
+  NotebookPen,
+  RotateCcw,
+  X,
+} from "lucide-react";
 import type { ReviewCard as ReviewCardType } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { getEvent } from "@/data/events";
@@ -264,16 +271,39 @@ export default function ReviewPage() {
       ) : due.length === 0 ? (
         <>
           <Card className="mt-4">
+            {/*
+              카드가 있는데 아직 때가 아닌 경우와, 카드 자체가 없는 경우를
+              구분해서 말해 준다. 퀴즈 결과 화면이 "복습 큐에 반영했습니다"라고
+              해 놓고 여기서 "카드가 없어요"라고 하면 반영이 안 된 줄 안다.
+            */}
             <EmptyState
               icon="🌙"
-              title="지금은 복습할 카드가 없어요"
-              desc="새 개념을 학습하면 자동으로 복습 일정이 잡힙니다"
+              title={
+                reviewCards.length > 0
+                  ? "지금 복습할 카드는 없어요"
+                  : "아직 복습할 카드가 없어요"
+              }
+              desc={
+                reviewCards.length > 0
+                  ? `${reviewCards.length}장이 대기 중이에요. 가장 이른 카드는 ${
+                      upcoming[0] ? nextDueLabel(upcoming[0]) : "곧"
+                    } 올라옵니다. 틀린 개념은 오답 노트에서 바로 다시 풀 수 있어요.`
+                  : "개념을 학습하거나 퀴즈에서 틀리면 복습 일정이 자동으로 잡힙니다"
+              }
               action={
-                <Link href="/learn">
-                  <Button>
-                    <BookOpen size={16} /> 학습하러 가기
-                  </Button>
-                </Link>
+                reviewCards.length > 0 ? (
+                  <Link href="/wrong">
+                    <Button>
+                      <NotebookPen size={16} /> 오답 노트에서 다시 풀기
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/learn">
+                    <Button>
+                      <BookOpen size={16} /> 학습하러 가기
+                    </Button>
+                  </Link>
+                )
               }
             />
           </Card>
