@@ -84,6 +84,15 @@ body {
   padding-top: env(safe-area-inset-top);
 }
 
+/*
+  화면 위에 붙어 있는 막대(시험 타이머 등).
+  그냥 top: 0.5rem 으로 두면 아이폰 상태바(시계·배터리) 아래로 파고들어
+  남은 시간과 제출 버튼이 겹쳐 읽히지 않는다.
+*/
+.sticky-top-safe {
+  top: calc(env(safe-area-inset-top) + 0.5rem);
+}
+
 /* 숨김 스크롤 영역 */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

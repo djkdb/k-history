@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,6 +61,9 @@ function PageViewer({
   page: number;
   onPage: (p: number) => void;
 }) {
+  const viewer = useRef<ZoomHandle>(null);
+  const [side, setSide] = useState<"left" | "right" | null>(null);
+
   return (
     <div>
       <div className="mb-2 flex items-center gap-2">
@@ -90,10 +101,37 @@ function PageViewer({
           <ChevronRight size={15} />
         </Button>
       </div>
+
+      {/*
+        단 전환.
+        시험지가 2단이라 좁은 화면에서 가장 잦은 이동이 좌·우 단 사이다.
+        시험지 위에 띄웠더니 하필 선택지를 가려서, 쪽 번호 줄 아래로 옮겼다.
+      */}
+      <div className="mb-2 flex gap-1.5 min-[740px]:hidden">
+        {(["left", "right"] as const).map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => viewer.current?.showColumn(s)}
+            className={cn(
+              "flex-1 rounded-lg py-1.5 text-[12px] font-bold transition-colors",
+              side === s
+                ? "bg-white text-zinc-900"
+                : "bg-white/5 text-zinc-400 hover:bg-white/10",
+            )}
+          >
+            {s === "left" ? "◀ 왼쪽 단" : "오른쪽 단 ▶"}
+          </button>
+        ))}
+      </div>
+
       <ZoomableImage
+        ref={viewer}
         src={pages[page]}
         alt={`시험지 ${page + 1}쪽`}
         resetKey={page}
+        twoColumn
+        onSideChange={setSide}
       />
     </div>
   );
@@ -115,30 +153,44 @@ function PageViewer({
  */
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 5;
+/**
+ * 한 단만 화면에 채우는 배율.
+ * 시험지는 2단이라 쪽 전체를 폭에 맞추면 글자가 절반 크기가 된다.
+ * 좁은 화면에서는 처음부터 한 단만 보여 주는 편이 실제로 읽힌다.
+ */
+const COLUMN_ZOOM = 2;
+/** 확대법을 한 번은 알려 준다 — 안내를 본 적 있는지 기억해 둔다 */
+const ZOOM_HINT_KEY = "khlm:zoom-hint-seen";
 
-function ZoomableImage({
-  src,
-  alt,
-  resetKey,
-}: {
-  src: string;
-  alt: string;
-  /** 이 값이 바뀌면 확대를 원래대로 되돌린다 (쪽을 넘겼을 때) */
-  resetKey: unknown;
-}) {
+/** 바깥(쪽 번호 줄)에서 단을 옮기기 위한 손잡이 */
+export interface ZoomHandle {
+  showColumn: (side: "left" | "right") => void;
+  /** 지금 왼쪽 단을 보고 있는가. 아무 단도 아니면 null */
+  side: () => "left" | "right" | null;
+}
+
+const ZoomableImage = forwardRef<
+  ZoomHandle,
+  {
+    src: string;
+    alt: string;
+    /** 이 값이 바뀌면 보던 자리를 처음으로 되돌린다 (쪽을 넘겼을 때) */
+    resetKey: unknown;
+    /** 2단 시험지 — 좁은 화면에서 한 단 보기로 시작한다 */
+    twoColumn?: boolean;
+    /** 단이 바뀔 때마다 알려 준다 (바깥 버튼의 켜짐 상태용) */
+    onSideChange?: (side: "left" | "right" | null) => void;
+  }
+>(function ZoomableImage({ src, alt, resetKey, twoColumn = false, onSideChange }, ref) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [hint, setHint] = useState(false);
 
   // 제스처 도중 값은 렌더와 무관하게 바뀌므로 ref에 둔다
   const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   const pinch = useRef<{ dist: number; scale: number } | null>(null);
   const lastTap = useRef(0);
-
-  useEffect(() => {
-    setScale(1);
-    setPos({ x: 0, y: 0 });
-  }, [resetKey]);
 
   /** 확대해도 이미지가 화면 밖으로 완전히 빠져나가지 않게 붙잡는다 */
   const clamp = useCallback((x: number, y: number, s: number) => {
@@ -161,6 +213,64 @@ function ZoomableImage({
     },
     [clamp],
   );
+
+  /**
+   * 한 단(왼쪽 또는 오른쪽) 맨 위로 옮긴다.
+   *
+   * 확대는 가운데를 기준으로 일어난다. 이미지 가로 위치 p(0~1)를 화면
+   * 한가운데로 가져오려면 -(p - 0.5) × 폭 × 배율만큼 밀면 된다.
+   * 왼쪽 단의 한가운데는 p=0.25, 오른쪽 단은 p=0.75다.
+   * 세로는 넉넉히 밀어 두면 clamp가 맨 위에서 멈춰 준다.
+   */
+  const showColumn = useCallback(
+    (side: "left" | "right") => {
+      const el = boxRef.current;
+      if (!el) return;
+      const { width, height } = el.getBoundingClientRect();
+      const p = side === "left" ? 0.25 : 0.75;
+      const s = COLUMN_ZOOM;
+      setScale(s);
+      setPos(clamp(-(p - 0.5) * width * s, height * s, s));
+    },
+    [clamp],
+  );
+
+  /** 지금 어느 단을 보고 있는가 (바깥 버튼의 켜짐 상태용) */
+  const side: "left" | "right" | null =
+    scale <= 1 ? null : pos.x > 0 ? "left" : "right";
+  useEffect(() => {
+    onSideChange?.(side);
+  }, [side, onSideChange]);
+
+  useImperativeHandle(ref, () => ({ showColumn, side: () => side }), [
+    showColumn,
+    side,
+  ]);
+
+  // 쪽을 넘기면 처음 자리로. 2단 시험지에 좁은 화면이면 한 단 보기로 시작한다.
+  useEffect(() => {
+    const el = boxRef.current;
+    const narrow = typeof window !== "undefined" && window.innerWidth < 740;
+    if (twoColumn && narrow && el) {
+      const { width, height } = el.getBoundingClientRect();
+      const s = COLUMN_ZOOM;
+      setScale(s);
+      setPos(clamp(0.25 * width * s, height * s, s));
+    } else {
+      setScale(1);
+      setPos({ x: 0, y: 0 });
+    }
+  }, [resetKey, twoColumn, clamp]);
+
+  // 처음 한 번만 조작법을 알려 준다
+  useEffect(() => {
+    if (localStorage.getItem(ZOOM_HINT_KEY)) return;
+    setHint(true);
+  }, []);
+  const closeHint = useCallback(() => {
+    localStorage.setItem(ZOOM_HINT_KEY, "1");
+    setHint(false);
+  }, []);
 
   const dist = (t: React.TouchList) =>
     Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
@@ -312,14 +422,36 @@ function ZoomableImage({
         </div>
       </div>
 
-      {scale === 1 && (
-        <p className="mt-1.5 text-center text-[11px] text-zinc-600">
-          두 손가락으로 벌리거나 두 번 두드리면 크게 볼 수 있어요
-        </p>
+      {/*
+        조작법 안내.
+        예전에는 이미지 아래에 회색 잔글씨로 뒀는데, 검은 배경에 묻혀
+        아무도 읽지 않았다. 시험지 위에 덮어 놓고 한 번 읽으면 사라지게 한다.
+      */}
+      {hint && (
+        <motion.button
+          type="button"
+          onClick={closeHint}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute inset-x-3 top-3 z-30 rounded-2xl border-2 border-indigo-400/60 bg-zinc-900/95 px-4 py-3.5 text-left shadow-2xl backdrop-blur"
+        >
+          <p className="text-[14px] font-black text-indigo-200">
+            글씨가 작으면 이렇게 크게 보세요
+          </p>
+          <ul className="mt-2 flex flex-col gap-1 text-[13px] leading-relaxed text-zinc-200">
+            <li>· 두 손가락으로 벌리기 — 자유롭게 확대·축소</li>
+            <li>· 화면을 두 번 두드리기 — 크게 ↔ 원래대로</li>
+            <li>· 크게 본 상태에서 손가락으로 끌기 — 자리 옮기기</li>
+            {twoColumn && <li>· 아래 &lsquo;왼쪽 단 · 오른쪽 단&rsquo; 버튼으로 단 이동</li>}
+          </ul>
+          <p className="mt-2.5 text-[12px] font-bold text-indigo-300">
+            눌러서 닫기
+          </p>
+        </motion.button>
       )}
     </div>
   );
-}
+});
 
 /** 시험지와 답안의 너비를 기억해 둔다 — 사람마다 편한 비율이 다르다 */
 const SPLIT_KEY = "khlm:exam-split";
@@ -851,7 +983,7 @@ export function MockSession() {
     // 데스크톱에서는 컨테이너 폭을 넘어 넓게 쓴다 — 시험지와 답안을 나란히 놓기 위해
     <div className="wide-page pt-4">
       {/* 상단 고정: 타이머 + 진행 + 제출 */}
-      <div className="glass-strong sticky top-2 z-30 mb-3 rounded-2xl px-3 py-2">
+      <div className="glass-strong sticky-top-safe sticky z-30 mb-3 rounded-2xl px-3 py-2">
         <div className="flex items-center gap-2">
           <span
             className={cn(
