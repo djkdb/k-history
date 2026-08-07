@@ -12,6 +12,8 @@ import {
   Flag,
   Timer,
   X,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import type { MockExamQuestion } from "@/lib/types";
 import { useApp } from "@/lib/store";
@@ -88,15 +90,233 @@ function PageViewer({
           <ChevronRight size={15} />
         </Button>
       </div>
-      <div className="overflow-hidden rounded-xl bg-white">
+      <ZoomableImage
+        src={pages[page]}
+        alt={`시험지 ${page + 1}쪽`}
+        resetKey={page}
+      />
+    </div>
+  );
+}
+
+/**
+ * 확대해서 보는 시험지.
+ *
+ * 스캔 시험지는 한 쪽에 2단으로 50문항 중 4~5개가 들어 있어,
+ * 휴대폰 폭에 통째로 맞추면 글자가 읽히지 않는다. 실제 시험지를
+ * 눈앞에 당겨 보듯 자유롭게 키우고 끌 수 있어야 한다.
+ *
+ * 브라우저 기본 핀치 줌은 페이지 전체를 키워 버려서 답안과 타이머까지
+ * 화면 밖으로 밀려난다. 그래서 이미지 안에서만 도는 확대를 따로 만든다.
+ *  · 두 손가락으로 벌리기/오므리기
+ *  · 확대 상태에서 한 손가락으로 끌기 (원래 크기면 스크롤을 방해하지 않는다)
+ *  · 두 번 두드리면 확대 ↔ 원래 크기
+ *  · 데스크톱은 Ctrl+휠, 그리고 버튼
+ */
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 5;
+
+function ZoomableImage({
+  src,
+  alt,
+  resetKey,
+}: {
+  src: string;
+  alt: string;
+  /** 이 값이 바뀌면 확대를 원래대로 되돌린다 (쪽을 넘겼을 때) */
+  resetKey: unknown;
+}) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+
+  // 제스처 도중 값은 렌더와 무관하게 바뀌므로 ref에 둔다
+  const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const pinch = useRef<{ dist: number; scale: number } | null>(null);
+  const lastTap = useRef(0);
+
+  useEffect(() => {
+    setScale(1);
+    setPos({ x: 0, y: 0 });
+  }, [resetKey]);
+
+  /** 확대해도 이미지가 화면 밖으로 완전히 빠져나가지 않게 붙잡는다 */
+  const clamp = useCallback((x: number, y: number, s: number) => {
+    const el = boxRef.current;
+    if (!el) return { x, y };
+    const { width, height } = el.getBoundingClientRect();
+    const mx = (width * (s - 1)) / 2;
+    const my = (height * (s - 1)) / 2;
+    return {
+      x: Math.min(mx, Math.max(-mx, x)),
+      y: Math.min(my, Math.max(-my, y)),
+    };
+  }, []);
+
+  const zoomTo = useCallback(
+    (next: number) => {
+      const s = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
+      setScale(s);
+      setPos((p) => (s === 1 ? { x: 0, y: 0 } : clamp(p.x, p.y, s)));
+    },
+    [clamp],
+  );
+
+  const dist = (t: React.TouchList) =>
+    Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      pinch.current = { dist: dist(e.touches), scale };
+      drag.current = null;
+      return;
+    }
+    if (e.touches.length === 1) {
+      const now = Date.now();
+      if (now - lastTap.current < 300) {
+        zoomTo(scale > 1 ? 1 : 2.5);
+        lastTap.current = 0;
+        return;
+      }
+      lastTap.current = now;
+      // 원래 크기일 때는 손대지 않는다 — 세로 스크롤이 먹어야 한다
+      if (scale > 1) {
+        drag.current = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+          px: pos.x,
+          py: pos.y,
+        };
+      }
+    }
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (pinch.current && e.touches.length === 2) {
+      e.preventDefault();
+      const ratio = dist(e.touches) / pinch.current.dist;
+      zoomTo(pinch.current.scale * ratio);
+      return;
+    }
+    if (drag.current && e.touches.length === 1) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - drag.current.x;
+      const dy = e.touches[0].clientY - drag.current.y;
+      setPos(clamp(drag.current.px + dx, drag.current.py + dy, scale));
+    }
+  };
+
+  const endGesture = () => {
+    pinch.current = null;
+    drag.current = null;
+  };
+
+  // 마우스로 끌기 — 데스크톱에서도 확대 뒤 위치를 옮길 수 있어야 한다
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (scale === 1) return;
+    e.preventDefault();
+    drag.current = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y };
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!drag.current) return;
+    setPos(
+      clamp(
+        drag.current.px + (e.clientX - drag.current.x),
+        drag.current.py + (e.clientY - drag.current.y),
+        scale,
+      ),
+    );
+  };
+
+  // Ctrl+휠은 브라우저 기본 확대라 가로채야 이미지 안에서만 돈다.
+  // React onWheel은 passive라 preventDefault가 안 먹어서 직접 붙인다.
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      zoomTo(scale * (e.deltaY < 0 ? 1.12 : 1 / 1.12));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [scale, zoomTo]);
+
+  return (
+    <div className="relative">
+      <div
+        ref={boxRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={endGesture}
+        onTouchCancel={endGesture}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endGesture}
+        onMouseLeave={endGesture}
+        onDoubleClick={() => zoomTo(scale > 1 ? 1 : 2.5)}
+        className={cn(
+          "overflow-hidden rounded-xl bg-white",
+          scale > 1 ? "cursor-grab touch-none active:cursor-grabbing" : "touch-pan-y",
+        )}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={pages[page]}
-          alt={`시험지 ${page + 1}쪽`}
-          className="w-full"
+          src={src}
+          alt={alt}
+          className="w-full select-none"
+          draggable={false}
           loading="lazy"
+          style={{
+            transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+            transformOrigin: "center center",
+            transition: drag.current || pinch.current ? "none" : "transform 0.15s ease-out",
+          }}
         />
       </div>
+
+      {/*
+        확대 조작 — 손가락이 안 되는 환경과, 제스처를 모르는 사람을 위해.
+        시험지 한 쪽은 화면보다 훨씬 길어서, 그냥 아래쪽에 두면
+        정작 확대해서 보는 동안에는 버튼이 화면 밖에 있다.
+        시험지를 보고 있는 내내 화면에 붙어 있게 한다.
+      */}
+      <div className="pointer-events-none sticky bottom-4 z-20 -mt-14 flex justify-end pr-3">
+        {/* 흰 시험지 위에 올라가므로 반투명이면 묻힌다 — 불투명하게 */}
+        <div className="pointer-events-auto flex items-center gap-0.5 rounded-xl border border-white/20 bg-zinc-900/95 px-1 py-1 shadow-2xl backdrop-blur-sm">
+          <button
+            type="button"
+            aria-label="축소"
+            onClick={() => zoomTo(scale - 0.5)}
+            disabled={scale <= ZOOM_MIN}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-200 transition-colors hover:bg-white/10 disabled:opacity-30"
+          >
+            <ZoomOut size={17} />
+          </button>
+          <button
+            type="button"
+            onClick={() => zoomTo(1)}
+            className="min-w-12 rounded-lg px-1.5 text-[11px] font-bold tabular-nums text-zinc-300 transition-colors hover:bg-white/10"
+          >
+            {Math.round(scale * 100)}%
+          </button>
+          <button
+            type="button"
+            aria-label="확대"
+            onClick={() => zoomTo(scale + 0.5)}
+            disabled={scale >= ZOOM_MAX}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-200 transition-colors hover:bg-white/10 disabled:opacity-30"
+          >
+            <ZoomIn size={17} />
+          </button>
+        </div>
+      </div>
+
+      {scale === 1 && (
+        <p className="mt-1.5 text-center text-[11px] text-zinc-600">
+          두 손가락으로 벌리거나 두 번 두드리면 크게 볼 수 있어요
+        </p>
+      )}
     </div>
   );
 }
@@ -212,17 +432,14 @@ function AllCorrectNotice({
 
 function QuestionBody({ q }: { q: MockExamQuestion }) {
   if (q.image) {
+    // 시험지 캡처는 흰 배경이므로 밝은 판 위에 그대로 올린다.
+    // 자료 속 작은 글씨(사료·연표)는 휴대폰에서 잘 안 보여 확대가 필요하다.
     return (
-      // 시험지 캡처는 흰 배경이므로 밝은 판 위에 그대로 올린다
-      <div className="overflow-hidden rounded-xl bg-white">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={q.image}
-          alt={`${q.number}번 문항`}
-          className="w-full"
-          loading="lazy"
-        />
-      </div>
+      <ZoomableImage
+        src={q.image}
+        alt={`${q.number}번 문항`}
+        resetKey={q.number}
+      />
     );
   }
   return (
