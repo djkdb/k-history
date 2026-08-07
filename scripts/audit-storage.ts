@@ -16,7 +16,11 @@
  */
 import { readFileSync } from "node:fs";
 import { ALL_EVENTS } from "@/data/events";
-import { LOCKED_EVENT_IDS, LOCKED_EXAM_IDS } from "@/data/locked-ids";
+import {
+  LOCKED_EVENT_IDS,
+  LOCKED_EXAM_IDS,
+  LOCKED_EXAM_KEYS,
+} from "@/data/locked-ids";
 import { MOCK_EXAMS } from "@/data/mock-exams";
 
 const errors: string[] = [];
@@ -87,10 +91,31 @@ for (const id of LOCKED_EXAM_IDS.filter((id) => !examsNow.has(id)))
   );
 const examsAdded = [...examsNow].filter((id) => !LOCKED_EXAM_IDS.includes(id));
 
+// ─── ⑦ 정답·배점 잠금 ──────────────────────────────────────────────
+// 시험지를 쪽 이미지에서 문항별로 바꾸는 것처럼 보여 주는 방식이 달라져도
+// 채점 결과는 그대로여야 한다. 이미 저장된 점수와 어긋나기 때문이다.
+for (const ex of MOCK_EXAMS) {
+  const locked = LOCKED_EXAM_KEYS[ex.id];
+  if (!locked) continue;
+  const now = ex.questions.map((q) => `${q.answer}:${q.points}`).join(",");
+  if (now === locked) continue;
+  const was = locked.split(",");
+  const is = now.split(",");
+  const diff = ex.questions
+    .map((q, i) => (was[i] !== is[i] ? `${q.number}번(${was[i]}→${is[i]})` : null))
+    .filter(Boolean)
+    .slice(0, 6);
+  errors.push(
+    `기출 "${ex.id}"의 정답·배점이 달라졌습니다: ${diff.join(", ")}` +
+      ` — 이미 저장된 응시 점수와 어긋납니다`,
+  );
+}
+
 // ─── 결과 ───────────────────────────────────────────────────────────
 console.log(
   `잠긴 개념 ${LOCKED_EVENT_IDS.length}개 · 현재 개념 ${now.size}개 검사\n` +
-    `잠긴 회차 ${LOCKED_EXAM_IDS.length}개 · 현재 회차 ${examsNow.size}개 검사\n`,
+    `잠긴 회차 ${LOCKED_EXAM_IDS.length}개 · 현재 회차 ${examsNow.size}개 검사\n` +
+    `정답·배점 지문 ${Object.keys(LOCKED_EXAM_KEYS).length}회차 대조\n`,
 );
 if (examsAdded.length)
   console.log(
