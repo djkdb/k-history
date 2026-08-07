@@ -165,6 +165,51 @@ function SplitHandle({
 }
 
 /** 문항 본문 — 기출 시험지 캡처 이미지 또는 텍스트 */
+/**
+ * "정답 없음 — 전원 정답 처리" 알림.
+ *
+ * 문항이의심사에서 오류로 판정돼 정답이 없어진 문항이 실제로 있다
+ * (63회 42번). 이걸 모르고 풀면 "왜 답이 안 보이지" 하며 시간을 버리고,
+ * 채점 뒤에야 알게 되면 이미 늦다. 푸는 중에 크게 알려 준다.
+ */
+function AllCorrectNotice({
+  q,
+  compact = false,
+}: {
+  q: MockExamQuestion;
+  /** 답안 줄 아래에 끼워 넣는 좁은 형태 (쪽 모드) */
+  compact?: boolean;
+}) {
+  if (q.answer !== 0) return null;
+  if (compact) {
+    return (
+      <div className="ml-9 flex items-start gap-1.5 rounded-lg border border-amber-400/40 bg-amber-500/15 px-2.5 py-2">
+        <AlertTriangle size={13} className="mt-px shrink-0 text-amber-300" />
+        <p className="text-[11px] font-bold leading-snug text-amber-200">
+          {q.number}번은 정답 없음 — 전원 정답 처리
+          <span className="block font-medium text-amber-100/70">
+            뭘 골라도, 안 골라도 맞은 것으로 채점돼요
+          </span>
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="mb-3 flex items-start gap-3 rounded-2xl border-2 border-amber-400/50 bg-amber-500/15 px-4 py-3.5">
+      <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-300" />
+      <div>
+        <p className="text-[15px] font-black text-amber-200">
+          정답 없음 — 응시자 전원 정답 처리
+        </p>
+        <p className="mt-1 text-[13px] leading-relaxed text-amber-100/80">
+          문항이의심사에서 오류로 판정된 문항이에요. 무엇을 골라도, 고르지
+          않아도 맞은 것으로 채점됩니다. 넘어가도 괜찮아요.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function QuestionBody({ q }: { q: MockExamQuestion }) {
   if (q.image) {
     return (
@@ -299,6 +344,10 @@ export function MockSession() {
 
   const q = exam.questions[idx];
   const answeredCount = Object.keys(answers).length;
+  // 정답이 없어진 문항(전원 정답 처리) — 시작 화면에서 미리 알려 준다
+  const allCorrectNumbers = exam.questions
+    .filter((x) => x.answer === 0)
+    .map((x) => x.number);
   const pageMode = isPageMode(exam);
   // 쪽 모드: 지금 보고 있는 쪽에 실린 문항들
   const pageQuestions = pageMode
@@ -336,6 +385,24 @@ export function MockSession() {
             <li>· 채점 후 틀린 문항의 개념이 오답노트와 복습 큐에 들어갑니다.</li>
           </ul>
         </Card>
+
+        {/* 정답이 없어진 문항이 있으면 시작 전에 미리 알려 준다 */}
+        {allCorrectNumbers.length > 0 && (
+          <Card className="mt-2 border-2 border-amber-400/50 bg-amber-500/15">
+            <div className="flex items-start gap-3">
+              <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-300" />
+              <div>
+                <p className="text-[15px] font-black text-amber-200">
+                  {allCorrectNumbers.join("·")}번은 정답 없음 — 전원 정답 처리
+                </p>
+                <p className="mt-1 text-[13px] leading-relaxed text-amber-100/80">
+                  문항이의심사에서 오류로 판정되어 응시자 전원이 정답 처리된
+                  문항이에요. 붙잡고 시간 쓰지 말고 넘어가세요.
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
 
         <p className="mt-3 text-[11px] leading-relaxed text-zinc-600">
           출처: {exam.attribution}
@@ -431,11 +498,14 @@ export function MockSession() {
                 }}
                 className={cn(
                   "aspect-square rounded-md text-[10px] font-bold transition-colors",
-                  ok
-                    ? "bg-emerald-500/25 text-emerald-300"
-                    : blank
-                      ? "bg-white/5 text-zinc-600"
-                      : "bg-red-500/25 text-red-300",
+                  // 정답 없는 문항은 맞은 것과도 구분되게 따로 칠한다
+                  x.answer === 0
+                    ? "bg-amber-500/25 text-amber-300"
+                    : ok
+                      ? "bg-emerald-500/25 text-emerald-300"
+                      : blank
+                        ? "bg-white/5 text-zinc-600"
+                        : "bg-red-500/25 text-red-300",
                 )}
               >
                 {x.number}
@@ -617,33 +687,43 @@ export function MockSession() {
           </div>
           <div className="flex flex-col gap-1.5 pb-4">
             {pageQuestions.map((x) => (
-              <div key={x.number} className="flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    "w-8 shrink-0 text-right text-sm font-bold tabular-nums",
-                    answers[x.number] ? "text-indigo-300" : "text-zinc-500",
-                  )}
-                >
-                  {x.number}
-                </span>
-                {CHOICES.map((c) => {
-                  const on = answers[x.number] === c;
-                  return (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => pick(x.number, c)}
-                      className={cn(
-                        "h-10 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95",
-                        on
-                          ? "border-indigo-400 bg-indigo-500 text-white"
-                          : "border-white/10 bg-white/[0.03] text-zinc-500",
-                      )}
-                    >
-                      {c}
-                    </button>
-                  );
-                })}
+              <div key={x.number} className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={cn(
+                      "w-8 shrink-0 text-right text-sm font-bold tabular-nums",
+                      x.answer === 0
+                        ? "text-amber-300"
+                        : answers[x.number]
+                          ? "text-indigo-300"
+                          : "text-zinc-500",
+                    )}
+                  >
+                    {x.number}
+                  </span>
+                  {CHOICES.map((c) => {
+                    const on = answers[x.number] === c;
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => pick(x.number, c)}
+                        className={cn(
+                          "h-10 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95",
+                          on
+                            ? "border-indigo-400 bg-indigo-500 text-white"
+                            : x.answer === 0
+                              ? "border-amber-400/30 bg-amber-500/10 text-amber-200/70"
+                              : "border-white/10 bg-white/[0.03] text-zinc-500",
+                        )}
+                      >
+                        {c}
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* 정답 없는 문항은 답안 줄 바로 아래에서 알려 준다 */}
+                <AllCorrectNotice q={x} compact />
               </div>
             ))}
           </div>
@@ -720,6 +800,7 @@ export function MockSession() {
             </button>
           </div>
 
+          <AllCorrectNotice q={q} />
           <QuestionBody q={q} />
         </motion.div>
       </AnimatePresence>
