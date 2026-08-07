@@ -615,6 +615,8 @@ export function MockSession() {
   const [page, setPage] = useState(0); // 쪽 모드에서 보고 있는 시험지 쪽
   const startedAt = useRef(0);
   const saved = useRef(false);
+  /** 채점 뒤 시험지를 다시 들여다보는 중인가 — 이때는 시계가 멈춘다 */
+  const [paperReview, setPaperReview] = useState(false);
   /** 지난 기록을 보고 있는 중인가 — 이때는 다시 저장하지 않는다 */
   const [reviewing, setReviewing] = useState(false);
   const [reviewMins, setReviewMins] = useState(0);
@@ -688,9 +690,16 @@ export function MockSession() {
     else localStorage.setItem(SPLIT_KEY, String(w));
   }, []);
 
-  // 제한 시간 카운트다운 — 0이 되면 자동 제출
+  /*
+    제한 시간 카운트다운 — 0이 되면 자동 제출.
+
+    채점을 마친 뒤 문항을 눌러 시험지를 다시 볼 때는 시계가 돌면 안 된다.
+    그때는 남은 시간이 이미 0이라, 1초 뒤 "시간 종료"로 판정돼 곧바로
+    채점 화면으로 튕겨 나갔다. 시험지를 들여다볼 틈이 없었다.
+    (지난 응시 기록을 열어 볼 때도 같은 일이 일어난다)
+  */
   useEffect(() => {
-    if (!started || submitted) return;
+    if (!started || submitted || paperReview || remain <= 0) return;
     const t = setInterval(() => {
       setRemain((r) => {
         if (r <= 1) {
@@ -702,7 +711,7 @@ export function MockSession() {
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [started, submitted, submit]);
+  }, [started, submitted, paperReview, remain, submit]);
 
   if (!exam) {
     return (
@@ -731,7 +740,10 @@ export function MockSession() {
     ? exam.questions.filter((x) => (x.page ?? 1) === page + 1)
     : [];
 
-  const pick = (num: number, c: number) =>
+  const pick = (num: number, c: number) => {
+    // 다시 보다가 답을 고치기 시작하면 그때부터는 다시 푸는 것이다 —
+    // 제출 버튼이 돌아와야 고친 답으로 다시 채점할 수 있다
+    if (paperReview) setPaperReview(false);
     setAnswers((a) => {
       if (a[num] === c) {
         const { [num]: _drop, ...rest } = a;
@@ -739,6 +751,7 @@ export function MockSession() {
       }
       return { ...a, [num]: c };
     });
+  };
 
   // ─── 시작 전 ───
   if (!started) {
@@ -791,6 +804,7 @@ export function MockSession() {
           onClick={() => {
             startedAt.current = Date.now();
             setRemain(exam.timeLimitMin * 60);
+            setPaperReview(false);
             setStarted(true);
           }}
         >
@@ -888,6 +902,7 @@ export function MockSession() {
                     startedAt.current = Date.now();
                     setReviewing(false);
                   }
+                  setPaperReview(true);
                   setSubmitted(false);
                   setShowAllExp(false);
                   setIdx(i);
@@ -1033,26 +1048,49 @@ export function MockSession() {
       {/* 상단 고정: 타이머 + 진행 + 제출 */}
       <div className="glass-strong sticky-top-safe sticky z-30 mb-3 rounded-2xl px-3 py-2">
         <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              "flex items-center gap-1 text-sm font-black tabular-nums",
-              low ? "text-red-400" : "text-zinc-200",
-            )}
-          >
-            <Timer size={14} /> {fmtClock(remain)}
-          </span>
+          {/*
+            시험지를 다시 보는 중에는 시계 대신 무엇을 하는 중인지 적는다.
+            멈춘 "00:00"이 떠 있으면 시간이 끝난 줄 알고 당황한다.
+          */}
+          {paperReview ? (
+            <span className="flex items-center gap-1 text-sm font-black text-indigo-300">
+              <History size={14} /> 시험지 다시 보기
+            </span>
+          ) : (
+            <span
+              className={cn(
+                "flex items-center gap-1 text-sm font-black tabular-nums",
+                low ? "text-red-400" : "text-zinc-200",
+              )}
+            >
+              <Timer size={14} /> {fmtClock(remain)}
+            </span>
+          )}
           <ProgressBar
             value={answeredCount}
             max={exam.questions.length}
             className="flex-1"
-            color={low ? "#ef4444" : "#6366f1"}
+            color={paperReview ? "#6366f1" : low ? "#ef4444" : "#6366f1"}
           />
           <span className="text-[11px] text-zinc-400">
             {answeredCount}/{exam.questions.length}
           </span>
-          <Button size="sm" onClick={() => setConfirming(true)}>
-            제출
-          </Button>
+          {paperReview ? (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setPaperReview(false);
+                setSubmitted(true);
+              }}
+            >
+              결과로
+            </Button>
+          ) : (
+            <Button size="sm" onClick={() => setConfirming(true)}>
+              제출
+            </Button>
+          )}
         </div>
       </div>
 
