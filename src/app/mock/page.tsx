@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronRight, FileText, Timer, Trophy } from "lucide-react";
@@ -16,6 +17,7 @@ import { Badge, Button, Card, EmptyState, SectionTitle } from "@/components/ui";
 export default function MockExamListPage() {
   const hydrated = useApp((s) => s.hydrated);
   const attempts = useApp((s) => s.mockAttempts);
+  const [showAll, setShowAll] = useState(false);
 
   return (
     <div className="pt-6">
@@ -153,34 +155,53 @@ export default function MockExamListPage() {
       {hydrated && attempts.length > 0 && (
         <>
           <SectionTitle>응시 기록</SectionTitle>
+          <p className="mb-2 -mt-1 text-[11px] text-zinc-500">
+            누르면 그때 푼 답안과 채점 결과를 그대로 다시 볼 수 있어요
+          </p>
           <div className="flex flex-col gap-2 pb-4">
             {[...attempts]
               .reverse()
-              .slice(0, 8)
+              .slice(0, showAll ? attempts.length : 8)
               .map((a) => {
                 const exam = MOCK_EXAMS.find((e) => e.id === a.examId);
                 const g = hnkGrade(a.score, exam?.level ?? "advanced");
                 const mins = Math.round((a.finishedAt - a.startedAt) / 60000);
+                const when = new Date(a.startedAt).toLocaleDateString("ko-KR", {
+                  month: "long",
+                  day: "numeric",
+                });
                 return (
-                  <Card
-                    key={`${a.examId}-${a.finishedAt}`}
-                    className="flex items-center gap-2"
+                  <Link
+                    key={`${a.examId}-${a.startedAt}`}
+                    href={`/mock/session?id=${a.examId}&attempt=${a.startedAt}`}
                   >
-                    <span className="flex-1 text-sm font-medium">
-                      {exam ? `${exam.round}회` : a.examId}
-                    </span>
-                    <span className="text-xs text-zinc-500">{mins}분</span>
-                    <span className="text-sm font-bold">
-                      {a.score}/{a.total}
-                    </span>
-                    {g && (
-                      <Badge className="border-indigo-400/30 bg-indigo-500/10 text-indigo-300">
-                        {g.label}
-                      </Badge>
-                    )}
-                  </Card>
+                    <Card className="flex items-center gap-2">
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium">
+                          {exam ? `${exam.round}회` : a.examId}
+                        </span>
+                        <span className="text-[11px] text-zinc-500">
+                          {when} · {mins}분
+                        </span>
+                      </span>
+                      <span className="text-sm font-bold">
+                        {a.score}/{a.total}
+                      </span>
+                      {g && (
+                        <Badge className="border-indigo-400/30 bg-indigo-500/10 text-indigo-300">
+                          {g.label}
+                        </Badge>
+                      )}
+                      <ChevronRight size={15} className="shrink-0 text-zinc-600" />
+                    </Card>
+                  </Link>
                 );
               })}
+            {attempts.length > 8 && !showAll && (
+              <Button variant="ghost" onClick={() => setShowAll(true)}>
+                기록 {attempts.length}건 전부 보기
+              </Button>
+            )}
           </div>
         </>
       )}

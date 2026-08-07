@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Flag,
+  History,
   Timer,
   X,
   ZoomIn,
@@ -594,8 +595,12 @@ function QuestionBody({ q }: { q: MockExamQuestion }) {
 export function MockSession() {
   const searchParams = useSearchParams();
   const exam = getMockExam(searchParams.get("id") ?? "");
+  /** 지난 응시를 다시 보러 온 경우 — 그 응시의 시작 시각 */
+  const attemptAt = Number(searchParams.get("attempt")) || null;
 
   const recordMockAttempt = useApp((s) => s.recordMockAttempt);
+  const mockAttempts = useApp((s) => s.mockAttempts);
+  const hydrated = useApp((s) => s.hydrated);
 
   const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
@@ -610,6 +615,31 @@ export function MockSession() {
   const [page, setPage] = useState(0); // 쪽 모드에서 보고 있는 시험지 쪽
   const startedAt = useRef(0);
   const saved = useRef(false);
+  /** 지난 기록을 보고 있는 중인가 — 이때는 다시 저장하지 않는다 */
+  const [reviewing, setReviewing] = useState(false);
+  const [reviewMins, setReviewMins] = useState(0);
+
+  /**
+   * 지난 응시 불러오기.
+   *
+   * 고른 답과 점수는 처음부터 기록에 남아 있었는데, 그걸 다시 펼쳐 볼
+   * 화면이 없었다. 채점 화면을 벗어나는 순간 어느 문항을 틀렸는지
+   * 확인할 길이 사라졌다. 같은 채점 화면을 그대로 다시 띄운다.
+   */
+  useEffect(() => {
+    if (!attemptAt || !exam || !hydrated || started) return;
+    const a = mockAttempts.find(
+      (x) => x.examId === exam.id && x.startedAt === attemptAt,
+    );
+    if (!a) return;
+    setAnswers(a.answers);
+    startedAt.current = a.startedAt;
+    setReviewMins(Math.max(0, Math.round((a.finishedAt - a.startedAt) / 60000)));
+    saved.current = true; // 다시 저장하지 않는다
+    setReviewing(true);
+    setStarted(true);
+    setSubmitted(true);
+  }, [attemptAt, exam, hydrated, mockAttempts, started]);
 
   const total = exam ? totalPoints(exam) : 0;
 
@@ -780,7 +810,10 @@ export function MockSession() {
     const pct = total ? Math.round((score / total) * 100) : 0;
     const grade = hnkGrade(pct, exam.level);
     const wrong = exam.questions.filter((x) => !isCorrect(x, answers[x.number]));
-    const mins = Math.round((Date.now() - startedAt.current) / 60000);
+    // 지난 기록을 볼 때는 그때 걸린 시간을 그대로 쓴다
+    const mins = reviewing
+      ? reviewMins
+      : Math.round((Date.now() - startedAt.current) / 60000);
     const wrongEvents = [...new Set(wrong.flatMap((x) => x.eventIds ?? []))];
 
     // 해설은 틀린 문항부터 보여 준다. 맞힌 문항은 눌러서 펼친다.
@@ -797,6 +830,17 @@ export function MockSession() {
           animate={{ scale: 1, opacity: 1 }}
           className="text-center"
         >
+          {reviewing && (
+            <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-[11px] font-bold text-indigo-300">
+              <History size={12} /> 지난 응시 기록
+              {" · "}
+              {new Date(startedAt.current).toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          )}
           <p className="text-sm text-zinc-500">
             제{exam.round}회 {exam.level === "advanced" ? "심화" : "기본"} ·{" "}
             {mins}분 소요
@@ -838,6 +882,12 @@ export function MockSession() {
                   // 다시 풀고 제출할 수 있어야 한다.
                   // 중복 저장을 막는 빗장을 여기서 풀지 않으면 제출이 먹지 않는다.
                   saved.current = false;
+                  // 지난 기록에서 이어 풀면 그때부터가 새 응시다.
+                  // 옛 기록의 시작 시각을 그대로 두면 "3일 걸림"으로 남는다.
+                  if (reviewing) {
+                    startedAt.current = Date.now();
+                    setReviewing(false);
+                  }
                   setSubmitted(false);
                   setShowAllExp(false);
                   setIdx(i);
