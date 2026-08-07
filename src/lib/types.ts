@@ -195,6 +195,13 @@ export interface MockExamQuestion {
   points: number; // 배점
   /** 문항 캡처 이미지 경로 (public 기준, 예: /exams/68-advanced/q01.png) */
   image?: string;
+  /**
+   * 여러 문항이 함께 쓰는 자료 이미지.
+   * "[49~50] 다음 자료를 읽고 물음에 답하시오"처럼 한 자료로 두 문항을
+   * 묻는 묶음 문항이 있다. 그 자료는 어느 한 문항에도 속하지 않아
+   * 문항별로 자르면 통째로 빠진다. 묶인 문항 모두에 같은 그림을 달아 준다.
+   */
+  sharedImage?: string;
   /** 이미지가 없을 때 쓰는 텍스트 문항 */
   text?: string;
   options?: string[];

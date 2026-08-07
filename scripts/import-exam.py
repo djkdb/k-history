@@ -235,6 +235,52 @@ def crop(doc, anchors, marks, out_dir):
     return sorted(saved)
 
 
+# 묶음 문항의 공용 자료 — "[49 ~ 50] 다음 자료를 읽고 물음에 답하시오"
+GROUP = re.compile(r"^\[\s*(\d{1,2})\s*[~∼\u2006 -]+\s*(\d{1,2})\s*\]$")
+
+
+def crop_shared(doc, anchors, out_dir):
+    """한 자료로 두 문항을 묻는 경우, 그 자료를 따로 잘라 낸다.
+
+    자료 상자는 어느 한 문항에도 속하지 않아 문항별로 자르면 통째로 빠진다.
+    실제로 62회 49~50번과 72회 47~48번이 자료 없이 나갔다.
+    표시는 늘 단 맨 위에 있고 묶인 문항이 그 아래로 이어지므로,
+    표시부터 그 단의 첫 문항 직전까지를 자료로 본다.
+
+    돌려주는 값: {문항번호: 파일명}
+    """
+    zoom = DPI / 72
+    out = {}
+    for pi, pg in enumerate(doc):
+        W, H = pg.rect.width, pg.rect.height
+        words = pg.get_text("words")
+        for w in words:
+            m = GROUP.match(w[4].replace(" ", ""))
+            if not m:
+                continue
+            a, b = int(m.group(1)), int(m.group(2))
+            col = 0 if w[0] < W / 2 else 1
+            ys = [
+                x[1]
+                for x in words
+                if MARKER.match(x[4])
+                and (x[0] < W / 2) == (col == 0)
+                and x[1] > w[1] + 5
+            ]
+            bottom = min(ys) - 8 if ys else H - 30
+            left = max(anchors[col] - 10, 0)
+            right = (anchors[col + 1] - 8) if col + 1 < len(anchors) else W - 20
+            rect = fitz.Rect(left, w[1] - 10, right, bottom)
+            if rect.height < 60:
+                continue
+            name = f"s{a:02d}-{b:02d}.webp"
+            save_webp(pg.get_pixmap(matrix=fitz.Matrix(zoom, zoom), clip=rect),
+                      os.path.join(out_dir, name))
+            for n in range(a, b + 1):
+                out[n] = name
+    return out
+
+
 def render_pages(doc, out_dir, dpi=DPI):
     """문항 분할이 불가능한 스캔 PDF — 쪽 단위 이미지로 저장한다."""
     os.makedirs(out_dir, exist_ok=True)
@@ -259,7 +305,7 @@ def page_of(counts):
 
 
 def write_data_file(path, exam_id, rnd, level, questions, answers, attribution,
-                    page_images=None, pages=None):
+                    page_images=None, pages=None, shared=None):
     var = f"ROUND_{rnd}_{level.upper()}"
     lines = [
         'import type { MockExam } from "@/lib/types";',
@@ -303,6 +349,12 @@ def write_data_file(path, exam_id, rnd, level, questions, answers, attribution,
                 f"      number: {num},",
                 f"      points: {pts},",
                 f'      image: "/exams/{exam_id}/{name}",',
+            ]
+            if shared and num in shared:
+                lines.append(
+                    f'      sharedImage: "/exams/{exam_id}/{shared[num]}",'
+                )
+            lines += [
                 f"      answer: {ans},{todo}",
                 "    },",
             ]
@@ -348,9 +400,12 @@ def main():
     page_images = None
     questions = []
 
+    shared = {}
     if anchors:
         marks = collect_questions(doc, anchors)
         questions = crop(doc, anchors, marks, out_dir)
+        if questions:
+            shared = crop_shared(doc, anchors, out_dir)
     if not anchors or len(questions) < 40:
         # 텍스트 레이어가 없는 스캔 PDF — 쪽 단위로 제공한다
         print("문항 자동 분할 불가 → 쪽 단위 이미지로 전환합니다")
@@ -376,6 +431,7 @@ def main():
         data_path, exam_id, args.round, args.level, questions, answers,
         args.attribution, page_images,
         page_of([int(c) for c in args.pages.split(",")]) if args.pages else None,
+        shared,
     )
 
     nums = [n for n, _ in questions]
@@ -392,6 +448,9 @@ def main():
     print(f"데이터 파일 → src/data/mock-exams/round-{exam_id}.ts")
     if missing_q:
         print(f"⚠️  이미지 누락 문항: {missing_q}")
+    if shared:
+        groups = sorted(set(shared.values()))
+        print(f"묶음 문항 공용 자료 {len(groups)}건: {', '.join(groups)}")
     if none_a:
         print(f"ℹ️  정답 없음(전원 정답 처리) 문항: {none_a}")
     if missing_a:

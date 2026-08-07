@@ -699,6 +699,7 @@ export const ROUND_72_ADVANCED: MockExam = {
     {
       number: 47,
       points: 3,
+      sharedImage: "/exams/72-advanced/s47-48.webp",
       image: "/exams/72-advanced/q47.webp",
       answer: 1,
       options: [
@@ -712,6 +713,7 @@ export const ROUND_72_ADVANCED: MockExam = {
     {
       number: 48,
       points: 2,
+      sharedImage: "/exams/72-advanced/s47-48.webp",
       image: "/exams/72-advanced/q48.webp",
       answer: 3,
       explanation:

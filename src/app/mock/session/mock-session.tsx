@@ -160,6 +160,11 @@ const ZOOM_MAX = 5;
 const COLUMN_ZOOM = 2;
 /** 확대법을 한 번은 알려 준다 — 안내를 본 적 있는지 기억해 둔다 */
 const ZOOM_HINT_KEY = "khlm:zoom-hint-seen";
+/**
+ * 한 화면에 확대 가능한 그림이 둘 이상일 때(묶음 문항의 공용 자료 + 문항)
+ * 안내가 두 번 겹쳐 뜬다. 먼저 뜬 하나만 안내를 맡는다.
+ */
+let hintOwner: object | null = null;
 
 /**
  * 풀던 중인 답안 임시 보관.
@@ -296,10 +301,17 @@ const ZoomableImage = forwardRef<
     }
   }, [resetKey, twoColumn, clamp]);
 
-  // 처음 한 번만 조작법을 알려 준다
+  // 처음 한 번만 조작법을 알려 준다 (화면에 그림이 여럿이면 하나만)
+  const hintTicket = useRef({});
   useEffect(() => {
     if (localStorage.getItem(ZOOM_HINT_KEY)) return;
+    const me = hintTicket.current;
+    if (hintOwner === null) hintOwner = me;
+    if (hintOwner !== me) return;
     setHint(true);
+    return () => {
+      if (hintOwner === me) hintOwner = null;
+    };
   }, []);
   const closeHint = useCallback(() => {
     localStorage.setItem(ZOOM_HINT_KEY, "1");
@@ -596,16 +608,86 @@ function AllCorrectNotice({
   );
 }
 
+/**
+ * 채점 뒤 시험지를 다시 볼 때 붙는 정답·해설.
+ *
+ * 다시 보기로 들어오면 시험지와 내가 고른 답만 보였다. 정답이 무엇이었는지,
+ * 왜 그런지는 채점 화면으로 되돌아가야만 볼 수 있어서, 시험지와 해설을
+ * 번갈아 보려면 화면을 계속 오가야 했다. 문항 옆에 바로 붙여 준다.
+ */
+function AnswerReveal({
+  q,
+  mine,
+}: {
+  q: MockExamQuestion;
+  mine: number | undefined;
+}) {
+  const ok = isCorrect(q, mine);
+  return (
+    <Card
+      className={cn(
+        "mt-3",
+        ok
+          ? "border-emerald-400/30 bg-emerald-500/10"
+          : "border-red-400/30 bg-red-500/10",
+      )}
+    >
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-bold">
+        <span className={ok ? "text-emerald-300" : "text-red-300"}>
+          {ok ? "✅ 맞힘" : "❌ 틀림"}
+        </span>
+        <span className="text-zinc-300">
+          {q.answer === 0
+            ? "정답 없음 — 전원 정답 처리"
+            : `정답 ${CIRCLED[q.answer - 1]}`}
+        </span>
+        <span className="text-zinc-500">
+          · 내 답 {mine === undefined ? "미표기" : CIRCLED[mine - 1]}
+        </span>
+      </div>
+      {q.explanation && (
+        <p className="mt-2 whitespace-pre-line text-[13px] leading-[1.75] text-zinc-300">
+          {q.explanation}
+        </p>
+      )}
+      {!q.explanation && (
+        <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
+          이 회차는 스캔 시험지라 해설을 붙이지 못했습니다.
+        </p>
+      )}
+    </Card>
+  );
+}
+
 function QuestionBody({ q }: { q: MockExamQuestion }) {
   if (q.image) {
     // 시험지 캡처는 흰 배경이므로 밝은 판 위에 그대로 올린다.
     // 자료 속 작은 글씨(사료·연표)는 휴대폰에서 잘 안 보여 확대가 필요하다.
     return (
-      <ZoomableImage
-        src={q.image}
-        alt={`${q.number}번 문항`}
-        resetKey={q.number}
-      />
+      <div className="flex flex-col gap-2">
+        {/*
+          묶음 문항의 공용 자료.
+          "[49~50] 다음 자료를 읽고 물음에 답하시오"처럼 한 자료로 두 문항을
+          묻는 경우가 있다. 그 자료 없이는 문제를 읽을 수조차 없다.
+        */}
+        {q.sharedImage && (
+          <>
+            <p className="text-[11px] font-semibold text-indigo-300">
+              두 문항이 함께 쓰는 자료
+            </p>
+            <ZoomableImage
+              src={q.sharedImage}
+              alt="묶음 문항 공용 자료"
+              resetKey={q.sharedImage}
+            />
+          </>
+        )}
+        <ZoomableImage
+          src={q.image}
+          alt={`${q.number}번 문항`}
+          resetKey={q.number}
+        />
+      </div>
     );
   }
   return (
@@ -1316,6 +1398,8 @@ export function MockSession() {
                 </div>
                 {/* 정답 없는 문항은 답안 줄 바로 아래에서 알려 준다 */}
                 <AllCorrectNotice q={x} compact />
+                {/* 다시 보는 중이면 이 문항의 정답과 해설을 바로 붙여 준다 */}
+                {paperReview && <AnswerReveal q={x} mine={answers[x.number]} />}
               </div>
             ))}
           </div>
@@ -1446,6 +1530,8 @@ export function MockSession() {
           );
         })}
       </div>
+
+      {paperReview && <AnswerReveal q={q} mine={answers[q.number]} />}
 
       {/* 이동 */}
       <div className="mt-4 flex gap-2">
