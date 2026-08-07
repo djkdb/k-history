@@ -135,7 +135,9 @@ for (const ex of MOCK_EXAMS) {
   if (nums.join() !== Array.from({ length: 50 }, (_, i) => i + 1).join())
     errors.push(`${tag}: 번호가 1~50이 아님`);
   for (const q of ex.questions) {
-    if (q.answer < 1 || q.answer > 5) errors.push(`${tag} ${q.number}번: 정답 ${q.answer}`);
+    // 0은 "정답 없음 — 전원 정답 처리"(63회 42번 같은 이의심사 정정)라 정상이다
+    if (q.answer < 0 || q.answer > 5)
+      errors.push(`${tag} ${q.number}번: 정답 ${q.answer}`);
     for (const id of q.eventIds ?? [])
       if (!getEvent(id)) errors.push(`${tag} ${q.number}번: 없는 개념 "${id}"`);
     if (!isPageMode(ex) && !q.image) errors.push(`${tag} ${q.number}번: 이미지 없음`);

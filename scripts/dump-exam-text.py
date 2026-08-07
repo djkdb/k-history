@@ -7,9 +7,14 @@
 match-concepts.py는 오답 개념이 섞이는 걸 막으려고 선택지를 잘라 내지만,
 여기서는 반대로 선택지까지 온전히 남긴다.
 
-스캔 이미지 회차(69·73·74·78)는 텍스트 레이어가 없어 아무것도 나오지 않는다.
+스캔 PDF 회차는 텍스트 레이어가 없어 아무것도 나오지 않는다.
+
+단 위치는 import-exam.py의 판별기를 그대로 빌려 쓴다. 예전에는 여기에
+(43, 374)를 박아 두었는데, 그 값이 아닌 회차(62회는 48·380)가 들어오면
+문항을 하나도 못 찾고 "텍스트 레이어 없음"으로 오해했다.
 """
 import glob
+import importlib.util
 import json
 import os
 import re
@@ -20,10 +25,27 @@ import fitz
 NUMBER = re.compile(r"^(\d{1,2})\.$")
 CHOICE = re.compile(r"[①②③④⑤]")
 
+_spec = importlib.util.spec_from_file_location(
+    "import_exam", os.path.join(os.path.dirname(__file__), "import-exam.py")
+)
+importer = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(importer)
 
-def markers(doc, anchors=(43, 374), tol=4):
+
+# 단 아래쪽 쪽 번호가 마지막 선택지 뒤에 딸려 붙는다("… 존재하였어요. 1").
+# 선택지는 '다.'나 '요.'로 끝나므로, 그 뒤의 홀로 남은 한두 자리 숫자는 쪽 번호다.
+PAGE_NO = re.compile(r"(?<=[다요까]\.)\s+\d{1,2}$")
+
+
+def strip_page_no(text: str) -> str:
+    return PAGE_NO.sub("", text).strip()
+
+
+def markers(doc, anchors, tol=importer.MARKER_TOL):
+    xs = importer.find_marker_xs(doc)
     found = []
     for pi, pg in enumerate(doc):
+        mid = pg.rect.width / 2
         for w in pg.get_text("words"):
             m = NUMBER.match(w[4])
             if not m:
@@ -31,10 +53,10 @@ def markers(doc, anchors=(43, 374), tol=4):
             n = int(m.group(1))
             if not 1 <= n <= 50:
                 continue
-            for ci, ax in enumerate(anchors):
-                if abs(w[0] - ax) <= tol:
-                    found.append({"n": n, "p": pi, "c": ci, "y": w[1]})
-                    break
+            if not any(abs(w[0] - ax) <= tol for ax in xs):
+                continue
+            ci = 0 if (w[0] < mid or len(anchors) == 1) else 1
+            found.append({"n": n, "p": pi, "c": ci, "y": w[1]})
     best = {}
     for f in found:
         if f["n"] not in best or (f["p"], f["y"]) < (
@@ -47,7 +69,11 @@ def markers(doc, anchors=(43, 374), tol=4):
 
 def dump(pdf):
     doc = fitz.open(pdf)
-    mk = markers(doc)
+    anchors = importer.find_column_anchors(doc)
+    if not anchors:
+        doc.close()
+        return {}
+    mk = markers(doc, anchors)
     by_col = {}
     for f in mk.values():
         by_col.setdefault((f["p"], f["c"]), []).append(f)
@@ -62,8 +88,8 @@ def dump(pdf):
         i = sib.index(f)
         top = f["y"] - 8
         bottom = sib[i + 1]["y"] - 8 if i + 1 < len(sib) else H - 30
-        left = max((43, 374)[f["c"]] - 12, 0)
-        right = (374 - 14) if f["c"] == 0 else W - 20
+        left = max(anchors[f["c"]] - 10, 0)
+        right = (anchors[f["c"] + 1] - 8) if f["c"] + 1 < len(anchors) else W - 20
         ws = pg.get_text(
             "words", clip=fitz.Rect(left, max(top, 0), right, min(bottom, H))
         )
@@ -74,7 +100,7 @@ def dump(pdf):
         # 선택지 ①~⑤를 쪼갠다
         parts = CHOICE.split(text)
         stem = parts[0].strip()
-        opts = [p.strip() for p in parts[1:]] if len(parts) == 6 else []
+        opts = [strip_page_no(p.strip()) for p in parts[1:]] if len(parts) == 6 else []
         out[n] = {"stem": stem, "options": opts}
     doc.close()
     return out

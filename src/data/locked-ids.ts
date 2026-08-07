@@ -129,6 +129,10 @@ export const LOCKED_EVENT_IDS: readonly string[] = [
  * 갈 곳을 잃어 "성적표가 사라진 것처럼" 보인다.
  */
 export const LOCKED_EXAM_IDS: readonly string[] = [
+  "60-advanced",
+  "62-advanced",
+  "63-advanced",
+  "65-advanced",
   "69-advanced",
   "70-advanced",
   "71-advanced",

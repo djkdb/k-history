@@ -1,4 +1,8 @@
-import type { MockExam } from "@/lib/types";
+import type { MockExam, MockExamQuestion } from "@/lib/types";
+import { ROUND_60_ADVANCED } from "./round-60-advanced";
+import { ROUND_62_ADVANCED } from "./round-62-advanced";
+import { ROUND_63_ADVANCED } from "./round-63-advanced";
+import { ROUND_65_ADVANCED } from "./round-65-advanced";
 import { ROUND_69_ADVANCED } from "./round-69-advanced";
 import { ROUND_70_ADVANCED } from "./round-70-advanced";
 import { ROUND_71_ADVANCED } from "./round-71-advanced";
@@ -38,6 +42,10 @@ export const MOCK_EXAMS: MockExam[] = [
   ROUND_71_ADVANCED,
   ROUND_70_ADVANCED,
   ROUND_69_ADVANCED,
+  ROUND_65_ADVANCED,
+  ROUND_63_ADVANCED,
+  ROUND_62_ADVANCED,
+  ROUND_60_ADVANCED,
 ];
 
 export function getMockExam(id: string): MockExam | undefined {
@@ -47,6 +55,20 @@ export function getMockExam(id: string): MockExam | undefined {
 /** 만점 (배점 합계) */
 export function totalPoints(exam: MockExam): number {
   return exam.questions.reduce((s, q) => s + q.points, 0);
+}
+
+/**
+ * 이 문항을 맞힌 것으로 볼 것인가.
+ *
+ * 정답 번호가 0이면 "정답 없음 — 응시자 전원 정답 처리"다.
+ * 문항이의심사에서 오류로 판정된 문항이 실제로 있다(63회 42번).
+ * 그런 문항은 무엇을 골라도, 아예 고르지 않아도 맞은 것으로 친다.
+ * 채점·오답 목록·결과 격자가 제각각 판단하면 점수와 표시가 어긋나므로
+ * 판단은 여기 한 곳에서만 한다.
+ */
+export function isCorrect(q: MockExamQuestion, picked: number | undefined): boolean {
+  if (q.answer === 0) return true;
+  return picked === q.answer;
 }
 
 /** 시험지를 넘겨 보며 푸는 방식인가 */

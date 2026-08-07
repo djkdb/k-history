@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { MockExamQuestion } from "@/lib/types";
 import { useApp } from "@/lib/store";
-import { getMockExam, isPageMode, totalPoints } from "@/data/mock-exams";
+import { getMockExam, isCorrect, isPageMode, totalPoints } from "@/data/mock-exams";
 import { getEvent } from "@/data/events";
 import { cn, hnkGrade } from "@/lib/utils";
 import {
@@ -224,7 +224,7 @@ export function MockSession() {
   const score = useMemo(() => {
     if (!exam) return 0;
     return exam.questions.reduce(
-      (s, q) => (answers[q.number] === q.answer ? s + q.points : s),
+      (s, q) => (isCorrect(q, answers[q.number]) ? s + q.points : s),
       0,
     );
   }, [exam, answers]);
@@ -235,7 +235,7 @@ export function MockSession() {
     const wrongEventIds = [
       ...new Set(
         exam.questions
-          .filter((q) => answers[q.number] !== q.answer)
+          .filter((q) => !isCorrect(q, answers[q.number]))
           .flatMap((q) => q.eventIds ?? []),
       ),
     ];
@@ -365,7 +365,7 @@ export function MockSession() {
   if (submitted) {
     const pct = total ? Math.round((score / total) * 100) : 0;
     const grade = hnkGrade(pct, exam.level);
-    const wrong = exam.questions.filter((x) => answers[x.number] !== x.answer);
+    const wrong = exam.questions.filter((x) => !isCorrect(x, answers[x.number]));
     const mins = Math.round((Date.now() - startedAt.current) / 60000);
     const wrongEvents = [...new Set(wrong.flatMap((x) => x.eventIds ?? []))];
 
@@ -374,7 +374,7 @@ export function MockSession() {
     const hasAllExplanations = withExp.length === exam.questions.length;
     const explained = showAllExp
       ? withExp
-      : withExp.filter((x) => answers[x.number] !== x.answer);
+      : withExp.filter((x) => !isCorrect(x, answers[x.number]));
 
     return (
       <div className="pt-8">
@@ -413,13 +413,13 @@ export function MockSession() {
         <SectionTitle>문항별 결과</SectionTitle>
         <div className="grid grid-cols-8 gap-1.5">
           {exam.questions.map((x, i) => {
-            const ok = answers[x.number] === x.answer;
+            const ok = isCorrect(x, answers[x.number]);
             const blank = answers[x.number] === undefined;
             return (
               <button
                 key={x.number}
                 type="button"
-                title={`${x.number}번 — 정답 ${x.answer}`}
+                title={`${x.number}번 — ${x.answer === 0 ? "정답 없음(전원 정답)" : `정답 ${x.answer}`}`}
                 onClick={() => {
                   // 다시 풀고 제출할 수 있어야 한다.
                   // 중복 저장을 막는 빗장을 여기서 풀지 않으면 제출이 먹지 않는다.
@@ -456,7 +456,7 @@ export function MockSession() {
             <div className="flex flex-col gap-2">
               {explained.map((q) => {
                 const mine = answers[q.number];
-                const ok = mine === q.answer;
+                const ok = isCorrect(q, mine);
                 return (
                   <Card key={q.number} className="flex flex-col gap-1.5">
                     <div className="flex items-center gap-2">
@@ -471,7 +471,9 @@ export function MockSession() {
                         {q.number}
                       </span>
                       <span className="text-[11px] text-zinc-500">
-                        정답 {CIRCLED[q.answer - 1]}
+                        {q.answer === 0
+                          ? "정답 없음 — 전원 정답 처리"
+                          : `정답 ${CIRCLED[q.answer - 1]}`}
                         {!ok && (
                           <>
                             {" · "}
