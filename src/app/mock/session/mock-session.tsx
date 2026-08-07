@@ -161,6 +161,41 @@ const COLUMN_ZOOM = 2;
 /** 확대법을 한 번은 알려 준다 — 안내를 본 적 있는지 기억해 둔다 */
 const ZOOM_HINT_KEY = "khlm:zoom-hint-seen";
 
+/**
+ * 풀던 중인 답안 임시 보관.
+ *
+ * 답안은 제출해야 기록에 남는다. 그 전까지는 화면 안에만 있어서,
+ * 시험 도중 전화가 오거나 화면이 꺼져 앱이 메모리에서 내려가면
+ * 한 시간 넘게 푼 것이 통째로 사라졌다. 실제로 그렇게 되는 걸 확인했다.
+ *
+ * 그래서 고를 때마다 따로 적어 둔다. 학습 기록(khlm-state)과 섞지 않는
+ * 이유는, 아직 제출하지 않은 임시 답안이 진도·복습 카드와 같은 저장소를
+ * 건드릴 이유가 없어서다. 제출하면 지운다.
+ */
+const PROGRESS_KEY = "khlm:exam-progress";
+
+interface ExamProgress {
+  examId: string;
+  startedAt: number;
+  /** 시험이 끝나는 시각. 앱을 껐다 켜도 시계는 실제 시간으로 흐른다 */
+  endsAt: number;
+  answers: Record<number, number>;
+  flagged: number[];
+  page: number;
+  idx: number;
+}
+
+function readProgress(examId: string): ExamProgress | null {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw) as ExamProgress;
+    return p && p.examId === examId ? p : null;
+  } catch {
+    return null;
+  }
+}
+
 /** 바깥(쪽 번호 줄)에서 단을 옮기기 위한 손잡이 */
 export interface ZoomHandle {
   showColumn: (side: "left" | "right") => void;
@@ -620,6 +655,10 @@ export function MockSession() {
   /** 지난 기록을 보고 있는 중인가 — 이때는 다시 저장하지 않는다 */
   const [reviewing, setReviewing] = useState(false);
   const [reviewMins, setReviewMins] = useState(0);
+  /** 시험이 끝나는 시각 — 남은 시간은 여기서 계산한다 */
+  const endsAt = useRef(0);
+  /** 이어 풀 수 있는 답안이 남아 있으면 시작 화면에 띄운다 */
+  const [resumable, setResumable] = useState<ExamProgress | null>(null);
 
   /**
    * 지난 응시 불러오기.
@@ -628,6 +667,12 @@ export function MockSession() {
    * 화면이 없었다. 채점 화면을 벗어나는 순간 어느 문항을 틀렸는지
    * 확인할 길이 사라졌다. 같은 채점 화면을 그대로 다시 띄운다.
    */
+  // 풀다 만 답안이 있는지 확인한다
+  useEffect(() => {
+    if (!exam || attemptAt) return;
+    setResumable(readProgress(exam.id));
+  }, [exam, attemptAt]);
+
   useEffect(() => {
     if (!attemptAt || !exam || !hydrated || started) return;
     const a = mockAttempts.find(
@@ -674,9 +719,36 @@ export function MockSession() {
       },
       wrongEventIds,
     );
+    // 기록에 남았으니 임시 답안은 더 둘 이유가 없다
+    try {
+      localStorage.removeItem(PROGRESS_KEY);
+    } catch {}
     setConfirming(false);
     setSubmitted(true);
   }, [exam, answers, score, total, recordMockAttempt]);
+
+  /*
+    풀던 답안을 고를 때마다 적어 둔다.
+    제출 전에 앱이 내려가도 남아 있어야 한다 — 한 시간 넘게 푼 것이
+    화면 안에만 있으면 전화 한 통에 사라진다.
+  */
+  useEffect(() => {
+    if (!exam || !started || submitted || reviewing || paperReview) return;
+    try {
+      const p: ExamProgress = {
+        examId: exam.id,
+        startedAt: startedAt.current,
+        endsAt: endsAt.current,
+        answers,
+        flagged: [...flagged],
+        page,
+        idx,
+      };
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
+    } catch {
+      // 저장 공간이 꽉 찼더라도 시험은 계속 볼 수 있어야 한다
+    }
+  }, [exam, started, submitted, reviewing, paperReview, answers, flagged, page, idx]);
 
   // 지난번에 맞춰 둔 너비를 되살린다
   useEffect(() => {
@@ -701,14 +773,14 @@ export function MockSession() {
   useEffect(() => {
     if (!started || submitted || paperReview || remain <= 0) return;
     const t = setInterval(() => {
-      setRemain((r) => {
-        if (r <= 1) {
-          clearInterval(t);
-          submit();
-          return 0;
-        }
-        return r - 1;
-      });
+      // 남은 시간은 빼기가 아니라 마감 시각에서 계산한다.
+      // 1초씩 빼면 화면이 잠들었을 때 시계가 같이 멈춰 시간이 늘어난다.
+      const left = Math.max(0, Math.round((endsAt.current - Date.now()) / 1000));
+      setRemain(left);
+      if (left <= 0) {
+        clearInterval(t);
+        submit();
+      }
     }, 1000);
     return () => clearInterval(t);
   }, [started, submitted, paperReview, remain, submit]);
@@ -798,17 +870,80 @@ export function MockSession() {
           출처: {exam.attribution}
         </p>
 
+        {/*
+          풀다 만 답안이 있으면 이어서 풀 수 있게 한다.
+          시계는 실제 시간으로 흘렀으므로 남은 시간도 그대로 이어진다.
+          이미 시간이 다 됐으면 이어 풀 게 아니라 채점해 주는 것이 맞다.
+        */}
+        {resumable &&
+          (() => {
+            const left = Math.max(
+              0,
+              Math.round((resumable.endsAt - Date.now()) / 1000),
+            );
+            const done = Object.keys(resumable.answers).length;
+            return (
+              <Card className="mt-4 border-2 border-indigo-400/50 bg-indigo-500/10">
+                <p className="text-[15px] font-black text-indigo-200">
+                  풀다 만 답안이 있어요
+                </p>
+                <p className="mt-1 text-[13px] leading-relaxed text-zinc-300">
+                  {exam.questions.length}문항 중 {done}문항 응답
+                  {left > 0
+                    ? ` · 남은 시간 ${fmtClock(left)}`
+                    : " · 제한 시간이 이미 지났어요"}
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      startedAt.current = resumable.startedAt;
+                      endsAt.current = resumable.endsAt;
+                      setAnswers(resumable.answers);
+                      setFlagged(new Set(resumable.flagged));
+                      setPage(resumable.page);
+                      setIdx(resumable.idx);
+                      setRemain(left);
+                      setPaperReview(false);
+                      setStarted(true);
+                      // 시간이 이미 지났으면 이어 풀 수 없다 — 그대로 채점한다
+                      if (left <= 0) setSubmitted(true);
+                    }}
+                  >
+                    {left > 0 ? "이어서 풀기" : "지금까지 답안으로 채점"}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      try {
+                        localStorage.removeItem(PROGRESS_KEY);
+                      } catch {}
+                      setResumable(null);
+                    }}
+                  >
+                    지우기
+                  </Button>
+                </div>
+              </Card>
+            );
+          })()}
+
         <Button
           size="lg"
           className="mt-6 w-full"
           onClick={() => {
             startedAt.current = Date.now();
+            endsAt.current = Date.now() + exam.timeLimitMin * 60 * 1000;
             setRemain(exam.timeLimitMin * 60);
+            setAnswers({});
+            setFlagged(new Set());
+            setPage(0);
+            setIdx(0);
             setPaperReview(false);
             setStarted(true);
           }}
         >
-          <Timer size={18} /> 시험 시작
+          <Timer size={18} /> {resumable ? "처음부터 새로 풀기" : "시험 시작"}
         </Button>
         <Link href="/mock">
           <Button variant="ghost" size="lg" className="mt-2 w-full">
