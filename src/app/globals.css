@@ -260,3 +260,25 @@ body {
 [data-theme="light"] .on-dark .text-indigo-200 { color: #c7d2fe; }
 [data-theme="light"] .on-dark .text-indigo-300 { color: #a5b4fc; }
 [data-theme="light"] .on-dark .border-white\/20 { border-color: rgba(255, 255, 255, 0.2); }
+
+/*
+  시험 화면 위쪽 고정 막대.
+  glass는 뒤가 비치는 게 장점이지만, 여기서는 흰 시험지가 그대로 비쳐
+  남은 시간과 응답 수가 읽히지 않았다. 시험 중에 가장 자주 보는 곳이라
+  뒤가 비치는 것보다 또렷한 쪽이 낫다.
+*/
+.exam-bar {
+  background: var(--exam-bar-bg);
+  border: 1px solid var(--glass-line-strong);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--exam-bar-shadow);
+}
+:root,
+[data-theme="dark"] {
+  --exam-bar-bg: rgba(16, 16, 19, 0.94);
+  --exam-bar-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+[data-theme="light"] {
+  --exam-bar-bg: rgba(255, 255, 255, 0.96);
+  --exam-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}

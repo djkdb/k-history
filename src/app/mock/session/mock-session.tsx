@@ -1180,35 +1180,40 @@ export function MockSession() {
   return (
     // 데스크톱에서는 컨테이너 폭을 넘어 넓게 쓴다 — 시험지와 답안을 나란히 놓기 위해
     <div className="wide-page pt-4">
-      {/* 상단 고정: 타이머 + 진행 + 제출 */}
-      <div className="glass-strong sticky-top-safe sticky z-30 mb-3 rounded-2xl px-3 py-2">
+      {/*
+        상단 고정 — 시간과 진행을 두 줄로 나눠 보여 준다.
+
+        숫자만 있으면 "79:12"가 얼마나 남은 건지 한눈에 안 들어온다.
+        막대가 줄어드는 걸 보면 시험지를 보다가도 곁눈으로 알 수 있다.
+        위가 시간, 아래가 푼 문항 — 시험장에서 신경 쓰는 순서대로 놓았다.
+      */}
+      <div className="exam-bar sticky-top-safe sticky z-30 mb-3 rounded-2xl px-3 py-2.5">
         <div className="flex items-center gap-2">
           {/*
             시험지를 다시 보는 중에는 시계 대신 무엇을 하는 중인지 적는다.
             멈춘 "00:00"이 떠 있으면 시간이 끝난 줄 알고 당황한다.
           */}
           {paperReview ? (
-            <span className="flex items-center gap-1 text-sm font-black text-indigo-300">
+            <span className="flex flex-1 items-center gap-1 text-sm font-black text-indigo-300">
               <History size={14} /> 시험지 다시 보기
             </span>
           ) : (
-            <span
-              className={cn(
-                "flex items-center gap-1 text-sm font-black tabular-nums",
-                low ? "text-red-400" : "text-zinc-200",
-              )}
-            >
-              <Timer size={14} /> {fmtClock(remain)}
-            </span>
+            <>
+              <span
+                className={cn(
+                  "flex items-center gap-1 text-sm font-black tabular-nums",
+                  low ? "text-red-400" : "text-zinc-200",
+                )}
+              >
+                <Timer size={14} /> {fmtClock(remain)}
+              </span>
+              <span className="flex-1 text-[11px] text-zinc-500">
+                / {exam.timeLimitMin}분
+              </span>
+            </>
           )}
-          <ProgressBar
-            value={answeredCount}
-            max={exam.questions.length}
-            className="flex-1"
-            color={paperReview ? "#6366f1" : low ? "#ef4444" : "#6366f1"}
-          />
-          <span className="text-[11px] text-zinc-400">
-            {answeredCount}/{exam.questions.length}
+          <span className="text-[11px] font-semibold text-zinc-400 tabular-nums">
+            {answeredCount}/{exam.questions.length} 응답
           </span>
           {paperReview ? (
             <Button
@@ -1227,6 +1232,23 @@ export function MockSession() {
             </Button>
           )}
         </div>
+
+        {/* 남은 시간 — 줄어드는 막대. 10분 아래로는 붉게 */}
+        {!paperReview && (
+          <ProgressBar
+            value={remain}
+            max={exam.timeLimitMin * 60}
+            className="mt-2"
+            color={low ? "#ef4444" : "#a5b4fc"}
+          />
+        )}
+        {/* 푼 문항 — 늘어나는 막대 */}
+        <ProgressBar
+          value={answeredCount}
+          max={exam.questions.length}
+          className="mt-1.5"
+          color="#6366f1"
+        />
       </div>
 
       {/* 쪽 모드: 시험지를 넘겨 보며 OMR에 답한다 */}
