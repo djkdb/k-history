@@ -19,8 +19,48 @@
   --color-era-modern: #6366f1;
 }
 
-:root {
+/*
+  ─── 테마 ──────────────────────────────────────────────────────────
+  기본은 어두운 화면이다. 밤에 누워서 보는 사람이 많고, 앱이 그 톤으로
+  자랐다. 밝은 화면은 낮에 밖에서 보거나 눈이 부신 사람을 위해 더한다.
+
+  화면 전체를 다시 칠하는 대신, 어두운 화면이 쓰던 색을 밝은 화면에서
+  어떻게 읽을지만 다시 정한다. 예를 들어 "흐린 글씨(zinc-500)"는 어두운
+  바탕에서는 밝은 회색이지만 밝은 바탕에서는 어두운 회색이어야 한다.
+  이렇게 해 두면 화면을 새로 만들 때도 색을 두 벌씩 쓰지 않아도 된다.
+*/
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
+  --bg: #09090b;
+  --fg: #fafafa;
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-line: rgba(255, 255, 255, 0.08);
+  --glass-bg-strong: rgba(255, 255, 255, 0.06);
+  --glass-line-strong: rgba(255, 255, 255, 0.12);
+  --glass-shadow: none;
+  --scroll-thumb: rgba(255, 255, 255, 0.12);
+  --pill-bg: #ffffff;
+  --pill-fg: #18181b;
+  --glow-1: rgba(99, 102, 241, 0.08);
+  --glow-2: rgba(16, 185, 129, 0.05);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f4f5;
+  --fg: #18181b;
+  /* 밝은 화면에서 반투명 카드는 지저분해 보인다 — 흰 종이에 옅은 그림자로 */
+  --glass-bg: #ffffff;
+  --glass-line: rgba(0, 0, 0, 0.07);
+  --glass-bg-strong: #ffffff;
+  --glass-line-strong: rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --scroll-thumb: rgba(0, 0, 0, 0.18);
+  --pill-bg: #18181b;
+  --pill-fg: #fafafa;
+  --glow-1: rgba(99, 102, 241, 0.07);
+  --glow-2: rgba(16, 185, 129, 0.05);
 }
 
 html {
@@ -29,8 +69,8 @@ html {
 }
 
 body {
-  background: #09090b;
-  color: #fafafa;
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
@@ -40,22 +80,40 @@ body {
 /* 은은한 배경 그라데이션 */
 .app-bg {
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(99, 102, 241, 0.08), transparent 60%),
-    radial-gradient(900px 500px at 90% 110%, rgba(16, 185, 129, 0.05), transparent 60%),
-    #09090b;
+    radial-gradient(1200px 600px at 50% -10%, var(--glow-1), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, var(--glow-2), transparent 60%),
+    var(--bg);
 }
 
 /* 유리 카드 (과하지 않은 glassmorphism) */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
   backdrop-filter: blur(12px);
+  box-shadow: var(--glass-shadow);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-line-strong);
   backdrop-filter: blur(16px);
+  box-shadow: var(--glass-shadow);
+}
+
+/*
+  선택된 칩·탭.
+  어두운 화면에서는 흰 알약, 밝은 화면에서는 검은 알약이어야 한다.
+  bg-white를 그대로 쓰면 밝은 화면에서 흰 바탕에 흰 알약이 되어 사라진다.
+  (시험지 이미지 판은 진짜 흰색이어야 하므로 bg-white 자체는 건드리지 않는다)
+*/
+.pill-on {
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+}
+
+/* 본문 글자색 — 테마에 따라 뒤집힌다 */
+.text-fg {
+  color: var(--fg);
 }
 
 /* 스크롤바 */
@@ -67,7 +125,7 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--scroll-thumb);
   border-radius: 3px;
 }
 
@@ -116,3 +174,89 @@ body {
     margin-left: calc(50% - min(1120px, 100vw - 3rem) / 2);
   }
 }
+
+/*
+  ─── 밝은 화면에서의 색 다시 읽기 ──────────────────────────────────
+  앱 곳곳에 쓰인 색은 "어두운 바탕"을 전제로 고른 것이다.
+  화면마다 클래스를 두 벌씩 다는 대신, 밝은 테마일 때 그 색들이
+  뜻하는 바(진한 글씨 / 흐린 글씨 / 옅은 판 / 옅은 선)를 그대로 지키도록
+  값만 바꿔 준다. 새 화면을 만들 때 테마를 신경 쓰지 않아도 되게 하려는 것이다.
+
+  layer 밖에 두어야 Tailwind 유틸리티(@layer utilities)를 이긴다.
+*/
+
+/* 글자: 어두운 화면의 밝은 회색 = 밝은 화면의 어두운 회색 */
+[data-theme="light"] .text-zinc-200 { color: #27272a; }
+[data-theme="light"] .text-zinc-300 { color: #3f3f46; }
+[data-theme="light"] .text-zinc-400 { color: #52525b; }
+[data-theme="light"] .text-zinc-500 { color: #71717a; }
+[data-theme="light"] .text-zinc-600 { color: #a1a1aa; }
+[data-theme="light"] .hover\:text-zinc-200:hover,
+[data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }
+
+/* 강조색: 어두운 바탕용 파스텔은 흰 바탕에서 읽히지 않는다 */
+[data-theme="light"] .text-indigo-200 { color: #3730a3; }
+[data-theme="light"] .text-indigo-300 { color: #4f46e5; }
+[data-theme="light"] .text-emerald-100 { color: #065f46; }
+[data-theme="light"] .text-emerald-200 { color: #047857; }
+[data-theme="light"] .text-emerald-300,
+[data-theme="light"] .text-emerald-400 { color: #059669; }
+[data-theme="light"] .text-red-200 { color: #991b1b; }
+[data-theme="light"] .text-red-300,
+[data-theme="light"] .text-red-400,
+[data-theme="light"] .text-red-500 { color: #dc2626; }
+[data-theme="light"] .text-amber-100 { color: #78350f; }
+[data-theme="light"] .text-amber-200 { color: #92400e; }
+[data-theme="light"] .text-amber-300 { color: #b45309; }
+[data-theme="light"] .text-orange-200 { color: #7c2d12; }
+[data-theme="light"] .text-orange-300,
+[data-theme="light"] .text-orange-400 { color: #ea580c; }
+[data-theme="light"] .text-cyan-300 { color: #0891b2; }
+
+/* 옅은 판: 흰색을 겹치던 자리에 검정을 겹친다 */
+[data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04); }
+[data-theme="light"] .bg-white\/10 { background-color: rgba(0, 0, 0, 0.07); }
+[data-theme="light"] .bg-white\/\[0\.02\],
+[data-theme="light"] .bg-white\/\[0\.03\] { background-color: rgba(0, 0, 0, 0.03); }
+[data-theme="light"] .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.04); }
+[data-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(0, 0, 0, 0.06); }
+[data-theme="light"] .hover\:bg-white\/8:hover { background-color: rgba(0, 0, 0, 0.05); }
+
+/* 옅은 선 */
+[data-theme="light"] .border-white\/5 { border-color: rgba(0, 0, 0, 0.05); }
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/12 { border-color: rgba(0, 0, 0, 0.1); }
+[data-theme="light"] .border-white\/15,
+[data-theme="light"] .border-white\/20 { border-color: rgba(0, 0, 0, 0.14); }
+[data-theme="light"] .hover\:border-white\/25:hover { border-color: rgba(0, 0, 0, 0.2); }
+
+/* 진행 막대·구분선의 바탕 */
+[data-theme="light"] .bg-white\/15 { background-color: rgba(0, 0, 0, 0.12); }
+[data-theme="light"] .bg-white\/20 { background-color: rgba(0, 0, 0, 0.16); }
+
+/* 시험 화면의 떠 있는 조작판은 밝은 화면에서도 어두운 채로 둔다 —
+   흰 시험지 위에 올라가므로 어두운 쪽이 훨씬 잘 보인다 */
+[data-theme="light"] .bg-zinc-900\/95 { background-color: rgba(24, 24, 27, 0.95); }
+
+/*
+  시대색으로 쓴 글자.
+  시대색(노랑 #eab308, 회색 #a8a29e 등)은 어두운 바탕을 전제로 고른 값이라
+  흰 바탕에서는 흐려서 읽히지 않는다. 색을 두 벌 관리하는 대신
+  밝은 테마에서만 한 단계 짙게 눌러 준다. 색상은 그대로라 시대 구분은 유지된다.
+*/
+[data-theme="light"] .era-ink {
+  filter: brightness(0.72) saturate(1.35);
+}
+
+/*
+  밝은 테마에서도 일부러 어둡게 남겨 둔 판(시험지 위의 안내·확대 조작판).
+  흰 시험지 위에서는 어두운 쪽이 훨씬 잘 보여서 색을 뒤집지 않는다.
+  다만 그 안의 글자까지 어두워지면 어두운 판에 어두운 글씨가 되므로,
+  안쪽에서만 원래(밝은) 글자색으로 되돌린다.
+*/
+[data-theme="light"] .on-dark .text-zinc-200 { color: #e4e4e7; }
+[data-theme="light"] .on-dark .text-zinc-300 { color: #d4d4d8; }
+[data-theme="light"] .on-dark .text-zinc-400 { color: #a1a1aa; }
+[data-theme="light"] .on-dark .text-indigo-200 { color: #c7d2fe; }
+[data-theme="light"] .on-dark .text-indigo-300 { color: #a5b4fc; }
+[data-theme="light"] .on-dark .border-white\/20 { border-color: rgba(255, 255, 255, 0.2); }

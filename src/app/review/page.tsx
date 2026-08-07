@@ -82,7 +82,7 @@ function Flashcard({
           style={{ backfaceVisibility: "hidden" }}
         >
           <EraBadge eraId={event.era} />
-          <p className="text-sm font-bold" style={{ color: era.color }}>
+          <p className="text-sm font-bold era-ink" style={{ color: era.color }}>
             {event.yearDisplay}
           </p>
           <h2 className="text-2xl font-black tracking-tight">{event.title}</h2>

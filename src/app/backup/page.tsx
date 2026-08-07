@@ -25,6 +25,7 @@ import {
   type BackupSummary,
 } from "@/lib/backup";
 import { Button, Card, SectionTitle } from "@/components/ui";
+import { ThemePicker } from "@/components/theme";
 
 function fmt(iso: string | null): string {
   if (!iso) return "";
@@ -111,6 +112,16 @@ export default function BackupPage() {
         남지만, 브라우저 데이터를 지우거나 기기를 바꾸면 사라집니다. 가끔
         파일로 저장해 두세요.
       </p>
+
+      <SectionTitle>화면 밝기</SectionTitle>
+      <Card>
+        <ThemePicker />
+        <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">
+          기본은 어두운 화면입니다. &lsquo;기기 설정&rsquo;을 고르면 휴대폰이
+          밤에 어두워질 때 함께 어두워집니다. 이 설정은 학습 기록과 따로
+          저장돼서, 바꿔도 진도에 아무 영향이 없습니다.
+        </p>
+      </Card>
 
       <SectionTitle>지금 기록</SectionTitle>
       <Card>{hydrated ? <Rows s={now} /> : <p className="text-xs text-zinc-500">불러오는 중…</p>}</Card>

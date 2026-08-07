@@ -83,9 +83,7 @@ function PageViewer({
               onClick={() => onPage(i)}
               className={cn(
                 "h-7 w-7 shrink-0 rounded-md text-[11px] font-bold transition-colors",
-                i === page
-                  ? "bg-white text-zinc-900"
-                  : "bg-white/5 text-zinc-500",
+                i === page ? "pill-on" : "bg-white/5 text-zinc-500",
               )}
             >
               {i + 1}
@@ -116,7 +114,7 @@ function PageViewer({
             className={cn(
               "flex-1 rounded-lg py-1.5 text-[12px] font-bold transition-colors",
               side === s
-                ? "bg-white text-zinc-900"
+                ? "pill-on"
                 : "bg-white/5 text-zinc-400 hover:bg-white/10",
             )}
           >
@@ -393,7 +391,7 @@ const ZoomableImage = forwardRef<
       */}
       <div className="pointer-events-none sticky bottom-4 z-20 -mt-14 flex justify-end pr-3">
         {/* 흰 시험지 위에 올라가므로 반투명이면 묻힌다 — 불투명하게 */}
-        <div className="pointer-events-auto flex items-center gap-0.5 rounded-xl border border-white/20 bg-zinc-900/95 px-1 py-1 shadow-2xl backdrop-blur-sm">
+        <div className="on-dark pointer-events-auto flex items-center gap-0.5 rounded-xl border border-white/20 bg-zinc-900/95 px-1 py-1 shadow-2xl backdrop-blur-sm">
           <button
             type="button"
             aria-label="축소"
@@ -433,7 +431,7 @@ const ZoomableImage = forwardRef<
           onClick={closeHint}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute inset-x-3 top-3 z-30 rounded-2xl border-2 border-indigo-400/60 bg-zinc-900/95 px-4 py-3.5 text-left shadow-2xl backdrop-blur"
+          className="on-dark absolute inset-x-3 top-3 z-30 rounded-2xl border-2 border-indigo-400/60 bg-zinc-900/95 px-4 py-3.5 text-left shadow-2xl backdrop-blur"
         >
           <p className="text-[14px] font-black text-indigo-200">
             글씨가 작으면 이렇게 크게 보세요

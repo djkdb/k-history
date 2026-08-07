@@ -45,6 +45,7 @@ import {
   StatCard,
 } from "@/components/ui";
 import { InstallPrompt } from "@/components/install-guide";
+import { ThemeToggle } from "@/components/theme";
 
 
 function Skeleton() {
@@ -161,22 +162,26 @@ export default function DashboardPage() {
             <h1
               className={cn(
                 "mt-0.5 text-4xl font-black tracking-tight",
-                dday <= 7 ? "text-red-400" : "text-white",
+                dday <= 7 ? "text-red-400" : "text-fg",
               )}
             >
               {dDayLabel(exam.examDate)}
             </h1>
           </div>
-          <Link href="/onboarding" className="text-right">
-            <p className="text-xs font-semibold text-indigo-300">
-              Lv.{level.level} {levelTitle(level.level)}
-            </p>
-            <ProgressBar
-              value={level.current}
-              max={level.needed}
-              className="mt-1 w-24"
-            />
-          </Link>
+          <div className="flex items-end gap-2">
+            <Link href="/onboarding" className="text-right">
+              <p className="text-xs font-semibold text-indigo-300">
+                Lv.{level.level} {levelTitle(level.level)}
+              </p>
+              <ProgressBar
+                value={level.current}
+                max={level.needed}
+                className="mt-1 w-24"
+              />
+            </Link>
+            {/* 화면 밝기 — 낮에 밖에서 볼 때 한 번에 뒤집을 수 있게 */}
+            <ThemeToggle />
+          </div>
         </div>
         {dday <= 7 && dday >= 0 && (
           <Link href="/cram">

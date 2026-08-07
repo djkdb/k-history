@@ -68,7 +68,7 @@ export function EraDetail() {
         />
         <div className="text-4xl">{era.symbol}</div>
         <h1 className="mt-2 text-2xl font-black tracking-tight">{era.name}</h1>
-        <p className="text-xs" style={{ color: era.color }}>
+        <p className="text-xs era-ink" style={{ color: era.color }}>
           {era.period}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-zinc-300">
@@ -122,7 +122,7 @@ export function EraDetail() {
                 <Card className={cn(isDone && "opacity-60")}>
                   <div className="flex items-center gap-2">
                     <span
-                      className="text-xs font-bold"
+                      className="text-xs font-bold era-ink"
                       style={{ color: era.color }}
                     >
                       {e.yearDisplay}

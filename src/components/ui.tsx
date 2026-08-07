@@ -211,7 +211,7 @@ export function Chip({
       className={cn(
         "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all active:scale-95",
         active
-          ? "bg-white text-zinc-900 shadow-lg shadow-white/10"
+          ? "pill-on shadow-lg shadow-black/10"
           : "bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-200",
         className,
       )}
@@ -318,12 +318,19 @@ export function ScrollRow({
       </div>
       {more && (
         <>
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-zinc-950 to-transparent" />
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 w-14"
+            // 바탕색에서 투명으로 — 테마가 바뀌면 페이드도 같이 바뀐다
+            style={{
+              background:
+                "linear-gradient(to left, var(--bg), color-mix(in srgb, var(--bg) 0%, transparent))",
+            }}
+          />
           <button
             type="button"
             aria-label="오른쪽으로 넘기기"
             onClick={nudge}
-            className="absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-zinc-900/90 text-zinc-300 shadow-lg backdrop-blur transition-transform active:scale-90"
+            className="pill-on absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform active:scale-90"
           >
             <ChevronRight size={15} />
           </button>

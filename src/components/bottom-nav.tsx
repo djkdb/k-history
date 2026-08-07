@@ -47,7 +47,7 @@ export function BottomNav() {
                 href={href}
                 className={cn(
                   "relative flex flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1 transition-colors",
-                  active ? "text-white" : "text-zinc-500 hover:text-zinc-300",
+                  active ? "text-fg" : "text-zinc-500 hover:text-zinc-300",
                 )}
               >
                 {active && (

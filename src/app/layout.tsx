@@ -27,7 +27,19 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" data-theme="dark">
+      <head>
+        {/*
+          칠하기 전에 테마를 정한다.
+          리액트가 뜬 뒤에 바꾸면 어두운 화면이 한 번 번쩍이고 밝아진다.
+          저장된 값이 없으면 지금까지와 같은 어두운 화면이다.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=localStorage.getItem("khlm:theme");var a=p==="light"||(p==="system"&&matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";document.documentElement.setAttribute("data-theme",a);document.documentElement.style.colorScheme=a;}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="app-bg min-h-dvh">
         <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28">
           {children}

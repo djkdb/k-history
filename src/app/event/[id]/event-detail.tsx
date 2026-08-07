@@ -136,7 +136,7 @@ export function EventDetail() {
           )}
         </div>
         <p
-          className="mt-3 text-sm font-bold tracking-wide"
+          className="mt-3 text-sm font-bold tracking-wide era-ink"
           style={{ color: era.color }}
         >
           {event.yearDisplay}

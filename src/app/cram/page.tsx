@@ -156,7 +156,7 @@ export default function CramPage() {
             <div className="flex items-center gap-2">
               <EraBadge eraId={event.era} />
               <span
-                className="text-xs font-bold tabular-nums"
+                className="text-xs font-bold tabular-nums era-ink"
                 style={{ color: era.color }}
               >
                 {event.yearDisplay}

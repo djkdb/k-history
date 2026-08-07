@@ -137,7 +137,7 @@ export default function SearchPage() {
                 <div className="mb-2 flex items-center gap-2">
                   <span>{era.symbol}</span>
                   <h2
-                    className="text-sm font-bold"
+                    className="text-sm font-bold era-ink"
                     style={{ color: era.color }}
                   >
                     {era.name}
@@ -154,7 +154,7 @@ export default function SearchPage() {
                       <Link href={`/event/${e.id}`}>
                         <Card>
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-bold" style={{ color: era.color }}>
+                            <span className="text-xs font-bold era-ink" style={{ color: era.color }}>
                               {e.yearDisplay}
                             </span>
                             <ImportanceBadge importance={e.importance} />

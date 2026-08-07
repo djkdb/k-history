@@ -25,7 +25,7 @@ function EraHeader({ eraId }: { eraId: EraId }) {
     >
       <div className="text-4xl">{era.symbol}</div>
       <h2 className="mt-2 text-xl font-black tracking-tight">{era.name}</h2>
-      <p className="text-xs" style={{ color: era.color }}>
+      <p className="text-xs era-ink" style={{ color: era.color }}>
         {era.period}
       </p>
       <p className="mt-1 text-xs text-zinc-400">{era.mood}</p>
@@ -51,7 +51,7 @@ function FlowCard({ event, index }: { event: HistoryEvent; index: number }) {
       >
         <Link href={`/event/${event.id}`}>
           <div className="glass rounded-2xl p-4 transition-transform active:scale-[0.99]">
-            <p className="text-lg font-black" style={{ color: era.color }}>
+            <p className="text-lg font-black era-ink" style={{ color: era.color }}>
               {event.yearDisplay}
             </p>
             <div className="mt-1 flex items-center justify-between gap-2">
