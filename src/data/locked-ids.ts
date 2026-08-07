@@ -119,3 +119,24 @@ export const LOCKED_EVENT_IDS: readonly string[] = [
   "yun-gwan",
   "yusin",
 ];
+
+/**
+ * 이미 배포되어 사람들이 응시한 기출 회차 id 목록 (잠금).
+ *
+ * 모의고사 응시 기록(mockAttempts)은 이 id로 저장돼 있다.
+ * 회차를 **추가**하는 것은 안전하다 — 기존 기록은 그대로 있고 목록만 늘어난다.
+ * 하지만 여기 있는 id를 바꾸거나 빼면 그 회차를 푼 사람의 점수 기록이
+ * 갈 곳을 잃어 "성적표가 사라진 것처럼" 보인다.
+ */
+export const LOCKED_EXAM_IDS: readonly string[] = [
+  "69-advanced",
+  "70-advanced",
+  "71-advanced",
+  "72-advanced",
+  "73-advanced",
+  "74-advanced",
+  "75-advanced",
+  "76-advanced",
+  "77-advanced",
+  "78-advanced",
+];

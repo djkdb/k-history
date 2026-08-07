@@ -16,7 +16,8 @@
  */
 import { readFileSync } from "node:fs";
 import { ALL_EVENTS } from "@/data/events";
-import { LOCKED_EVENT_IDS } from "@/data/locked-ids";
+import { LOCKED_EVENT_IDS, LOCKED_EXAM_IDS } from "@/data/locked-ids";
+import { MOCK_EXAMS } from "@/data/mock-exams";
 
 const errors: string[] = [];
 
@@ -77,10 +78,24 @@ for (const id of gone)
 
 const added = [...now].filter((id) => !LOCKED_EVENT_IDS.includes(id));
 
+// ─── ⑥ 기출 회차 id 잠금 ───────────────────────────────────────────
+// 회차 추가는 안전하다. 사라지거나 이름이 바뀌는 것만 막는다.
+const examsNow = new Set(MOCK_EXAMS.map((e) => e.id));
+for (const id of LOCKED_EXAM_IDS.filter((id) => !examsNow.has(id)))
+  errors.push(
+    `기출 회차 "${id}"가 사라졌습니다. 이 회차를 푼 사람의 점수 기록이 갈 곳을 잃습니다`,
+  );
+const examsAdded = [...examsNow].filter((id) => !LOCKED_EXAM_IDS.includes(id));
+
 // ─── 결과 ───────────────────────────────────────────────────────────
 console.log(
-  `잠긴 개념 ${LOCKED_EVENT_IDS.length}개 · 현재 개념 ${now.size}개 검사\n`,
+  `잠긴 개념 ${LOCKED_EVENT_IDS.length}개 · 현재 개념 ${now.size}개 검사\n` +
+    `잠긴 회차 ${LOCKED_EXAM_IDS.length}개 · 현재 회차 ${examsNow.size}개 검사\n`,
 );
+if (examsAdded.length)
+  console.log(
+    `ℹ️  새 기출 회차 ${examsAdded.length}개 (추가는 안전합니다. src/data/locked-ids.ts 에 넣어 두세요)\n   ${examsAdded.join(", ")}\n`,
+  );
 if (added.length)
   console.log(
     `ℹ️  새 개념 ${added.length}개 (추가는 안전합니다. src/data/locked-ids.ts 에 넣어 두세요)\n   ${added.join(", ")}\n`,
