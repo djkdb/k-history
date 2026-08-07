@@ -1,8 +1,15 @@
 import type { MockExam, MockExamQuestion } from "@/lib/types";
+import { ROUND_58_ADVANCED } from "./round-58-advanced";
+import { ROUND_59_ADVANCED } from "./round-59-advanced";
 import { ROUND_60_ADVANCED } from "./round-60-advanced";
 import { ROUND_62_ADVANCED } from "./round-62-advanced";
 import { ROUND_63_ADVANCED } from "./round-63-advanced";
 import { ROUND_65_ADVANCED } from "./round-65-advanced";
+import { ROUND_61_ADVANCED } from "./round-61-advanced";
+import { ROUND_64_ADVANCED } from "./round-64-advanced";
+import { ROUND_66_ADVANCED } from "./round-66-advanced";
+import { ROUND_67_ADVANCED } from "./round-67-advanced";
+import { ROUND_68_ADVANCED } from "./round-68-advanced";
 import { ROUND_69_ADVANCED } from "./round-69-advanced";
 import { ROUND_70_ADVANCED } from "./round-70-advanced";
 import { ROUND_71_ADVANCED } from "./round-71-advanced";
@@ -42,10 +49,17 @@ export const MOCK_EXAMS: MockExam[] = [
   ROUND_71_ADVANCED,
   ROUND_70_ADVANCED,
   ROUND_69_ADVANCED,
+  ROUND_68_ADVANCED,
+  ROUND_67_ADVANCED,
+  ROUND_66_ADVANCED,
   ROUND_65_ADVANCED,
+  ROUND_64_ADVANCED,
   ROUND_63_ADVANCED,
   ROUND_62_ADVANCED,
+  ROUND_61_ADVANCED,
   ROUND_60_ADVANCED,
+  ROUND_59_ADVANCED,
+  ROUND_58_ADVANCED,
 ];
 
 export function getMockExam(id: string): MockExam | undefined {
