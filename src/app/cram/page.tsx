@@ -16,14 +16,9 @@ import type { HistoryEvent } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ALL_EVENTS } from "@/data/events";
 import { ERA_MAP } from "@/data/eras";
+import { InfographicView, infographicsFor } from "@/components/infographic";
 import { cn, dDayLabel } from "@/lib/utils";
-import {
-  Badge,
-  Button,
-  Card,
-  EraBadge,
-  ProgressBar,
-} from "@/components/ui";
+import { Button, Card, EraBadge, ProgressBar } from "@/components/ui";
 
 /**
  * 줄글을 문장 단위로 끊는다.
@@ -35,6 +30,67 @@ function sentences(text: string): string[] {
     .map((t) => t.trim().replace(/^[·\-\s]+/, ""))
     .filter((t) => t.length > 1)
     .map((t) => (/[.!?]$/.test(t) ? t : t + "."));
+}
+
+/**
+ * 핵심 키워드 판.
+ *
+ * 시험 직전에 필요한 건 읽을 글이 아니라 짚을 낱말이다.
+ * 칸으로 나눠 번호를 붙이면 "이 개념은 다섯 개짜리"라는 감각이 함께 남고,
+ * 첫 글자를 모아 두면 시험장에서 인출할 실마리가 된다.
+ * (외워야 할 두문자를 남이 정해 주는 대신, 이 개념의 낱말로 만든다)
+ */
+function KeywordBoard({
+  event,
+  color,
+}: {
+  event: HistoryEvent;
+  color: string;
+}) {
+  const keys = event.keywords.slice(0, 6);
+  if (keys.length === 0) return null;
+  // 첫 글자만 모은 인출 실마리. 낱말이 셋 이상일 때만 쓸모가 있다.
+  const initials = keys.length >= 3 ? keys.map((k) => k.trim()[0]) : null;
+
+  return (
+    <div className="mt-4">
+      <div className="mb-2 flex items-baseline gap-2">
+        <span className="text-[11px] font-bold tracking-wide text-zinc-400">
+          핵심 키워드
+        </span>
+        <span className="text-[11px] font-black tabular-nums" style={{ color }}>
+          {keys.length}개
+        </span>
+        {initials && (
+          <span className="ml-auto text-[13px] font-black tracking-[0.2em]" style={{ color }}>
+            {initials.join("·")}
+          </span>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-1.5">
+        {keys.map((k, i) => (
+          <div
+            key={k}
+            className="flex items-center gap-2 rounded-xl border px-2.5 py-2.5"
+            style={{
+              borderColor: `color-mix(in srgb, ${color} 30%, transparent)`,
+              background: `color-mix(in srgb, ${color} 10%, transparent)`,
+            }}
+          >
+            <span
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-black"
+              style={{ background: color, color: "#0b0b0d" }}
+            >
+              {i + 1}
+            </span>
+            <span className="min-w-0 flex-1 break-keep text-[14px] font-bold leading-tight">
+              {k}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const MODES = [
@@ -123,6 +179,7 @@ export default function CramPage() {
   if (deck) {
     const event = deck[idx];
     const era = ERA_MAP[event.era];
+    const graphics = infographicsFor(event);
     return (
       <div className="flex flex-col pt-4">
         <div className="mb-4 flex items-center gap-3">
@@ -172,22 +229,17 @@ export default function CramPage() {
               {event.title}
             </h2>
 
-            {/* 직전에 가장 잘 먹히는 건 두문자다. 가장 크게, 가장 먼저. */}
-            <div className="mt-4 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3.5">
-              <p className="text-[15px] font-bold leading-relaxed text-emerald-100">
-                {event.memory.mnemonic}
-              </p>
-            </div>
+            {/*
+              시험 직전에 필요한 건 읽을 글이 아니라 짚을 낱말이다.
+              예전에는 여기에 암기법 문장을 크게 띄웠는데, 남의 두문자를
+              읽는 것보다 이 개념의 키워드를 눈으로 훑는 편이 빠르다.
+              칸으로 나눠 번호를 붙이면 몇 개짜리인지가 함께 외워진다.
+            */}
+            <KeywordBoard event={event} color={era.color} />
 
             <p className="mt-4 text-[15px] leading-[1.75] text-zinc-200">
               {event.summary10s}
             </p>
-
-            <div className="mt-3.5 flex flex-wrap gap-1.5">
-              {event.keywords.slice(0, 6).map((k) => (
-                <Badge key={k}>{k}</Badge>
-              ))}
-            </div>
 
             {/* 나머지는 접어 둔다 — 76장을 넘겨야 하는 화면에 줄글을 다 펼치면 읽히지 않는다 */}
             {detail && (
@@ -208,6 +260,24 @@ export default function CramPage() {
                     ))}
                   </ul>
                 </section>
+
+                {/* 구조가 있는 정보는 그림이 빠르다 — 연표·비교표 등 */}
+                {graphics.length > 0 && (
+                  <section>
+                    <h3 className="mb-1.5 text-[11px] font-bold tracking-wide text-cyan-300">
+                      한눈에 보기
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {graphics.slice(0, 2).map((spec, i) => (
+                        <InfographicView
+                          key={`${spec.kind}-${i}`}
+                          spec={spec}
+                          color={era.color}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
 
                 {event.traps.length > 0 && (
                   <section>
