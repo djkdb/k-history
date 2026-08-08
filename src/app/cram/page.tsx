@@ -93,11 +93,37 @@ function KeywordBoard({
   );
 }
 
+/**
+ * 남은 시간별 범위.
+ * 세 모드는 담는 내용이 아니라 "어디까지 보느냐"만 다르다.
+ * 30분 ⊂ 1시간 ⊂ 3시간 — 좁은 쪽은 넓은 쪽에 그대로 들어 있다.
+ */
 const MODES = [
-  { label: "30분", desc: "★5 반드시 암기 — 거의 매회 출제되는 것만", minImportance: 5 },
-  { label: "1시간", desc: "★4 이상 — 2회 중 1회꼴로 나오는 것까지", minImportance: 4 },
-  { label: "3시간", desc: "★3 이상 — 자주 출제되는 것까지", minImportance: 3 },
+  {
+    label: "30분",
+    stars: "★5",
+    desc: "거의 매회 나오는 것만",
+    note: "가장 급할 때. 이것만은 놓치면 안 되는 것",
+    minImportance: 5,
+  },
+  {
+    label: "1시간",
+    stars: "★4 이상",
+    desc: "2회 중 1회꼴로 나오는 것까지",
+    note: "30분 범위를 포함합니다",
+    minImportance: 4,
+  },
+  {
+    label: "3시간",
+    stars: "★3 이상",
+    desc: "자주 출제되는 것까지",
+    note: "1시간 범위를 포함합니다",
+    minImportance: 3,
+  },
 ];
+
+/** 카드 한 장을 훑는 데 걸리는 대략의 시간(초) — 장수로 총량을 가늠하게 한다 */
+const SEC_PER_CARD = 45;
 
 export default function CramPage() {
   const exam = useApp((s) => s.exam);
@@ -108,7 +134,12 @@ export default function CramPage() {
   const [deck, setDeck] = useState<HistoryEvent[] | null>(null);
   const [idx, setIdx] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [detail, setDetail] = useState(false);
+  /*
+    출제 포인트·인포그래픽·함정은 처음부터 펼쳐 둔다.
+    접어 두었더니 어느 모드를 골라도 카드가 똑같아 보여, 30분과 3시간이
+    무엇이 다른지 화면에서 알 수가 없었다. 접는 건 원하는 사람만.
+  */
+  const [detail, setDetail] = useState(true);
 
   const counts = useMemo(
     () =>
@@ -352,20 +383,57 @@ export default function CramPage() {
       </motion.div>
 
       <div className="mt-4 flex flex-col gap-2.5">
-        {MODES.map((m, i) => (
-          <button key={m.label} type="button" onClick={() => begin(m.minImportance)}>
-            <Card className="flex items-center gap-4 text-left">
-              <span className="text-xl font-black text-red-300">{m.label}</span>
-              <span className="flex-1">
-                <span className="block text-sm font-semibold">{m.desc}</span>
-                <span className="block text-xs text-zinc-500">
-                  핵심 개념 {counts[i]}개
+        {MODES.map((m, i) => {
+          const mins = Math.round((counts[i] * SEC_PER_CARD) / 60);
+          return (
+            <button
+              key={m.label}
+              type="button"
+              onClick={() => begin(m.minImportance)}
+            >
+              <Card className="text-left">
+                <span className="flex items-center gap-2">
+                  <span className="text-xl font-black text-red-300">
+                    {m.label}
+                  </span>
+                  <span className="text-[11px] font-bold text-zinc-500">
+                    남았다면
+                  </span>
+                  <span className="ml-auto flex items-baseline gap-1">
+                    <span className="text-2xl font-black tabular-nums">
+                      {counts[i]}
+                    </span>
+                    <span className="text-xs font-semibold text-zinc-400">
+                      장
+                    </span>
+                  </span>
+                  <ChevronRight size={16} className="text-zinc-600" />
                 </span>
-              </span>
-              <ChevronRight size={16} className="text-zinc-600" />
-            </Card>
-          </button>
-        ))}
+                {/* 세 모드가 얼마나 다른지 막대로 한눈에 */}
+                <ProgressBar
+                  value={counts[i]}
+                  max={counts[counts.length - 1]}
+                  className="mt-2"
+                  color="#ef4444"
+                />
+                <span className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span className="text-xs font-bold text-amber-300">
+                    {m.stars}
+                  </span>
+                  <span className="text-xs font-semibold text-zinc-300">
+                    {m.desc}
+                  </span>
+                  <span className="text-[11px] text-zinc-500">
+                    · 다 훑는 데 약 {mins}분
+                  </span>
+                </span>
+                <span className="mt-0.5 block text-[11px] text-zinc-600">
+                  {m.note}
+                </span>
+              </Card>
+            </button>
+          );
+        })}
       </div>
 
       <button
