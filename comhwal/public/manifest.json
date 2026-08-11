@@ -1,0 +1,18 @@
+{
+  "name": "컴활 마스터",
+  "short_name": "컴활 마스터",
+  "description": "컴퓨터활용능력 1·2급 — 필기는 이해로, 실기는 손으로",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
