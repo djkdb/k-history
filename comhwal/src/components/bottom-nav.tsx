@@ -21,6 +21,7 @@ export function BottomNav() {
   if (
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/mock/session") ||
+    pathname.startsWith("/practical/mock") ||
     pathname.startsWith("/cram")
   ) {
     return null;

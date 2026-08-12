@@ -205,14 +205,26 @@ export interface Stats {
 
 /** 모의고사 응시 기록 */
 export interface MockAttempt {
-  /** 급수-과목 조합 (예: "2-written") */
+  /** 급수-시험 (예: "2-written", "1-practical") */
   examId: string;
   startedAt: number;
   finishedAt: number;
-  /** 문항 번호 → 고른 보기 번호 */
+  /**
+   * 문항 번호 → 고른 보기 번호.
+   * 실기 모의고사의 수식 문항은 답이 글이라 여기에 담기지 않는다
+   * (채점은 제출 시점에 끝나고 점수만 남는다).
+   */
   answers: Record<number, number>;
-  /** 과목별 점수 — 컴활은 과목당 40점 미만이면 과락이다 */
-  bySubject: { subject: SubjectId; correct: number; total: number }[];
+  /**
+   * 갈래별 점수.
+   * 필기는 과목별로 나뉘고 — 컴활은 한 과목이라도 40점 미만이면 과락이다 —
+   * 실기는 수식·단축키로 나뉜다.
+   */
+  bySubject: {
+    subject: SubjectId | "formula" | "shortcut";
+    correct: number;
+    total: number;
+  }[];
   score: number;
   total: number;
 }

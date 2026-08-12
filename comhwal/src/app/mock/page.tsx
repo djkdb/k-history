@@ -11,7 +11,10 @@ import { PROGRESS_KEY, readProgress, type MockProgress } from "./progress";
 
 export default function MockPage() {
   const grade = useGrade();
-  const attempts = useApp((s) => s.mockAttempts);
+  // 실기 응시는 실기 화면에서 따로 보여 준다
+  const attempts = useApp((s) => s.mockAttempts).filter((a) =>
+    a.examId.endsWith("-written"),
+  );
   const [resume, setResume] = useState<MockProgress | null>(null);
 
   useEffect(() => {

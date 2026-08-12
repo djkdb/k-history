@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Keyboard, Sigma } from "lucide-react";
+import { ArrowRight, Keyboard, Sigma, Timer } from "lucide-react";
 import { useApp, useGrade } from "@/lib/store";
 import { formulasFor, formulaTopics } from "@/data/formulas";
 import { shortcutsFor } from "@/data/shortcuts";
@@ -11,6 +11,10 @@ export default function PracticalPage() {
   const grade = useGrade();
   const clearedFormulaIds = useApp((s) => s.clearedFormulaIds);
   const clearedShortcutIds = useApp((s) => s.clearedShortcutIds);
+  const attempts = useApp((s) => s.mockAttempts);
+  const lastMock = [...attempts]
+    .reverse()
+    .find((a) => a.examId.endsWith("-practical"));
 
   const formulas = formulasFor(grade);
   const shortcuts = shortcutsFor(grade);
@@ -90,6 +94,33 @@ export default function PracticalPage() {
           </Card>
         </Link>
       </div>
+
+      <SectionTitle>시험처럼 몰아서</SectionTitle>
+      <Link href="/practical/mock">
+        <Card className="transition-transform active:scale-[0.99]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 text-indigo-300">
+                <Timer size={20} />
+              </span>
+              <div>
+                <p className="text-sm font-bold">실기 모의고사</p>
+                <p className="mt-1 text-[13px] leading-relaxed text-zinc-400">
+                  수식 20문항과 단축키 10개를 {grade === 1 ? 45 : 30}분 안에
+                  풉니다. 중간에 정답을 볼 수 없고, 제출해야 채점됩니다.
+                </p>
+              </div>
+            </div>
+            <ArrowRight size={16} className="mt-1 shrink-0 text-zinc-500" />
+          </div>
+          {lastMock && (
+            <p className="mt-3 text-[11px] text-zinc-500">
+              지난 응시 {Math.round((lastMock.score / lastMock.total) * 100)}점 ·{" "}
+              {new Date(lastMock.startedAt).toLocaleDateString("ko-KR")}
+            </p>
+          )}
+        </Card>
+      </Link>
 
       <SectionTitle>알아 두면 좋은 것</SectionTitle>
       <Card>
