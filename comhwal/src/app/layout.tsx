@@ -28,6 +28,17 @@ export default function RootLayout({
   return (
     <html lang="ko" data-theme="dark">
       <head>
+        {/* 글꼴은 첫 화면부터 필요하다 — 먼저 받아 두어야 글자가 한 번 바뀌지 않는다 */}
+        {[400, 500, 600, 700].map((w) => (
+          <link
+            key={w}
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={`/fonts/pretendard-${w}.woff2`}
+            crossOrigin="anonymous"
+          />
+        ))}
         {/*
           칠하기 전에 테마를 정한다.
           리액트가 뜬 뒤에 바꾸면 어두운 화면이 한 번 번쩍이고 밝아진다.

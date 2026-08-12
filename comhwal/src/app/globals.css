@@ -1,7 +1,49 @@
 @import "tailwindcss";
 
+/*
+  ─── 글꼴 ──────────────────────────────────────────────────────────
+  Pretendard 를 직접 실어 둔다.
+  이름만 적어 두면 그 글꼴이 없는 기기에서는 저마다 다른 글꼴로 그려진다.
+  아이폰은 애플 산돌고딕, 안드로이드는 로보토·본고딕, PC는 또 다른 것이라
+  같은 화면이 기기마다 다르게 보였다.
+
+  앱에 실제로 쓰이는 글자만 남겨 굵기당 73KB로 줄였다(963자). 화면에 뜨는
+  글자는 모두 소스 안의 문자열에서 나오므로 빠지는 글자가 없고, 사용자가
+  직접 치는 것은 수식뿐이라 아스키만 있으면 된다.
+
+  Pretendard — SIL Open Font License 1.1 (public/fonts/OFL.txt)
+*/
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/pretendard-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/pretendard-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/pretendard-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/pretendard-700.woff2") format("woff2");
+}
+
 @theme {
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont,
     "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, Consolas,
     "Liberation Mono", Menlo, monospace;

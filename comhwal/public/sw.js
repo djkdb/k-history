@@ -1,6 +1,14 @@
 // 컴활 마스터 서비스 워커 — 오프라인 지원 (network-first, 캐시 폴백)
-const CACHE_NAME = "comhwal-v1";
-const PRECACHE = ["/", "/manifest.json", "/icon.svg"];
+const CACHE_NAME = "comhwal-v2";
+const PRECACHE = [
+  "/",
+  "/manifest.json",
+  "/icon.svg",
+  "/fonts/pretendard-400.woff2",
+  "/fonts/pretendard-500.woff2",
+  "/fonts/pretendard-600.woff2",
+  "/fonts/pretendard-700.woff2",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
