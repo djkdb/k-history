@@ -40,11 +40,21 @@ export function shortTitle(title: string): string {
   return cut.length >= 2 ? cut : title;
 }
 
-/** 제목에서 뜻이 있는 낱말만 (조사·기호는 버린다) */
+/**
+ * 제목에서 뜻이 있는 낱말만 (조사·기호는 버린다).
+ *
+ * 조사를 떼되, 떼고 나서 한 글자만 남으면 원래 낱말을 그대로 둔다.
+ * '질의'의 '의'는 조사가 아니라 낱말의 일부인데, 이를 떼면 '질' 한 글자가
+ * 남아 걸러지고 결국 지문에서 '질의'를 가리지 못해 답이 새기 때문이다.
+ */
 function titleTokens(title: string): string[] {
   return title
     .split(/[\s·,()—\-–~/]+/)
-    .map((t) => t.replace(/(의|과|와|은|는|이|가)$/, "").trim())
+    .map((raw) => {
+      const t = raw.trim();
+      const stem = t.replace(/(의|과|와|은|는|이|가)$/, "");
+      return stem.length >= 2 ? stem : t;
+    })
     .filter((t) => t.length >= 2);
 }
 
