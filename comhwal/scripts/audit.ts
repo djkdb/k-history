@@ -60,6 +60,10 @@ const LOCKED = [
   },
   { file: "src/lib/store.ts", needle: 'name: "comhwal-state"' },
   { file: "src/app/mock/progress.ts", needle: 'PROGRESS_KEY = "comhwal:mock-progress"' },
+  {
+    file: "src/app/quiz/progress.ts",
+    needle: 'QUIZ_PROGRESS_KEY = "comhwal:quiz-progress"',
+  },
   { file: "src/components/theme.tsx", needle: 'THEME_KEY = "comhwal:theme"' },
 ];
 

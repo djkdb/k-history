@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +21,12 @@ import {
   SectionTitle,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import {
+  clearQuizProgress,
+  readQuizProgress,
+  writeQuizProgress,
+  type QuizProgress,
+} from "./progress";
 
 const COUNTS = [5, 10, 20, 30];
 
@@ -39,8 +45,18 @@ export function QuizScreen() {
   const [at, setAt] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [answers, setAnswers] = useState<(number | null)[]>([]);
+  /** 풀던 것이 남아 있으면 시작 화면에 이어 하기 카드를 띄운다 */
+  const [saved, setSaved] = useState<QuizProgress | null>(null);
+
+  // 이 회차를 만들어 낸 값 — 같은 값이면 같은 문제가 같은 순서로 나온다
+  const seed = useRef(0);
+  const sourceIds = useRef<string[] | null>(null);
 
   const mine = subjectsFor(grade);
+
+  useEffect(() => {
+    setSaved(readQuizProgress());
+  }, []);
 
   // 잘못된 급수·과목 조합으로 들어왔을 때 (2급인데 데이터베이스)
   useEffect(() => {
@@ -53,17 +69,72 @@ export function QuizScreen() {
   );
 
   const start = () => {
+    const s = Date.now() % 1_000_000;
+    const only = onlyWrong ? wrongIds : null;
+    seed.current = s;
+    sourceIds.current = only;
     const qs = makeQuiz({
       grade,
       subject: subject ?? undefined,
       count,
-      onlySourceIds: onlyWrong ? wrongIds : undefined,
+      onlySourceIds: only ?? undefined,
+      seed: s,
     });
+    clearQuizProgress();
+    setSaved(null);
     setQuestions(qs);
     setAnswers(new Array(qs.length).fill(null));
     setAt(0);
     setPicked(null);
   };
+
+  /** 저장해 둔 회차를 그대로 다시 만들어 이어 푼다 */
+  const resume = useCallback((p: QuizProgress) => {
+    const qs = makeQuiz({
+      grade: p.grade,
+      subject: p.subject ?? undefined,
+      count: p.count,
+      onlySourceIds: p.onlySourceIds ?? undefined,
+      seed: p.seed,
+    });
+    // 개념 데이터가 바뀌어 문항 수가 달라졌다면 이어 할 수 없다
+    if (qs.length !== p.answers.length) {
+      clearQuizProgress();
+      setSaved(null);
+      return;
+    }
+    seed.current = p.seed;
+    sourceIds.current = p.onlySourceIds;
+    setSubject(p.subject);
+    setCount(p.count);
+    setQuestions(qs);
+    setAnswers(p.answers);
+    setAt(p.at);
+    // 답을 고른 채로 멈췄다면 해설이 열린 그 화면 그대로 돌아간다
+    setPicked(p.answers[p.at] ?? null);
+    setSaved(null);
+  }, []);
+
+  // 답을 고르거나 다음으로 넘어갈 때마다 어디까지 왔는지 적어 둔다.
+  // 채점은 고르는 순간 이미 끝났으므로 여기 남는 것은 진행 상황뿐이다.
+  useEffect(() => {
+    if (!questions || questions.length === 0) return;
+    // 끝까지 푼 회차는 이어 할 것이 없다
+    if (at >= questions.length) {
+      clearQuizProgress();
+      return;
+    }
+    writeQuizProgress({
+      grade,
+      subject,
+      count,
+      seed: seed.current,
+      onlySourceIds: sourceIds.current,
+      answers,
+      at,
+      savedAt: Date.now(),
+    });
+  }, [questions, answers, at, grade, subject, count]);
 
   // ── 설정 화면 ────────────────────────────────────────────────
   if (!questions) {
@@ -75,6 +146,34 @@ export function QuizScreen() {
             ? `틀렸던 개념 ${wrongIds.length}개에서만 출제합니다`
             : `${grade}급 범위에서 ${available}문항까지 만들 수 있습니다`}
         </p>
+
+        {saved && (
+          <Card className="mt-4 border-amber-500/30 bg-amber-500/[0.08]">
+            <p className="text-[13px] font-bold text-amber-200">
+              풀던 퀴즈가 남아 있습니다
+            </p>
+            <p className="mt-1 text-[13px] leading-relaxed text-zinc-300">
+              {saved.answers.length}문항 중{" "}
+              {saved.answers.filter((a) => a !== null).length}문항까지 풀었습니다.
+              {saved.onlySourceIds ? " (틀렸던 것만 풀기)" : ""}
+            </p>
+            <div className="mt-3 flex gap-2">
+              <Button size="sm" className="flex-1" onClick={() => resume(saved)}>
+                이어서 풀기
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  clearQuizProgress();
+                  setSaved(null);
+                }}
+              >
+                버리기
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {!onlyWrong && wrongIds.length > 0 && (
           <Link href="/quiz?mode=wrong" className="mt-4 block">
@@ -153,9 +252,14 @@ export function QuizScreen() {
           />
         ) : (
           <Button size="lg" className="mt-6 w-full" onClick={start}>
-            시작하기
+            {saved ? "새로 시작하기" : "시작하기"}
             <ArrowRight size={17} />
           </Button>
+        )}
+        {saved && (
+          <p className="mt-2 text-center text-[11px] text-zinc-600">
+            새로 시작하면 풀던 것은 사라집니다
+          </p>
         )}
       </div>
     );
@@ -289,7 +393,11 @@ export function QuizScreen() {
         </span>
         <button
           type="button"
-          onClick={() => setQuestions(null)}
+          // 그만둬도 지우지 않는다 — 돌아오면 이어 하기 카드가 기다린다
+          onClick={() => {
+            setQuestions(null);
+            setSaved(readQuizProgress());
+          }}
           className="hover:text-zinc-200"
         >
           그만두기
