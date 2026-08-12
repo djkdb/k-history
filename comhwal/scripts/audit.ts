@@ -17,6 +17,11 @@ import { CONCEPTS } from "../src/data/concepts";
 import { FORMULA_TASKS } from "../src/data/formulas";
 import { SHORTCUTS } from "../src/data/shortcuts";
 import { SUBJECTS } from "../src/data/subjects";
+import {
+  LOCKED_CONCEPT_IDS,
+  LOCKED_FORMULA_IDS,
+  LOCKED_SHORTCUT_IDS,
+} from "../src/data/locked-ids";
 import { questionBank } from "../src/lib/quiz";
 import { gradeFormula, normalizeFormula } from "../src/lib/grade-formula";
 import { prettyKey } from "../src/lib/shortcut";
@@ -80,7 +85,35 @@ if (/\bversion:\s*\d/.test(storeSrc)) {
   fail("store.ts 에 persist version 이 생겼습니다 — 저장본이 버려질 수 있습니다");
 }
 
-// ── 2. 데이터 무결성 ───────────────────────────────────────────────
+// ── 2. id 잠금 ─────────────────────────────────────────────────────
+// 사용자의 진도·복습 카드·오답 노트가 전부 이 id로 저장돼 있다.
+// 하나라도 사라지면 그 사람의 기록이 갈 곳을 잃고, 서버에 사본이 없어
+// 되돌릴 수 없다. 추가는 언제나 안전하다.
+function checkLock(kind: string, locked: readonly string[], now: string[]) {
+  const have = new Set(now);
+  const gone = locked.filter((id) => !have.has(id));
+  if (gone.length) {
+    fail(
+      `${kind} id가 사라졌습니다 (${gone.length}개): ${gone.slice(0, 8).join(", ")}` +
+        (gone.length > 8 ? " …" : "") +
+        " — 이 id로 저장된 사용자 기록이 갈 곳을 잃습니다",
+    );
+  }
+  const added = now.filter((id) => !locked.includes(id));
+  if (added.length) {
+    notes.push(
+      `${kind} ${added.length}개가 새로 늘었습니다 — 배포 후 locked-ids.ts 에 추가할 것 (${added
+        .slice(0, 5)
+        .join(", ")}${added.length > 5 ? " …" : ""})`,
+    );
+  }
+}
+
+checkLock("개념", LOCKED_CONCEPT_IDS, CONCEPTS.map((c) => c.id));
+checkLock("수식 문제", LOCKED_FORMULA_IDS, FORMULA_TASKS.map((f) => f.id));
+checkLock("단축키", LOCKED_SHORTCUT_IDS, SHORTCUTS.map((s) => s.id));
+
+// ── 3. 데이터 무결성 ───────────────────────────────────────────────
 const ids = new Set<string>();
 for (const c of CONCEPTS) {
   if (ids.has(c.id)) fail(`개념 id 중복: ${c.id}`);
@@ -177,7 +210,7 @@ for (const s of SHORTCUTS) {
   }
 }
 
-// ── 3. 문제 은행 ───────────────────────────────────────────────────
+// ── 4. 문제 은행 ───────────────────────────────────────────────────
 let bankTotal = 0;
 for (const grade of [1, 2] as Grade[]) {
   const bank = questionBank(grade);
