@@ -42,6 +42,7 @@ export default function HomePage() {
   const clearedFormulaIds = useApp((s) => s.clearedFormulaIds);
   const clearedShortcutIds = useApp((s) => s.clearedShortcutIds);
   const quizHistory = useApp((s) => s.quizHistory);
+  const wrongIds = useApp((s) => s.wrongIds);
 
   // 서버에서 그린 화면과 첫 렌더가 달라지면 깜빡이므로, 시간에 기대는 값은
   // 화면이 뜬 뒤에 계산한다
@@ -169,6 +170,23 @@ export default function HomePage() {
               </p>
             </div>
             <ArrowRight size={18} className="text-emerald-300" />
+          </div>
+        </Link>
+      )}
+
+      {/* 틀린 것만 다시 — 점수가 가장 빨리 오르는 자리라 눈에 띄게 둔다 */}
+      {wrongIds.length > 0 && (
+        <Link href="/quiz?mode=wrong" className="mt-2.5 block">
+          <div className="flex items-center justify-between rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 transition-transform active:scale-[0.99]">
+            <div>
+              <p className="text-sm font-bold text-rose-200">
+                틀렸던 것 {wrongIds.length}개
+              </p>
+              <p className="mt-0.5 text-[11px] text-zinc-400">
+                맞히면 목록에서 빠집니다
+              </p>
+            </div>
+            <ArrowRight size={18} className="text-rose-300" />
           </div>
         </Link>
       )}

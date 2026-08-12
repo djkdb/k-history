@@ -161,16 +161,39 @@ function hintFor(mine: string, target: string): string {
     return `${extra.join("·")} 함수는 필요하지 않습니다.`;
   }
 
+  // 문자 값을 따옴표 없이 친 흔한 실수.
+  // 정답에는 따옴표가 있는데 내 답에는 없으면 거의 이 경우다.
+  if (mine.indexOf('"') === -1 && target.indexOf('"') !== -1) {
+    return '문자 값은 큰따옴표로 감싸야 합니다. 예: IF(A1>=60,"합격","불합격")';
+  }
+
   const mineArgs = argCount(mine);
   const targetArgs = argCount(target);
   if (mineArgs !== targetArgs) {
-    return `함수는 맞습니다. 인수 개수가 다릅니다 (내 답 ${mineArgs + 1}개, 정답 ${targetArgs + 1}개).`;
+    return `함수는 맞습니다. 인수 개수가 다릅니다 (내 답 ${mineArgs + 1}개, 정답 ${targetArgs + 1}개). 빠뜨린 인수가 없는지 보세요.`;
+  }
+
+  // 이상(>=)과 초과(>)를 바꿔 쓰는 실수 — 이것만으로 점수가 갈린다
+  const cmp = (s: string) => (s.match(/>=|<=|<>|>|</g) || []).join(",");
+  if (cmp(mine) !== cmp(target)) {
+    return `비교 연산자가 다릅니다. '이상·이하'는 >= 와 <=, '초과·미만'은 > 와 < 입니다.`;
+  }
+
+  // 문자열 안의 값만 다르면 순서를 바꿔 쓴 것이다 ("합격"과 "불합격"을 뒤집는 실수)
+  const strings = (s: string) => (s.match(/"[^"]*"/g) || []).join("|");
+  if (strings(mine) !== strings(target)) {
+    const same =
+      strings(mine).split("|").sort().join() ===
+      strings(target).split("|").sort().join();
+    return same
+      ? "쓴 값은 맞지만 자리가 바뀌었습니다. 조건이 참일 때 올 값이 앞자리입니다."
+      : "따옴표 안의 값이 문제에서 요구한 것과 다릅니다.";
   }
 
   let i = 0;
   while (i < mine.length && i < target.length && mine[i] === target[i]) i++;
-  const around = mine.slice(Math.max(0, i - 6), i + 6);
-  return `함수는 맞습니다. 인수 순서나 범위를 다시 보세요. (${i + 1}번째 글자 부근: …${around}…)`;
+  const around = mine.slice(Math.max(0, i - 8), i + 8);
+  return `함수는 맞습니다. 인수 순서나 범위를 다시 보세요. (…${around}… 부근)`;
 }
 
 export function gradeFormula(input: string, task: FormulaTask): FormulaGrade {

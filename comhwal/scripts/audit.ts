@@ -89,6 +89,16 @@ for (const c of CONCEPTS) {
   if (c.examPoint.length < 20) fail(`${c.id}: examPoint 가 너무 짧습니다`);
   if (c.keywords.length < 3) fail(`${c.id}: 키워드가 3개 미만입니다`);
   if (c.traps.length === 0) fail(`${c.id}: 헷갈리는 짝(traps)이 없습니다`);
+  for (const t of c.traps) {
+    // wrong 이 없으면 '옳지 않은 것' 문제의 오답이 딴 주제가 되어
+    // 읽지 않고도 답이 보인다
+    if (!t.wrong || t.wrong.length < 10) {
+      fail(`${c.id}: 함정 '${t.concept}' 에 뒤바꾼 틀린 설명(wrong)이 없습니다`);
+    }
+    if (t.wrong === t.difference) {
+      fail(`${c.id}: 함정 '${t.concept}' 의 wrong 이 difference 와 같습니다`);
+    }
+  }
   if (c.table) {
     const w = c.table.headers.length;
     for (const [i, r] of c.table.rows.entries()) {
@@ -209,6 +219,39 @@ for (const grade of [1, 2] as Grade[]) {
         fail(`${q.id}: 오답 보기가 정답과 같습니다`);
       }
     }
+
+    // 보기에 공부 요령("…선지가 단골이다")이 섞이면 시험 문제가 아니라
+    // 학습 노트가 된다. 실제 시험 선지는 사실 서술문이다.
+    // ('나온다' 는 "값이 그대로 나온다" 처럼 사실 서술에도 쓰이므로
+    //  출제·암기를 말하는 표현만 잡는다)
+    if (q.type === "negative" || q.type === "trap") {
+      const tip = q.options.find((o) =>
+        /(출제된다|출제되는|문제가 나온다|선지|단골|함정으로|외운다|외워|묶어 둔다|굳혀|헷갈리지 않는다)/.test(
+          o,
+        ),
+      );
+      if (tip) fail(`${q.id}: 보기에 공부 요령이 들어 있습니다 — "${tip.slice(0, 30)}…"`);
+
+      // 앞 문장을 가리키는 선지는 혼자 읽으면 뜻이 통하지 않는다
+      const dangling = q.options.find((o) =>
+        /^(여기|이때|이를|이는|이것|그러면|그래서|반면|다만|또한|대신|즉|반대로|예를 들어|따라서)/.test(
+          o,
+        ),
+      );
+      if (dangling) {
+        fail(`${q.id}: 앞 문장을 가리키는 선지가 있습니다 — "${dangling.slice(0, 30)}…"`);
+      }
+    }
+
+    // '헷갈리는 둘'은 뒤바꾼 설명이 오답에 반드시 들어가야 한다.
+    // 없으면 소재만 보고 고를 수 있어 문제가 되지 않는다.
+    if (q.type === "trap") {
+      const c = CONCEPTS.find((x) => x.id === q.sourceId);
+      const swapped = c?.traps.find((t) => t.difference === answer)?.wrong;
+      if (swapped && !q.options.includes(swapped)) {
+        fail(`${q.id}: 뒤바꾼 설명이 오답 보기에 없습니다`);
+      }
+    }
   }
 }
 
@@ -221,9 +264,11 @@ if (notes.length) {
   for (const n of notes) console.log(`  · ${n}`);
 }
 
-if (problems.length) {
-  console.error(`\n✗ ${problems.length}건`);
-  for (const p of problems) console.error(`  · ${p}`);
+// 같은 문제가 1급·2급 은행에 함께 들어 있어 두 번 걸린다 — 한 번만 알린다
+const unique = [...new Set(problems)];
+if (unique.length) {
+  console.error(`\n✗ ${unique.length}건`);
+  for (const p of unique) console.error(`  · ${p}`);
   process.exit(1);
 }
 console.log("\n✓ 이상 없음");

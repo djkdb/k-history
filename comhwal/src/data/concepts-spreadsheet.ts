@@ -28,6 +28,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "숫자 vs 문자 숫자",
         difference:
           "왼쪽에 붙어 있으면 문자다. 문자 숫자는 SUM 등 계산 함수에서 그냥 무시된다.",
+        wrong:
+          "문자로 입력된 숫자도 SUM 함수가 숫자로 인식해 합계에 포함한다.",
       },
     ],
     table: {
@@ -61,6 +63,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "숫자 채우기 vs 날짜 채우기",
         difference:
           "숫자는 Ctrl을 눌러야 증가하고, 날짜는 Ctrl을 누르면 증가가 멈추고 복사된다.",
+        wrong:
+          "숫자는 그냥 끌면 1씩 증가하고, 날짜는 Ctrl을 누른 채 끌어야 하루씩 증가한다.",
       },
     ],
   },
@@ -83,6 +87,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "중지 vs 경고",
         difference:
           "중지는 값을 아예 못 넣게 하고, 경고는 '계속하겠느냐'고 물어본 뒤 넣을 수 있게 한다.",
+        wrong:
+          "오류 스타일을 '경고'로 두면 조건에 맞지 않는 값은 입력 자체가 막히고, '중지'로 두면 확인을 거쳐 입력할 수 있다.",
       },
     ],
   },
@@ -107,6 +113,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "$A1 vs A$1",
         difference:
           "$가 앞(열 문자 앞)에 있으면 열이 고정이고, 뒤(행 번호 앞)에 있으면 행이 고정이다. $는 항상 자기 바로 뒤를 붙잡는다.",
+        wrong:
+          "$A1은 행이 고정되고 열이 변하며, A$1은 열이 고정되고 행이 변한다.",
       },
     ],
     table: {
@@ -139,6 +147,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "시트 이름에 공백이 있을 때",
         difference:
           "공백·한글·숫자 시작 이름은 작은따옴표로 감싼다. 없으면 감싸지 않아도 된다.",
+        wrong:
+          "시트 이름에 공백이 있으면 큰따옴표로 감싸고, 공백이 없으면 작은따옴표로 감싼다.",
       },
     ],
   },
@@ -161,6 +171,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "이름 vs 셀 주소",
         difference:
           "Sales는 되지만 A1은 안 된다. 셀 주소로 읽힐 수 있는 문자열은 이름이 될 수 없다.",
+        wrong:
+          "이름은 A1처럼 셀 주소와 같은 형태로도 정의할 수 있고 가운데에 공백도 넣을 수 있다.",
       },
     ],
   },
@@ -183,11 +195,15 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "#### vs 오류",
         difference:
           "#####는 오류가 아니다. 열 너비만 넓히면 값이 그대로 나온다.",
+        wrong:
+          "#####는 수식에 잘못된 값이 들어갔다는 오류이므로 수식을 고쳐야 사라진다.",
       },
       {
         concept: "#NAME? vs #N/A",
         difference:
           "#NAME?은 이름·함수명을 잘못 쓴 것, #N/A는 찾는 값 자체가 없는 것이다.",
+        wrong:
+          "#NAME?은 찾는 값이 아예 없을 때, #N/A는 함수 이름을 잘못 썼을 때 나타난다.",
       },
     ],
     table: {
@@ -225,11 +241,15 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
       {
         concept: "COUNT vs COUNTA",
         difference: "COUNT는 숫자만 센다. 문자까지 세고 싶으면 COUNTA다.",
+        wrong:
+          "COUNT는 문자와 숫자를 모두 세고, COUNTA는 숫자가 든 셀만 센다.",
       },
       {
         concept: "LARGE vs MAX",
         difference:
           "MAX는 가장 큰 값 하나, LARGE(범위, k)는 k번째로 큰 값이다. LARGE(범위,1)이 곧 MAX다.",
+        wrong:
+          "LARGE(범위,1)은 범위에서 가장 작은 값을 구하므로 MIN 함수와 같은 결과를 낸다.",
       },
     ],
     table: {
@@ -266,11 +286,15 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "VLOOKUP vs HLOOKUP",
         difference:
           "V는 Vertical(세로) — 첫 '열'에서 찾고, H는 Horizontal(가로) — 첫 '행'에서 찾는다.",
+        wrong:
+          "VLOOKUP은 범위의 첫 행에서 가로로 찾고, HLOOKUP은 첫 열에서 세로로 찾는다.",
       },
       {
         concept: "TRUE vs FALSE 옵션",
         difference:
           "정확히 일치는 FALSE(0). 구간·등급처럼 '이상'을 찾을 때만 TRUE(1)이고, 이때는 정렬이 필수다.",
+        wrong:
+          "정확히 일치하는 값을 찾을 때는 마지막 인수를 TRUE(1)로 주고, 구간을 찾을 때는 FALSE(0)로 준다.",
       },
     ],
     table: {
@@ -303,11 +327,15 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
       {
         concept: "TODAY vs NOW",
         difference: "TODAY()는 날짜만, NOW()는 날짜+시간이다. 둘 다 인수가 없다.",
+        wrong:
+          "TODAY()는 날짜와 시간을 함께 반환하고, NOW()는 날짜만 반환한다.",
       },
       {
         concept: "TRIM vs 모든 공백 제거",
         difference:
           "TRIM은 단어 사이 한 칸은 남기고 앞뒤와 중복 공백만 지운다. 전부 지우는 것이 아니다.",
+        wrong:
+          "TRIM 함수는 문자열에 들어 있는 공백을 하나도 남기지 않고 모두 없앤다.",
       },
     ],
   },
@@ -330,6 +358,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "INT vs TRUNC",
         difference:
           "양수에서는 같지만 음수에서 갈린다. TRUNC(-3.5)=-3(그냥 자름), INT(-3.5)=-4(작은 쪽으로).",
+        wrong:
+          "INT(-3.5)는 -3이고 TRUNC(-3.5)는 -4로, 음수에서는 INT가 더 큰 값을 준다.",
       },
     ],
     table: {
@@ -363,10 +393,14 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "중괄호 직접 입력",
         difference:
           "{ }를 손으로 치면 배열 수식이 아니라 그냥 문자열이 된다. 반드시 Ctrl+Shift+Enter로 마쳐야 한다.",
+        wrong:
+          "배열 수식은 중괄호 { }를 직접 입력해 감싸면 Enter만 눌러도 배열 수식으로 인식된다.",
       },
       {
         concept: "조건 곱하기 vs 더하기",
         difference: "곱하면 둘 다 만족(AND), 더하면 하나만 만족해도(OR)이다.",
+        wrong:
+          "조건식을 더하면 두 조건을 모두 만족(AND)하고, 곱하면 하나만 만족해도(OR) 된다.",
       },
     ],
   },
@@ -390,6 +424,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
       {
         concept: "빈 셀의 위치",
         difference: "정렬 방향과 무관하게 빈 셀은 항상 맨 아래로 간다.",
+        wrong:
+          "오름차순으로 정렬하면 빈 셀이 가장 앞에 오고, 내림차순으로 정렬하면 가장 뒤로 간다.",
       },
     ],
   },
@@ -412,6 +448,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "고급 필터 조건 위치",
         difference:
           "같은 행에 쓰면 AND, 행을 바꿔 쓰면 OR이다. 필드명은 원본과 철자까지 같아야 한다.",
+        wrong:
+          "고급 필터에서 조건을 같은 행에 쓰면 OR, 행을 바꿔 쓰면 AND로 묶인다.",
       },
     ],
     table: {
@@ -443,6 +481,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "부분합 vs 피벗 테이블",
         difference:
           "부분합은 원본 표 안에 계산 행을 끼워 넣고, 피벗 테이블은 별도 요약 표를 만든다.",
+        wrong:
+          "부분합은 원본과 별개의 새 표를 만들고, 피벗 테이블은 원본 표 안에 계산 행을 끼워 넣는다.",
       },
     ],
   },
@@ -465,6 +505,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "목표값 찾기 vs 시나리오",
         difference:
           "목표값 찾기는 결과를 정해 원인 하나를 역산하고, 시나리오는 여러 원인 조합의 결과를 비교한다.",
+        wrong:
+          "목표값 찾기는 값을 바꿀 셀을 여러 개 지정해 한꺼번에 역산할 수 있다.",
       },
     ],
   },
@@ -489,6 +531,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "# vs 0",
         difference:
           "#,### 에 0을 넣으면 아무것도 안 보이고, #,##0 에 넣으면 0이 보인다.",
+        wrong:
+          "표시 형식 #,### 에 0을 입력하면 0이 그대로 표시되고, #,##0 에 입력하면 아무것도 표시되지 않는다.",
       },
     ],
     table: {
@@ -523,6 +567,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "조건부 서식 vs 셀 서식",
         difference:
           "조건이 참인 동안에는 조건부 서식이 이긴다. 조건이 거짓이 되면 원래 셀 서식으로 돌아온다.",
+        wrong:
+          "셀에 직접 지정한 서식이 조건부 서식보다 우선하므로, 조건을 만족해도 서식은 바뀌지 않는다.",
       },
     ],
   },
@@ -545,11 +591,15 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "분산형 vs 꺾은선",
         difference:
           "꺾은선은 항목 축이 순서대로 나열된 것이고, 분산형은 두 축 모두 숫자값이라 간격이 실제 크기를 따른다.",
+        wrong:
+          "분산형 차트는 항목 축이 순서대로 나열된 차트이고, 꺾은선형 차트는 두 축이 모두 숫자값인 차트다.",
       },
       {
         concept: "추세선을 못 그리는 차트",
         difference:
           "원형·도넛형·방사형·3차원 차트에는 추세선을 추가할 수 없다.",
+        wrong:
+          "원형·도넛형·방사형 차트에도 추세선을 추가할 수 있다.",
       },
     ],
   },
@@ -572,6 +622,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "인쇄 영역 vs 인쇄 제목",
         difference:
           "인쇄 영역은 '어디를 찍을지', 인쇄 제목은 '매 장 위에 무엇을 반복할지'다.",
+        wrong:
+          "인쇄 제목은 인쇄할 범위를 정하는 기능이고, 인쇄 영역은 매 페이지 위에 반복할 행을 정하는 기능이다.",
       },
     ],
   },
@@ -596,6 +648,8 @@ export const SPREADSHEET_CONCEPTS: Concept[] = [
         concept: "절대 참조 기록 vs 상대 참조 기록",
         difference:
           "절대 참조로 기록하면 언제나 기록 당시의 그 셀에서 작동하고, 상대 참조로 기록하면 현재 선택된 셀을 기준으로 움직인다.",
+        wrong:
+          "절대 참조로 기록한 매크로는 현재 선택된 셀을 기준으로 움직이고, 상대 참조로 기록한 매크로는 언제나 기록 당시의 그 셀에서 작동한다.",
       },
     ],
   },

@@ -28,7 +28,9 @@ export const DATABASE_CONCEPTS: Concept[] = [
       {
         concept: "중복 '최소화' vs '완전 제거'",
         difference:
-          "DBMS는 중복을 줄이는 것이지 완전히 없애지는 못한다. '완전히 제거된다'는 선지는 틀리다.",
+          "DBMS는 데이터 중복을 최소화하는 것이지 완전히 없애지는 못한다.",
+        wrong:
+          "DBMS를 사용하면 데이터 중복이 완전히 제거된다.",
       },
     ],
   },
@@ -51,6 +53,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "논리적 독립성 vs 물리적 독립성",
         difference:
           "논리적 독립성은 개념 구조가 바뀌어도 응용 프로그램이 안 바뀌는 것, 물리적 독립성은 저장 장치가 바뀌어도 논리 구조가 안 바뀌는 것이다.",
+        wrong:
+          "논리적 독립성은 저장 장치가 바뀌어도 논리 구조가 그대로인 것이고, 물리적 독립성은 개념 구조가 바뀌어도 응용 프로그램이 그대로인 것이다.",
       },
     ],
     table: {
@@ -83,10 +87,14 @@ export const DATABASE_CONCEPTS: Concept[] = [
       {
         concept: "차수 vs 카디널리티",
         difference: "차수는 속성(열)의 개수, 카디널리티는 튜플(행)의 개수다.",
+        wrong:
+          "차수는 튜플(행)의 개수이고, 카디널리티는 속성(열)의 개수다.",
       },
       {
         concept: "스키마 vs 인스턴스",
         difference: "스키마는 표의 틀, 인스턴스는 그 순간 들어 있는 값들이다.",
+        wrong:
+          "인스턴스는 릴레이션의 구조와 제약 조건을 정의한 틀이고, 스키마는 그 순간 저장되어 있는 값들이다.",
       },
     ],
   },
@@ -109,10 +117,14 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "슈퍼키 vs 후보키",
         difference:
           "슈퍼키는 유일성만 있으면 되고, 후보키는 최소성까지 만족해야 한다. (학번+이름)은 슈퍼키지만 후보키는 아니다.",
+        wrong:
+          "슈퍼키는 유일성과 최소성을 모두 만족해야 하고, 후보키는 유일성만 만족하면 된다.",
       },
       {
         concept: "기본키 NULL vs 외래키 NULL",
         difference: "기본키는 NULL 불가, 외래키는 NULL 가능하고 중복도 된다.",
+        wrong:
+          "외래키는 NULL 값을 가질 수 없지만, 기본키는 NULL 값을 가질 수 있다.",
       },
     ],
     table: {
@@ -146,6 +158,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "개체 무결성 vs 참조 무결성",
         difference:
           "개체 무결성은 한 표 안의 기본키 이야기, 참조 무결성은 두 표 사이의 외래키 이야기다.",
+        wrong:
+          "개체 무결성은 두 릴레이션 사이의 외래키에 대한 규칙이고, 참조 무결성은 한 릴레이션 안 기본키에 대한 규칙이다.",
       },
     ],
   },
@@ -168,6 +182,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "외래키가 놓이는 자리",
         difference:
           "일대다에서 외래키는 항상 '다' 쪽 테이블에 들어간다. '일' 쪽에 넣으면 값이 하나밖에 못 들어간다.",
+        wrong:
+          "일대다 관계에서 외래키는 '일' 쪽 테이블에 넣어야 한다.",
       },
     ],
   },
@@ -192,11 +208,15 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "2NF vs 3NF",
         difference:
           "2NF는 '기본키의 일부'에 딸린 것을 없애고, 3NF는 '키가 아닌 것'에 딸린 것을 없앤다.",
+        wrong:
+          "2NF는 이행적 함수 종속을 없앤 것이고, 3NF는 부분 함수 종속을 없앤 것이다.",
       },
       {
         concept: "정규화의 대가",
         difference:
           "정규화는 중복과 이상 현상을 줄이지만 테이블이 늘어 조인이 많아지므로 검색 성능은 오히려 떨어질 수 있다.",
+        wrong:
+          "정규화를 하면 테이블이 합쳐져 조인이 줄어들므로 검색 성능이 언제나 좋아진다.",
       },
     ],
     table: {
@@ -229,6 +249,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "삭제 이상 vs 갱신 이상",
         difference:
           "삭제 이상은 원하지 않는 정보까지 사라지는 것, 갱신 이상은 남아 있는 값들이 서로 어긋나는 것이다.",
+        wrong:
+          "삭제 이상은 남은 값들이 서로 어긋나는 것이고, 갱신 이상은 원하지 않는 정보까지 함께 사라지는 것이다.",
       },
     ],
   },
@@ -253,6 +275,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "WHERE vs HAVING",
         difference:
           "WHERE는 묶기 전 개별 행을 거르고, HAVING은 묶은 뒤 그룹을 거른다. COUNT(*)>=2 같은 조건은 HAVING에만 쓸 수 있다.",
+        wrong:
+          "그룹으로 묶은 뒤에 거는 조건은 WHERE 절에 쓰고, 개별 행을 거르는 조건은 HAVING 절에 쓴다.",
       },
     ],
     table: {
@@ -287,11 +311,15 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "= NULL vs IS NULL",
         difference:
           "NULL은 값이 아니라 '없음'이므로 어떤 값과도 같지 않다. 반드시 IS NULL로 확인한다.",
+        wrong:
+          "NULL 값을 찾을 때는 = NULL 로 비교해야 하며 IS NULL 은 쓸 수 없다.",
       },
       {
         concept: "액세스 * vs 표준 SQL %",
         difference:
           "액세스 질의에서는 *와 ?, 표준 SQL에서는 %와 _를 쓴다. 문제 지문이 어느 쪽인지 먼저 본다.",
+        wrong:
+          "액세스 질의에서는 %와 _를, 표준 SQL에서는 *와 ?를 만능 문자로 쓴다.",
       },
     ],
   },
@@ -314,6 +342,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "조인 조건을 빠뜨리면",
         difference:
           "ON을 빠뜨리면 모든 조합이 나오는 카티션 곱이 되어 행 수가 두 테이블 행 수의 곱이 된다.",
+        wrong:
+          "조인 조건을 빠뜨려도 두 테이블에서 짝이 맞는 행만 나오므로 결과는 달라지지 않는다.",
       },
     ],
   },
@@ -336,6 +366,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "DELETE vs DROP",
         difference:
           "DELETE는 데이터(행)만 지우는 DML, DROP은 테이블 자체를 없애는 DDL이다.",
+        wrong:
+          "DELETE는 테이블 자체를 없애는 DDL이고, DROP은 행만 지우는 DML이다.",
       },
     ],
     table: {
@@ -369,6 +401,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "폼 vs 보고서",
         difference:
           "폼은 입력·편집이 되고, 보고서는 출력 전용이라 값을 고칠 수 없다.",
+        wrong:
+          "보고서 보기에서도 데이터를 직접 입력하고 수정할 수 있다.",
       },
     ],
   },
@@ -391,6 +425,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "형식 vs 입력 마스크",
         difference:
           "형식은 이미 저장된 값을 '어떻게 보여 줄지', 입력 마스크는 '어떻게 넣게 할지'를 정한다.",
+        wrong:
+          "형식은 값을 어떻게 입력하게 할지 정하고, 입력 마스크는 저장된 값을 어떻게 보여 줄지 정한다.",
       },
     ],
   },
@@ -413,6 +449,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "보고서 머리글 vs 페이지 머리글",
         difference:
           "보고서 머리글은 전체에서 딱 한 번, 페이지 머리글은 모든 페이지마다 나온다.",
+        wrong:
+          "보고서 머리글은 모든 페이지 위에 반복되고, 페이지 머리글은 첫 페이지에 한 번만 나온다.",
       },
     ],
     table: {
@@ -448,6 +486,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "인덱스의 득과 실",
         difference:
           "검색은 빨라지지만 입력·수정·삭제는 느려진다. 공짜로 빨라지는 것이 아니다.",
+        wrong:
+          "인덱스를 설정하면 검색뿐 아니라 데이터의 입력·수정·삭제 속도까지 함께 빨라진다.",
       },
     ],
   },
@@ -470,6 +510,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "일관성 vs 지속성",
         difference:
           "일관성은 '규칙을 깨지 않는다', 지속성은 '확정된 결과가 사라지지 않는다'는 뜻이다.",
+        wrong:
+          "일관성은 확정된 결과가 사라지지 않는 성질이고, 지속성은 실행 전후로 규칙이 지켜지는 성질이다.",
       },
     ],
     table: {
@@ -502,6 +544,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "개체 vs 속성",
         difference:
           "개체는 표 하나가 될 만한 대상(학생), 속성은 그 표의 열(학번·이름)이다.",
+        wrong:
+          "E-R 다이어그램에서 개체는 타원으로, 속성은 사각형으로 그린다.",
       },
     ],
     table: {
@@ -535,6 +579,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "선택 쿼리 vs 실행 쿼리",
         difference:
           "선택 쿼리는 보여 주기만 하고, 실행 쿼리는 원본을 바꾼다. 실행 쿼리는 되돌리기가 없다.",
+        wrong:
+          "선택 쿼리를 실행하면 조건에 맞는 원본 데이터가 실제로 바뀐다.",
       },
     ],
   },
@@ -557,6 +603,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
         concept: "언바운드 vs 계산 컨트롤",
         difference:
           "둘 다 필드에 묶여 있지 않지만, 계산 컨트롤은 원본에 = 로 시작하는 식이 들어 있다.",
+        wrong:
+          "계산 컨트롤은 컨트롤 원본이 테이블의 필드이므로 값을 직접 편집할 수 있다.",
       },
     ],
   },

@@ -61,6 +61,14 @@ export default function ShortcutTrainerPage() {
   const [choiceMode, setChoiceMode] = useState(false);
   const [score, setScore] = useState({ tried: 0, correct: 0 });
 
+  // 손가락으로 쓰는 기기는 눌러서 맞힐 방법이 없다.
+  // "키를 눌러 보세요"만 띄워 놓으면 폰에서는 아무것도 못 하고 막힌다.
+  // 처음부터 보기 고르기로 열어 두고, 자판이 있으면 아래에서 되돌릴 수 있게 한다.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(pointer: coarse)").matches) setChoiceMode(true);
+  }, []);
+
   const pool = useMemo(
     () => shortcutsFor(grade, filter === "all" ? undefined : filter),
     [grade, filter],
@@ -323,6 +331,18 @@ export default function ShortcutTrainerPage() {
             </>
           )}
         </div>
+      )}
+
+      {/* 입력 방식 바꾸기 — 자판이 없는 기기에서 막히지 않도록 */}
+      {verdict === null && !mustChoose && (
+        <button
+          type="button"
+          onClick={() => setChoiceMode(!choiceMode)}
+          className="mt-3 flex w-full items-center justify-center gap-1.5 text-[12px] text-zinc-500 hover:text-zinc-300"
+        >
+          <ListChecks size={13} />
+          {choiceMode ? "직접 키를 눌러 맞히기" : "키보드가 없나요? 보기에서 고르기"}
+        </button>
       )}
 
       {/* 정답 공개 */}

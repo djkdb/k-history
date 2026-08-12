@@ -28,6 +28,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "누산기 vs 프로그램 카운터",
         difference:
           "누산기(AC)는 연산 결과를 담는 연산장치 소속, 프로그램 카운터(PC)는 다음 명령 주소를 담는 제어장치 소속이다.",
+        wrong:
+          "누산기(AC)는 다음 명령의 주소를 담는 제어장치 소속, 프로그램 카운터(PC)는 연산 결과를 담는 연산장치 소속이다.",
       },
     ],
     table: {
@@ -60,11 +62,15 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "DRAM vs SRAM",
         difference:
           "재충전이 필요한 쪽이 DRAM(주기억장치), 필요 없고 빠른 쪽이 SRAM(캐시)다.",
+        wrong:
+          "재충전이 필요 없는 쪽이 DRAM(주기억장치)이고, 재충전이 필요하며 느린 쪽이 SRAM(캐시)이다.",
       },
       {
         concept: "ROM vs 플래시 메모리",
         difference:
           "플래시는 EEPROM의 한 종류로 비휘발성이면서도 지우고 다시 쓸 수 있다. USB·SSD가 여기에 해당한다.",
+        wrong:
+          "플래시 메모리는 RAM의 한 종류라 전원이 끊기면 내용이 모두 지워진다.",
       },
     ],
     table: {
@@ -98,11 +104,15 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "캐시 vs 가상 메모리",
         difference:
           "캐시는 '속도'를 위한 것이고 가상 메모리는 '용량'을 위한 것이다. 목적이 다르다.",
+        wrong:
+          "캐시 메모리는 주기억장치의 용량을 늘리기 위한 것이고, 가상 메모리는 처리 속도를 높이기 위한 것이다.",
       },
       {
         concept: "버퍼링 vs 스풀링",
         difference:
           "버퍼링은 주기억장치를 쓰고 한 번에 한 작업, 스풀링은 보조기억장치를 쓰고 여러 작업을 동시에 처리한다.",
+        wrong:
+          "버퍼링은 보조기억장치를 써서 여러 작업을 동시에 처리하고, 스풀링은 주기억장치를 써서 한 번에 한 작업만 처리한다.",
       },
     ],
   },
@@ -125,6 +135,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "처리량 vs 응답시간",
         difference:
           "처리량은 높을수록, 응답시간은 짧을수록 좋다. 방향이 반대다.",
+        wrong:
+          "처리량과 응답시간은 모두 값이 클수록 좋은 성능 평가 기준이다.",
       },
     ],
   },
@@ -147,6 +159,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "컴파일러 vs 인터프리터",
         difference:
           "컴파일러는 전체를 한 번에 번역해 목적 프로그램을 만들고, 인터프리터는 한 줄씩 번역하며 목적 프로그램을 만들지 않는다.",
+        wrong:
+          "컴파일러는 한 줄씩 번역하며 목적 프로그램을 만들지 않고, 인터프리터는 전체를 한 번에 번역해 목적 프로그램을 만든다.",
       },
     ],
   },
@@ -169,6 +183,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "IPv6의 전송 방식",
         difference:
           "유니캐스트·멀티캐스트·애니캐스트 셋이다. 브로드캐스트는 IPv4에만 있다.",
+        wrong:
+          "IPv6의 전송 방식은 유니캐스트·멀티캐스트·브로드캐스트 셋이며, 애니캐스트는 IPv4에만 있다.",
       },
     ],
     table: {
@@ -201,6 +217,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "라우터 vs 게이트웨이",
         difference:
           "라우터는 같은 방식의 망에서 '길'을 고르고, 게이트웨이는 방식이 다른 망을 '통역'해 잇는다.",
+        wrong:
+          "라우터는 방식이 다른 망을 통역해 잇고, 게이트웨이는 같은 방식의 망에서 길을 고른다.",
       },
     ],
   },
@@ -223,6 +241,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "웜 vs 트로이 목마",
         difference:
           "웜은 스스로 복제해 퍼지고, 트로이 목마는 복제하지 않고 위장해 숨어 있는다.",
+        wrong:
+          "웜은 스스로 복제하지 못하고 정상 프로그램으로 위장해 숨어 있으며, 트로이 목마는 스스로 복제해 네트워크로 퍼진다.",
       },
     ],
     table: {
@@ -254,6 +274,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "기밀성 vs 무결성",
         difference:
           "기밀성은 '남이 못 보게', 무결성은 '남이 못 바꾸게'다. 가로채기는 기밀성, 수정·위조는 무결성이다.",
+        wrong:
+          "가로채기는 무결성을 위협하는 행위이고, 데이터의 수정·위조는 기밀성을 위협하는 행위다.",
       },
     ],
   },
@@ -276,6 +298,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "GIF vs PNG",
         difference:
           "둘 다 무손실·투명도 지원이지만 애니메이션은 GIF만 되고, 색 수는 PNG가 훨씬 많다.",
+        wrong:
+          "PNG는 애니메이션을 지원하지만 GIF는 지원하지 않으며, 표현할 수 있는 색 수도 GIF가 훨씬 많다.",
       },
     ],
     table: {
@@ -308,6 +332,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "바로 가기 vs 복사본",
         difference:
           "바로 가기는 원본을 가리키기만 하고, 복사본은 내용을 통째로 가진 별개의 파일이다.",
+        wrong:
+          "바로 가기 아이콘을 삭제하면 그것이 가리키던 원본 파일도 함께 삭제된다.",
       },
     ],
   },
@@ -330,6 +356,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "휴지통 파일로 할 수 있는 것",
         difference:
           "복원·완전 삭제는 되고, 실행·이름 바꾸기·내용 편집은 안 된다.",
+        wrong:
+          "휴지통에 들어 있는 파일은 복원뿐 아니라 실행과 이름 바꾸기도 그대로 할 수 있다.",
       },
     ],
   },
@@ -352,6 +380,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "워드 vs 레코드",
         difference:
           "워드는 CPU가 한 번에 처리하는 물리적 단위, 레코드는 사람이 의미를 묶은 논리적 단위다.",
+        wrong:
+          "워드는 여러 필드를 묶은 논리적 단위이고, 레코드는 CPU가 한 번에 처리하는 물리적 단위다.",
       },
     ],
     table: {
@@ -385,6 +415,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "ASCII vs EBCDIC",
         difference:
           "ASCII는 7비트로 통신·PC용, EBCDIC은 8비트로 대형 컴퓨터용이다.",
+        wrong:
+          "ASCII는 8비트로 256자를 표현하고, EBCDIC은 7비트로 128자를 표현한다.",
       },
     ],
     table: {
@@ -417,10 +449,14 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "프리웨어 vs 공개 소프트웨어",
         difference:
           "프리웨어는 '값이 무료', 공개 소프트웨어는 '소스가 공개'다. 무료라고 다 오픈 소스가 아니다.",
+        wrong:
+          "프리웨어는 소스 코드까지 공개되어 누구나 수정하고 재배포할 수 있는 소프트웨어다.",
       },
       {
         concept: "알파 vs 베타",
         difference: "알파는 개발사 내부 시험, 베타는 외부 사용자 시험이다.",
+        wrong:
+          "알파 버전은 정식 발표 전 외부 사용자에게 배포해 시험하는 것이고, 베타 버전은 개발사 내부에서만 시험하는 것이다.",
       },
     ],
   },
@@ -443,6 +479,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "컴파일러 vs 인터프리터",
         difference:
           "목적 프로그램을 만드느냐가 갈림길이다. 컴파일러는 만들고, 인터프리터는 만들지 않는다.",
+        wrong:
+          "인터프리터는 목적 프로그램을 미리 만들어 두므로 실행 속도가 컴파일러보다 빠르다.",
       },
     ],
     table: {
@@ -475,6 +513,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "TCP vs UDP",
         difference:
           "TCP는 연결형이라 순서와 도착을 보장하지만 느리고, UDP는 비연결형이라 빠르지만 보장하지 않는다.",
+        wrong:
+          "TCP는 비연결형이라 빠른 대신 도착을 보장하지 않고, UDP는 연결형이라 순서와 도착을 보장한다.",
       },
     ],
   },
@@ -497,6 +537,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "POP3 vs IMAP",
         difference:
           "POP3는 내려받아 서버에서 지우고, IMAP은 서버에 두고 여러 기기에서 함께 본다.",
+        wrong:
+          "POP3는 메일을 서버에 남겨 여러 기기에서 함께 보는 방식이고, IMAP은 내려받은 뒤 서버에서 지우는 방식이다.",
       },
     ],
   },
@@ -519,6 +561,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "클라우드 vs 그리드",
         difference:
           "클라우드는 남의 자원을 빌려 쓰는 서비스, 그리드는 여러 컴퓨터를 묶어 계산력을 합치는 것이다.",
+        wrong:
+          "클라우드 컴퓨팅은 흩어진 컴퓨터를 묶어 하나의 계산기처럼 쓰는 것이고, 그리드 컴퓨팅은 자원을 빌려 쓰는 서비스다.",
       },
     ],
   },
@@ -541,10 +585,14 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "비밀키 vs 공개키",
         difference:
           "키가 하나면 비밀키(빠르고 관리 어려움), 둘이면 공개키(느리고 관리 쉬움)다.",
+        wrong:
+          "공개키 암호화는 키가 하나뿐이라 비밀키 방식보다 속도가 빠르고, 비밀키 암호화는 키가 둘이라 관리가 쉽다.",
       },
       {
         concept: "방화벽의 한계",
         difference: "외부 침입은 막지만 내부에서 나가는 유출은 막지 못한다.",
+        wrong:
+          "방화벽을 설치하면 외부의 침입뿐 아니라 내부 사용자의 정보 유출까지 함께 막을 수 있다.",
       },
     ],
     table: {
@@ -577,6 +625,8 @@ export const COMPUTER_CONCEPTS: Concept[] = [
         concept: "비트맵 vs 벡터",
         difference:
           "확대했을 때 깨지면 비트맵(JPG·BMP·GIF), 안 깨지면 벡터(AI·WMF·SVG)다.",
+        wrong:
+          "비트맵은 수식으로 그려 확대해도 깨지지 않고, 벡터는 픽셀로 이루어져 확대하면 계단 현상이 생긴다.",
       },
     ],
   },

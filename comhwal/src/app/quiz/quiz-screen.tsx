@@ -76,6 +76,17 @@ export function QuizScreen() {
             : `${grade}급 범위에서 ${available}문항까지 만들 수 있습니다`}
         </p>
 
+        {!onlyWrong && wrongIds.length > 0 && (
+          <Link href="/quiz?mode=wrong" className="mt-4 block">
+            <div className="flex items-center justify-between rounded-2xl border border-rose-500/25 bg-rose-500/10 p-3.5 transition-transform active:scale-[0.99]">
+              <span className="text-[13px] font-bold text-rose-200">
+                틀렸던 {wrongIds.length}개만 골라 풀기
+              </span>
+              <ArrowRight size={15} className="text-rose-300" />
+            </div>
+          </Link>
+        )}
+
         {!onlyWrong && (
           <>
             <SectionTitle>과목</SectionTitle>
