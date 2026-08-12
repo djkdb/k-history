@@ -17,7 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { SUBJECTS, subjectsFor } from "@/data/subjects";
+import { SUBJECTS, SUBJECT_MAP, subjectsFor } from "@/data/subjects";
 import { conceptsFor } from "@/data/concepts";
 import { formulasFor } from "@/data/formulas";
 import { shortcutsFor } from "@/data/shortcuts";
@@ -28,6 +28,7 @@ import {
   Card,
   ProgressBar,
   SectionTitle,
+  ImportanceBadge,
   StatCard,
 } from "@/components/ui";
 import { cn, daysUntil, formatMinutes } from "@/lib/utils";
@@ -70,6 +71,13 @@ export default function HomePage() {
         .length,
     };
   }, [grade, studiedIds, clearedFormulaIds, clearedShortcutIds]);
+
+  // 아직 안 본 것 중 가장 자주 나오는 것 하나
+  const nextUp = useMemo(() => {
+    const rest = conceptsFor(grade).filter((c) => !studiedIds.includes(c.id));
+    if (rest.length === 0) return null;
+    return [...rest].sort((a, b) => b.importance - a.importance)[0];
+  }, [grade, studiedIds]);
 
   const due = now ? dueCards(reviewCards, now).length : 0;
   const retention = now ? Math.round(retentionRate(reviewCards, now) * 100) : 0;
@@ -187,6 +195,34 @@ export default function HomePage() {
               </p>
             </div>
             <ArrowRight size={18} className="text-rose-300" />
+          </div>
+        </Link>
+      )}
+
+      {/*
+        이어서 볼 개념.
+        앱을 열 때마다 "그래서 뭘 보지"를 다시 고르게 하면 그 사이에 그만두게
+        된다. 아직 안 본 것 중 가장 자주 나오는 것 하나를 골라 눌러만 두면
+        되게 한다.
+      */}
+      {nextUp && (
+        <Link href={`/concept/${nextUp.id}`} className="mt-2.5 block">
+          <div className="glass rounded-2xl p-4 transition-transform active:scale-[0.99]">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-indigo-300">
+                이어서 볼 개념
+              </span>
+              <ImportanceBadge importance={nextUp.importance} compact />
+            </div>
+            <p className="mt-1.5 text-[15px] font-bold leading-snug">
+              {nextUp.title}
+            </p>
+            <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-zinc-400">
+              {nextUp.summary}
+            </p>
+            <p className="mt-2 text-[11px] text-zinc-600">
+              {SUBJECT_MAP[nextUp.subject]?.name} · {nextUp.topic}
+            </p>
           </div>
         </Link>
       )}

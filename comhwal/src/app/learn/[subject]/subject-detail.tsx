@@ -25,13 +25,25 @@ export function SubjectDetail() {
   const grade = useGrade();
   const studiedIds = useApp((s) => s.studiedIds);
   const [topic, setTopic] = useState<string | null>(null);
+  const [unseenOnly, setUnseenOnly] = useState(false);
+  const [byImportance, setByImportance] = useState(false);
 
   const info = SUBJECT_MAP[subject];
   const available = subjectsFor(grade).some((s) => s.id === subject);
   const all = useMemo(() => conceptsFor(grade, subject), [grade, subject]);
   const topics = useMemo(() => topicsOf(grade, subject), [grade, subject]);
-  const list = topic ? all.filter((c) => c.topic === topic) : all;
   const done = all.filter((c) => studiedIds.includes(c.id)).length;
+
+  const list = useMemo(() => {
+    let out = topic ? all.filter((c) => c.topic === topic) : all;
+    if (unseenOnly) out = out.filter((c) => !studiedIds.includes(c.id));
+    // 중요도 순으로 보면 "거의 매회 나오는 것"부터 훑을 수 있다.
+    // 기본은 데이터 순서 — 앞에서부터 차례로 쌓아 가는 사람을 위한 것이다.
+    if (byImportance) {
+      out = [...out].sort((a, b) => b.importance - a.importance);
+    }
+    return out;
+  }, [all, topic, unseenOnly, byImportance, studiedIds]);
 
   if (!info) {
     return <EmptyState icon="❓" title="없는 과목입니다" />;
@@ -91,18 +103,37 @@ export function SubjectDetail() {
         </Link>
       </Card>
 
+      {/* 갈래마다 몇 개를 봤는지 함께 보여 준다 — 어디가 비었는지 한눈에 */}
       <ScrollRow className="mt-5">
         <Chip active={topic === null} onClick={() => setTopic(null)}>
-          전체 {all.length}
+          전체 {done}/{all.length}
         </Chip>
-        {topics.map((t) => (
-          <Chip key={t} active={topic === t} onClick={() => setTopic(t)}>
-            {t}
-          </Chip>
-        ))}
+        {topics.map((t) => {
+          const inTopic = all.filter((c) => c.topic === t);
+          const d = inTopic.filter((c) => studiedIds.includes(c.id)).length;
+          return (
+            <Chip key={t} active={topic === t} onClick={() => setTopic(t)}>
+              {t} {d}/{inTopic.length}
+            </Chip>
+          );
+        })}
       </ScrollRow>
 
+      <div className="mt-2.5 flex gap-2">
+        <Chip active={unseenOnly} onClick={() => setUnseenOnly(!unseenOnly)}>
+          안 본 것만
+        </Chip>
+        <Chip active={byImportance} onClick={() => setByImportance(!byImportance)}>
+          중요한 것부터
+        </Chip>
+      </div>
+
       <div className="mt-4 flex flex-col gap-2">
+        {list.length === 0 && (
+          <p className="py-10 text-center text-sm text-zinc-500">
+            {unseenOnly ? "이 갈래는 다 봤습니다" : "해당하는 개념이 없습니다"}
+          </p>
+        )}
         {list.map((c) => {
           const studied = studiedIds.includes(c.id);
           return (

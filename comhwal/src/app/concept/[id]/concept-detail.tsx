@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -11,11 +11,15 @@ import {
   Brain,
   CheckCircle2,
   Lightbulb,
+  RefreshCw,
   Target,
+  X,
 } from "lucide-react";
+import type { QuizQuestion } from "@/lib/types";
 import { useApp, useGrade } from "@/lib/store";
 import { CONCEPT_MAP, conceptsFor } from "@/data/concepts";
 import { SUBJECT_MAP } from "@/data/subjects";
+import { questionsFor, QUIZ_TYPE_LABELS } from "@/lib/quiz";
 import { nextDueLabel } from "@/lib/srs";
 import {
   Badge,
@@ -48,8 +52,38 @@ export function ConceptDetail() {
   const studiedIds = useApp((s) => s.studiedIds);
   const reviewCards = useApp((s) => s.reviewCards);
   const markStudied = useApp((s) => s.markStudied);
+  const recordQuizResult = useApp((s) => s.recordQuizResult);
 
   const [tab, setTab] = useState<Tab>("quick");
+
+  /**
+   * 확인 문제.
+   *
+   * 읽고 나서 "알겠다"고 넘어간 것과 실제로 답할 수 있는 것은 다르다.
+   * 퀴즈 탭까지 가야 확인이 되면 대부분 그냥 넘어가므로, 개념 바로 아래에
+   * 한 문제를 둔다.
+   *
+   * '설명 보고 개념 고르기'는 빼 둔다 — 지금 그 개념 화면에 있으니
+   * 읽지 않아도 답이 보인다.
+   */
+  const checks = useMemo(
+    () =>
+      concept
+        ? questionsFor(concept, grade).filter((q) => q.type !== "multiple")
+        : [],
+    [concept, grade],
+  );
+  const [checkAt, setCheckAt] = useState(0);
+  const [checkPick, setCheckPick] = useState<number | null>(null);
+  const [checkOpen, setCheckOpen] = useState(false);
+
+  // 다른 개념으로 넘어가면 문제도 처음부터
+  useEffect(() => {
+    setCheckAt(0);
+    setCheckPick(null);
+    setCheckOpen(false);
+    setTab("quick");
+  }, [concept?.id]);
 
   const siblings = useMemo(
     () => (concept ? conceptsFor(grade, concept.subject) : []),
@@ -181,6 +215,79 @@ export function ConceptDetail() {
         </section>
       )}
 
+      {/* 확인 문제 — 읽은 것과 답할 수 있는 것은 다르다 */}
+      {checks.length > 0 && (
+        <section id="check" className="mt-7">
+          <div className="mb-2.5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Brain size={15} className="text-indigo-300" />
+              <h2 className="text-sm font-bold">확인 문제</h2>
+            </div>
+            {checkOpen && (
+              <span className="text-[11px] text-zinc-500">
+                {checkAt + 1} / {checks.length}
+              </span>
+            )}
+          </div>
+
+          {/*
+            펼치기 전에는 문제를 보여 주지 않는다.
+            바로 위에 설명과 헷갈리는 짝이 그대로 적혀 있어서, 문제가 함께
+            보이면 기억에서 꺼내는 것이 아니라 눈으로 베끼게 된다.
+            누르면 문제만 화면에 남도록 그 자리로 옮겨 준다.
+          */}
+          {!checkOpen ? (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setCheckOpen(true);
+                requestAnimationFrame(() =>
+                  document
+                    .getElementById("check")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+                );
+              }}
+            >
+              <Brain size={15} />
+              가리고 풀어 보기
+            </Button>
+          ) : (
+          <CheckQuestion
+            key={checks[checkAt % checks.length].id}
+            question={checks[checkAt % checks.length]}
+            picked={checkPick}
+            onPick={(i) => {
+              if (checkPick !== null) return;
+              const q = checks[checkAt % checks.length];
+              const correct = i === q.answerIndex;
+              setCheckPick(i);
+              recordQuizResult({
+                questionId: q.id,
+                sourceId: q.sourceId,
+                subject: q.subject,
+                type: q.type,
+                correct,
+                answeredAt: Date.now(),
+              });
+              // 맞혔으면 굳이 아래 단추를 또 누르게 하지 않는다
+              if (correct && !studiedIds.includes(concept.id)) {
+                markStudied(concept.id);
+              }
+            }}
+            onNext={
+              checks.length > 1
+                ? () => {
+                    setCheckAt(checkAt + 1);
+                    setCheckPick(null);
+                  }
+                : undefined
+            }
+          />
+          )}
+        </section>
+      )}
+
       {/* 학습 완료 */}
       <div className="mt-7">
         {studied ? (
@@ -259,5 +366,106 @@ export function ConceptDetail() {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * 개념 아래에 붙는 한 문제.
+ * 고르는 순간 채점되고, 틀리면 복습 큐로 넘어간다.
+ */
+function CheckQuestion({
+  question,
+  picked,
+  onPick,
+  onNext,
+}: {
+  question: QuizQuestion;
+  picked: number | null;
+  onPick: (i: number) => void;
+  onNext?: () => void;
+}) {
+  const answered = picked !== null;
+  const correct = picked === question.answerIndex;
+
+  return (
+    <Card>
+      <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-zinc-400">
+        {QUIZ_TYPE_LABELS[question.type]}
+      </span>
+      <p className="mt-2.5 text-[15px] font-bold leading-snug">
+        {question.question}
+      </p>
+
+      {question.passage && (
+        <div className="mt-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+          <p className="text-[13.5px] leading-[1.85] text-zinc-200">
+            {question.passage}
+          </p>
+        </div>
+      )}
+
+      <div className="mt-3 flex flex-col gap-1.5">
+        {question.options.map((opt, i) => {
+          const isAnswer = i === question.answerIndex;
+          const isPicked = picked === i;
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onPick(i)}
+              disabled={answered}
+              className={cn(
+                "flex items-start gap-2.5 rounded-xl border p-2.5 text-left transition-all active:scale-[0.99]",
+                !answered && "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]",
+                answered && isAnswer && "border-emerald-500/40 bg-emerald-500/10",
+                answered && isPicked && !isAnswer && "border-red-500/40 bg-red-500/10",
+                answered && !isAnswer && !isPicked && "border-white/5 opacity-50",
+              )}
+            >
+              <span
+                className={cn(
+                  "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
+                  answered && isAnswer
+                    ? "bg-emerald-500/25 text-emerald-300"
+                    : answered && isPicked
+                      ? "bg-red-500/25 text-red-300"
+                      : "bg-white/10 text-zinc-400",
+                )}
+              >
+                {i + 1}
+              </span>
+              <span className="text-[13.5px] leading-[1.7]">{opt}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {answered && (
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-3 border-t border-white/10 pt-3"
+        >
+          <p
+            className={cn(
+              "flex items-center gap-1.5 text-[13px] font-bold",
+              correct ? "text-emerald-300" : "text-red-300",
+            )}
+          >
+            {correct ? <CheckCircle2 size={14} /> : <X size={14} />}
+            {correct ? "맞혔습니다" : "복습에 넣었습니다"}
+          </p>
+          <p className="mt-1.5 text-[13.5px] leading-[1.85] text-zinc-300">
+            {question.explanation}
+          </p>
+          {onNext && (
+            <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={onNext}>
+              <RefreshCw size={13} />
+              다른 문제로
+            </Button>
+          )}
+        </motion.div>
+      )}
+    </Card>
   );
 }

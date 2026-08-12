@@ -40,6 +40,8 @@
   --sheet-head: rgba(255, 255, 255, 0.06);
   --exam-bar-bg: rgba(16, 16, 19, 0.94);
   --exam-bar-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --nav-bg: rgba(18, 18, 21, 0.92);
+  --nav-shadow: 0 -2px 24px rgba(0, 0, 0, 0.5);
 }
 
 [data-theme="light"] {
@@ -63,6 +65,8 @@
   --sheet-head: rgba(0, 0, 0, 0.04);
   --exam-bar-bg: rgba(255, 255, 255, 0.96);
   --exam-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.94);
+  --nav-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
 }
 
 html {
@@ -98,6 +102,33 @@ body {
   border: 1px solid var(--glass-line-strong);
   backdrop-filter: blur(16px);
   box-shadow: var(--glass-shadow);
+}
+
+/*
+  아래쪽 탭바.
+  glass-strong 만으로는 뒤가 너무 비쳐서, 스크롤한 본문 글자가 탭 이름과
+  겹쳐 읽혔다. 늘 화면에 떠 있는 것이라 뒤가 비치는 멋보다 또렷함이 낫다.
+*/
+.nav-bar {
+  background: var(--nav-bg);
+  border: 1px solid var(--glass-line-strong);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: var(--nav-shadow);
+}
+
+/*
+  탭바가 놓이는 자리.
+  막대 자체를 불투명하게 해도 옆과 아래 틈으로 글이 지나간다. 막대 위쪽에
+  바탕색으로 녹아드는 띠를 깔아, 본문이 탭바에 닿기 전에 사라지게 한다.
+*/
+.nav-shell {
+  padding-top: 1.5rem;
+  background: linear-gradient(
+    to top,
+    var(--bg) 0%,
+    var(--bg) 62%,
+    color-mix(in srgb, var(--bg) 0%, transparent) 100%
+  );
 }
 
 /* 선택된 칩·탭 — 어두운 화면에서는 흰 알약, 밝은 화면에서는 검은 알약 */

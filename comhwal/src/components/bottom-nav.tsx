@@ -27,9 +27,9 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50">
+    <nav className="nav-shell fixed inset-x-0 bottom-0 z-50">
       <div className="mx-auto max-w-2xl px-4 pb-safe">
-        <div className="glass-strong mb-2 flex items-center justify-around rounded-2xl px-2 py-2">
+        <div className="nav-bar mb-2 flex items-center justify-around rounded-2xl px-2 py-2">
           {TABS.map(({ href, label, icon: Icon }) => {
             const active =
               href === "/" ? pathname === "/" : pathname.startsWith(href);
