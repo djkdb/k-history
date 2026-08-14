@@ -45,6 +45,17 @@ export const SUBJECT_MAP: Record<string, Subject> = Object.fromEntries(
 );
 
 /**
+ * 과목 색을 **글자**로 쓸 때의 값.
+ *
+ * `color` 는 막대·점처럼 넓게 칠하는 자리에 맞춘 색이라, 그대로 글자에 쓰면
+ * 밝은 화면에서 배경과 붙어 안 읽힌다(주황은 흰 바탕에서 2:1 남짓). 화면 밝기에
+ * 따라 갈리는 값이라 CSS 변수로 두고 globals.css 가 테마별로 채운다.
+ */
+export function subjectInk(id: string): string {
+  return `var(--sub-${id}, currentColor)`;
+}
+
+/**
  * 해당 급수에서 보는 과목만.
  *
  * 급수는 숫자가 작을수록 상위다(1급 > 2급). 1급은 2급 범위를 포함하므로

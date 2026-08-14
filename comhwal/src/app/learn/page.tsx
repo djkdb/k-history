@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { useApp, useGrade } from "@/lib/store";
-import { SUBJECTS, subjectsFor } from "@/data/subjects";
+import { SUBJECTS, subjectsFor, subjectInk } from "@/data/subjects";
 import { CONCEPTS, conceptsFor, topicsOf } from "@/data/concepts";
 import {
   Card,
@@ -114,7 +114,10 @@ export default function LearnPage() {
                           <span className="text-zinc-500">
                             {topics.length}개 갈래 · {list.length}개 개념
                           </span>
-                          <span className="font-bold" style={{ color: s.color }}>
+                          <span
+                            className="font-bold"
+                            style={{ color: subjectInk(s.id) }}
+                          >
                             {done} / {list.length}
                           </span>
                         </div>

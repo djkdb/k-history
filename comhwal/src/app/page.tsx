@@ -17,7 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { SUBJECTS, SUBJECT_MAP, subjectsFor } from "@/data/subjects";
+import { SUBJECTS, SUBJECT_MAP, subjectsFor, subjectInk } from "@/data/subjects";
 import { conceptsFor } from "@/data/concepts";
 import { formulasFor } from "@/data/formulas";
 import { shortcutsFor } from "@/data/shortcuts";
@@ -300,7 +300,10 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm font-bold" style={{ color: s.color }}>
+                  <span
+                    className="text-sm font-bold"
+                    style={{ color: subjectInk(s.id) }}
+                  >
                     {included && list.length
                       ? `${Math.round((done / list.length) * 100)}%`
                       : "—"}

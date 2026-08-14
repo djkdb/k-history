@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { ArrowLeft, Brain, CheckCircle2 } from "lucide-react";
 import { useApp, useGrade } from "@/lib/store";
 import type { SubjectId } from "@/lib/types";
-import { SUBJECT_MAP, subjectsFor } from "@/data/subjects";
+import { SUBJECT_MAP, subjectsFor, subjectInk } from "@/data/subjects";
 import { conceptsFor, topicsOf } from "@/data/concepts";
 import {
   Button,
@@ -86,7 +86,7 @@ export function SubjectDetail() {
       <Card className="mt-4">
         <div className="flex items-center justify-between text-sm">
           <span className="text-zinc-400">학습한 개념</span>
-          <span className="font-bold" style={{ color: info.color }}>
+          <span className="font-bold" style={{ color: subjectInk(info.id) }}>
             {done} / {all.length}
           </span>
         </div>

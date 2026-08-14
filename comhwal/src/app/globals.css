@@ -84,6 +84,15 @@
   --exam-bar-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
   --nav-bg: rgba(18, 18, 21, 0.92);
   --nav-shadow: 0 -2px 24px rgba(0, 0, 0, 0.5);
+
+  /*
+    과목 색을 글자로 쓸 때의 값.
+    채우기(막대·점)는 과목의 원래 색을 그대로 쓰지만, 글자는 배경과 붙어야
+    읽힌다. 어두운 화면과 밝은 화면에서 읽히는 밝기가 정반대라 따로 둔다.
+  */
+  --sub-computer: #818cf8;
+  --sub-spreadsheet: #34d399;
+  --sub-database: #fbbf24;
 }
 
 [data-theme="light"] {
@@ -109,6 +118,10 @@
   --exam-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   --nav-bg: rgba(255, 255, 255, 0.94);
   --nav-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
+
+  --sub-computer: #4338ca;
+  --sub-spreadsheet: #047857;
+  --sub-database: #92400e;
 }
 
 html {
@@ -291,8 +304,11 @@ body {
 [data-theme="light"] .text-zinc-200 { color: #27272a; }
 [data-theme="light"] .text-zinc-300 { color: #3f3f46; }
 [data-theme="light"] .text-zinc-400 { color: #52525b; }
-[data-theme="light"] .text-zinc-500 { color: #71717a; }
-[data-theme="light"] .text-zinc-600 { color: #a1a1aa; }
+/* 흐린 글씨일수록 밝은 화면에서 먼저 묻힌다. 어두운 화면의 흐림 정도를
+   그대로 뒤집으면 11px 잔글씨가 배경과 붙어 버려, 한 칸씩 더 진하게 둔다.
+   (WCAG AA 4.5:1 — 카드 배경 #f4f4f5 위에서 잰 값) */
+[data-theme="light"] .text-zinc-500 { color: #5b5b64; }
+[data-theme="light"] .text-zinc-600 { color: #67676f; }
 [data-theme="light"] .hover\:text-zinc-200:hover,
 [data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }
 
@@ -301,7 +317,7 @@ body {
 [data-theme="light"] .text-emerald-100 { color: #065f46; }
 [data-theme="light"] .text-emerald-200 { color: #047857; }
 [data-theme="light"] .text-emerald-300,
-[data-theme="light"] .text-emerald-400 { color: #059669; }
+[data-theme="light"] .text-emerald-400 { color: #047857; }
 [data-theme="light"] .text-red-200 { color: #991b1b; }
 [data-theme="light"] .text-red-300,
 [data-theme="light"] .text-red-400,
@@ -309,11 +325,11 @@ body {
 /* rose-200 은 옅은 분홍 판 위의 제목에 쓴다 — 밝은 화면에서는 판도 옅어져
    같은 색이면 글자가 배경에 묻힌다 */
 [data-theme="light"] .text-rose-200 { color: #9f1239; }
-[data-theme="light"] .text-rose-300 { color: #e11d48; }
+[data-theme="light"] .text-rose-300 { color: #be123c; }
 [data-theme="light"] .text-amber-100 { color: #78350f; }
 [data-theme="light"] .text-amber-200 { color: #92400e; }
-[data-theme="light"] .text-amber-300 { color: #b45309; }
-[data-theme="light"] .text-sky-300 { color: #0284c7; }
+[data-theme="light"] .text-amber-300 { color: #92400e; }
+[data-theme="light"] .text-sky-300 { color: #0369a1; }
 [data-theme="light"] .text-cyan-300 { color: #0891b2; }
 
 [data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04); }

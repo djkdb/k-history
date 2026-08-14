@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Clock, Flag, X } from "lucide-react";
 import { useApp, useGrade } from "@/lib/store";
 import type { MockAttempt, QuizQuestion, SubjectId } from "@/lib/types";
-import { SUBJECT_MAP, subjectsFor } from "@/data/subjects";
+import { SUBJECT_MAP, subjectsFor, subjectInk } from "@/data/subjects";
 import { CONCEPT_MAP } from "@/data/concepts";
 import { makeMock } from "@/lib/quiz";
 import { Button, Card, ProgressBar } from "@/components/ui";
@@ -335,7 +335,7 @@ export function MockSession() {
           className="rounded-full px-2 py-0.5 text-[11px] font-medium"
           style={{
             background: `${subject?.color}22`,
-            color: subject?.color,
+            color: subject ? subjectInk(subject.id) : undefined,
           }}
         >
           {subject?.name}
