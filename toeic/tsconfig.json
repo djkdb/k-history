@@ -17,6 +17,5 @@
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  // 한 저장소 안의 다른 앱들 — 각자 tsconfig 를 갖고 따로 빌드된다
-  "exclude": ["node_modules", "comhwal", "toeic", "out"]
+  "exclude": ["node_modules", "out"]
 }

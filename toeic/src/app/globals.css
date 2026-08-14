@@ -1,0 +1,355 @@
+@import "tailwindcss";
+
+/*
+  ─── 글꼴 ──────────────────────────────────────────────────────────
+  Pretendard 를 직접 실어 둔다.
+  이름만 적어 두면 그 글꼴이 없는 기기에서는 저마다 다른 글꼴로 그려진다.
+  아이폰은 애플 산돌고딕, 안드로이드는 로보토·본고딕, PC는 또 다른 것이라
+  같은 화면이 기기마다 다르게 보였다.
+
+  앱에 실제로 쓰이는 글자만 남겨 굵기당 73KB로 줄였다(963자). 화면에 뜨는
+  글자는 모두 소스 안의 문자열에서 나오므로 빠지는 글자가 없고, 사용자가
+  직접 치는 것은 수식뿐이라 아스키만 있으면 된다.
+
+  Pretendard — SIL Open Font License 1.1 (public/fonts/OFL.txt)
+*/
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/pretendard-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/pretendard-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/pretendard-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/pretendard-700.woff2") format("woff2");
+}
+
+@theme {
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, Consolas,
+    "Liberation Mono", Menlo, monospace;
+
+  /* 과목별 전용 컬러 */
+  --color-subject-computer: #6366f1;
+  --color-subject-spreadsheet: #10b981;
+  --color-subject-database: #f59e0b;
+}
+
+/*
+  ─── 테마 ──────────────────────────────────────────────────────────
+  기본은 어두운 화면이고 밝은 화면을 함께 둔다.
+  화면마다 색을 두 벌 쓰는 대신, 어두운 화면이 쓰던 색을 밝은 화면에서
+  어떻게 읽을지만 아래에서 다시 정한다.
+*/
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #09090b;
+  --fg: #fafafa;
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-line: rgba(255, 255, 255, 0.08);
+  --glass-bg-strong: rgba(255, 255, 255, 0.06);
+  --glass-line-strong: rgba(255, 255, 255, 0.12);
+  --glass-shadow: none;
+  --scroll-thumb: rgba(255, 255, 255, 0.12);
+  --pill-bg: #ffffff;
+  --pill-fg: #18181b;
+  --glow-1: rgba(99, 102, 241, 0.08);
+  --glow-2: rgba(16, 185, 129, 0.05);
+  --key-bg: #27272a;
+  --key-line: rgba(255, 255, 255, 0.14);
+  --key-fg: #fafafa;
+  --sheet-line: rgba(255, 255, 255, 0.1);
+  --sheet-head: rgba(255, 255, 255, 0.06);
+  --exam-bar-bg: rgba(16, 16, 19, 0.94);
+  --exam-bar-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --nav-bg: rgba(18, 18, 21, 0.92);
+  --nav-shadow: 0 -2px 24px rgba(0, 0, 0, 0.5);
+
+  /*
+    과목 색을 글자로 쓸 때의 값.
+    채우기(막대·점)는 과목의 원래 색을 그대로 쓰지만, 글자는 배경과 붙어야
+    읽힌다. 어두운 화면과 밝은 화면에서 읽히는 밝기가 정반대라 따로 둔다.
+  */
+  --sub-computer: #818cf8;
+  --sub-spreadsheet: #34d399;
+  --sub-database: #fbbf24;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f4f5;
+  --fg: #18181b;
+  --glass-bg: #ffffff;
+  --glass-line: rgba(0, 0, 0, 0.07);
+  --glass-bg-strong: #ffffff;
+  --glass-line-strong: rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --scroll-thumb: rgba(0, 0, 0, 0.18);
+  --pill-bg: #18181b;
+  --pill-fg: #fafafa;
+  --glow-1: rgba(99, 102, 241, 0.07);
+  --glow-2: rgba(16, 185, 129, 0.05);
+  --key-bg: #ffffff;
+  --key-line: rgba(0, 0, 0, 0.16);
+  --key-fg: #18181b;
+  --sheet-line: rgba(0, 0, 0, 0.1);
+  --sheet-head: rgba(0, 0, 0, 0.04);
+  --exam-bar-bg: rgba(255, 255, 255, 0.96);
+  --exam-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.94);
+  --nav-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
+
+  --sub-computer: #4338ca;
+  --sub-spreadsheet: #047857;
+  --sub-database: #92400e;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+.app-bg {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, var(--glow-1), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, var(--glow-2), transparent 60%),
+    var(--bg);
+}
+
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-line-strong);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--glass-shadow);
+}
+
+/*
+  아래쪽 탭바.
+  glass-strong 만으로는 뒤가 너무 비쳐서, 스크롤한 본문 글자가 탭 이름과
+  겹쳐 읽혔다. 늘 화면에 떠 있는 것이라 뒤가 비치는 멋보다 또렷함이 낫다.
+*/
+.nav-bar {
+  background: var(--nav-bg);
+  border: 1px solid var(--glass-line-strong);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: var(--nav-shadow);
+}
+
+/*
+  탭바가 놓이는 자리.
+  막대 자체를 불투명하게 해도 옆과 아래 틈으로 글이 지나간다. 막대 위쪽에
+  바탕색으로 녹아드는 띠를 깔아, 본문이 탭바에 닿기 전에 사라지게 한다.
+*/
+.nav-shell {
+  padding-top: 1.5rem;
+  background: linear-gradient(
+    to top,
+    var(--bg) 0%,
+    var(--bg) 62%,
+    color-mix(in srgb, var(--bg) 0%, transparent) 100%
+  );
+}
+
+/* 선택된 칩·탭 — 어두운 화면에서는 흰 알약, 밝은 화면에서는 검은 알약 */
+.pill-on {
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+}
+
+.text-fg {
+  color: var(--fg);
+}
+
+/*
+  키캡.
+  단축키는 글로 적으면 눈에 안 들어온다. 실제 자판처럼 도드라지게
+  그려 두면 "Ctrl을 누른 채 Shift" 라는 손의 모양이 그대로 떠오른다.
+*/
+.keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.1rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.5rem;
+  background: var(--key-bg);
+  color: var(--key-fg);
+  border: 1px solid var(--key-line);
+  border-bottom-width: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.keycap-lg {
+  min-width: 3rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 1rem;
+  border-radius: 0.65rem;
+}
+/* 눌린 순간 — 실제로 키가 내려간 것처럼 */
+.keycap-down {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+/* 수식·셀 주소는 고정폭이어야 $ 위치가 눈에 들어온다 */
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}
+
+/* 개념 안의 비교 표 */
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.cmp-table th,
+.cmp-table td {
+  border: 1px solid var(--sheet-line);
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+.cmp-table th {
+  background: var(--sheet-head);
+  font-weight: 700;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 3px;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.sticky-top-safe {
+  top: calc(env(safe-area-inset-top) + 0.5rem);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.exam-bar {
+  background: var(--exam-bar-bg);
+  border: 1px solid var(--glass-line-strong);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--exam-bar-shadow);
+}
+
+/*
+  ─── 밝은 화면에서의 색 다시 읽기 ──────────────────────────────────
+  앱 곳곳의 색은 "어두운 바탕"을 전제로 고른 값이다. 화면마다 클래스를
+  두 벌씩 다는 대신, 밝은 테마일 때 그 색이 뜻하는 바(진한 글씨 /
+  흐린 글씨 / 옅은 판 / 옅은 선)를 지키도록 값만 바꾼다.
+  layer 밖에 두어야 Tailwind 유틸리티를 이긴다.
+*/
+[data-theme="light"] .text-zinc-200 { color: #27272a; }
+[data-theme="light"] .text-zinc-300 { color: #3f3f46; }
+[data-theme="light"] .text-zinc-400 { color: #52525b; }
+/* 흐린 글씨일수록 밝은 화면에서 먼저 묻힌다. 어두운 화면의 흐림 정도를
+   그대로 뒤집으면 11px 잔글씨가 배경과 붙어 버려, 한 칸씩 더 진하게 둔다.
+   (WCAG AA 4.5:1 — 카드 배경 #f4f4f5 위에서 잰 값) */
+[data-theme="light"] .text-zinc-500 { color: #5b5b64; }
+[data-theme="light"] .text-zinc-600 { color: #67676f; }
+[data-theme="light"] .hover\:text-zinc-200:hover,
+[data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }
+
+[data-theme="light"] .text-indigo-200 { color: #3730a3; }
+[data-theme="light"] .text-indigo-300 { color: #4f46e5; }
+[data-theme="light"] .text-emerald-100 { color: #065f46; }
+[data-theme="light"] .text-emerald-200 { color: #047857; }
+[data-theme="light"] .text-emerald-300,
+[data-theme="light"] .text-emerald-400 { color: #047857; }
+[data-theme="light"] .text-red-200 { color: #991b1b; }
+[data-theme="light"] .text-red-300,
+[data-theme="light"] .text-red-400,
+[data-theme="light"] .text-red-500 { color: #dc2626; }
+/* rose-200 은 옅은 분홍 판 위의 제목에 쓴다 — 밝은 화면에서는 판도 옅어져
+   같은 색이면 글자가 배경에 묻힌다 */
+[data-theme="light"] .text-rose-200 { color: #9f1239; }
+[data-theme="light"] .text-rose-300 { color: #be123c; }
+[data-theme="light"] .text-amber-100 { color: #78350f; }
+[data-theme="light"] .text-amber-200 { color: #92400e; }
+[data-theme="light"] .text-amber-300 { color: #92400e; }
+[data-theme="light"] .text-sky-300 { color: #0369a1; }
+[data-theme="light"] .text-cyan-300 { color: #0891b2; }
+
+[data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04); }
+[data-theme="light"] .bg-white\/10 { background-color: rgba(0, 0, 0, 0.07); }
+[data-theme="light"] .bg-white\/\[0\.02\],
+[data-theme="light"] .bg-white\/\[0\.03\] { background-color: rgba(0, 0, 0, 0.03); }
+[data-theme="light"] .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.04); }
+[data-theme="light"] .hover\:bg-white\/10:hover { background-color: rgba(0, 0, 0, 0.06); }
+
+[data-theme="light"] .border-white\/5 { border-color: rgba(0, 0, 0, 0.05); }
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/12 { border-color: rgba(0, 0, 0, 0.1); }
+[data-theme="light"] .border-white\/15,
+[data-theme="light"] .border-white\/20 { border-color: rgba(0, 0, 0, 0.14); }
+
+[data-theme="light"] .bg-white\/15 { background-color: rgba(0, 0, 0, 0.12); }
+[data-theme="light"] .bg-white\/20 { background-color: rgba(0, 0, 0, 0.16); }
+
+/* 일부러 어둡게 남겨 둔 판 안에서는 원래(밝은) 글자색으로 되돌린다 */
+[data-theme="light"] .on-dark .text-zinc-200 { color: #e4e4e7; }
+[data-theme="light"] .on-dark .text-zinc-300 { color: #d4d4d8; }
+[data-theme="light"] .on-dark .text-zinc-400 { color: #a1a1aa; }
+[data-theme="light"] .on-dark .border-white\/20 { border-color: rgba(255, 255, 255, 0.2); }

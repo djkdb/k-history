@@ -1,0 +1,18 @@
+{
+  "name": "토익 마스터",
+  "short_name": "토익 마스터",
+  "description": "TOEIC — 듣기는 귀로, 독해는 눈으로, 어휘는 반복으로",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
