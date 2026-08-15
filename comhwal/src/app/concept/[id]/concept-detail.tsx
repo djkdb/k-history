@@ -36,10 +36,9 @@ import {
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-type Tab = "quick" | "detail" | "exam";
+type Tab = "detail" | "exam";
 
 const TABS: { key: Tab; label: string; hint: string }[] = [
-  { key: "quick", label: "한 줄", hint: "시험장에서 떠올릴 문장" },
   { key: "detail", label: "설명", hint: "왜 그런지까지" },
   { key: "exam", label: "시험 포인트", hint: "어떻게 나오는가" },
 ];
@@ -54,7 +53,15 @@ export function ConceptDetail() {
   const markStudied = useApp((s) => s.markStudied);
   const recordQuizResult = useApp((s) => s.recordQuizResult);
 
-  const [tab, setTab] = useState<Tab>("quick");
+  /**
+   * 처음 열면 '설명'을 보여 준다.
+   *
+   * 한 줄 정의는 이미 아는 것을 시험장에서 되짚을 때 쓰는 문장이다.
+   * 개념을 펼쳐 보는 사람은 대개 아직 모르는 상태라, 한 줄만 띄우면
+   * "그래서 왜?"가 남는다. 처음부터 설명을 펴 두고, 한 줄은 필요할 때
+   * 옆 갈래에서 꺼내 보게 한다.
+   */
+  const [tab, setTab] = useState<Tab>("detail");
 
   /**
    * 확인 문제.
@@ -82,7 +89,7 @@ export function ConceptDetail() {
     setCheckAt(0);
     setCheckPick(null);
     setCheckOpen(false);
-    setTab("quick");
+    setTab("detail");
   }, [concept?.id]);
 
   const siblings = useMemo(
@@ -134,6 +141,26 @@ export function ConceptDetail() {
         {concept.title}
       </h1>
 
+      {/*
+        한 줄 정의는 갈래 뒤에 숨기지 않는다.
+        설명 중에는 이 정의를 읽었다고 치고 곧장 하위 분류로 들어가는 것이
+        있어서(예: 처리·제어 프로그램), 정의가 없으면 설명이 허공에 뜬다.
+        그래서 제목 바로 밑에 붙박이로 둔다.
+      */}
+      <Card className="mt-4 border-indigo-500/20 bg-indigo-500/[0.06]">
+        <Prose size="lg">{concept.summary}</Prose>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {concept.keywords.map((k) => (
+            <span
+              key={k}
+              className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[12px] font-medium text-zinc-300"
+            >
+              {k}
+            </span>
+          ))}
+        </div>
+      </Card>
+
       <ScrollRow className="mt-5">
         {TABS.map((t) => (
           <Chip key={t.key} active={tab === t.key} onClick={() => setTab(t.key)}>
@@ -152,22 +179,6 @@ export function ConceptDetail() {
         transition={{ duration: 0.22 }}
         className="mt-3"
       >
-        {tab === "quick" && (
-          <Card className="border-indigo-500/20 bg-indigo-500/[0.06]">
-            <Prose size="lg">{concept.summary}</Prose>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {concept.keywords.map((k) => (
-                <span
-                  key={k}
-                  className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[12px] font-medium text-zinc-300"
-                >
-                  {k}
-                </span>
-              ))}
-            </div>
-          </Card>
-        )}
-
         {tab === "detail" && (
           <Card>
             <Prose>{concept.detail}</Prose>
