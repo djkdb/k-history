@@ -28,6 +28,11 @@ export default function RootLayout({
   return (
     <html lang="ko" data-theme="dark">
       <head>
+        {/*
+          iOS 는 manifest 의 아이콘을 보지 않는다. 이것이 없으면 홈 화면에
+          앱 아이콘 대신 화면을 축소한 그림이 박힌다.
+        */}
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         {/* 글꼴은 첫 화면부터 필요하다 — 먼저 받아 두어야 글자가 한 번 바뀌지 않는다 */}
         {[400, 500, 600, 700].map((w) => (
           <link

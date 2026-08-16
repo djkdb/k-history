@@ -3,16 +3,42 @@
   "short_name": "컴활 마스터",
   "description": "컴퓨터활용능력 1·2급 — 필기는 이해로, 실기는 손으로",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#09090b",
   "theme_color": "#09090b",
   "lang": "ko",
+  "categories": ["education"],
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     }
+  ],
+  "shortcuts": [
+    { "name": "오늘 복습", "url": "/review" },
+    { "name": "필기 퀴즈", "url": "/quiz" },
+    { "name": "모의고사", "url": "/mock" }
   ]
 }

@@ -23,6 +23,7 @@ import { formulasFor } from "@/data/formulas";
 import { shortcutsFor } from "@/data/shortcuts";
 import { dueCards, retentionRate } from "@/lib/srs";
 import { ThemeToggle } from "@/components/theme";
+import { InstallHint } from "@/components/install-hint";
 import {
   Button,
   Card,
@@ -226,6 +227,13 @@ export default function HomePage() {
           </div>
         </Link>
       )}
+
+      {/*
+        오늘 할 일(복습·오답·이어 볼 개념) 아래에 둔다.
+        공부하러 들어온 사람의 첫 화면을 설치 안내가 밀어내면 안 되지만,
+        스크롤을 한참 내려야 보이면 아무도 못 본다.
+      */}
+      <InstallHint />
 
       <SectionTitle>바로 시작</SectionTitle>
       <div className="grid grid-cols-2 gap-2.5">

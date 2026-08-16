@@ -1,9 +1,12 @@
 // 컴활 마스터 서비스 워커 — 오프라인 지원 (network-first, 캐시 폴백)
-const CACHE_NAME = "comhwal-v2";
+const CACHE_NAME = "comhwal-v3";
 const PRECACHE = [
   "/",
   "/manifest.json",
   "/icon.svg",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/apple-touch-icon.png",
   "/fonts/pretendard-400.woff2",
   "/fonts/pretendard-500.woff2",
   "/fonts/pretendard-600.woff2",
