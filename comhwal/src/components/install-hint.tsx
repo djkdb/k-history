@@ -2,111 +2,157 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, Plus, Share, Smartphone, X } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Download,
+  ExternalLink,
+  Plus,
+  Share,
+  Smartphone,
+  TriangleAlert,
+  X,
+} from "lucide-react";
+import { escapeHint, readEnv, type Env } from "@/lib/browser";
 
 /**
- * 홈 화면에 추가 안내.
+ * 앱처럼 쓰게 하는 안내.
  *
- * 이 앱은 주소창이 있는 웹으로 봐도 되지만, 홈 화면에 얹어 두면
- * 앱처럼 전체 화면으로 뜨고 지하철에서도 그대로 열린다. 그런데 그 방법을
- * 아는 사람이 많지 않아, 한 번만 알려 준다.
+ * 두 가지를 말한다. 어느 쪽인지는 어디서 열었느냐로 갈린다.
  *
- * 기기마다 방법이 다르다.
- *   안드로이드·PC 크롬 — 브라우저가 설치를 제안한다(beforeinstallprompt).
- *                        단추 하나로 끝나므로 그대로 눌러 주면 된다.
- *   아이폰 사파리     — 그런 제안이 없다. 공유 → 홈 화면에 추가를
- *                        직접 눌러야 해서 그림으로 설명한다.
- *   아이폰 다른 브라우저 — 애초에 안 된다. 사파리로 열라고 알린다.
- * 어느 쪽인지 모르면 아무 말도 하지 않는다. 잘못된 안내가 없느니만 못하다.
+ *   인스타·카카오톡 등에서 들어온 경우 → 먼저 밖으로 나가라고 한다.
+ *     여기서는 홈 화면 추가가 아예 안 되고, 무엇보다 여기서 쌓은 학습
+ *     기록이 나중에 사파리로 열면 없다. 링크를 타고 들어오는 사람이
+ *     많을수록 이 말을 먼저 해야 한다.
  *
- * ⚠️ 닫음 표시는 학습 기록과 따로 둔다. 취향에 가까운 값이고,
- *    잃어버려도 안내가 한 번 더 뜰 뿐이다.
+ *   보통 브라우저인 경우 → 홈 화면에 얹는 법을 알려 준다.
+ *
+ * 둘 다 닫으면 다시 뜨지 않는다. 표시는 따로 둔다 — 하나를 닫았다고
+ * 다른 하나까지 사라지면 정작 필요한 말을 못 듣는다.
  */
-const KEY = "comhwal:install-hint";
+const KEY_INAPP = "comhwal:inapp-hint";
+const KEY_INSTALL = "comhwal:install-hint";
 
-type How = "prompt" | "ios-safari" | "ios-other" | null;
+type How = "inapp" | "prompt" | "ios-safari" | "ios-other" | null;
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-function standalone(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    // iOS 사파리는 표준 방식 대신 이것만 알려 준다
-    (navigator as unknown as { standalone?: boolean }).standalone === true
-  );
+function read(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function write(key: string, v: string) {
+  try {
+    localStorage.setItem(key, v);
+  } catch {
+    /* 못 적어도 이번 화면에서는 사라진다 */
+  }
 }
 
-export function InstallHint() {
+/**
+ * @param slot 어디에 놓인 자리인가.
+ *   "top"  — 머리글 바로 아래. 앱 안의 브라우저 경고만 여기서 뜬다.
+ *            공부를 시작하기 전에 봐야 하는 말이라 맨 위여야 한다.
+ *   "body" — 오늘 할 일 아래. 홈 화면 추가 안내는 급하지 않으므로
+ *            첫 화면을 밀어내지 않는 자리에 둔다.
+ */
+export function InstallHint({ slot = "body" }: { slot?: "top" | "body" }) {
+  const [env, setEnv] = useState<Env | null>(null);
   const [how, setHow] = useState<How>(null);
   const [event, setEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    const e = readEnv();
+    setEnv(e);
+
     // 이미 홈 화면에서 열었으면 할 말이 없다
-    if (standalone()) return;
-    try {
-      if (localStorage.getItem(KEY) === "닫음") return;
-    } catch {
-      /* 저장소를 못 쓰는 브라우저에서도 안내는 뜨게 둔다 */
-    }
+    if (e.standalone) return;
 
-    const ua = navigator.userAgent;
-    const isIOS =
-      /iPad|iPhone|iPod/.test(ua) ||
-      // 아이패드는 요즘 자신을 맥이라고 말한다 — 손가락이 닿는지로 가른다
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-    if (isIOS) {
-      // 아이폰에서 홈 화면에 추가가 되는 것은 사파리뿐이다
-      const safari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
-      setHow(safari ? "ios-safari" : "ios-other");
+    // 앱 안의 브라우저 — 이것이 가장 급하다
+    if (e.inApp) {
+      if (read(KEY_INAPP) === "닫음") return;
+      setHow("inapp");
       setOpen(true);
       return;
     }
 
-    const onPrompt = (e: Event) => {
-      e.preventDefault(); // 브라우저 제 안내 대신 우리 카드로 보여 준다
-      setEvent(e as BeforeInstallPromptEvent);
+    if (read(KEY_INSTALL) === "닫음") return;
+
+    if (e.ios) {
+      setHow(e.iosSafari ? "ios-safari" : "ios-other");
+      setOpen(true);
+      return;
+    }
+
+    const onPrompt = (ev: Event) => {
+      ev.preventDefault(); // 브라우저 제 안내 대신 우리 카드로 보여 준다
+      setEvent(ev as BeforeInstallPromptEvent);
       setHow("prompt");
       setOpen(true);
     };
-    window.addEventListener("beforeinstallprompt", onPrompt);
-
-    // 설치를 마치면 안내를 접는다
     const onInstalled = () => {
-      close("설치함");
+      setOpen(false);
+      write(KEY_INSTALL, "닫음");
     };
+    window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
-
     return () => {
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
     };
   }, []);
 
-  const close = (why: "닫음" | "설치함" = "닫음") => {
+  const close = () => {
     setOpen(false);
-    try {
-      localStorage.setItem(KEY, why);
-    } catch {
-      /* 못 적어도 이번 화면에서는 사라진다 */
-    }
+    write(how === "inapp" ? KEY_INAPP : KEY_INSTALL, "닫음");
   };
 
   const install = async () => {
     if (!event) return;
     await event.prompt();
-    const { outcome } = await event.userChoice;
-    // 여기서 거절했다면 다시 묻지 않는다 — 두 번 묻는 것이 더 성가시다
-    close(outcome === "accepted" ? "설치함" : "닫음");
+    await event.userChoice;
+    // 받아들였든 물렸든 다시 묻지 않는다 — 두 번 묻는 것이 더 성가시다
+    setOpen(false);
+    write(KEY_INSTALL, "닫음");
   };
 
-  if (!how) return null;
+  /** 주소를 복사해 둔다 — 밖에서 붙여 넣으면 그만이다 */
+  const copyLink = async () => {
+    const url = window.location.origin + "/";
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // 인앱 브라우저는 클립보드를 막아 두기도 한다. 옛 방법으로 한 번 더.
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+      } catch {
+        /* 여기까지 막혔으면 주소창을 길게 눌러 복사하는 수밖에 없다 */
+      }
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
+  };
+
+  if (!how || !env) return null;
+  // 자기 자리가 아니면 그리지 않는다 (같은 부품을 위아래 두 곳에 둔다)
+  if (slot === "top" && how !== "inapp") return null;
+  if (slot === "body" && how === "inapp") return null;
 
   return (
     <AnimatePresence>
@@ -118,44 +164,36 @@ export function InstallHint() {
           transition={{ duration: 0.22 }}
           className="mt-3 overflow-hidden"
         >
-          <div className="relative rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.08] p-4">
-            <button
-              type="button"
-              onClick={() => close()}
-              aria-label="안내 닫기"
-              className="absolute right-1.5 top-1.5 grid h-9 w-9 place-items-center rounded-full text-zinc-400 transition-colors hover:bg-white/10 hover:text-zinc-200"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="flex items-start gap-2.5 pr-9">
-              <Smartphone size={17} className="mt-0.5 shrink-0 text-indigo-300" />
-              <div className="min-w-0">
-                {/* indigo-200 을 쓴다 — 밝은 화면 대응 규칙이 있는 색이다 */}
-                <p className="text-[14px] font-bold text-indigo-200">
-                  앱처럼 쓸 수 있습니다
-                </p>
-                <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">
-                  홈 화면에 얹어 두면 주소창 없이 전체 화면으로 열리고, 지하철처럼
-                  연결이 끊기는 곳에서도 그대로 공부할 수 있습니다.
-                </p>
+          {how === "inapp" ? (
+            <InApp env={env} onClose={close} onCopy={copyLink} copied={copied} />
+          ) : (
+            <div className="relative rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.08] p-4">
+              <CloseButton onClick={close} />
+              <div className="flex items-start gap-2.5 pr-9">
+                <Smartphone size={17} className="mt-0.5 shrink-0 text-indigo-300" />
+                <div className="min-w-0">
+                  <p className="text-[14px] font-bold text-indigo-200">
+                    앱처럼 쓸 수 있습니다
+                  </p>
+                  <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">
+                    홈 화면에 얹어 두면 주소창 없이 전체 화면으로 열리고,
+                    지하철처럼 연결이 끊기는 곳에서도 그대로 공부할 수 있습니다.
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {how === "prompt" && (
-              <button
-                type="button"
-                onClick={install}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 py-2.5 text-[14px] font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all active:scale-[0.98]"
-              >
-                <Download size={15} />
-                홈 화면에 추가
-              </button>
-            )}
+              {how === "prompt" && (
+                <button
+                  type="button"
+                  onClick={install}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 py-2.5 text-[14px] font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all active:scale-[0.98]"
+                >
+                  <Download size={15} />홈 화면에 추가
+                </button>
+              )}
 
-            {how === "ios-safari" && (
-              <>
-                {!steps ? (
+              {how === "ios-safari" &&
+                (!steps ? (
                   <button
                     type="button"
                     onClick={() => setSteps(true)}
@@ -166,31 +204,99 @@ export function InstallHint() {
                 ) : (
                   <ol className="mt-3 flex flex-col gap-2 border-t border-white/10 pt-3">
                     <Step n={1}>
-                      화면 아래 <Share size={13} className="mx-0.5 inline align-[-2px] text-sky-300" />
+                      화면 아래
+                      <Share size={13} className="mx-0.5 inline align-[-2px] text-sky-300" />
                       <b className="text-zinc-200">공유</b> 를 누릅니다
                     </Step>
                     <Step n={2}>
-                      목록을 내려 <Plus size={13} className="mx-0.5 inline align-[-2px] text-sky-300" />
+                      목록을 내려
+                      <Plus size={13} className="mx-0.5 inline align-[-2px] text-sky-300" />
                       <b className="text-zinc-200">홈 화면에 추가</b> 를 누릅니다
                     </Step>
                     <Step n={3}>
                       오른쪽 위 <b className="text-zinc-200">추가</b> 를 누르면 끝입니다
                     </Step>
                   </ol>
-                )}
-              </>
-            )}
+                ))}
 
-            {how === "ios-other" && (
-              <p className="mt-3 border-t border-white/10 pt-3 text-[12px] leading-relaxed text-amber-200">
-                아이폰에서는 <b>사파리</b>로 열어야 홈 화면에 추가할 수 있습니다.
-                주소를 복사해 사파리에서 열어 보세요.
-              </p>
-            )}
-          </div>
+              {how === "ios-other" && (
+                <p className="mt-3 border-t border-white/10 pt-3 text-[12px] leading-relaxed text-amber-200">
+                  아이폰에서는 <b>사파리</b>로 열어야 홈 화면에 추가할 수 있습니다.
+                </p>
+              )}
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+/**
+ * 앱 안의 브라우저에서 열렸을 때.
+ *
+ * 홈 화면 추가가 안 된다는 것보다, 여기서 쌓은 기록이 밖으로 넘어가지
+ * 않는다는 것이 훨씬 큰 문제다. 그것을 먼저 말한다.
+ */
+function InApp({
+  env,
+  onClose,
+  onCopy,
+  copied,
+}: {
+  env: Env;
+  onClose: () => void;
+  onCopy: () => void;
+  copied: boolean;
+}) {
+  return (
+    <div className="relative rounded-2xl border border-amber-500/35 bg-amber-500/[0.09] p-4">
+      <CloseButton onClick={onClose} />
+      <div className="flex items-start gap-2.5 pr-9">
+        <TriangleAlert size={17} className="mt-0.5 shrink-0 text-amber-300" />
+        <div className="min-w-0">
+          <p className="text-[14px] font-bold text-amber-200">
+            {env.inApp} 안에서 보고 있습니다
+          </p>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-300">
+            여기서 공부한 기록은 <b className="text-amber-100">이 화면 안에만</b> 남습니다.
+            나중에 {env.ios ? "사파리" : "크롬"}으로 열면 외운 것도, 복습 카드도
+            보이지 않습니다. 서버에 사본을 두지 않아 되찾을 수도 없습니다.
+          </p>
+          <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+            시작하기 전에 밖에서 여세요. {escapeHint(env)}
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={onCopy}
+        // 주황 위의 흰 글자는 2.3:1 밖에 안 된다 — 주황은 밝은 색이라
+        // 어두운 글자를 얹어야 읽힌다 (7.9:1)
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 py-2.5 text-[14px] font-bold text-zinc-900 shadow-lg shadow-amber-500/20 transition-all active:scale-[0.98]"
+      >
+        {copied ? <Check size={15} /> : <Copy size={15} />}
+        {copied ? "복사했습니다 — 붙여 넣어 여세요" : "주소 복사하기"}
+      </button>
+      <p className="mt-2 flex items-center justify-center gap-1 text-center text-[11px] text-zinc-500">
+        <ExternalLink size={11} />
+        메뉴가 안 보이면 주소를 복사해 브라우저에 붙여 넣으세요
+      </p>
+    </div>
+  );
+}
+
+function CloseButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="안내 닫기"
+      className="absolute right-1.5 top-1.5 grid h-9 w-9 place-items-center rounded-full text-zinc-400 transition-colors hover:bg-white/10 hover:text-zinc-200"
+    >
+      <X size={16} />
+    </button>
   );
 }
 

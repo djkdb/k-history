@@ -126,6 +126,12 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/*
+        인스타·카카오톡 같은 앱 안에서 열렸다는 경고는 맨 위여야 한다.
+        여기서 공부하면 기록이 밖으로 안 넘어가므로, 시작하기 전에 봐야 한다.
+      */}
+      <InstallHint slot="top" />
+
       {/* 시험이 코앞이면 직전 모드를 가장 크게 */}
       {dday !== null && dday >= 0 && dday <= 3 && (
         <motion.div
