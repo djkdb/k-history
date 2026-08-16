@@ -4,6 +4,8 @@ const PRECACHE = [
   "/",
   "/manifest.json",
   "/icon.svg",
+  "/icon-192.png",
+  "/apple-touch-icon.png",
   "/fonts/pretendard-400.woff2",
   "/fonts/pretendard-500.woff2",
   "/fonts/pretendard-600.woff2",

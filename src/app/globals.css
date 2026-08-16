@@ -63,6 +63,23 @@
   --glow-2: rgba(16, 185, 129, 0.05);
 }
 
+/*
+  난이도 강조색을 글자로 쓸 때.
+  인라인 style 로 넣은 색은 테마 규칙이 닿지 못한다(클래스가 없다).
+  채우기(판·테두리)는 원래 색을 그대로 쓰고, 글자만 이 변수로 돌린다.
+*/
+:root,
+[data-theme="dark"] {
+  --diff-easy: #34d399;
+  --diff-real: #818cf8;
+  --diff-hard: #f87171;
+}
+[data-theme="light"] {
+  --diff-easy: #047857;
+  --diff-real: #4338ca;
+  --diff-hard: #b91c1c;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -189,8 +206,11 @@ body {
 [data-theme="light"] .text-zinc-200 { color: #27272a; }
 [data-theme="light"] .text-zinc-300 { color: #3f3f46; }
 [data-theme="light"] .text-zinc-400 { color: #52525b; }
-[data-theme="light"] .text-zinc-500 { color: #71717a; }
-[data-theme="light"] .text-zinc-600 { color: #a1a1aa; }
+/* 흐린 글씨일수록 밝은 화면에서 먼저 묻힌다. 어두운 화면의 흐림 정도를
+   그대로 뒤집으면 10~12px 잔글씨가 배경과 붙어 버린다(측정값 2.6:1).
+   흰 카드 위에서 재서 정한 값이다. */
+[data-theme="light"] .text-zinc-500 { color: #5b5b64; }
+[data-theme="light"] .text-zinc-600 { color: #67676f; }
 [data-theme="light"] .hover\:text-zinc-200:hover,
 [data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }
 
@@ -199,18 +219,24 @@ body {
 [data-theme="light"] .text-indigo-300 { color: #4f46e5; }
 [data-theme="light"] .text-emerald-100 { color: #065f46; }
 [data-theme="light"] .text-emerald-200 { color: #047857; }
+/* 아래 색들은 대부분 '같은 색 계열의 옅은 판' 위에 얹힌다(중요도 배지 등).
+   흰 바탕만 보고 고르면 그 판 위에서 3.0~3.9:1 로 떨어진다 — 화면 픽셀로
+   재서 판 위에서도 4.5:1 을 넘는 값으로 잡았다. */
 [data-theme="light"] .text-emerald-300,
-[data-theme="light"] .text-emerald-400 { color: #059669; }
+[data-theme="light"] .text-emerald-400 { color: #065f46; }
 [data-theme="light"] .text-red-200 { color: #991b1b; }
 [data-theme="light"] .text-red-300,
 [data-theme="light"] .text-red-400,
-[data-theme="light"] .text-red-500 { color: #dc2626; }
+[data-theme="light"] .text-red-500 { color: #991b1b; }
 [data-theme="light"] .text-amber-100 { color: #78350f; }
 [data-theme="light"] .text-amber-200 { color: #92400e; }
 [data-theme="light"] .text-amber-300 { color: #b45309; }
 [data-theme="light"] .text-orange-200 { color: #7c2d12; }
 [data-theme="light"] .text-orange-300,
-[data-theme="light"] .text-orange-400 { color: #ea580c; }
+[data-theme="light"] .text-orange-400 { color: #9a3412; }
+/* 노랑은 밝은 화면에서 가장 먼저 묻힌다 — 흰 바탕에서 1.2:1 이었다 */
+[data-theme="light"] .text-yellow-300,
+[data-theme="light"] .text-yellow-400 { color: #854d0e; }
 [data-theme="light"] .text-cyan-300 { color: #0891b2; }
 
 /* 옅은 판: 흰색을 겹치던 자리에 검정을 겹친다 */
@@ -244,8 +270,23 @@ body {
   흰 바탕에서는 흐려서 읽히지 않는다. 색을 두 벌 관리하는 대신
   밝은 테마에서만 한 단계 짙게 눌러 준다. 색상은 그대로라 시대 구분은 유지된다.
 */
+/*
+  얼마나 눌러야 하는가는 눈이 아니라 화면 픽셀로 정했다.
+  brightness(0.72) 로는 노랑(#eab308)이 흰 바탕에서 2.4:1 밖에 안 나온다.
+  0.38 까지 내려야 시대 열둘이 모두 AA(4.5:1)를 넘는다.
+*/
 [data-theme="light"] .era-ink {
-  filter: brightness(0.72) saturate(1.35);
+  filter: brightness(0.38) saturate(1.6);
+}
+
+/*
+  어두운 화면에서도 같은 문제가 반대로 생긴다.
+  남색(#6366f1)·슬레이트(#64748b)처럼 어두운 축의 시대색은 거의 검은
+  바탕과 붙어 3.9:1 로 떨어진다. 이쪽은 반대로 띄워 준다.
+*/
+[data-theme="dark"] .era-ink,
+:root:not([data-theme="light"]) .era-ink {
+  filter: brightness(1.78) saturate(0.8);
 }
 
 /*

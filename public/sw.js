@@ -1,6 +1,12 @@
 // KHLM 서비스 워커 — 오프라인 지원 (network-first, 캐시 폴백)
 const CACHE_NAME = "khlm-v1";
-const PRECACHE = ["/", "/manifest.json", "/icon.svg"];
+const PRECACHE = [
+  "/",
+  "/manifest.json",
+  "/icon.svg",
+  "/icon-192.png",
+  "/apple-touch-icon.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

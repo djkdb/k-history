@@ -42,6 +42,8 @@ const LOCKED_NAMES = [
   { file: "src/lib/idb-storage.ts", needle: 'const MIRROR_PREFIX = "toeic:mirror:"' },
   { file: "src/lib/store.ts", needle: 'name: "toeic-state"' },
   { file: "src/components/theme.tsx", needle: 'THEME_KEY = "toeic:theme"' },
+  { file: "src/components/install-hint.tsx", needle: 'KEY_INAPP = "toeic:inapp-hint"' },
+  { file: "src/components/install-hint.tsx", needle: 'KEY_INSTALL = "toeic:install-hint"' },
   { file: "src/app/mock/progress.ts", needle: 'MOCK_PROGRESS_KEY = "toeic:mock-progress"' },
 ];
 

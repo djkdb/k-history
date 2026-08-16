@@ -25,6 +25,7 @@ import { listeningFor, countListeningQuestions } from "@/data/listening";
 import { BAND_LABEL } from "@/data/parts";
 import { daysUntil } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme";
+import { InstallHint } from "@/components/install-hint";
 
 export default function Home() {
   const router = useRouter();
@@ -96,6 +97,12 @@ export default function Home() {
         </div>
       </header>
 
+      {/*
+        인스타·카카오톡 같은 앱 안에서 열렸다는 경고는 맨 위여야 한다.
+        여기서 외운 것은 밖으로 넘어가지 않으므로, 시작하기 전에 봐야 한다.
+      */}
+      <InstallHint slot="top" />
+
       <div className="mt-5 grid grid-cols-2 gap-3">
         <StatCard
           label="연속 학습"
@@ -154,6 +161,12 @@ export default function Home() {
           </Link>
         </div>
       )}
+
+      {/*
+        오늘 할 일(복습·오답) 아래에 둔다. 공부하러 들어온 사람의 첫 화면을
+        설치 안내가 밀어내면 안 되지만, 한참 내려야 보이면 아무도 못 본다.
+      */}
+      <InstallHint />
 
       <SectionTitle>바로 시작</SectionTitle>
       <div className="grid grid-cols-2 gap-3">

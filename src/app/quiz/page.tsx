@@ -646,6 +646,9 @@ function QuizContent() {
           const active = difficulty === d;
           const accent =
             d === "hard" ? "#ef4444" : d === "real" ? "#6366f1" : "#10b981";
+          // 판·테두리는 원래 색 그대로. 글자만 테마에 맞춰 돌린다 —
+          // 인라인 색은 밝은 화면 규칙이 닿지 못해 옅은 판 위에서 묻힌다.
+          const ink = `var(--diff-${d})`;
           return (
             <button
               key={d}
@@ -672,7 +675,7 @@ function QuizContent() {
               <span className="flex items-center gap-2">
                 <span
                   className="text-sm font-bold"
-                  style={{ color: active ? accent : undefined }}
+                  style={{ color: active ? ink : undefined }}
                 >
                   {p.label}
                 </span>

@@ -224,9 +224,20 @@ function GuideBody({
     <>
       {inApp && (
         <>
-          <p className="mt-2 text-[11px] leading-relaxed text-amber-300/90">
+          <p className="mt-2 text-[11px] leading-relaxed text-amber-200">
             지금은 {inApp.name} 안의 브라우저예요. 여기에는 홈 화면 추가 메뉴가
             없으니 {browser}로 먼저 나가야 합니다.
+          </p>
+          {/*
+            홈 화면 추가가 안 된다는 것보다 이쪽이 더 큰 문제다.
+            앱 안 브라우저는 저장 공간이 따로라, 여기서 외운 것이 나중에
+            사파리·크롬으로 열면 없다. 서버에 사본이 없어 되찾을 수도 없다.
+            그래서 "지금 나가라"는 말의 이유를 여기서 밝힌다.
+          */}
+          <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-300">
+            여기서 공부한 기록은 <b className="text-amber-100">이 화면 안에만</b> 남아요.
+            나중에 {browser}로 열면 외운 것도 복습 카드도 보이지 않고, 되돌릴
+            방법이 없습니다.
           </p>
           <StepList steps={escapeSteps} start={1} />
           <button

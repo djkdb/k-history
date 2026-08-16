@@ -54,7 +54,10 @@ export function Button({
 }) {
   const variants = {
     primary:
-      "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-400 hover:to-indigo-600",
+      // Tailwind v4 가 색을 oklch 로 바꾸면서 indigo-500 이 한 단계 밝아졌다.
+      // 그 위의 흰 글자는 4.0:1 로 AA(4.5:1)에 못 미친다 — 화면에서 픽셀로 잰 값이다.
+      // 가장 자주 누르는 단추라 여기서 흐리면 앱 전체가 흐려 보인다. 한 칸 어둡게.
+      "bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-500 hover:to-indigo-600",
     ghost: "bg-white/5 text-zinc-200 hover:bg-white/10",
     outline: "border border-white/15 text-zinc-200 hover:bg-white/5",
     danger:
