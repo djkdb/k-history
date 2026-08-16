@@ -100,6 +100,9 @@ function isReserved(combo: string): boolean {
     "ctrl+pageup",
     "ctrl+pagedown",
     "f11",
+    // f11(전체 화면)과 같은 이유다 — 브라우저 제 기능이 앱 위로 덮인다.
+    // 하나만 빠져 있으면 그 문항에서만 아무 반응이 없어 사용자가 멈춘다.
+    "f12",
   ];
   return fixed.includes(combo);
 }

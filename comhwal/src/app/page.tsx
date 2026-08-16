@@ -269,7 +269,11 @@ export default function HomePage() {
 
       <SectionTitle
         action={
-          <Link href="/learn" className="text-xs text-zinc-400 hover:text-zinc-200">
+          // 손가락으로 누르는 자리다 — 글자 높이만큼만 두면 너무 얇다
+          <Link
+            href="/learn"
+            className="-mr-2 inline-flex items-center px-2 py-2 text-xs text-zinc-400 hover:text-zinc-200"
+          >
             전체 보기
           </Link>
         }
