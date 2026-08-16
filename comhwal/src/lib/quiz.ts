@@ -106,6 +106,12 @@ function neighbors(c: Concept, all: Concept[]): Concept[] {
   ];
 }
 
+/** 오답 선지 하나 — 글과, 왜 이것이 아닌지 */
+interface Distractor {
+  text: string;
+  note: string;
+}
+
 function build(
   id: string,
   type: QuizType,
@@ -114,12 +120,24 @@ function build(
   question: string,
   passage: string | undefined,
   correct: string,
-  wrong: string[],
+  wrong: Distractor[],
   explanation: string,
 ): QuizQuestion | null {
-  const distinct = wrong.filter((w) => w !== correct);
+  // 같은 글이 두 번 나오면 보기가 겹친다 — 먼저 온 것만 남긴다
+  const seen = new Set([correct]);
+  const distinct = wrong.filter((w) => {
+    if (seen.has(w.text)) return false;
+    seen.add(w.text);
+    return true;
+  });
   if (distinct.length < 3) return null;
-  const options = shuffleSeeded([correct, ...distinct.slice(0, 3)], hash(id));
+
+  const picked = distinct.slice(0, 3);
+  // 글과 풀이를 함께 섞는다 — 따로 섞으면 짝이 어긋난다
+  const pairs = shuffleSeeded(
+    [{ text: correct, note: null as string | null }, ...picked],
+    hash(id),
+  );
   return {
     id,
     type,
@@ -128,9 +146,10 @@ function build(
     grade,
     question,
     passage,
-    options,
-    answerIndex: options.indexOf(correct),
+    options: pairs.map((p) => p.text),
+    answerIndex: pairs.findIndex((p) => p.text === correct),
     explanation,
+    optionNotes: pairs.map((p) => p.note),
     importance: c.importance,
   };
 }
@@ -140,9 +159,13 @@ function makeMultiple(c: Concept, all: Concept[], grade: Grade): QuizQuestion | 
   const name = shortTitle(c.title);
   const passage = maskName(c.summary, name);
   if (!passage) return null;
+  // 오답에는 그것이 실제로 무엇인지를 달아 둔다 — 헷갈린 상대를 바로 배운다
   const wrong = neighbors(c, all)
-    .map((o) => shortTitle(o.title))
-    .filter((t) => !leaks(passage, t));
+    .filter((o) => !leaks(passage, shortTitle(o.title)))
+    .map((o) => ({
+      text: shortTitle(o.title),
+      note: `'${shortTitle(o.title)}' — ${o.summary}`,
+    }));
   return build(
     `q-mul-${c.id}`,
     "multiple",
@@ -167,20 +190,29 @@ function makeNegative(c: Concept, grade: Grade): QuizQuestion | null {
   const trap = c.traps.find((t) => t.wrong && t.wrong.length > 10);
   if (!trap) return null;
 
-  const trues = [
-    c.summary,
-    ...splitSentences(c.detail).filter(
-      (s) => s.length >= 20 && s.length <= 120 && standalone(s),
-    ),
-    ...c.traps.map((t) => t.difference),
+  // 참인 보기에는 그것이 어디서 온 말인지를 달아 둔다.
+  // '옳지 않은 것'에서 참인 보기를 골랐다면, 그 문장이 맞다는 사실 자체가
+  // 알아야 할 것이다 — 어디서 본 문장인지까지 알려 주면 다음에 안 걸린다.
+  const trues: Distractor[] = [
+    { text: c.summary, note: "개념의 정의 그대로다. 맞는 설명이다." },
+    ...splitSentences(c.detail)
+      .filter((s) => s.length >= 20 && s.length <= 120 && standalone(s))
+      .map((s) => ({ text: s, note: "본문에 나오는 설명이다. 맞는 설명이다." })),
+    ...c.traps.map((t) => ({
+      text: t.difference,
+      note: `'${t.concept}'을 바르게 설명한 문장이다. 맞는 설명이다.`,
+    })),
   ]
     // 틀린 보기와 겹치는 말이 참 보기에 그대로 있으면 비교가 되지 않는다
-    .filter((s) => s !== trap.difference)
+    .filter((s) => s.text !== trap.difference)
     .slice(0, 3);
   if (trues.length < 3) return null;
 
   const id = `q-neg-${c.id}`;
-  const options = shuffleSeeded([trap.wrong, ...trues], hash(id));
+  const pairs = shuffleSeeded(
+    [{ text: trap.wrong, note: null as string | null }, ...trues],
+    hash(id),
+  );
   return {
     id,
     type: "negative",
@@ -188,9 +220,12 @@ function makeNegative(c: Concept, grade: Grade): QuizQuestion | null {
     subject: c.subject,
     grade,
     question: `${shortTitle(c.title)}에 대한 설명으로 옳지 않은 것은?`,
-    options,
-    answerIndex: options.indexOf(trap.wrong),
-    explanation: `바르게 고치면 — ${trap.difference}`,
+    options: pairs.map((p) => p.text),
+    answerIndex: pairs.findIndex((p) => p.text === trap.wrong),
+    explanation:
+      `'${trap.concept}'의 설명을 서로 맞바꿔 놓은 선지다. ` +
+      `바르게 고치면 — ${trap.difference}`,
+    optionNotes: pairs.map((p) => p.note),
     importance: c.importance,
   };
 }
@@ -233,15 +268,20 @@ function makeBlank(c: Concept, all: Concept[], grade: Grade): QuizQuestion | nul
   // 같은 문장에 여러 번 나오면 전부 가린다 — 한 번만 가리면 옆에서 보인다
   const passage = sentence.split(keyword).join("____");
 
-  const wrong = neighbors(c, all)
-    .flatMap((o) => o.keywords)
+  // 오답 낱말이 어느 개념에서 온 말인지 달아 둔다 — 낱말을 제자리에 돌려놓는다
+  const wrong: Distractor[] = neighbors(c, all)
+    .flatMap((o) => o.keywords.map((k) => ({ k, o })))
     .filter(
-      (k) =>
+      ({ k }) =>
         k !== keyword &&
         !k.includes(keyword) &&
         !keyword.includes(k) &&
         !passage.includes(k),
-    );
+    )
+    .map(({ k, o }) => ({
+      text: k,
+      note: `'${k}' — '${shortTitle(o.title)}'에 나오는 말이다.`,
+    }));
 
   return build(
     `q-blank-${c.id}`,
@@ -251,7 +291,7 @@ function makeBlank(c: Concept, all: Concept[], grade: Grade): QuizQuestion | nul
     "빈칸에 들어갈 말로 알맞은 것은?",
     passage,
     keyword,
-    [...new Set(wrong)],
+    wrong,
     `${sentence} (${c.title})`,
   );
 }
@@ -270,9 +310,13 @@ function makeTrap(
   const trap = c.traps[index];
   if (!trap) return null;
 
-  const others = neighbors(c, all)
-    .flatMap((o) => o.traps.map((t) => t.difference))
-    .filter((d) => d !== trap.difference);
+  const others: Distractor[] = neighbors(c, all)
+    .flatMap((o) => o.traps)
+    .filter((t) => t.difference !== trap.difference)
+    .map((t) => ({
+      text: t.difference,
+      note: `'${t.concept}'을 설명한 문장이다. 지금 묻는 것은 '${trap.concept}'이다.`,
+    }));
 
   return build(
     `q-trap-${c.id}-${index}`,
@@ -283,8 +327,16 @@ function makeTrap(
     undefined,
     trap.difference,
     // 뒤바꾼 설명을 맨 앞에 둬야 반드시 보기에 들어간다
-    [trap.wrong, ...new Set(others)],
-    `${trap.difference} (${c.title})`,
+    [
+      {
+        text: trap.wrong,
+        note: `둘의 설명을 서로 맞바꿔 놓은 것이다. 소재가 같아 그럴듯해 보이지만 방향이 반대다.`,
+      },
+      ...others,
+    ],
+    // 해설이 정답 선지를 그대로 되풀이하면 읽을 것이 없다.
+    // 이 유형에서 정작 알아야 할 것은 "보기에 반드시 뒤바꾼 것이 섞여 있다"는 사실이다.
+    `보기에는 둘을 맞바꿔 놓은 설명이 함께 들어 있다. 소재가 아니라 방향을 본다. (${c.title})`,
   );
 }
 

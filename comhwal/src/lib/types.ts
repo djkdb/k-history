@@ -161,6 +161,14 @@ export interface QuizQuestion {
   options: string[];
   answerIndex: number;
   explanation: string;
+  /**
+   * 선지마다 "왜 이것이 아닌가".
+   *
+   * options 와 같은 길이·같은 순서다. 정답 자리는 null 이다.
+   * 틀렸을 때 정작 알고 싶은 것은 정답의 근거가 아니라 내가 고른 것이
+   * 왜 아닌지인데, 해설 한 줄로는 그 답을 주지 못한다.
+   */
+  optionNotes?: (string | null)[];
   importance: Importance;
 }
 

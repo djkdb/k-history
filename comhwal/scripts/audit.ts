@@ -232,6 +232,35 @@ for (const grade of [1, 2] as Grade[]) {
     if (!q.explanation || q.explanation.length < 5) {
       fail(`${q.id}: 해설이 없습니다`);
     }
+
+    // 해설이 정답 선지를 그대로 되풀이하면 읽을 것이 없다.
+    // 방금 고른 문장을 한 번 더 보여 주는 것뿐이라 해설 자리가 빈 것과 같다.
+    {
+      const bare = q.explanation.replace(/\s*\([^)]*\)\s*$/, "").trim();
+      if (bare === q.options[q.answerIndex].trim()) {
+        fail(`${q.id}: 해설이 정답 선지와 같은 문장입니다 — 읽을 것이 없습니다`);
+      }
+    }
+
+    // 선지별 풀이 — 틀렸을 때 "내가 고른 것이 왜 아닌지"를 주는 자리다.
+    // options 와 순서가 어긋나면 엉뚱한 선지의 풀이를 보여 주므로 길이까지 본다.
+    if (!q.optionNotes) {
+      fail(`${q.id}: 선지별 풀이가 없습니다`);
+    } else {
+      if (q.optionNotes.length !== q.options.length) {
+        fail(
+          `${q.id}: 선지 ${q.options.length}개인데 풀이가 ${q.optionNotes.length}개입니다 — 짝이 어긋납니다`,
+        );
+      }
+      if (q.optionNotes[q.answerIndex] !== null) {
+        fail(`${q.id}: 정답 자리에 오답 풀이가 붙어 있습니다`);
+      }
+      q.optionNotes.forEach((n, i) => {
+        if (i !== q.answerIndex && (!n || n.trim().length < 5)) {
+          fail(`${q.id}: ${i + 1}번 오답에 풀이가 없습니다`);
+        }
+      });
+    }
     if (!CONCEPTS.some((c) => c.id === q.sourceId)) {
       fail(`${q.id}: 출처 개념 ${q.sourceId} 을 찾을 수 없습니다`);
     }

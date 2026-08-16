@@ -445,7 +445,14 @@ function CheckQuestion({
               >
                 {i + 1}
               </span>
-              <span className="text-[13.5px] leading-[1.7]">{opt}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[13.5px] leading-[1.7]">{opt}</span>
+                {answered && isPicked && !isAnswer && question.optionNotes?.[i] && (
+                  <span className="mt-1.5 block text-[12px] leading-[1.75] text-red-200">
+                    {question.optionNotes[i]}
+                  </span>
+                )}
+              </span>
             </button>
           );
         })}

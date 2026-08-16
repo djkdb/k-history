@@ -461,7 +461,18 @@ export function QuizScreen() {
                   >
                     {i + 1}
                   </span>
-                  <span className="text-[14px] leading-[1.7]">{opt}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[14px] leading-[1.7]">{opt}</span>
+                    {/*
+                      내가 고른 오답이 왜 아닌지는 답을 본 뒤 바로 그 자리에서
+                      알아야 한다. 해설 한 줄로는 "정답이 왜 정답인지"만 남는다.
+                    */}
+                    {answered && isPicked && !isAnswer && q.optionNotes?.[i] && (
+                      <span className="mt-1.5 block text-[12px] leading-[1.75] text-red-200">
+                        {q.optionNotes[i]}
+                      </span>
+                    )}
+                  </span>
                 </button>
               );
             })}
