@@ -21,6 +21,7 @@ import { CHAPTERS, EXAM, SUBJECTS, cutoff, judge } from "../src/data/exam";
 import { SCHEMA_SQL, TABLES } from "../src/data/schema";
 import { LOCKED_CONCEPT_IDS, LOCKED_TASK_IDS } from "../src/data/locked-ids";
 import { makeMock, questionBank } from "../src/lib/quiz";
+import { bridge } from "../src/lib/sqlite";
 import type { SubjectId } from "../src/lib/types";
 
 const root = process.cwd();
@@ -395,7 +396,8 @@ async function runSqlChecks() {
   for (const t of SQL_TASKS) {
     const db = fresh();
     try {
-      const out = db.exec(t.answer);
+      // 화면과 같은 변환을 거쳐 돌린다 (NVL → IFNULL 등)
+      const out = db.exec(bridge(t.answer));
       const rows = out[0]?.values ?? [];
       if (!out.length) {
         fail(`${t.id}: 모범 답안이 아무 결과도 내놓지 않습니다 — 채점 기준이 없습니다`);
@@ -415,7 +417,7 @@ async function runSqlChecks() {
     if (!c.sql) continue;
     const db = fresh();
     try {
-      db.exec(c.sql.query);
+      db.exec(bridge(c.sql.query));
       conceptQueries++;
     } catch (e) {
       fail(`${c.id}: 곁들인 쿼리가 돌아가지 않습니다 — ${(e as Error).message}`);

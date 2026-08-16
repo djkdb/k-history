@@ -152,9 +152,10 @@ export const SQL_TASKS: SqlTask[] = [
       "SELECT e.ename, m.ename AS mgr_name FROM emp e LEFT JOIN emp m ON e.mgr = m.empno ORDER BY e.ename;",
     explanation:
       "같은 표를 두 번 불러 별칭을 달리 준다(셀프 조인). 상사가 없는 대표까지 남기려면 LEFT JOIN 이다.",
+    trap: "INNER 로 조인하면 mgr 가 NULL 인 최상위 한 명이 결과에서 사라진다.",
     importance: 4,
     ordered: true,
-    links: ["s-join-basic"],
+    links: ["s-join-basic", "s-join-self"],
   },
 
   /* ───────── 서브쿼리 ───────── */
@@ -314,6 +315,98 @@ SELECT ename, lvl FROM t ORDER BY lvl, ename;`,
     importance: 5,
     ordered: true,
     links: ["s-function"],
+  },
+
+  /* ───────── 보강 — 새로 늘린 개념에 맞춰 ───────── */
+  {
+    id: "t-select-coalesce",
+    topic: "select",
+    prompt:
+      "사원의 이름과 보너스를 보이되, 보너스가 없으면 '없음' 이라고 적으시오.",
+    schema: "emp",
+    answer:
+      "SELECT ename, COALESCE(CAST(bonus AS TEXT), '없음') AS bonus FROM emp;",
+    explanation:
+      "COALESCE 는 왼쪽부터 훑어 처음 만나는 NULL 아닌 값을 돌려준다. 숫자와 문자를 한 열에 담아야 하므로 형을 맞춰 준다.",
+    trap:
+      "자료형이 다른 값을 그대로 넣으면 제품에 따라 오류가 나거나 엉뚱하게 변환된다.",
+    importance: 4,
+    links: ["s-null-functions"],
+  },
+  {
+    id: "t-select-precedence",
+    topic: "select",
+    prompt:
+      "20번 부서이거나 30번 부서인 사원 중, 급여가 450 이상인 사람의 이름을 보이시오.",
+    schema: "emp",
+    answer:
+      "SELECT ename FROM emp WHERE (deptno = 20 OR deptno = 30) AND sal >= 450;",
+    explanation:
+      "괄호가 없으면 AND 가 먼저 묶여 20번 부서 전체가 조건 없이 딸려 온다. 뜻대로 묶으려면 괄호를 직접 쳐야 한다.",
+    trap:
+      "deptno = 20 OR deptno = 30 AND sal >= 450 으로 쓰면 20번 부서는 급여와 상관없이 모두 나온다.",
+    importance: 4,
+    links: ["s-operator-order"],
+  },
+  {
+    id: "t-sub-exists",
+    topic: "subquery",
+    prompt: "사원이 한 명이라도 있는 부서의 이름을 보이시오.",
+    schema: "emp,dept",
+    answer:
+      "SELECT dname FROM dept d WHERE EXISTS (SELECT 1 FROM emp e WHERE e.deptno = d.deptno);",
+    explanation:
+      "EXISTS 는 서브쿼리가 무엇을 뽑는지 보지 않고 행이 있는지만 확인한다. 한 건만 찾으면 멈추므로 IN 보다 유리한 경우가 많다.",
+    trap:
+      "사원이 없는 부서를 빼는 문제다. dept 만 조회하면 네 부서가 모두 나온다.",
+    importance: 5,
+    links: ["s-subquery-exists"],
+  },
+  {
+    id: "t-setop-minus",
+    topic: "setop",
+    prompt:
+      "사원이 있는 부서 번호 중, 급여가 700 이상인 사원이 한 명도 없는 부서 번호를 보이시오.",
+    schema: "emp",
+    answer:
+      "SELECT deptno FROM emp EXCEPT SELECT deptno FROM emp WHERE sal >= 700;",
+    explanation:
+      "위쪽 집합에서 아래쪽 집합을 뺀다. 오라클은 MINUS, 표준과 여러 제품은 EXCEPT 라는 이름을 쓴다. 중복은 자동으로 제거된다.",
+    trap:
+      "WHERE sal < 700 으로 바꾸면 답이 달라진다. 그 부서에 700 이상인 사람이 함께 있어도 걸러지지 않기 때문이다.",
+    importance: 4,
+    links: ["s-setop-intersect"],
+  },
+  {
+    id: "t-window-lag",
+    topic: "window",
+    prompt:
+      "사원을 급여가 높은 순으로 세우고, 이름·급여와 함께 바로 앞사람의 급여를 보이시오.",
+    schema: "emp",
+    answer:
+      "SELECT ename, sal, LAG(sal) OVER (ORDER BY sal DESC) AS prev_sal FROM emp ORDER BY sal DESC, empno;",
+    explanation:
+      "LAG 는 정렬 순서에서 앞(이전) 행의 값을 가져온다. 첫 행은 가져올 앞 행이 없어 NULL 이 된다.",
+    trap:
+      "LEAD 로 바꾸면 뒷사람의 급여가 나온다. LAG 는 뒤처진다(앞 행), LEAD 는 앞서 간다(뒷 행)로 묶어 둔다.",
+    importance: 4,
+    ordered: true,
+    links: ["s-window-offset"],
+  },
+  {
+    id: "t-window-ntile",
+    topic: "window",
+    prompt:
+      "사원을 급여가 높은 순으로 넷으로 나누어, 이름·급여와 몇 번째 통인지를 보이시오.",
+    schema: "emp",
+    answer:
+      "SELECT ename, sal, NTILE(4) OVER (ORDER BY sal DESC) AS quartile FROM emp ORDER BY sal DESC, empno;",
+    explanation:
+      "NTILE(4) 는 정렬한 행을 넷으로 나눠 1~4 를 매긴다. 10명을 넷으로 나누면 등분되지 않으므로 앞쪽 통이 한 행씩 더 갖는다.",
+    trap: "나머지가 생기면 뒤쪽이 아니라 앞쪽 통이 더 가져간다.",
+    importance: 3,
+    ordered: true,
+    links: ["s-window-ratio"],
   },
 ];
 

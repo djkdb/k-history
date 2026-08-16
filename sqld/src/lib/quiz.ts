@@ -298,6 +298,20 @@ export interface QuizOptions {
 }
 
 /**
+ * 유형을 얼마나 자주 낼 것인가 (서로 견주는 값).
+ *
+ * '헷갈리는 둘'은 개념마다 두세 개씩 만들어져 그냥 두면 시험지의 절반을
+ * 차지한다. 실제 시험지는 옳고 그름을 가리는 문제가 가장 많고, 정의를
+ * 묻는 문제와 용어를 채우는 문제가 뒤를 잇는다. 그 비율에 맞춘다.
+ */
+const TYPE_WEIGHT: Partial<Record<QuizType, number>> = {
+  negative: 3,
+  multiple: 3,
+  trap: 2,
+  blank: 2,
+};
+
+/**
  * 출제.
  *
  * 중요도가 높은 개념이 더 자주 나오되, 낮은 개념도 반드시 섞인다.
@@ -317,10 +331,22 @@ export function makeQuiz(opts: QuizOptions): QuizQuestion[] {
 
   const picked: QuizQuestion[] = [];
   const used = new Set<string>();
+  const typeCount: Partial<Record<QuizType, number>> = {};
   for (const q of shuffled) {
     if (used.has(q.sourceId)) continue;
     used.add(q.sourceId);
-    picked.push(q);
+    // 그 개념에서 만들 수 있는 문제들 중 아직 적게 나온 유형을 고른다.
+    // 그러지 않으면 '헷갈리는 둘'이 개념마다 여러 개씩 있어 시험지의
+    // 절반을 차지한다 — 실제 시험지는 그렇게 생기지 않았다.
+    const mates = shuffled.filter((x) => x.sourceId === q.sourceId);
+    const best = mates.reduce((a, b) =>
+      (typeCount[a.type] ?? 0) / (TYPE_WEIGHT[a.type] ?? 1) <=
+      (typeCount[b.type] ?? 0) / (TYPE_WEIGHT[b.type] ?? 1)
+        ? a
+        : b,
+    );
+    typeCount[best.type] = (typeCount[best.type] ?? 0) + 1;
+    picked.push(best);
     if (picked.length >= count) break;
   }
 

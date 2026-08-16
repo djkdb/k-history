@@ -134,8 +134,14 @@ function isQuery(sql: string): boolean {
   return /^(select|with|values|pragma|explain)\b/i.test(last);
 }
 
-/** 오라클 문법으로 쓴 것을 SQLite 가 알아듣게 살짝 바꿔 준다 */
-function bridge(sql: string): string {
+/**
+ * 오라클 문법으로 쓴 것을 SQLite 가 알아듣게 살짝 바꿔 준다.
+ *
+ * 내보내는 이유는 배포 전 점검(scripts/audit.ts)이 같은 변환을 거쳐
+ * 모범 답안을 돌려 보기 위해서다. 점검이 앱과 다른 문장을 실행하면
+ * "감사는 통과했는데 화면에서는 안 되는" 자리가 생긴다.
+ */
+export function bridge(sql: string): string {
   let out = sql;
   // NVL(a,b) → IFNULL(a,b)  · SQLite 에는 NVL 이 없다
   out = out.replace(/\bNVL\s*\(/gi, "IFNULL(");
