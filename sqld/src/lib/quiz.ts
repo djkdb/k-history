@@ -1,0 +1,369 @@
+import type { Concept, QuizQuestion, QuizType, SubjectId } from "./types";
+import { CONCEPTS } from "@/data/concepts";
+import { shuffleSeeded, splitSentences } from "./utils";
+
+/**
+ * 문제 생성기.
+ *
+ * 문제를 손으로 다 써 두면 몇백 개에서 멈추고, 같은 문제를 다시 만나
+ * 답을 외워 버린다. 그래서 개념 데이터에서 만들어 낸다.
+ *
+ * 자동 생성이 실패하는 방식은 둘뿐이다.
+ *   1) 지문이 답을 흘린다 — 읽지 않고도 맞힌다
+ *   2) 오답이 딴 소리다 — 읽지 않고도 맞힌다
+ * 1번은 가리거나 만들지 않는 것으로, 2번은 개념마다 적어 둔
+ * "뒤바꾼 틀린 설명(trap.wrong)"을 오답으로 써서 막는다.
+ */
+
+const MASK = "◯◯◯";
+
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return Math.abs(h);
+}
+
+/** 보기로 쓸 짧은 이름 — 제목의 대시 뒤에 답이 적혀 있으면 새어 나간다 */
+export function shortTitle(title: string): string {
+  const cut = title.split(" — ")[0].trim();
+  return cut.length >= 2 ? cut : title;
+}
+
+/**
+ * 제목에서 뜻이 있는 낱말만.
+ * 조사를 떼되, 떼고 나서 한 글자만 남으면 원래 낱말을 그대로 둔다.
+ */
+function titleTokens(title: string): string[] {
+  return title
+    .split(/[\s·,()—\-–~/]+/)
+    .map((raw) => {
+      const t = raw.trim();
+      const stem = t.replace(/(의|과|와|은|는|이|가)$/, "");
+      return stem.length >= 2 ? stem : t;
+    })
+    .filter((t) => t.length >= 2);
+}
+
+function maskName(passage: string, name: string): string | null {
+  let out = passage;
+  let masked = 0;
+  for (const tok of titleTokens(name)) {
+    if (!out.includes(tok)) continue;
+    const before = out;
+    out = out.split(tok).join(MASK);
+    masked += before.split(tok).length - 1;
+  }
+  if (masked === 0) return passage;
+  if (masked > 3) return null;
+  if (out.split(MASK).join("").length < passage.length * 0.5) return null;
+  return out;
+}
+
+function leaks(passage: string, answer: string): boolean {
+  return titleTokens(answer).some((t) => passage.includes(t));
+}
+
+/** 앞 문장 없이도 혼자 말이 되는 문장인가 */
+function standalone(s: string): boolean {
+  return !/^(여기|이때|이를|이는|이것|이 |그 |그러면|그래서|그리고|그러나|반면|다만|또한|또 |대신|즉|반대로|예를 들어|따라서|주의|특히)/.test(
+    s,
+  );
+}
+
+/** 같은 과목의 다른 개념 — 같은 장을 먼저 (더 헷갈리는 오답) */
+function neighbors(c: Concept, all: Concept[]): Concept[] {
+  const others = all.filter((o) => o.id !== c.id && o.subject === c.subject);
+  return [
+    ...others.filter((o) => o.chapter === c.chapter),
+    ...others.filter((o) => o.chapter !== c.chapter),
+  ];
+}
+
+interface Distractor {
+  text: string;
+  note: string;
+}
+
+function build(
+  id: string,
+  type: QuizType,
+  c: Concept,
+  question: string,
+  passage: string | undefined,
+  correct: string,
+  wrong: Distractor[],
+  explanation: string,
+  passageIsSql = false,
+): QuizQuestion | null {
+  const seen = new Set([correct]);
+  const distinct = wrong.filter((w) => {
+    if (seen.has(w.text)) return false;
+    seen.add(w.text);
+    return true;
+  });
+  if (distinct.length < 3) return null;
+
+  // 글과 풀이를 함께 섞는다 — 따로 섞으면 짝이 어긋난다
+  const pairs = shuffleSeeded(
+    [{ text: correct, note: null as string | null }, ...distinct.slice(0, 3)],
+    hash(id),
+  );
+  return {
+    id,
+    type,
+    sourceId: c.id,
+    subject: c.subject,
+    question,
+    passage,
+    passageIsSql,
+    options: pairs.map((p) => p.text),
+    answerIndex: pairs.findIndex((p) => p.text === correct),
+    explanation,
+    optionNotes: pairs.map((p) => p.note),
+    importance: c.importance,
+  };
+}
+
+// ── 유형 1. 설명을 보고 무엇인지 고르기 ───────────────────────────
+function makeMultiple(c: Concept, all: Concept[]): QuizQuestion | null {
+  const name = shortTitle(c.title);
+  const passage = maskName(c.summary, name);
+  if (!passage) return null;
+  const wrong = neighbors(c, all)
+    .filter((o) => !leaks(passage, shortTitle(o.title)))
+    .map((o) => ({
+      text: shortTitle(o.title),
+      note: `'${shortTitle(o.title)}' — ${o.summary}`,
+    }));
+  return build(
+    `q-mul-${c.id}`,
+    "multiple",
+    c,
+    "다음 설명에 해당하는 것은?",
+    passage,
+    name,
+    wrong,
+    `${c.summary} (${c.title})`,
+  );
+}
+
+// ── 유형 2. 옳지 않은 것 고르기 ────────────────────────────────────
+function makeNegative(c: Concept): QuizQuestion | null {
+  const trap = c.traps.find((t) => t.wrong && t.wrong.length > 10);
+  if (!trap) return null;
+
+  const trues: Distractor[] = [
+    { text: c.summary, note: "개념의 정의 그대로다. 맞는 설명이다." },
+    ...splitSentences(c.detail)
+      .filter((s) => s.length >= 20 && s.length <= 130 && standalone(s))
+      .map((s) => ({ text: s, note: "본문에 나오는 설명이다. 맞는 설명이다." })),
+    ...c.traps.map((t) => ({
+      text: t.difference,
+      note: `'${t.concept}'을 바르게 설명한 문장이다. 맞는 설명이다.`,
+    })),
+  ]
+    .filter((s) => s.text !== trap.difference)
+    .slice(0, 3);
+  if (trues.length < 3) return null;
+
+  const id = `q-neg-${c.id}`;
+  const pairs = shuffleSeeded(
+    [{ text: trap.wrong, note: null as string | null }, ...trues],
+    hash(id),
+  );
+  return {
+    id,
+    type: "negative",
+    sourceId: c.id,
+    subject: c.subject,
+    question: `${shortTitle(c.title)}에 대한 설명으로 옳지 않은 것은?`,
+    options: pairs.map((p) => p.text),
+    answerIndex: pairs.findIndex((p) => p.text === trap.wrong),
+    explanation:
+      `'${trap.concept}'의 설명을 서로 맞바꿔 놓은 선지다. ` +
+      `바르게 고치면 — ${trap.difference}`,
+    optionNotes: pairs.map((p) => p.note),
+    importance: c.importance,
+  };
+}
+
+// ── 유형 3. 빈칸 채우기 ────────────────────────────────────────────
+function pickBlank(c: Concept): { keyword: string; sentence: string } | null {
+  const sentences = [...splitSentences(c.detail), ...splitSentences(c.examPoint)].filter(
+    (s) => s.length >= 20 && s.length <= 150 && standalone(s),
+  );
+  for (const keyword of c.keywords) {
+    if (keyword.length < 2) continue;
+    const glued = new RegExp(
+      `[가-힣A-Za-z0-9]${keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+    );
+    for (const s of sentences) {
+      if (!s.includes(keyword)) continue;
+      if (glued.test(s)) continue; // 낱말 가운데가 잘린다
+      return { keyword, sentence: s };
+    }
+  }
+  return null;
+}
+
+function makeBlank(c: Concept, all: Concept[]): QuizQuestion | null {
+  const picked = pickBlank(c);
+  if (!picked) return null;
+  const { keyword, sentence } = picked;
+  const passage = sentence.split(keyword).join("____");
+
+  const wrong: Distractor[] = neighbors(c, all)
+    .flatMap((o) => o.keywords.map((k) => ({ k, o })))
+    .filter(
+      ({ k }) =>
+        k !== keyword &&
+        !k.includes(keyword) &&
+        !keyword.includes(k) &&
+        !passage.includes(k),
+    )
+    .map(({ k, o }) => ({
+      text: k,
+      note: `'${k}' — '${shortTitle(o.title)}'에 나오는 말이다.`,
+    }));
+
+  return build(
+    `q-blank-${c.id}`,
+    "blank",
+    c,
+    "빈칸에 들어갈 말로 알맞은 것은?",
+    passage,
+    keyword,
+    wrong,
+    `${sentence} (${c.title})`,
+  );
+}
+
+// ── 유형 4. 헷갈리는 둘 구분하기 ───────────────────────────────────
+function makeTrap(c: Concept, all: Concept[], index: number): QuizQuestion | null {
+  const trap = c.traps[index];
+  if (!trap) return null;
+
+  const others: Distractor[] = neighbors(c, all)
+    .flatMap((o) => o.traps)
+    .filter((t) => t.difference !== trap.difference)
+    .map((t) => ({
+      text: t.difference,
+      note: `'${t.concept}'을 설명한 문장이다. 지금 묻는 것은 '${trap.concept}'이다.`,
+    }));
+
+  return build(
+    `q-trap-${c.id}-${index}`,
+    "trap",
+    c,
+    `'${trap.concept}'의 차이를 바르게 설명한 것은?`,
+    undefined,
+    trap.difference,
+    [
+      {
+        text: trap.wrong,
+        note: "둘의 설명을 서로 맞바꿔 놓은 것이다. 소재가 같아 그럴듯해 보이지만 방향이 반대다.",
+      },
+      ...others,
+    ],
+    `보기에는 둘을 맞바꿔 놓은 설명이 함께 들어 있다. 소재가 아니라 방향을 본다. (${c.title})`,
+  );
+}
+
+/** 한 개념에서 만들 수 있는 문제 전부 */
+export function questionsFor(c: Concept, all: Concept[] = CONCEPTS): QuizQuestion[] {
+  const out: (QuizQuestion | null)[] = [
+    makeMultiple(c, all),
+    makeNegative(c),
+    makeBlank(c, all),
+    ...c.traps.map((_, i) => makeTrap(c, all, i)),
+  ];
+  return out.filter((q): q is QuizQuestion => q !== null);
+}
+
+/** 과목에 맞는 문제 은행 전체 */
+export function questionBank(subject?: SubjectId): QuizQuestion[] {
+  const targets = subject ? CONCEPTS.filter((c) => c.subject === subject) : CONCEPTS;
+  return targets.flatMap((c) => questionsFor(c, CONCEPTS));
+}
+
+export interface QuizOptions {
+  subject?: SubjectId;
+  count?: number;
+  /** 이 개념들만 (오답노트·복습에서 쓴다) */
+  onlySourceIds?: string[];
+  seed?: number;
+}
+
+/**
+ * 출제.
+ *
+ * 중요도가 높은 개념이 더 자주 나오되, 낮은 개념도 반드시 섞인다.
+ * 한 개념에서 두 문제가 연달아 나오면 앞 문제의 보기가 뒤 문제의 답이
+ * 되므로, 같은 개념은 한 번씩만 담는다.
+ */
+export function makeQuiz(opts: QuizOptions): QuizQuestion[] {
+  const { subject, count = 10, onlySourceIds, seed = Date.now() } = opts;
+  let bank = questionBank(subject);
+  if (onlySourceIds?.length) {
+    bank = bank.filter((q) => onlySourceIds.includes(q.sourceId));
+  }
+  if (bank.length === 0) return [];
+
+  const shuffled = shuffleSeeded(bank, seed);
+  shuffled.sort((a, b) => b.importance - a.importance);
+
+  const picked: QuizQuestion[] = [];
+  const used = new Set<string>();
+  for (const q of shuffled) {
+    if (used.has(q.sourceId)) continue;
+    used.add(q.sourceId);
+    picked.push(q);
+    if (picked.length >= count) break;
+  }
+
+  // 개념 수보다 많이 달라고 하면 남은 문제로 채운다.
+  // 이때 '옳지 않은 것'과 '헷갈리는 둘'을 같은 개념에서 함께 내면
+  // 앞 문제의 보기가 뒤 문제의 답이 되어 버린다.
+  if (picked.length < count) {
+    const byConcept = new Map<string, QuizQuestion[]>();
+    for (const q of picked) {
+      byConcept.set(q.sourceId, [...(byConcept.get(q.sourceId) ?? []), q]);
+    }
+    for (const q of shuffled) {
+      if (picked.includes(q)) continue;
+      const mates = byConcept.get(q.sourceId) ?? [];
+      if (mates.length >= 2) continue;
+      if (q.type === "negative" || mates.some((m) => m.type === "negative")) continue;
+      picked.push(q);
+      byConcept.set(q.sourceId, [...mates, q]);
+      if (picked.length >= count) break;
+    }
+  }
+  return shuffleSeeded(picked, seed + 1);
+}
+
+/**
+ * 모의고사 한 벌.
+ *
+ * 실제 시험은 1과목 10문항 + 2과목 40문항이다. 과목별 과락이 있으므로
+ * 과목을 섞지 않고 순서대로 담아, 결과 화면에서 과목별 점수를 그대로
+ * 보여 줄 수 있게 한다.
+ */
+export function makeMock(seed = Date.now()): QuizQuestion[] {
+  return [
+    ...makeQuiz({ subject: "modeling", count: 10, seed }),
+    ...makeQuiz({ subject: "sql", count: 40, seed: seed + 1000 }),
+  ];
+}
+
+export const QUIZ_TYPE_LABELS: Record<QuizType, string> = {
+  multiple: "개념 찾기",
+  negative: "옳지 않은 것",
+  blank: "빈칸",
+  trap: "헷갈리는 둘",
+  "sql-result": "결과 맞히기",
+  "sql-write": "직접 쓰기",
+};

@@ -1,0 +1,14 @@
+이 폴더의 두 파일은 우리가 만든 것이 아닙니다.
+
+  sql-wasm.js
+  sql-wasm.wasm
+
+SQLite 를 WebAssembly 로 옮긴 sql.js 입니다. 브라우저 안에서 진짜 SQL 을
+돌리기 위해 앱과 함께 담아 두었습니다(인터넷이 끊겨도 실습이 되도록).
+
+  sql.js  — MIT License, sql.js authors
+            https://github.com/sql-js/sql.js
+  SQLite  — 퍼블릭 도메인
+            https://www.sqlite.org/copyright.html
+
+전체 라이선스 원문은 위 저장소의 LICENSE 파일에 있습니다.

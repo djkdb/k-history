@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // 다른 앱들과 다른 이름 — 별도 프로젝트로 배포된다
+  "name": "sqld-master",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}

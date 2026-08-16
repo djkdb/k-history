@@ -1,0 +1,34 @@
+{
+  "name": "sqld-master",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SQLD — 모델링은 그림으로, SQL은 직접 쳐 보며",
+  "scripts": {
+    "dev": "next dev -p 3300",
+    "build": "next build",
+    "start": "npx serve out",
+    "deploy": "npm run audit && npm run build && npx wrangler deploy",
+    "audit": "npx tsc --noEmit -p tsconfig.json && node -e \"require('jiti')(process.cwd(),{alias:{'@':process.cwd()+'/src'}})('./scripts/audit.ts')\"",
+    "icons": "node scripts/make-icons.js"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.15.0",
+    "idb": "^8.0.0",
+    "lucide-react": "^0.469.0",
+    "next": "^15.1.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "jiti": "^2.4.2",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,75 @@
+/**
+ * 이미 내보낸 id 목록 — 사용자의 학습 기록이 이 값을 열쇠로 저장돼 있다.
+ *
+ * ⚠️ 여기 있는 id 를 지우거나 바꾸면, 그 사람이 공부한 개념·풀어 둔 실습
+ *    기록이 갈 곳을 잃는다. 서버에 사본이 없어 되돌릴 수 없다.
+ *    새로 늘리는 것은 언제나 안전하다 — 배포한 뒤 이 목록에 더해 둔다.
+ *    scripts/audit.ts 가 배포 전에 대조한다.
+ */
+
+export const LOCKED_CONCEPT_IDS = [
+  "m-modeling-basics",
+  "m-three-schema",
+  "m-entity",
+  "m-attribute",
+  "m-relationship",
+  "m-identifier",
+  "m-identifying",
+  "m-normalization",
+  "m-denormalization",
+  "m-transaction-model",
+  "m-distributed",
+  "s-null",
+  "s-select-order",
+  "s-where",
+  "s-function",
+  "s-groupby",
+  "s-join-basic",
+  "s-orderby",
+  "s-ddl-datatype",
+  "s-subquery",
+  "s-scalar-inline",
+  "s-setop",
+  "s-window",
+  "s-group-function",
+  "s-topn",
+  "s-hierarchy",
+  "s-pivot",
+  "s-dml",
+  "s-tcl",
+  "s-ddl-dcl",
+  "s-view",
+  "s-standard-join",
+  "s-case",
+  "s-string-func",
+  "s-date-func",
+  "s-constraint",
+  "s-index",
+  "s-regexp",
+  "s-aggregate-kind",
+  "s-transaction-isolation",
+  "s-with",
+] as const;
+
+export const LOCKED_TASK_IDS = [
+  "t-select-basic",
+  "t-select-null",
+  "t-select-nvl",
+  "t-select-like",
+  "t-group-count",
+  "t-group-having",
+  "t-group-avg-null",
+  "t-join-inner",
+  "t-join-outer",
+  "t-join-self",
+  "t-sub-scalar",
+  "t-sub-in",
+  "t-sub-correlated",
+  "t-setop-union",
+  "t-window-rank",
+  "t-window-partition",
+  "t-window-topn",
+  "t-hierarchy-level",
+  "t-dml-update",
+  "t-dml-case",
+] as const;
