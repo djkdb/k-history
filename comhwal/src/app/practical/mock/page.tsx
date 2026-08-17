@@ -10,6 +10,7 @@ import {
   Clock,
   Flag,
   Keyboard,
+  NotebookPen,
   Sigma,
   X,
 } from "lucide-react";
@@ -107,6 +108,10 @@ export default function PracticalMockPage() {
     const fCorrect = ok.filter((v, i) => v && items[i].kind === "formula").length;
     const sCorrect = ok.filter((v, i) => v && items[i].kind === "shortcut").length;
 
+    const wrongIds = items
+      .filter((_, i) => !ok[i])
+      .map((it) => (it.kind === "formula" ? it.task.id : it.sc.id));
+
     const attempt: MockAttempt = {
       examId: `${grade}-practical`,
       startedAt,
@@ -118,10 +123,10 @@ export default function PracticalMockPage() {
       ],
       score: fCorrect + sCorrect,
       total: items.length,
+      // 실기는 답이 글이라 문항을 되살릴 수 없다. 대신 무엇을 틀렸는지는
+      // 남겨 둔다 — 오답 노트가 그 수식·단축키를 다시 펴 준다.
+      wrongSourceIds: wrongIds,
     };
-    const wrongIds = items
-      .filter((_, i) => !ok[i])
-      .map((it) => (it.kind === "formula" ? it.task.id : it.sc.id));
     recordMockAttempt(attempt, wrongIds);
   }, [submitted, items, grade0, grade, startedAt, recordMockAttempt]);
 
@@ -219,6 +224,12 @@ export default function PracticalMockPage() {
                         </p>
                       </div>
                     </div>
+                    <Link href={`/mock/note?at=${a.startedAt}`}>
+                      <Button size="sm" variant="ghost" className="mt-3 w-full">
+                        <NotebookPen size={14} />
+                        오답 노트 ({a.total - a.score}문항)
+                      </Button>
+                    </Link>
                   </Card>
                 );
               })}

@@ -20,7 +20,8 @@ export const PROGRESS_KEY = "comhwal:mock-progress";
  * 표시되고 채점까지 어긋난다. 그래서 판이 바뀌면 풀던 것을 잇지 않는다.
  * (학습 기록과는 다른 저장소다 — 진도·복습 카드는 그대로 남는다)
  */
-const FORMAT = 2;
+export const MOCK_FORMAT = 2;
+const FORMAT = MOCK_FORMAT;
 
 export interface MockProgress {
   /** 이 답들이 어느 판에서 매겨졌는가 */

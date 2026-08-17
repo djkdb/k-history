@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, FileText, TriangleAlert } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  FileText,
+  NotebookPen,
+  TriangleAlert,
+} from "lucide-react";
 import { useApp, useGrade } from "@/lib/store";
 import { SUBJECT_MAP, subjectsFor } from "@/data/subjects";
 import { Button, Card, EmptyState, SectionTitle } from "@/components/ui";
@@ -162,6 +168,12 @@ export default function MockPage() {
                     );
                   })}
                 </div>
+                <Link href={`/mock/note?at=${a.startedAt}`}>
+                  <Button size="sm" variant="ghost" className="mt-3 w-full">
+                    <NotebookPen size={14} />
+                    오답 노트 ({a.total - a.score}문항)
+                  </Button>
+                </Link>
               </Card>
             );
           })}

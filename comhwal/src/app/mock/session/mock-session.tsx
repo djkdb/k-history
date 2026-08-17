@@ -4,7 +4,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, Clock, Flag, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Clock,
+  Flag,
+  NotebookPen,
+  X,
+} from "lucide-react";
 import { useApp, useGrade } from "@/lib/store";
 import type { MockAttempt, QuizQuestion, SubjectId } from "@/lib/types";
 import { SUBJECT_MAP, subjectsFor, subjectInk } from "@/data/subjects";
@@ -13,6 +21,7 @@ import { makeMock } from "@/lib/quiz";
 import { Button, Card, ProgressBar } from "@/components/ui";
 import { cn, formatClock } from "@/lib/utils";
 import {
+  MOCK_FORMAT,
   clearProgress,
   readProgress,
   writeProgress,
@@ -90,6 +99,10 @@ export function MockSession() {
     });
     const score = bySubject.reduce((a, b) => a + b.correct, 0);
 
+    const wrongSourceIds = questions
+      .filter((q, i) => answers[i] !== q.answerIndex)
+      .map((q) => q.sourceId);
+
     const attempt: MockAttempt = {
       examId: `${grade}-written`,
       startedAt,
@@ -98,10 +111,12 @@ export function MockSession() {
       bySubject,
       score,
       total: questions.length,
+      // 오답 노트가 나중에 이 시험지를 그대로 다시 펴 볼 수 있도록
+      seed: seed.current,
+      qids: questions.map((q) => q.id),
+      fmt: MOCK_FORMAT,
+      wrongSourceIds,
     };
-    const wrongSourceIds = questions
-      .filter((q, i) => answers[i] !== q.answerIndex)
-      .map((q) => q.sourceId);
     recordMockAttempt(attempt, wrongSourceIds);
   }, [
     submitted,
@@ -227,12 +242,18 @@ export function MockSession() {
           })}
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-2">
+        <Link href={`/mock/note?at=${startedAt}`} className="contents">
+          <Button size="lg" className="mt-6 w-full">
+            <NotebookPen size={17} />
+            오답 노트 ({questions.length - score}문항)
+          </Button>
+        </Link>
+        <div className="mt-2 grid grid-cols-2 gap-2">
           <Button variant="ghost" onClick={() => setPaperReview(true)}>
             시험지 다시 보기
           </Button>
           <Link href="/mock" className="contents">
-            <Button className="w-full">
+            <Button variant="ghost" className="w-full">
               모의고사 홈
               <ArrowRight size={15} />
             </Button>
