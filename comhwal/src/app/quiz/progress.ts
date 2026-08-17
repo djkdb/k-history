@@ -19,7 +19,12 @@ export const QUIZ_PROGRESS_KEY = "comhwal:quiz-progress";
 /** 사흘이 지난 것은 이어 하자고 권하지 않는다 — 무엇을 풀던 중이었는지 잊는다 */
 const STALE_MS = 3 * 86_400_000;
 
+/** 저장해 둔 답이 어느 판의 것인가 (mock/progress.ts 와 같은 이유) */
+const FORMAT = 2;
+
 export interface QuizProgress {
+  /** 이 답들이 어느 판에서 매겨졌는가 */
+  fmt?: number;
   grade: Grade;
   subject: SubjectId | null;
   count: number;
@@ -43,6 +48,11 @@ export function readQuizProgress(): QuizProgress | null {
     const raw = localStorage.getItem(QUIZ_PROGRESS_KEY);
     if (!raw) return null;
     const p = JSON.parse(raw) as QuizProgress;
+    // 보기 순서가 달라진 판의 답은 이어 쓸 수 없다
+    if (p?.fmt !== FORMAT) {
+      localStorage.removeItem(QUIZ_PROGRESS_KEY);
+      return null;
+    }
     if (!p || !Array.isArray(p.answers) || typeof p.seed !== "number") {
       localStorage.removeItem(QUIZ_PROGRESS_KEY);
       return null;
@@ -64,7 +74,7 @@ export function readQuizProgress(): QuizProgress | null {
 
 export function writeQuizProgress(p: QuizProgress): void {
   try {
-    localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify(p));
+    localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify({ ...p, fmt: FORMAT }));
   } catch {
     // 저장에 실패해도 풀이는 계속돼야 한다
   }

@@ -10,7 +10,19 @@
  */
 export const PROGRESS_KEY = "sqld:mock-progress";
 
+/**
+ * 저장해 둔 답이 어느 판의 것인가.
+ *
+ * 답은 "몇 번 보기를 골랐나"로 적힌다. 선지를 섞는 방식이 바뀌면 같은
+ * 문제라도 보기 순서가 달라져, 이어 풀 때 엉뚱한 보기가 내 답으로
+ * 표시되고 채점까지 어긋난다. 그래서 판이 바뀌면 풀던 것을 잇지 않는다.
+ * (학습 기록과는 다른 저장소다 — 진도·복습 카드는 그대로 남는다)
+ */
+const FORMAT = 2;
+
 export interface MockProgress {
+  /** 이 답들이 어느 판에서 매겨졌는가 */
+  fmt?: number;
   /** 문제 은행을 다시 만들 때 쓰는 값 — 같은 seed면 같은 문제가 나온다 */
   seed: number;
   startedAt: number;
@@ -27,6 +39,11 @@ export function readProgress(): MockProgress | null {
     const raw = localStorage.getItem(PROGRESS_KEY);
     if (!raw) return null;
     const p = JSON.parse(raw) as MockProgress;
+    // 보기 순서가 달라진 판의 답은 이어 쓸 수 없다
+    if (p?.fmt !== FORMAT) {
+      localStorage.removeItem(PROGRESS_KEY);
+      return null;
+    }
     // 시간이 이미 지난 것은 이어 할 수 없다
     if (!p || typeof p.endsAt !== "number" || p.endsAt <= Date.now()) {
       localStorage.removeItem(PROGRESS_KEY);
@@ -40,7 +57,7 @@ export function readProgress(): MockProgress | null {
 
 export function writeProgress(p: MockProgress): void {
   try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...p, fmt: FORMAT }));
   } catch {
     // 저장에 실패해도 시험은 계속 볼 수 있어야 한다
   }
