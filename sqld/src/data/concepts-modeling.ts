@@ -18,6 +18,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "데이터 모델링의 세 단계 — 개념·논리·물리",
+    term: "데이터 모델링의 세 단계",
     summary:
       "개념 모델링은 무엇을 다룰지, 논리 모델링은 어떤 표로 나눌지, 물리 모델링은 실제 데이터베이스에 어떻게 만들지를 정한다.",
     detail:
@@ -50,6 +51,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "3층 스키마 — 외부·개념·내부",
+    term: "3층 스키마",
     summary:
       "외부 스키마는 사용자가 보는 모습, 개념 스키마는 조직 전체가 합의한 모습, 내부 스키마는 실제로 저장된 모습이다.",
     detail:
@@ -73,6 +75,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "엔터티가 되기 위한 조건",
+    term: "엔터티",
     summary:
       "업무에서 관리해야 하고, 인스턴스가 두 개 이상이며, 속성을 가지고, 다른 엔터티와 관계가 있어야 한다.",
     detail:
@@ -103,6 +106,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "속성의 갈래 — 기본·설계·파생",
+    term: "속성",
     summary:
       "기본속성은 업무에서 그대로 온 것, 설계속성은 만들어 붙인 것(코드 등), 파생속성은 다른 값에서 계산해 낸 것이다.",
     detail:
@@ -126,6 +130,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "관계의 차수와 선택성",
+    term: "관계의 차수와 선택성",
     summary:
       "차수(카디널리티)는 몇 건이 이어지는가(1:1, 1:M, M:N), 선택성(옵셔널리티)은 반드시 있어야 하는가를 말한다.",
     detail:
@@ -149,6 +154,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "식별자 — 주식별자의 네 가지 조건",
+    term: "주식별자",
     summary:
       "유일성(한 줄을 가려낸다), 최소성(더 줄일 수 없다), 불변성(값이 바뀌지 않는다), 존재성(NULL 이 아니다).",
     detail:
@@ -189,6 +195,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "식별 관계와 비식별 관계",
+    term: "식별 관계와 비식별 관계",
     summary:
       "부모의 식별자가 자식의 주식별자에 포함되면 식별 관계, 일반 속성으로만 들어가면 비식별 관계다.",
     detail:
@@ -214,6 +221,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-sql",
     title: "정규화 — 1차부터 BCNF까지",
+    term: "정규화",
     summary:
       "1차는 값을 쪼개고, 2차는 부분 종속을 없애고, 3차는 이행 종속을 없애며, BCNF는 결정자가 모두 후보키가 되게 한다.",
     detail:
@@ -254,6 +262,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-sql",
     title: "반정규화 — 일부러 되돌리는 것",
+    term: "반정규화",
     summary:
       "조회 성능을 얻으려고 정규화를 일부 되돌려 중복을 허용하는 것. 대가로 데이터 정합성 관리 부담이 생긴다.",
     detail:
@@ -277,6 +286,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-sql",
     title: "엔터티를 나눌 때 — 수직·수평 분할",
+    term: "엔터티의 수직·수평 분할",
     summary:
       "수평 분할은 행을 기준으로 쪼개는 것(연도별 등), 수직 분할은 열을 기준으로 쪼개는 것(자주 쓰는 열만 따로)이다.",
     detail:
@@ -300,6 +310,7 @@ export const CONCEPTS_MODELING: Concept[] = [
     subject: "modeling",
     chapter: "m-sql",
     title: "분산 데이터베이스의 투명성",
+    term: "분산 데이터베이스의 투명성",
     summary:
       "여러 곳에 나뉘어 있어도 한 곳에 있는 것처럼 쓰게 하는 성질. 위치·분할·중복·장애·병행 투명성이 있다.",
     detail:

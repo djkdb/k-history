@@ -1,5 +1,6 @@
 import type { Concept, QuizQuestion, QuizType, SubjectId } from "./types";
 import { CONCEPTS } from "@/data/concepts";
+import { SQL_QUIZ } from "@/data/sql-quiz";
 import { shuffleSeeded, splitSentences } from "./utils";
 
 /**
@@ -26,7 +27,18 @@ function hash(s: string): number {
   return Math.abs(h);
 }
 
-/** 보기로 쓸 짧은 이름 — 제목의 대시 뒤에 답이 적혀 있으면 새어 나간다 */
+/**
+ * 보기·발문에 쓰는 이름.
+ *
+ * 개념의 title 은 목차 제목이라 "데이터 모델링을 하는 이유와 세 가지 유의점"
+ * 처럼 길고, 그대로 선지가 되면 시험지가 아니라 차례처럼 보인다.
+ * 그래서 개념마다 적어 둔 짧은 용어(term)를 쓴다.
+ */
+export function termOf(c: Concept): string {
+  return c.term;
+}
+
+/** 제목에서 대시 뒤를 떼어 낸 것 — 지문에서 답이 새는지 볼 때만 쓴다 */
 export function shortTitle(title: string): string {
   const cut = title.split(" — ")[0].trim();
   return cut.length >= 2 ? cut : title;
@@ -129,20 +141,22 @@ function build(
 
 // ── 유형 1. 설명을 보고 무엇인지 고르기 ───────────────────────────
 function makeMultiple(c: Concept, all: Concept[]): QuizQuestion | null {
-  const name = shortTitle(c.title);
-  const passage = maskName(c.summary, name);
+  const name = termOf(c);
+  // 제목과 용어 양쪽으로 가린다 — 어느 쪽이 지문에 남아도 답이 새어 나간다
+  const masked = maskName(c.summary, name);
+  const passage = masked === null ? null : maskName(masked, shortTitle(c.title));
   if (!passage) return null;
   const wrong = neighbors(c, all)
-    .filter((o) => !leaks(passage, shortTitle(o.title)))
+    .filter((o) => !leaks(passage, termOf(o)))
     .map((o) => ({
-      text: shortTitle(o.title),
-      note: `'${shortTitle(o.title)}' — ${o.summary}`,
+      text: termOf(o),
+      note: `'${termOf(o)}' — ${o.summary}`,
     }));
   return build(
     `q-mul-${c.id}`,
     "multiple",
     c,
-    "다음 설명에 해당하는 것은?",
+    "다음 중 아래 설명에 해당하는 것으로 가장 적절한 것은?",
     passage,
     name,
     wrong,
@@ -179,7 +193,7 @@ function makeNegative(c: Concept): QuizQuestion | null {
     type: "negative",
     sourceId: c.id,
     subject: c.subject,
-    question: `${shortTitle(c.title)}에 대한 설명으로 옳지 않은 것은?`,
+    question: `다음 중 ${termOf(c)}에 대한 설명으로 가장 적절하지 않은 것은?`,
     options: pairs.map((p) => p.text),
     answerIndex: pairs.findIndex((p) => p.text === trap.wrong),
     explanation:
@@ -233,7 +247,7 @@ function makeBlank(c: Concept, all: Concept[]): QuizQuestion | null {
     `q-blank-${c.id}`,
     "blank",
     c,
-    "빈칸에 들어갈 말로 알맞은 것은?",
+    "다음 ( ) 안에 들어갈 말로 가장 적절한 것은?",
     passage,
     keyword,
     wrong,
@@ -242,13 +256,54 @@ function makeBlank(c: Concept, all: Concept[]): QuizQuestion | null {
 }
 
 // ── 유형 4. 헷갈리는 둘 구분하기 ───────────────────────────────────
+
+/** 두 문장이 같은 것을 이야기하는가 — 겹치는 낱말 수로 본다 */
+function related(a: string, b: string): number {
+  const words = (t: string) =>
+    new Set(
+      t
+        .split(/[\s·,.()'"”“·—\-–~/]+/)
+        .map((w) => w.replace(/(은|는|이|가|을|를|의|에|와|과|로|으로|도)$/, ""))
+        .filter((w) => w.length >= 2),
+    );
+  const A = words(a);
+  let hit = 0;
+  for (const w of words(b)) if (A.has(w)) hit++;
+  return hit;
+}
+
+/**
+ * '헷갈리는 둘' 문제.
+ *
+ * 오답을 아무 개념에서나 끌어오면 문제가 되지 않는다. NOT IN 을 묻는데
+ * 보기에 COUNT 이야기가 섞여 있으면, 읽지 않고도 남은 하나가 답이다.
+ * 그래서 오답은
+ *   1) 같은 개념의 다른 함정  (가장 헷갈린다)
+ *   2) 묻는 문장과 낱말이 겹치는 남의 함정
+ * 순으로만 고르고, 겹치는 낱말이 없는 것은 아예 쓰지 않는다.
+ */
 function makeTrap(c: Concept, all: Concept[], index: number): QuizQuestion | null {
   const trap = c.traps[index];
   if (!trap) return null;
+  const topic = `${trap.concept} ${trap.difference}`;
 
-  const others: Distractor[] = neighbors(c, all)
+  const mine: Distractor[] = c.traps
+    .filter((t) => t.difference !== trap.difference)
+    .map((t) => ({
+      text: t.difference,
+      note: `같은 갈래의 다른 짝('${t.concept}')을 설명한 문장이다. 지금 묻는 것은 '${trap.concept}'이다.`,
+    }));
+
+  const borrowed: Distractor[] = neighbors(c, all)
     .flatMap((o) => o.traps)
     .filter((t) => t.difference !== trap.difference)
+    // 소재가 아예 다른 문장은 오답 구실을 못 한다 — 읽지 않고도 걸러진다
+    .filter((t) => related(topic, `${t.concept} ${t.difference}`) >= 2)
+    .sort(
+      (x, y) =>
+        related(topic, `${y.concept} ${y.difference}`) -
+        related(topic, `${x.concept} ${x.difference}`),
+    )
     .map((t) => ({
       text: t.difference,
       note: `'${t.concept}'을 설명한 문장이다. 지금 묻는 것은 '${trap.concept}'이다.`,
@@ -258,7 +313,8 @@ function makeTrap(c: Concept, all: Concept[], index: number): QuizQuestion | nul
     `q-trap-${c.id}-${index}`,
     "trap",
     c,
-    `'${trap.concept}'의 차이를 바르게 설명한 것은?`,
+    // "A vs B" 는 메모의 표기다. 시험지에는 그렇게 적히지 않는다.
+    `다음 중 ${trap.concept.replace(/\s*vs\s*/g, " 와 ")}에 대한 설명으로 가장 적절한 것은?`,
     undefined,
     trap.difference,
     [
@@ -266,10 +322,44 @@ function makeTrap(c: Concept, all: Concept[], index: number): QuizQuestion | nul
         text: trap.wrong,
         note: "둘의 설명을 서로 맞바꿔 놓은 것이다. 소재가 같아 그럴듯해 보이지만 방향이 반대다.",
       },
-      ...others,
+      ...mine,
+      ...borrowed,
     ],
     `보기에는 둘을 맞바꿔 놓은 설명이 함께 들어 있다. 소재가 아니라 방향을 본다. (${c.title})`,
   );
+}
+
+/**
+ * 쿼리를 주고 결과를 묻는 문제.
+ *
+ * 실제 시험지의 2과목은 이런 문제가 큰 몫을 차지한다. 손으로 적어 둔
+ * 것이라 개념에서 만들어 내지 않고 그대로 쓴다.
+ */
+function sqlResultQuestions(subject?: SubjectId): QuizQuestion[] {
+  if (subject && subject !== "sql") return [];
+  return SQL_QUIZ.map((it) => {
+    const pairs = shuffleSeeded(
+      [
+        { text: it.answer, note: null as string | null },
+        ...it.wrong.map((w) => ({ text: w, note: "결과를 잘못 셈한 것이다." })),
+      ],
+      hash(it.id),
+    );
+    return {
+      id: it.id,
+      type: "sql-result" as QuizType,
+      sourceId: it.links[0] ?? it.id,
+      subject: it.subject,
+      question: it.question,
+      passage: it.sql,
+      passageIsSql: true,
+      options: pairs.map((p) => p.text),
+      answerIndex: pairs.findIndex((p) => p.text === it.answer),
+      explanation: it.explanation,
+      optionNotes: pairs.map((p) => p.note),
+      importance: it.importance,
+    };
+  });
 }
 
 /** 한 개념에서 만들 수 있는 문제 전부 */
@@ -286,7 +376,10 @@ export function questionsFor(c: Concept, all: Concept[] = CONCEPTS): QuizQuestio
 /** 과목에 맞는 문제 은행 전체 */
 export function questionBank(subject?: SubjectId): QuizQuestion[] {
   const targets = subject ? CONCEPTS.filter((c) => c.subject === subject) : CONCEPTS;
-  return targets.flatMap((c) => questionsFor(c, CONCEPTS));
+  return [
+    ...targets.flatMap((c) => questionsFor(c, CONCEPTS)),
+    ...sqlResultQuestions(subject),
+  ];
 }
 
 export interface QuizOptions {
@@ -309,6 +402,9 @@ const TYPE_WEIGHT: Partial<Record<QuizType, number>> = {
   multiple: 3,
   trap: 2,
   blank: 2,
+  // 쿼리를 주고 결과를 묻는 문제는 손으로 적어 둔 만큼만 있다.
+  // 있는 대로 다 나오도록 가중치를 높게 준다 — 시험지에서 가장 시험지답다.
+  "sql-result": 6,
 };
 
 /**

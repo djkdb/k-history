@@ -321,6 +321,28 @@ for (const grade of [1, 2] as Grade[]) {
   }
 }
 
+/*
+  정답이 특정 자리에 몰려 있지 않은가.
+
+  섞기 함수가 조용히 망가지면 여기서만 드러난다. 실제로 32비트를 넘는
+  곱셈 때문에 난수가 난수가 아니게 되어 **정답이 100% 4번 자리**에 몰린
+  적이 있다. 화면도 빌드도 멀쩡해 보이므로 숫자로 잡는 수밖에 없다.
+*/
+for (const grade of [1, 2] as Grade[]) {
+  const all = questionBank(grade);
+  const pos = [0, 0, 0, 0];
+  for (const q of all) pos[q.answerIndex]++;
+  for (const [i, c] of pos.entries()) {
+    const pct = Math.round((c / all.length) * 100);
+    if (pct < 15 || pct > 35) {
+      fail(
+        `${grade}급: 정답이 ${i + 1}번 자리에 ${pct}% 몰려 있습니다 (고르면 25%)` +
+          " — 섞기가 망가졌을 수 있습니다",
+      );
+    }
+  }
+}
+
 // ── 결과 ───────────────────────────────────────────────────────────
 console.log(`개념 ${CONCEPTS.length}개 · 수식 ${FORMULA_TASKS.length}문항 · 단축키 ${SHORTCUTS.length}개`);
 console.log(`문제 은행 ${bankTotal}문항 (1급·2급 합산)`);

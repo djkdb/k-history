@@ -20,6 +20,7 @@ import { SQL_TASKS } from "../src/data/sql-tasks";
 import { CHAPTERS, EXAM, SUBJECTS, cutoff, judge } from "../src/data/exam";
 import { SCHEMA_SQL, TABLES } from "../src/data/schema";
 import { LOCKED_CONCEPT_IDS, LOCKED_TASK_IDS } from "../src/data/locked-ids";
+import { SQL_QUIZ } from "../src/data/sql-quiz";
 import { makeMock, questionBank } from "../src/lib/quiz";
 import { bridge } from "../src/lib/sqlite";
 import type { SubjectId } from "../src/lib/types";
@@ -329,6 +330,26 @@ const bank = questionBank();
   }
 }
 
+/*
+  정답이 특정 자리에 몰려 있지 않은가.
+
+  섞기 함수가 조용히 망가지면 여기서만 드러난다. 실제로 32비트를 넘는
+  곱셈 때문에 난수가 난수가 아니게 되어 **정답이 99% 4번 자리**에 몰린
+  적이 있다. 화면도 빌드도 멀쩡해 보이므로 숫자로 잡는 수밖에 없다.
+*/
+{
+  const pos = [0, 0, 0, 0];
+  for (const q of bank) pos[q.answerIndex]++;
+  for (const [i, c] of pos.entries()) {
+    const pct = Math.round((c / bank.length) * 100);
+    if (pct < 15 || pct > 35) {
+      fail(
+        `정답이 ${i + 1}번 자리에 ${pct}% 몰려 있습니다 (고르면 25%) — 섞기가 망가졌을 수 있습니다`,
+      );
+    }
+  }
+}
+
 // ── 6. 모의고사 한 벌이 실제 시험 구성과 같은가 ──────────────────
 for (const seed of [1, 7, 42, 99, 12345, 20260816]) {
   const mock = makeMock(seed);
@@ -411,6 +432,58 @@ async function runSqlChecks() {
     db.close();
   }
 
+  /*
+    쿼리를 주고 결과를 묻는 문제 — 적어 둔 정답이 진짜 그 결과인가.
+
+    문제집에서 가장 나쁜 것이 오답이다. 사람이 머리로 센 값을 그대로
+    믿지 않고, 같은 판에 쿼리를 넣어 돌린 결과와 글자 그대로 견준다.
+  */
+  let sqlQuiz = 0;
+  for (const it of SQL_QUIZ) {
+    const db = fresh();
+    try {
+      // [보기] 는 읽히기 위한 것, 확인은 verify 로 (없으면 [보기] 그대로)
+      const out = db.exec(bridge(it.verify ?? it.sql));
+      const cols = out[0]?.columns ?? [];
+      const rows = out[0]?.values ?? [];
+      // 정답 글에서 숫자·값만 떼어 낸다 ("2행" → "2", "10, 6" → ["10","6"])
+      const said = it.answer.split("—")[0].trim();
+      let real = "";
+      if (it.check === "rows") real = `${rows.length}행`;
+      else if (it.check === "cell") real = String(rows[0]?.[0] ?? "NULL");
+      else real = (rows[0] ?? []).map((v) => (v === null ? "NULL" : String(v))).join(", ");
+
+      const num = (t: string) => t.replace(/[^0-9.,]/g, "").replace(/,\s*/g, ",");
+      if (it.check === "rows" && `${rows.length}행` !== said && `${rows.length}개` !== said) {
+        fail(`${it.id}: 정답은 "${said}" 인데 실제로 돌리면 ${rows.length}행입니다`);
+      } else if (it.check === "cell" && num(real) !== num(said)) {
+        fail(`${it.id}: 정답은 "${said}" 인데 실제 값은 ${real} 입니다`);
+      } else if (it.check === "list" && num(real) !== num(said)) {
+        // 소수는 반올림해 적으므로 앞 두 자리까지만 견준다
+        const round = (t: string) =>
+          t.split(",").map((x) => (x.includes(".") ? (+x).toFixed(1) : x.trim())).join(",");
+        if (round(num(real)) !== round(num(said))) {
+          fail(`${it.id}: 정답은 "${said}" 인데 실제 결과는 "${real}" 입니다`);
+        }
+      }
+      if (!cols.length && it.check !== "rows") {
+        fail(`${it.id}: 쿼리가 값을 돌려주지 않습니다`);
+      }
+      for (const link of it.links) {
+        if (!CONCEPTS.some((c) => c.id === link)) {
+          fail(`${it.id}: 이어지는 개념 ${link} 을 찾을 수 없습니다`);
+        }
+      }
+      if (new Set([it.answer, ...it.wrong]).size !== 4) {
+        fail(`${it.id}: 선지 넷이 서로 달라야 합니다`);
+      }
+      sqlQuiz++;
+    } catch (e) {
+      fail(`${it.id}: 보기의 쿼리가 돌아가지 않습니다 — ${(e as Error).message}`);
+    }
+    db.close();
+  }
+
   // 개념에 곁들인 쿼리도 같은 잣대로
   let conceptQueries = 0;
   for (const c of CONCEPTS) {
@@ -425,14 +498,16 @@ async function runSqlChecks() {
     db.close();
   }
 
-  return { ran, conceptQueries };
+  return { ran, conceptQueries, sqlQuiz };
 }
 
-runSqlChecks().then(({ ran, conceptQueries }) => {
+runSqlChecks().then(({ ran, conceptQueries, sqlQuiz }) => {
   console.log(
     `개념 ${CONCEPTS.length}개 · SQL 실습 ${SQL_TASKS.length}문항 · 문제 은행 ${bank.length}문항`,
   );
-  console.log(`SQLite 실행 확인 — 모범 답안 ${ran}개 · 개념 쿼리 ${conceptQueries}개`);
+  console.log(
+    `SQLite 실행 확인 — 모범 답안 ${ran}개 · 개념 쿼리 ${conceptQueries}개 · 결과 맞히기 정답 대조 ${sqlQuiz}개`,
+  );
 
   if (notes.length) {
     console.log("\n참고");

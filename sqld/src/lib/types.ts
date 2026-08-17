@@ -66,6 +66,14 @@ export interface Concept {
   /** 어느 장에 속하는가 (Chapter.id) */
   chapter: string;
   title: string;
+  /**
+   * 시험지에 쓰는 짧은 용어.
+   *
+   * title 은 목차 제목이라 "데이터 모델링을 하는 이유와 세 가지 유의점"
+   * 처럼 길다. 그것이 그대로 선지가 되면 시험지가 아니라 차례가 된다.
+   * 발문과 선지에는 이 값을 쓴다.
+   */
+  term: string;
   /** 한 줄 정의 — 시험장에서 떠올릴 문장 */
   summary: string;
   /** 자세한 설명 2~5문장 */

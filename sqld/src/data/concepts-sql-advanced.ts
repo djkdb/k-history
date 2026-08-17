@@ -14,6 +14,7 @@ export const CONCEPTS_SQL_ADVANCED: Concept[] = [
     subject: "sql",
     chapter: "s-advanced",
     title: "서브쿼리 — 단일행·다중행·다중열",
+    term: "서브쿼리",
     summary:
       "한 건이 돌아오면 =·> 로 비교하고, 여러 건이면 IN·ANY·ALL·EXISTS 를 써야 한다.",
     detail:
@@ -52,6 +53,7 @@ FROM emp WHERE sal > (SELECT MAX(x) FROM (SELECT 1000 AS x UNION SELECT 2000 UNI
     subject: "sql",
     chapter: "s-advanced",
     title: "서브쿼리가 놓이는 자리 — 스칼라·인라인뷰·중첩",
+    term: "스칼라·인라인뷰·중첩 서브쿼리",
     summary:
       "SELECT 절에 오면 스칼라 서브쿼리, FROM 절에 오면 인라인 뷰, WHERE 절에 오면 중첩 서브쿼리다.",
     detail:
@@ -85,6 +87,7 @@ ORDER BY e.ename;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "집합 연산자 — UNION 과 UNION ALL",
+    term: "UNION 과 UNION ALL",
     summary:
       "UNION 은 중복을 없애고 정렬까지 하며, UNION ALL 은 그대로 이어 붙인다. 그래서 UNION ALL 이 빠르다.",
     detail:
@@ -118,6 +121,7 @@ SELECT 'UNION ALL', COUNT(*) FROM (
     subject: "sql",
     chapter: "s-advanced",
     title: "윈도우 함수 — 묶지 않고 집계한다",
+    term: "윈도우 함수",
     summary:
       "GROUP BY 는 행을 줄이지만, 윈도우 함수는 행을 그대로 두고 옆에 집계 값을 붙인다.",
     detail:
@@ -157,6 +161,7 @@ ORDER BY sal DESC;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "그룹 함수 — ROLLUP·CUBE·GROUPING SETS",
+    term: "ROLLUP·CUBE·GROUPING SETS",
     summary:
       "ROLLUP 은 오른쪽부터 하나씩 지워 가며 소계를, CUBE 는 모든 조합의 소계를 만든다.",
     detail:
@@ -180,6 +185,7 @@ ORDER BY sal DESC;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "Top N — 정렬한 뒤에 잘라야 한다",
+    term: "Top N 쿼리",
     summary:
       "행을 자르는 조건이 정렬보다 먼저 적용되면 엉뚱한 행이 남는다. 인라인 뷰에서 정렬한 뒤 바깥에서 자른다.",
     detail:
@@ -209,6 +215,7 @@ ORDER BY sal DESC;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "계층형 질의 — 위아래로 타고 내려가기",
+    term: "계층형 질의",
     summary:
       "START WITH 로 시작 행을 정하고 CONNECT BY 로 이어 간다. PRIOR 가 붙은 쪽이 부모다.",
     detail:
@@ -242,6 +249,7 @@ SELECT lvl AS "층", ename AS "이름" FROM t ORDER BY lvl, ename;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "PIVOT 과 UNPIVOT",
+    term: "PIVOT 과 UNPIVOT",
     summary:
       "PIVOT 은 행을 열로 돌려세우고, UNPIVOT 은 열을 다시 행으로 눕힌다.",
     detail:
@@ -274,6 +282,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-manage",
     title: "DML — INSERT·UPDATE·DELETE·MERGE",
+    term: "DML",
     summary:
       "DML 은 데이터를 바꾸는 명령이고, 아직 확정되지 않아 COMMIT 전까지는 되돌릴 수 있다.",
     detail:
@@ -306,6 +315,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-manage",
     title: "TCL — COMMIT·ROLLBACK·SAVEPOINT",
+    term: "TCL",
     summary:
       "COMMIT 은 확정, ROLLBACK 은 되돌리기, SAVEPOINT 는 중간에 표시를 찍어 거기까지만 되돌리는 것이다.",
     detail:
@@ -329,6 +339,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-manage",
     title: "DDL 과 DCL",
+    term: "DDL 과 DCL",
     summary:
       "DDL 은 구조를 만들고 바꾸는 것(CREATE·ALTER·DROP·TRUNCATE), DCL 은 권한을 주고 뺏는 것(GRANT·REVOKE)이다.",
     detail:
@@ -362,6 +373,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-manage",
     title: "뷰 — 저장된 질의",
+    term: "뷰",
     summary:
       "뷰는 데이터를 갖지 않고 질의만 저장한다. 쓸 때마다 원본을 다시 읽는다.",
     detail:

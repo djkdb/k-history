@@ -15,6 +15,7 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "데이터 모델링을 하는 이유와 세 가지 유의점",
+    term: "데이터 모델링의 유의점",
     summary:
       "중복·비유연성·비일관성을 없애려고 모델링을 한다. 같은 값을 여러 곳에 두지 않고, 업무가 바뀌어도 구조를 덜 고치게 하며, 서로 어긋나는 값이 생기지 않게 하는 것이다.",
     detail:
@@ -54,6 +55,7 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "엔터티의 갈래 — 유형·개념·사건, 기본·중심·행위",
+    term: "엔터티의 종류",
     summary:
       "만질 수 있는지로 나누면 유형·개념·사건이고, 다른 엔터티에 기대는 정도로 나누면 기본·중심·행위다.",
     detail:
@@ -92,6 +94,7 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "도메인과 다중값 속성",
+    term: "도메인과 다중값 속성",
     summary:
       "도메인은 그 속성이 가질 수 있는 값의 범위이고, 한 칸에 값이 여러 개 들어가는 다중값 속성은 별도 엔터티로 떼어 내야 한다.",
     detail:
@@ -122,6 +125,7 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
     subject: "modeling",
     chapter: "m-basic",
     title: "식별자의 분류 — 대표성·구성·생성 위치",
+    term: "식별자의 분류",
     summary:
       "대표성으로 주식별자와 보조식별자, 구성으로 단일식별자와 복합식별자, 어디서 왔는지로 내부식별자와 외부식별자로 나뉜다.",
     detail:
@@ -163,6 +167,7 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
     subject: "modeling",
     chapter: "m-sql",
     title: "본질식별자와 인조식별자",
+    term: "본질식별자와 인조식별자",
     summary:
       "본질식별자는 업무가 원래 갖고 있던 값으로 한 줄을 가려내는 것이고, 인조식별자는 그것이 마땅치 않을 때 일련번호를 새로 만들어 붙이는 것이다.",
     detail:
@@ -193,6 +198,7 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
     subject: "modeling",
     chapter: "m-sql",
     title: "관계는 곧 조인이다",
+    term: "관계와 조인",
     summary:
       "모델에서 그린 관계선은 SQL 에서 조인 조건이 된다. 관계를 제대로 잡지 않으면 조인할 길이 없거나, 엉뚱한 행이 곱해진다.",
     detail:
@@ -223,6 +229,7 @@ ORDER BY d.deptno, e.empno;`,
     subject: "modeling",
     chapter: "m-sql",
     title: "모델이 표현하는 트랜잭션",
+    term: "모델이 표현하는 트랜잭션",
     summary:
       "관계를 필수로 그리면 '두 건이 반드시 함께 생겨야 한다'는 뜻이 되어, 그 둘은 한 트랜잭션으로 묶여야 한다.",
     detail:
@@ -246,6 +253,7 @@ ORDER BY d.deptno, e.empno;`,
     subject: "modeling",
     chapter: "m-sql",
     title: "모델에서의 NULL — 선택 속성이 남기는 자리",
+    term: "모델의 NULL 속성",
     summary:
       "속성을 선택으로 두면 값이 없는 자리가 NULL 로 남고, 그 NULL 은 나중에 집계와 조인의 결과를 바꾼다.",
     detail:

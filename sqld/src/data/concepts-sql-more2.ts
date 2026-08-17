@@ -20,6 +20,7 @@ export const CONCEPTS_SQL_MORE2: Concept[] = [
     subject: "sql",
     chapter: "s-basic",
     title: "순수 관계 연산자와 SQL 문장의 대응",
+    term: "순수 관계 연산자",
     summary:
       "셀렉션은 WHERE, 프로젝션은 SELECT 절, 조인은 JOIN, 디비전은 나누기에 해당한다.",
     detail:
@@ -60,6 +61,7 @@ export const CONCEPTS_SQL_MORE2: Concept[] = [
     subject: "sql",
     chapter: "s-basic",
     title: "NULL 을 다루는 함수 — NVL·NVL2·NULLIF·COALESCE",
+    term: "NULL 관련 함수",
     summary:
       "NVL 은 NULL 일 때 대신 쓸 값을, NVL2 는 NULL 여부에 따라 서로 다른 값을, NULLIF 는 두 값이 같으면 NULL 을, COALESCE 는 여럿 중 처음 만나는 NULL 아닌 값을 돌려준다.",
     detail:
@@ -111,6 +113,7 @@ ORDER BY empno;`,
     subject: "sql",
     chapter: "s-basic",
     title: "연산자 우선순위와 문자열 붙이기",
+    term: "연산자 우선순위",
     summary:
       "괄호가 없으면 NOT → AND → OR 순으로 묶인다. 문자열은 || 로 잇는다.",
     detail:
@@ -143,6 +146,7 @@ FROM emp WHERE (deptno = 20 OR deptno = 30) AND sal >= 450;`,
     subject: "sql",
     chapter: "s-basic",
     title: "셀프 조인 — 같은 표를 두 번 부르기",
+    term: "셀프 조인",
     summary:
       "한 표 안에서 행끼리 이어야 할 때, 같은 표에 서로 다른 별칭을 붙여 두 표처럼 조인한다.",
     detail:
@@ -173,6 +177,7 @@ ORDER BY e.empno;`,
     subject: "sql",
     chapter: "s-basic",
     title: "WHERE 와 HAVING 은 거르는 시점이 다르다",
+    term: "WHERE 와 HAVING",
     summary:
       "WHERE 는 묶기 전에 행을 거르고, HAVING 은 묶은 뒤에 그룹을 거른다.",
     detail:
@@ -208,6 +213,7 @@ ORDER BY 1, 2;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "EXISTS·ANY·ALL — 있는지만 보거나, 하나라도·전부",
+    term: "EXISTS·ANY·ALL",
     summary:
       "EXISTS 는 행이 하나라도 있는지만 보고, ANY 는 여럿 중 하나라도 만족하면, ALL 은 전부 만족해야 참이다.",
     detail:
@@ -246,6 +252,7 @@ ORDER BY d.deptno;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "INTERSECT 와 MINUS — 겹치는 것, 빼는 것",
+    term: "INTERSECT 와 MINUS",
     summary:
       "INTERSECT 는 양쪽에 다 있는 행만, MINUS(EXCEPT)는 위쪽에만 있는 행만 남긴다. 둘 다 중복을 없애고 정렬한다.",
     detail:
@@ -284,6 +291,7 @@ ORDER BY deptno;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "행 사이를 넘겨다보는 함수 — LAG·LEAD·FIRST_VALUE",
+    term: "LAG·LEAD·FIRST_VALUE",
     summary:
       "LAG 는 앞 행, LEAD 는 뒷 행의 값을 끌어오고, FIRST_VALUE·LAST_VALUE 는 창 안의 첫 행·마지막 행 값을 준다.",
     detail:
@@ -323,6 +331,7 @@ ORDER BY sal DESC, empno;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "몫과 자리를 재는 함수 — NTILE·RATIO_TO_REPORT·비율 순위",
+    term: "NTILE 과 비율 함수",
     summary:
       "NTILE 은 몇 등분한 뒤 몇 번째 통인지, RATIO_TO_REPORT 는 전체 합에서 차지하는 비율, PERCENT_RANK·CUME_DIST 는 순위를 0~1 로 환산한 값이다.",
     detail:
@@ -361,6 +370,7 @@ ORDER BY sal DESC, empno;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "ROWNUM 과 ROW_NUMBER 는 매겨지는 때가 다르다",
+    term: "ROWNUM 과 ROW_NUMBER",
     summary:
       "ROWNUM 은 조건을 통과한 순서대로 먼저 붙고, ROW_NUMBER 는 정렬을 마친 뒤에 붙는다.",
     detail:
@@ -400,6 +410,7 @@ LIMIT 3;`,
     subject: "sql",
     chapter: "s-manage",
     title: "DELETE·TRUNCATE·DROP — 지우는 깊이가 다르다",
+    term: "DELETE·TRUNCATE·DROP",
     summary:
       "DELETE 는 행만 지우고 되돌릴 수 있으며, TRUNCATE 는 전부 비우되 표는 남기고 되돌릴 수 없으며, DROP 은 표 자체를 없앤다.",
     detail:
@@ -439,6 +450,7 @@ LIMIT 3;`,
     subject: "sql",
     chapter: "s-manage",
     title: "트랜잭션의 네 가지 성질",
+    term: "트랜잭션의 특성",
     summary:
       "원자성은 전부 되거나 전부 안 되는 것, 일관성은 규칙이 깨지지 않는 것, 고립성은 남의 중간 상태가 보이지 않는 것, 지속성은 커밋한 것이 남는 것이다.",
     detail:

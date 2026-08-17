@@ -12,6 +12,7 @@ export const CONCEPTS_SQL_MORE: Concept[] = [
     subject: "sql",
     chapter: "s-basic",
     title: "표준 조인 — NATURAL·USING·CROSS",
+    term: "표준 조인",
     summary:
       "NATURAL JOIN 은 같은 이름의 열로 알아서 잇고, USING 은 지정한 열로만 이으며, CROSS JOIN 은 조건 없이 모두 짝짓는다.",
     detail:
@@ -41,6 +42,7 @@ export const CONCEPTS_SQL_MORE: Concept[] = [
     subject: "sql",
     chapter: "s-basic",
     title: "CASE 와 DECODE — 조건에 따라 값을 바꾸기",
+    term: "CASE 와 DECODE",
     summary:
       "CASE 는 위에서부터 맞는 것을 찾아 멈춘다. 그래서 넓은 조건을 위에 두면 아래가 영영 걸리지 않는다.",
     detail:
@@ -80,6 +82,7 @@ FROM emp ORDER BY sal DESC;`,
     subject: "sql",
     chapter: "s-basic",
     title: "문자 함수 — SUBSTR·INSTR·REPLACE·TRIM",
+    term: "문자 함수",
     summary:
       "SUBSTR 은 잘라 내고, INSTR 은 위치를 찾고, REPLACE 는 바꾸고, TRIM 은 양끝을 다듬는다.",
     detail:
@@ -116,6 +119,7 @@ FROM emp ORDER BY sal DESC;`,
     subject: "sql",
     chapter: "s-basic",
     title: "날짜 다루기",
+    term: "날짜 함수",
     summary:
       "날짜끼리 빼면 일수가 나오고, 날짜에 숫자를 더하면 그만큼 뒤의 날짜가 된다.",
     detail:
@@ -142,6 +146,7 @@ FROM emp GROUP BY SUBSTR(hiredate, 1, 4) ORDER BY 1;`,
     subject: "sql",
     chapter: "s-manage",
     title: "제약조건 — 값이 들어오기 전에 막는다",
+    term: "제약조건",
     summary:
       "PRIMARY KEY·UNIQUE·NOT NULL·CHECK·FOREIGN KEY 로 잘못된 값이 아예 들어오지 못하게 한다.",
     detail:
@@ -165,6 +170,7 @@ FROM emp GROUP BY SUBSTR(hiredate, 1, 4) ORDER BY 1;`,
     subject: "sql",
     chapter: "s-manage",
     title: "인덱스 — 찾는 것은 빨라지고 넣는 것은 느려진다",
+    term: "인덱스",
     summary:
       "인덱스는 찾아보기다. 조회는 빨라지지만 INSERT·UPDATE·DELETE 때마다 함께 고쳐야 해 느려진다.",
     detail:
@@ -188,6 +194,7 @@ FROM emp GROUP BY SUBSTR(hiredate, 1, 4) ORDER BY 1;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "정규 표현식으로 찾기",
+    term: "정규 표현식",
     summary:
       "LIKE 로는 어려운 형태(숫자 세 자리, 특정 글자 반복)를 REGEXP_LIKE 로 찾는다.",
     detail:
@@ -209,6 +216,7 @@ FROM emp GROUP BY SUBSTR(hiredate, 1, 4) ORDER BY 1;`,
     subject: "sql",
     chapter: "s-basic",
     title: "집계 함수의 종류와 DISTINCT",
+    term: "집계 함수와 DISTINCT",
     summary:
       "SUM·AVG·MAX·MIN·COUNT 가 있고, 앞에 DISTINCT 를 붙이면 중복을 뺀 값으로 계산한다.",
     detail:
@@ -236,6 +244,7 @@ FROM emp WHERE deptno = 99;`,
     subject: "sql",
     chapter: "s-manage",
     title: "트랜잭션이 겹칠 때 생기는 문제",
+    term: "트랜잭션 격리 수준",
     summary:
       "Dirty Read 는 확정 안 된 값을 읽는 것, Non-Repeatable Read 는 같은 것을 두 번 읽었더니 값이 달라진 것, Phantom Read 는 행 수가 달라진 것이다.",
     detail:
@@ -259,6 +268,7 @@ FROM emp WHERE deptno = 99;`,
     subject: "sql",
     chapter: "s-advanced",
     title: "WITH 절 — 이름을 붙여 두고 쓰기",
+    term: "WITH 절",
     summary:
       "복잡한 인라인 뷰에 이름을 붙여 쿼리 앞으로 빼 두면 읽기 쉬워지고 여러 번 쓸 수 있다.",
     detail:

@@ -15,6 +15,7 @@ export const CONCEPTS_SQL_BASIC: Concept[] = [
     subject: "sql",
     chapter: "s-basic",
     title: "NULL — 값이 아니라 '모른다'",
+    term: "NULL",
     summary:
       "NULL 은 0 도 빈 문자열도 아니다. 어떤 연산을 해도 NULL 이고, 비교하면 참도 거짓도 아니다.",
     detail:
@@ -54,6 +55,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-basic",
     title: "SQL 이 실행되는 순서",
+    term: "SQL 실행 순서",
     summary:
       "FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. 쓰는 순서와 실행 순서가 다르다.",
     detail:
@@ -96,6 +98,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-basic",
     title: "WHERE 조건 — BETWEEN·IN·LIKE",
+    term: "WHERE 조건",
     summary:
       "BETWEEN 은 양 끝을 포함하고, IN 은 목록 중 하나, LIKE 는 %(여러 글자)와 _(한 글자)로 찾는다.",
     detail:
@@ -125,6 +128,7 @@ SELECT '결과 없음' FROM emp WHERE deptno NOT IN (10, NULL);`,
     subject: "sql",
     chapter: "s-basic",
     title: "단일행 함수와 형 변환",
+    term: "단일행 함수",
     summary:
       "단일행 함수는 행마다 하나씩 결과를 내고, 집계 함수는 여러 행을 묶어 하나를 낸다.",
     detail:
@@ -163,6 +167,7 @@ SELECT '결과 없음' FROM emp WHERE deptno NOT IN (10, NULL);`,
     subject: "sql",
     chapter: "s-basic",
     title: "GROUP BY 와 집계 함수",
+    term: "GROUP BY 와 집계 함수",
     summary:
       "GROUP BY 에 없는 열은 SELECT 에 그냥 쓸 수 없다. 집계 함수는 NULL 을 빼고 계산한다.",
     detail:
@@ -195,6 +200,7 @@ FROM emp;`,
     subject: "sql",
     chapter: "s-basic",
     title: "조인 — INNER 와 OUTER",
+    term: "INNER 조인과 OUTER 조인",
     summary:
       "INNER JOIN 은 양쪽에 다 있는 것만, LEFT OUTER JOIN 은 왼쪽은 다 남기고 오른쪽은 없으면 NULL 이다.",
     detail:
@@ -244,6 +250,7 @@ FROM emp e LEFT JOIN dept d ON e.deptno = d.deptno;`,
     subject: "sql",
     chapter: "s-basic",
     title: "ORDER BY 와 NULL 의 자리",
+    term: "ORDER BY",
     summary:
       "기본은 오름차순이고, NULL 이 어디에 놓이는지는 데이터베이스마다 다르다.",
     detail:
@@ -267,6 +274,7 @@ FROM emp e LEFT JOIN dept d ON e.deptno = d.deptno;`,
     subject: "sql",
     chapter: "s-basic",
     title: "관계형 데이터베이스와 키",
+    term: "관계형 데이터베이스와 키",
     summary:
       "기본키는 유일하고 NULL 이 아니며, 외래키는 다른 표의 기본키를 가리키되 NULL 일 수 있다.",
     detail:
