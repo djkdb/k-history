@@ -2,11 +2,17 @@ import type { Band, ReadingSet } from "@/lib/types";
 import { READING_PART5 } from "./reading-part5";
 import { READING_PART6 } from "./reading-part6";
 import { READING_PART7 } from "./reading-part7";
+import { READING_PART5_MORE } from "./reading-part5-more";
+import { READING_PART6_MORE } from "./reading-part6-more";
+import { READING_PART7_MORE } from "./reading-part7-more";
 
 export const READING: ReadingSet[] = [
   ...READING_PART5,
+  ...READING_PART5_MORE,
   ...READING_PART6,
+  ...READING_PART6_MORE,
   ...READING_PART7,
+  ...READING_PART7_MORE,
 ];
 
 export const READING_MAP: Record<string, ReadingSet> = Object.fromEntries(

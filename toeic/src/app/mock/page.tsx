@@ -2,7 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, Headphones, Info, Play, ScrollText, X } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  Headphones,
+  Info,
+  NotebookPen,
+  Play,
+  ScrollText,
+  X,
+} from "lucide-react";
 import { Badge, Button, Card, EmptyState, SectionTitle } from "@/components/ui";
 import { EXAMS, buildExam, type ExamId } from "@/lib/exam";
 import { SECTION_MINUTES } from "@/data/parts";
@@ -67,9 +76,16 @@ export default function MockHome() {
           <Info size={15} className="mt-0.5 shrink-0 text-zinc-400" />
           <p className="text-[12px] leading-relaxed text-zinc-400">
             실제 시험은 듣기 {SECTION_MINUTES.listening}분 100문항, 읽기{" "}
-            {SECTION_MINUTES.reading}분 100문항입니다. 여기 문항은 그보다 적으므로
-            <b className="text-zinc-300"> 문항당 시간을 실제와 같게 맞춰</b> 제한 시간을
-            줄였습니다. 쫓기는 감각은 같습니다.
+            {SECTION_MINUTES.reading}분 100문항입니다. 여기는{" "}
+            <b className="text-zinc-300">파트별 비율은 그대로 두고 분량만 절반</b>으로
+            줄였고, <b className="text-zinc-300">문항당 시간은 실제와 같게</b> 맞췄습니다.
+            쫓기는 감각은 같습니다.
+            <br />
+            <span className="mt-1 block">
+              모의고사만은 목표 점수대로 걸러 내지 않습니다. 실제 시험은 목표에 따라
+              쉬워지지 않고, 어려운 문항을 몇 개 버리고 갈지 정하는 것까지가 실력이기
+              때문입니다. 응시할 때마다 문항이 새로 뽑힙니다.
+            </span>
           </p>
         </div>
       </Card>
@@ -158,6 +174,12 @@ export default function MockHome() {
                   </span>
                 ))}
               </div>
+              <Link href={`/mock/note?at=${a.startedAt}`}>
+                <Button size="sm" variant="ghost" className="mt-3 w-full">
+                  <NotebookPen size={14} />
+                  오답 노트 ({a.total - a.correct}문항)
+                </Button>
+              </Link>
             </Card>
           ))}
         </div>

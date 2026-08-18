@@ -1,4 +1,7 @@
 import type { Band, ListeningSet } from "@/lib/types";
+import { LISTENING_P1 } from "./listening-p1";
+import { LISTENING_P2 } from "./listening-p2";
+import { LISTENING_P34 } from "./listening-p34";
 
 /**
  * 듣기 문항.
@@ -10,7 +13,7 @@ import type { Band, ListeningSet } from "@/lib/types";
  * 실제 시험과 다른 점이므로 화면에서도 그대로 밝힌다. 대신 이 파트의 진짜
  * 훈련 목표 — "들리는 명사에 낚이지 말고 동사와 태를 들어라" — 는 그대로 남는다.
  */
-export const LISTENING: ListeningSet[] = [
+const LISTENING_CORE: ListeningSet[] = [
   /* ─────────────────── Part 1 · 사진 묘사 ─────────────────── */
   {
     id: "l1-office-desk",
@@ -566,6 +569,18 @@ export const LISTENING: ListeningSet[] = [
       },
     ],
   },
+];
+
+/**
+ * 파트별 문항은 파일을 갈라 둔다. 한 파일에 다 넣으면 Part 2 하나만
+ * 손보려 해도 수천 줄을 스크롤해야 하고, 그러다 보면 손이 덜 가는 파트가
+ * 생긴다 — 실제로 Part 2·3 이 그렇게 얇아졌었다.
+ */
+export const LISTENING: ListeningSet[] = [
+  ...LISTENING_CORE,
+  ...LISTENING_P1,
+  ...LISTENING_P2,
+  ...LISTENING_P34,
 ];
 
 export const LISTENING_MAP: Record<string, ListeningSet> = Object.fromEntries(

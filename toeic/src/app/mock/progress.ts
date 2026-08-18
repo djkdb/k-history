@@ -10,7 +10,20 @@ import type { ExamId } from "@/lib/exam";
  */
 export const MOCK_PROGRESS_KEY = "toeic:mock-progress";
 
+/**
+ * 저장해 둔 답이 어느 판의 것인가.
+ *
+ * 답은 "몇 번째 문항에 몇 번을 골랐나"로 적힌다. 시험지를 뽑는 방식이
+ * 바뀌면 같은 seed 라도 다른 문항이 그 자리에 오고, 이어 풀 때 엉뚱한
+ * 문제에 내 답이 붙어 채점까지 어긋난다. 그래서 판이 바뀌면 풀던 것을
+ * 잇지 않는다.
+ * (학습 기록과는 다른 저장소다 — 어휘·복습 카드는 그대로 남는다)
+ */
+export const MOCK_FORMAT = 2;
+
 export interface MockProgress {
+  /** 이 답들이 어느 판에서 매겨졌는가 */
+  fmt?: number;
   examId: ExamId;
   band: number;
   seed: number;
@@ -27,6 +40,11 @@ export function readProgress(): MockProgress | null {
     const raw = localStorage.getItem(MOCK_PROGRESS_KEY);
     if (!raw) return null;
     const p = JSON.parse(raw) as MockProgress;
+    // 시험지를 뽑는 방식이 달라진 판의 답은 이어 쓸 수 없다
+    if (p?.fmt !== MOCK_FORMAT) {
+      localStorage.removeItem(MOCK_PROGRESS_KEY);
+      return null;
+    }
     if (!p || typeof p.seed !== "number" || !p.examId) return null;
     // 이미 시간이 다 된 것은 이어서 볼 수 없다
     if (p.endsAt <= Date.now()) return null;
@@ -38,7 +56,10 @@ export function readProgress(): MockProgress | null {
 
 export function writeProgress(p: MockProgress): void {
   try {
-    localStorage.setItem(MOCK_PROGRESS_KEY, JSON.stringify(p));
+    localStorage.setItem(
+      MOCK_PROGRESS_KEY,
+      JSON.stringify({ ...p, fmt: MOCK_FORMAT }),
+    );
   } catch {
     /* 용량 초과는 무시한다 — 시험은 계속 볼 수 있어야 한다 */
   }

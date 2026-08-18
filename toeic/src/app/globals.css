@@ -324,6 +324,9 @@ body {
 [data-theme="light"] .text-red-500 { color: #dc2626; }
 /* rose-200 은 옅은 분홍 판 위의 제목에 쓴다 — 밝은 화면에서는 판도 옅어져
    같은 색이면 글자가 배경에 묻힌다 */
+/* rose-100 은 거의 흰색에 가깝다. 밝은 화면의 옅은 분홍 판 위에 그대로
+   두면 글자가 판에 묻혀 읽히지 않는다. */
+[data-theme="light"] .text-rose-100 { color: #881337; }
 [data-theme="light"] .text-rose-200 { color: #9f1239; }
 [data-theme="light"] .text-rose-300 { color: #be123c; }
 [data-theme="light"] .text-amber-100 { color: #78350f; }

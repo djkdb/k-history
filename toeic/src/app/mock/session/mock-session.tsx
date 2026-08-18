@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Clock,
   ImageOff,
+  NotebookPen,
   Play,
   Square,
 } from "lucide-react";
@@ -37,7 +38,12 @@ import {
   supported,
 } from "@/lib/tts";
 import { cn, formatClock } from "@/lib/utils";
-import { clearProgress, readProgress, writeProgress } from "../progress";
+import {
+  MOCK_FORMAT,
+  clearProgress,
+  readProgress,
+  writeProgress,
+} from "../progress";
 
 export function MockSession() {
   const router = useRouter();
@@ -136,13 +142,18 @@ export function MockSession() {
       correct,
       total: exam.items.length,
       scaled: { listening: scaledLC, reading: scaledRC, total: scaledLC + scaledRC },
+      // 오답 노트가 나중에 이 시험지를 그대로 다시 펴 볼 수 있도록
+      seed,
+      qids: exam.items.map((it) => it.questionId),
+      fmt: MOCK_FORMAT,
+      wrongIds,
     };
 
     record(attempt, wrongIds);
     clearProgress();
     setSubmitted(true);
     window.scrollTo({ top: 0 });
-  }, [answers, exam, examId, record, startedAt]);
+  }, [answers, exam, examId, record, seed, startedAt]);
 
   // 남은 시간 — 끝나는 시각을 기준으로 세므로 앱을 닫아 두어도 흐른다
   useEffect(() => {
@@ -177,7 +188,14 @@ export function MockSession() {
   }
 
   if (submitted) {
-    return <Result exam={exam} answers={answers} onLeave={() => router.replace("/mock")} />;
+    return (
+      <Result
+        exam={exam}
+        answers={answers}
+        startedAt={startedAt}
+        onLeave={() => router.replace("/mock")}
+      />
+    );
   }
 
   const answered = Object.keys(answers).length;
@@ -557,10 +575,12 @@ function ReadingItem({
 function Result({
   exam,
   answers,
+  startedAt,
   onLeave,
 }: {
   exam: Exam;
   answers: Record<number, number>;
+  startedAt: number;
   onLeave: () => void;
 }) {
   const [showAll, setShowAll] = useState(false);
@@ -719,8 +739,17 @@ function Result({
       </p>
 
       <div className="mt-4 flex flex-col gap-2">
+        {/* 오답 노트는 며칠 뒤에 더 필요하다 — 여기서 나가도 남아 있다 */}
+        <Link href={`/mock/note?at=${startedAt}`}>
+          <Button size="lg" className="w-full">
+            <NotebookPen size={16} />
+            오답 노트 ({exam.items.length - stats.correct}문항)
+          </Button>
+        </Link>
         <Link href="/review?only=wrong">
-          <Button className="w-full">틀린 것 복습하기</Button>
+          <Button variant="ghost" className="w-full">
+            틀린 것 복습하기
+          </Button>
         </Link>
         <Button variant="ghost" className="w-full" onClick={onLeave}>
           모의고사 목록으로

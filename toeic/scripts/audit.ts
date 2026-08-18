@@ -23,7 +23,7 @@ import {
   LOCKED_GRAMMAR_IDS,
   LOCKED_QUESTION_IDS,
 } from "../src/data/locked-ids";
-import { buildExam, EXAMS } from "../src/lib/exam";
+import { BLUEPRINT, answerOf, buildExam, EXAMS } from "../src/lib/exam";
 import type { Band } from "../src/lib/types";
 
 const root = process.cwd();
@@ -134,8 +134,11 @@ for (const v of VOCAB) {
   // résumé 처럼 강세 부호가 붙은 말은 부호를 떼고 견준다
   const plain = (s: string) =>
     s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  const stem = plain(v.word).replace(/[^a-z ]/g, "").slice(0, 4);
-  if (stem.length >= 4 && !plain(v.example).includes(stem)) {
+  // 단어에서 떼어 낸 글자는 예문에서도 똑같이 떼고 견준다.
+  // 안 그러면 on-site 처럼 붙임표가 든 말이 "예문에 없다"고 잘못 걸린다.
+  const letters = (s: string) => plain(s).replace(/[^a-z ]/g, "");
+  const stem = letters(v.word).slice(0, 4);
+  if (stem.length >= 4 && !letters(v.example).includes(stem)) {
     fail(`어휘 ${v.id}: 예문에 "${v.word}" 가 보이지 않습니다 — ${v.example}`);
   }
   if (v.confusable) {
@@ -303,6 +306,114 @@ for (const band of [600, 700, 800, 900] as Band[]) {
     const ids = exam.items.map((i) => i.questionId);
     const d = dupes(ids);
     if (d.length) fail(`모의고사: ${e.name} 에 같은 문항이 두 번 나옵니다 — ${d.join(", ")}`);
+  }
+}
+
+// ── 8. 모의고사가 실제 시험을 닮았는가 ────────────────────────────
+// 여기까지는 "자료가 성한가"를 봤다. 아래는 "시험지가 시험 같은가"를 본다.
+// 이것이 어긋나면 앱이 멀쩡히 돌아가면서도 연습이 헛것이 된다.
+{
+  const REAL: Record<number, number> = { 1: 6, 2: 25, 3: 39, 4: 30, 5: 30, 6: 16, 7: 54 };
+
+  // (1) 설계표가 실제 시험의 비율을 따르는가 — 파트마다 ±25% 안
+  for (const [p, want] of Object.entries(BLUEPRINT)) {
+    const share = want / Object.values(BLUEPRINT).reduce((a, b) => a + b, 0);
+    const realShare = REAL[+p] / 200;
+    const off = Math.abs(share - realShare) / realShare;
+    if (off > 0.25) {
+      fail(
+        `모의고사 구성: Part ${p} 가 한 벌의 ${(share * 100).toFixed(1)}% 입니다 ` +
+          `(실제 시험은 ${(realShare * 100).toFixed(1)}%). 비율이 어긋나면 연습이 실전과 달라집니다.`,
+      );
+    }
+  }
+
+  // (2) 문제 은행이 한 벌을 채우고도 남는가 — 남지 않으면 매번 같은 시험지가 된다
+  for (const [p, want] of Object.entries(BLUEPRINT)) {
+    const pool = [...LISTENING, ...READING]
+      .filter((s) => s.part === +p)
+      .reduce((n, s) => n + s.questions.length, 0);
+    if (pool < want) {
+      fail(`문제 은행: Part ${p} 은 ${pool}문항뿐인데 한 벌에 ${want}문항이 필요합니다`);
+    } else if (pool < want * 1.5) {
+      notes.push(
+        `Part ${p} 은 ${pool}문항으로 한 벌(${want})의 ${(pool / want).toFixed(1)}배뿐입니다 — ` +
+          `다시 응시하면 겹치는 문항이 많아집니다`,
+      );
+    }
+  }
+
+  // (3) 응시할 때마다 시험지가 달라지는가
+  {
+    const a = buildExam("full", 900 as Band, 1).items.map((i) => i.questionId);
+    const b = buildExam("full", 900 as Band, 987_654).items.map((i) => i.questionId);
+    const setB = new Set(b);
+    const overlap = a.filter((id) => setB.has(id)).length / a.length;
+    if (overlap > 0.7) {
+      fail(
+        `모의고사: 다른 seed 인데 문항이 ${(overlap * 100).toFixed(0)}% 겹칩니다. ` +
+          `두 번째 응시가 답을 외운 시험지가 됩니다.`,
+      );
+    }
+    // 같은 seed 는 반드시 같은 시험지여야 한다 (이어 풀기·오답 노트가 여기에 기댄다)
+    const again = buildExam("full", 900 as Band, 1).items.map((i) => i.questionId);
+    if (again.join() !== a.join()) {
+      fail("모의고사: 같은 seed 인데 시험지가 달라집니다 — 이어 풀기와 오답 노트가 어긋납니다");
+    }
+  }
+
+  // (4) 정답이 한 자리에 몰려 있지 않은가
+  //     사람이 손으로 쓰면 정답이 (B)(C) 로 몰리기 쉽다. 몰리면 지문을 읽지
+  //     않고도 찍어서 맞는다.
+  {
+    const four: number[] = [];
+    const three: number[] = [];
+    for (const s of [...LISTENING, ...READING]) {
+      for (const q of s.questions) {
+        (q.choices.length === 3 ? three : four).push(q.answer);
+      }
+    }
+    const check = (list: number[], n: number, label: string) => {
+      if (list.length < 30) return;
+      for (let i = 0; i < n; i++) {
+        const share = list.filter((v) => v === i).length / list.length;
+        const even = 1 / n;
+        if (share < even * 0.6 || share > even * 1.6) {
+          fail(
+            `${label}: 정답이 ${"ABCD"[i]} 인 문항이 ${(share * 100).toFixed(0)}% 입니다 ` +
+              `(고르면 ${(even * 100).toFixed(0)}%). 한쪽으로 몰리면 찍어서 맞습니다.`,
+          );
+        }
+      }
+    };
+    check(four, 4, "4지선다");
+    check(three, 3, "3지선다 (Part 2)");
+  }
+
+  // (5) 한 벌이 실제 시험의 파트 순서대로 나오는가
+  {
+    const parts = buildExam("full", 900 as Band, 42).items.map((i) => i.part);
+    for (let i = 1; i < parts.length; i++) {
+      if (parts[i] < parts[i - 1]) {
+        fail("모의고사: 파트 순서가 뒤섞였습니다 — 실제 시험은 Part 1 부터 7 까지 차례로 나옵니다");
+        break;
+      }
+    }
+  }
+
+  // (6) 오답 노트가 시험지를 되살릴 수 있는가
+  //     저장하는 것은 seed 와 문항 id 뿐이다. 그것으로 같은 시험지가 나오지
+  //     않으면 노트가 엉뚱한 문제를 "당신이 틀린 문제"라고 내밀게 된다.
+  {
+    const made = buildExam("rc", 900 as Band, 24_601);
+    const qids = made.items.map((i) => i.questionId);
+    const again = buildExam("rc", 900 as Band, 24_601);
+    if (again.items.some((it, i) => it.questionId !== qids[i])) {
+      fail("오답 노트: 같은 seed 로 시험지를 되살리지 못합니다");
+    }
+    if (again.items.some((it, i) => answerOf(it) !== answerOf(made.items[i]))) {
+      fail("오답 노트: 되살린 시험지의 정답 번호가 달라집니다");
+    }
   }
 }
 
