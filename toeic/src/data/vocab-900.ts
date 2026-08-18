@@ -461,7 +461,7 @@ export const VOCAB_900: Vocab[] = [
     id: "v-notwithstanding",
     word: "notwithstanding",
     pos: "prep.",
-    meaning: "~에도 불구하고",
+    meaning: "~에도 불구하고(격식)",
     band: 900,
     topic: "general",
     example: "Notwithstanding the delay, the project stayed within budget.",

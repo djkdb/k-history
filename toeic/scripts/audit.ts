@@ -142,8 +142,11 @@ for (const v of VOCAB) {
   // 단어에서 떼어 낸 글자는 예문에서도 똑같이 떼고 견준다.
   // 안 그러면 on-site 처럼 붙임표가 든 말이 "예문에 없다"고 잘못 걸린다.
   const letters = (s: string) => plain(s).replace(/[^a-z ]/g, "");
+  // apply → applied 처럼 y 가 i 로 바뀌는 활용도 같은 말로 본다
   const stem = letters(v.word).slice(0, 4);
-  if (stem.length >= 4 && !letters(v.example).includes(stem)) {
+  const stemI = stem.replace(/y$/, "i");
+  const hay = letters(v.example);
+  if (stem.length >= 4 && !hay.includes(stem) && !hay.includes(stemI)) {
     fail(`어휘 ${v.id}: 예문에 "${v.word}" 가 보이지 않습니다 — ${v.example}`);
   }
   if (v.confusable) {
@@ -189,14 +192,20 @@ for (const [m, ids] of byMeaning) {
  * 다만 새로 쓰다가 실수로 어긋난 것과 구별이 안 되므로 눈에는 띄게 한다.
  */
 const mismatched = VOCAB.filter((v) => {
+  // -alt · -n · -v · -700 처럼 일부러 붙인 꼬리표는 어긋난 것이 아니다
+  if (/-(alt|n|v|adv|600|700|800|900)$/.test(v.id)) return false;
   const idPart = v.id.replace(/^v-/, "").replace(/-/g, "");
   const word = v.word.toLowerCase().replace(/[^a-z]/g, "");
   return !word.startsWith(idPart.slice(0, 4)) && !idPart.startsWith(word.slice(0, 4));
 });
 if (mismatched.length) {
   warn(
-    `id 와 낱말이 어긋난 어휘 ${mismatched.length}개: ` +
-      mismatched.map((v) => `${v.id}(${v.word})`).join(", "),
+    `id 와 낱말이 어긋난 어휘 ${mismatched.length}개 — ` +
+      mismatched
+        .slice(0, 8)
+        .map((v) => `${v.id}(${v.word})`)
+        .join(", ") +
+      (mismatched.length > 8 ? " …" : ""),
   );
 }
 
