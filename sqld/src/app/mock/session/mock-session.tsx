@@ -317,12 +317,12 @@ export function MockSession() {
 
       {q.passage && (
         <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-          q.passageIsSql ? (
+          {q.passageIsSql ? (
             // 쿼리는 적어 둔 줄바꿈과 들여쓰기를 그대로 지켜야 층이 보인다
             <SqlBlock>{q.passage}</SqlBlock>
           ) : (
             <p className="text-[14px] leading-[1.9] text-zinc-200">{q.passage}</p>
-          )
+          )}
         </div>
       )}
 

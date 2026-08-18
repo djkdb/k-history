@@ -410,13 +410,13 @@ function CheckQuestion({
 
       {question.passage && (
         <div className="mt-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-          question.passageIsSql ? (
+          {question.passageIsSql ? (
             <SqlBlock>{question.passage}</SqlBlock>
           ) : (
             <p className="text-[13.5px] leading-[1.85] text-zinc-200">
               {question.passage}
             </p>
-          )
+          )}
         </div>
       )}
 
