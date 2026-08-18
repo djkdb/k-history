@@ -209,7 +209,7 @@ export const VOCAB_700: Vocab[] = [
     id: "v-tentative",
     word: "tentative",
     pos: "adj.",
-    meaning: "잠정적인",
+    meaning: "잠정적인, 아직 확정되지 않은",
     band: 700,
     topic: "office",
     example: "The tentative schedule is subject to change.",

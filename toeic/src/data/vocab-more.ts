@@ -309,19 +309,19 @@ export const VOCAB_MORE: Vocab[] = [
   },
   {
     id: "v-thorough-adv",
-    word: "promptly",
+    word: "thoroughly",
     pos: "adv.",
-    meaning: "즉시; 정각에",
+    meaning: "빠짐없이, 철저히",
     band: 700,
     topic: "general",
-    example: "The session will begin promptly at nine.",
-    exampleKo: "행사는 9시 정각에 시작합니다.",
-    collocations: ["respond promptly", "promptly at + 시각"],
+    example: "All applications are reviewed thoroughly before the interview stage.",
+    exampleKo: "모든 지원서는 면접 단계 전에 빠짐없이 검토됩니다.",
+    collocations: ["thoroughly reviewed", "thoroughly inspected"],
     confusable: {
-      word: "prompt",
-      meaning: "신속한; 유도하다",
+      word: "thorough",
+      meaning: "철저한",
       difference:
-        "be 동사와 과거분사 사이는 늘 부사 자리다(were promptly distributed). Part 5 에서 가장 잘 알려진 자리다.",
+        "be 동사와 과거분사 사이는 늘 부사 자리다(are thoroughly reviewed). 형용사 thorough 는 명사 앞(a thorough review)에만 선다.",
     },
   },
   {
@@ -388,20 +388,26 @@ export const VOCAB_MORE: Vocab[] = [
     collocations: ["conditions deteriorate", "deterioration"],
   },
   {
+    /*
+     * id 는 in-lieu 지만 낱말은 notwithstanding 이다.
+     * 원래 in lieu of 가 들어 있었는데 v-in-lieu-of 와 글자 하나 다르지 않은
+     * 같은 낱말이라 한 목록에 두 번 나왔다. id 는 이미 내보낸 것이라
+     * 바꿀 수 없어(외운 표시가 이 id 를 가리킨다) 낱말만 바꿔 둔다.
+     */
     id: "v-in-lieu",
-    word: "in lieu of",
+    word: "pursuant to",
     pos: "prep.",
-    meaning: "~ 대신에",
+    meaning: "~에 따라, ~에 의거하여",
     band: 800,
     topic: "contract",
-    example: "Staff may take a day off in lieu of overtime pay.",
-    exampleKo: "직원은 초과근무 수당 대신 하루 휴가를 쓸 수 있습니다.",
-    collocations: ["in lieu of payment", "time off in lieu"],
+    example: "Pursuant to the agreement, the vendor must give thirty days' notice.",
+    exampleKo: "계약에 따라 공급업체는 30일 전에 통지해야 합니다.",
+    collocations: ["pursuant to the agreement", "pursuant to section 4"],
     confusable: {
-      word: "in light of",
-      meaning: "~을 고려하여",
+      word: "prior to",
+      meaning: "~에 앞서",
       difference:
-        "생김새가 비슷해 선택지에 함께 놓인다. lieu 는 '대신', light 는 '비추어 보아'다.",
+        "pursuant to 는 근거(무엇에 따라)를, prior to 는 시점(무엇보다 먼저)을 가리킨다. 빈칸 뒤가 계약·조항이면 pursuant to, 날짜·행사면 prior to 다.",
     },
   },
   {

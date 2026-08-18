@@ -55,7 +55,7 @@ function questionItems(): Item[] {
         back: answer ? `${answer.text} — ${answer.why}` : "",
         where: `Part ${set.part}`,
         band: q.band,
-        href: `/listen?set=${set.id}`,
+        href: `/part/${set.part}?set=${set.id}`,
       });
     }
   }

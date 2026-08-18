@@ -352,20 +352,26 @@ export const VOCAB_MORE2: Vocab[] = [
     collocations: ["reconcile accounts", "reconcile differences"],
   },
   {
+    /*
+     * id 는 forego 지만 낱말은 rescind 다.
+     * 원래 v-forgo 와 같은 낱말이 들어 있어 목록에 두 번 나왔다. id 는
+     * 이미 내보낸 것이라 바꿀 수 없어(외운 표시가 이 id 를 가리킨다)
+     * 낱말만 바꿔 둔다.
+     */
     id: "v-forego",
-    word: "waive off",
+    word: "rescind",
     pos: "v.",
-    meaning: "(요건을) 면해 주다",
+    meaning: "(결정·계약을) 철회하다, 취소하다",
     band: 800,
     topic: "contract",
-    example: "The bank agreed to waive the transfer fee for premium accounts.",
-    exampleKo: "은행은 프리미엄 계좌의 송금 수수료를 면제해 주기로 했습니다.",
-    collocations: ["waive a fee", "waive a requirement"],
+    example: "The board voted to rescind the earlier hiring freeze.",
+    exampleKo: "이사회는 앞서 내린 채용 동결을 철회하기로 의결했습니다.",
+    collocations: ["rescind an offer", "rescind a policy"],
     confusable: {
-      word: "wave",
-      meaning: "흔들다",
+      word: "revise",
+      meaning: "고치다",
       difference:
-        "소리가 같아 Part 2 에서 나란히 나온다. 수수료·요건 옆이면 waive 다.",
+        "rescind 는 있던 것을 통째로 없애는 것이고, revise 는 두고 고치는 것이다. 제안을 무르면 rescind, 조건을 손보면 revise 다.",
     },
   },
   {
@@ -502,7 +508,7 @@ export const VOCAB_MORE2: Vocab[] = [
     id: "v-provisional",
     word: "provisional",
     pos: "adj.",
-    meaning: "잠정적인",
+    meaning: "임시의, 정식 확정 전의",
     band: 900,
     topic: "contract",
     example: "The schedule is provisional until the venue confirms.",

@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -8,6 +9,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ClipboardCheck,
   Search,
   Volume2,
 } from "lucide-react";
@@ -90,6 +92,27 @@ function VocabScreen() {
         </p>
         <ProgressBar value={knownCount} max={all.length} color="#6366f1" className="mt-3" />
       </header>
+
+      {/*
+        카드만 넘기면 "다 아는 것 같은" 착각에 빠진다. 시험으로 건너가는
+        길을 목록 맨 위에 둔다 — 찾아 들어가야 하는 기능은 안 쓰인다.
+      */}
+      <Link href="/vocab/test" className="mt-4 block">
+        <Card className="border-indigo-500/30 bg-indigo-500/[0.08]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="flex items-center gap-1.5 text-[13px] font-bold text-indigo-200">
+                <ClipboardCheck size={15} />
+                어휘 시험 보기
+              </p>
+              <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-400">
+                뜻 고르기 · 단어 고르기 · 빈칸 채우기 — 떠오르는지 확인합니다.
+              </p>
+            </div>
+            <ChevronRight size={18} className="shrink-0 text-indigo-300" />
+          </div>
+        </Card>
+      </Link>
 
       <div className="mt-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5">
         <Search size={16} className="shrink-0 text-zinc-500" />

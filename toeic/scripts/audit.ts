@@ -34,6 +34,11 @@ function fail(msg: string) {
   problems.push(msg);
 }
 
+/** 막지는 않되 눈에는 띄게 — 사람이 보고 판단할 것 */
+function warn(msg: string) {
+  notes.push(msg);
+}
+
 // ── 1. 저장소 이름 잠금 ────────────────────────────────────────────
 // 바꾸는 순간 기존 사용자의 기록을 잃는다. 값 자체를 여기에 박아 둔다.
 const LOCKED_NAMES = [
@@ -147,6 +152,52 @@ for (const v of VOCAB) {
     if (v.confusable.word.trim() === v.word.trim())
       fail(`어휘 ${v.id}: 헷갈리는 짝이 자기 자신입니다`);
   }
+}
+
+/*
+ * 같은 낱말·같은 뜻이 두 번 들어 있으면 안 된다.
+ *
+ * 목록에 같은 낱말이 두 번 나오는 것만으로도 흉하지만, 진짜 문제는 어휘
+ * 시험이다. 뜻을 주고 낱말을 고르게 하는데 같은 뜻을 가진 낱말이 선택지에
+ * 나란히 서면 답이 둘이 된다. 실제로 v-forego(=v-forgo), v-in-lieu
+ * (=v-in-lieu-of), v-thorough-adv(=v-promptly) 가 그렇게 들어가 있었다.
+ */
+const byWord = new Map<string, string[]>();
+const byMeaning = new Map<string, string[]>();
+for (const v of VOCAB) {
+  const w = v.word.trim().toLowerCase();
+  const m = v.meaning.trim();
+  byWord.set(w, [...(byWord.get(w) ?? []), v.id]);
+  byMeaning.set(m, [...(byMeaning.get(m) ?? []), v.id]);
+}
+for (const [w, ids] of byWord) {
+  if (ids.length > 1) fail(`어휘: "${w}" 가 ${ids.length}번 들어 있습니다 — ${ids.join(", ")}`);
+}
+for (const [m, ids] of byMeaning) {
+  if (ids.length > 1)
+    fail(
+      `어휘: 뜻 "${m}" 이 ${ids.length}번 들어 있습니다 — ${ids.join(", ")}\n` +
+        `    뜻을 주고 낱말을 고르는 문제에서 답이 둘이 됩니다.`,
+    );
+}
+
+/*
+ * id 와 낱말이 어긋난 것도 짚어 준다.
+ *
+ * 막지는 않는다 — 한 번 내보낸 id 는 바꿀 수 없어서, 낱말만 갈아 끼운
+ * 자리가 실제로 있다(그런 자리에는 왜 그런지 주석을 달아 두었다).
+ * 다만 새로 쓰다가 실수로 어긋난 것과 구별이 안 되므로 눈에는 띄게 한다.
+ */
+const mismatched = VOCAB.filter((v) => {
+  const idPart = v.id.replace(/^v-/, "").replace(/-/g, "");
+  const word = v.word.toLowerCase().replace(/[^a-z]/g, "");
+  return !word.startsWith(idPart.slice(0, 4)) && !idPart.startsWith(word.slice(0, 4));
+});
+if (mismatched.length) {
+  warn(
+    `id 와 낱말이 어긋난 어휘 ${mismatched.length}개: ` +
+      mismatched.map((v) => `${v.id}(${v.word})`).join(", "),
+  );
 }
 
 // ── 5. 문법 ───────────────────────────────────────────────────────

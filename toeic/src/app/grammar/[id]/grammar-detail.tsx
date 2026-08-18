@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, EmptyState } from "@/components/ui";
 import { CATEGORY_LABEL, GRAMMAR_MAP } from "@/data/grammar";
-import { READING } from "@/data/reading";
+import { setsLinkedTo } from "@/data/reading";
 import { useApp } from "@/lib/store";
 import type { ReadingQuestion, ReadingSet } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -29,8 +29,7 @@ export function GrammarDetail({ id }: { id: string }) {
   const checks = useMemo(() => {
     if (!point) return [];
     const out: { set: ReadingSet; q: ReadingQuestion }[] = [];
-    for (const set of READING) {
-      if (!set.links?.includes(point.id)) continue;
+    for (const set of setsLinkedTo(point.id)) {
       for (const q of set.questions) out.push({ set, q });
     }
     return out;
