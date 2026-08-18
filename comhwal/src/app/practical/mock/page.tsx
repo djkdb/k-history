@@ -46,6 +46,7 @@ type Item =
 export default function PracticalMockPage() {
   const grade = useGrade();
   const recordMockAttempt = useApp((s) => s.recordMockAttempt);
+  const setExamRunning = useApp((s) => s.setExamRunning);
   const attempts = useApp((s) => s.mockAttempts);
 
   const limitMin = grade === 1 ? 45 : 30;
@@ -130,6 +131,16 @@ export default function PracticalMockPage() {
     recordMockAttempt(attempt, wrongIds);
   }, [submitted, items, grade0, grade, startedAt, recordMockAttempt]);
 
+  /*
+    시험을 보는 동안에만 탭바를 숨긴다.
+    시작 화면과 결과 화면에서는 그대로 둔다 — 거기서는 나가는 것이
+    사고가 아니라 다음 걸음이다.
+  */
+  useEffect(() => {
+    setExamRunning(Boolean(items) && !submitted);
+    return () => setExamRunning(false);
+  }, [items, submitted, setExamRunning]);
+
   // 시계 — 마감 시각을 들고 있어야 앱이 잠깐 멈춰도 되감기지 않는다
   useEffect(() => {
     if (!items || submitted) return;
@@ -186,6 +197,13 @@ export default function PracticalMockPage() {
           응시하기
           <ArrowRight size={17} />
         </Button>
+
+        <Link
+          href="/mock"
+          className="mt-3 block text-center text-[12px] text-zinc-500 hover:text-zinc-300"
+        >
+          필기 모의고사 보러 가기 →
+        </Link>
 
         {past.length > 0 && (
           <>

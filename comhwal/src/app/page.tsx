@@ -16,11 +16,11 @@ import {
   Sigma,
   Zap,
 } from "lucide-react";
-import { useApp } from "@/lib/store";
+import { useApp, usePractical } from "@/lib/store";
 import { SUBJECTS, SUBJECT_MAP, subjectsFor, subjectInk } from "@/data/subjects";
 import { conceptsFor } from "@/data/concepts";
-import { formulasFor } from "@/data/formulas";
-import { shortcutsFor } from "@/data/shortcuts";
+import { FORMULA_MAP, formulaTopics, formulasFor } from "@/data/formulas";
+import { SHORTCUT_MAP, shortcutsFor } from "@/data/shortcuts";
 import { dueCards, retentionRate } from "@/lib/srs";
 import { ThemeToggle } from "@/components/theme";
 import { InstallHint } from "@/components/install-hint";
@@ -56,6 +56,12 @@ export default function HomePage() {
   }, [hydrated, settings, router]);
 
   const grade = settings?.grade ?? 2;
+  /*
+    실기를 고른 사람에게도 이 화면은 필기 기준으로만 나왔다 — 고른 것이
+    부제 한 줄만 바꿨을 뿐이다. 아래에서 '무엇을 먼저 보여 줄지'를 이걸로
+    가른다. 반대쪽 내용도 그대로 있고, 눌러서 갈 수 있다.
+  */
+  const practical = usePractical();
 
   const totals = useMemo(() => {
     const concepts = conceptsFor(grade);
@@ -80,9 +86,25 @@ export default function HomePage() {
     return [...rest].sort((a, b) => b.importance - a.importance)[0];
   }, [grade, studiedIds]);
 
+  // 실기라면 개념이 아니라 '아직 못 맞힌 수식'을 이어서 준다
+  const nextFormula = useMemo(() => {
+    const rest = formulasFor(grade).filter((f) => !clearedFormulaIds.includes(f.id));
+    if (rest.length === 0) return null;
+    return [...rest].sort((a, b) => b.importance - a.importance)[0];
+  }, [grade, clearedFormulaIds]);
+
   const due = now ? dueCards(reviewCards, now).length : 0;
   const retention = now ? Math.round(retentionRate(reviewCards, now) * 100) : 0;
   const dday = settings?.examDate ? daysUntil(settings.examDate) : null;
+
+  /**
+   * 틀린 것 개수 — 준비 중인 시험 쪽만 센다.
+   * wrongIds 에는 개념·수식·단축키 id 가 섞여 있다.
+   */
+  const wrongCount = useMemo(() => {
+    if (!practical) return wrongIds.filter((id) => !FORMULA_MAP[id] && !SHORTCUT_MAP[id]).length;
+    return wrongIds.filter((id) => FORMULA_MAP[id] || SHORTCUT_MAP[id]).length;
+  }, [wrongIds, practical]);
 
   const recent = quizHistory.slice(-30);
   const accuracy = recent.length
@@ -190,12 +212,17 @@ export default function HomePage() {
       )}
 
       {/* 틀린 것만 다시 — 점수가 가장 빨리 오르는 자리라 눈에 띄게 둔다 */}
-      {wrongIds.length > 0 && (
-        <Link href="/quiz?mode=wrong" className="mt-2.5 block">
+      {/*
+        틀렸던 것.
+        실기 준비 중이면 개념 오답이 아니라 수식·단축키 오답을 센다 —
+        필기 퀴즈로 보내 봐야 지금 볼 것이 아니다.
+      */}
+      {wrongCount > 0 && (
+        <Link href={practical ? "/review?only=wrong" : "/quiz?mode=wrong"} className="mt-2.5 block">
           <div className="flex items-center justify-between rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 transition-transform active:scale-[0.99]">
             <div>
               <p className="text-sm font-bold text-rose-200">
-                틀렸던 것 {wrongIds.length}개
+                틀렸던 것 {wrongCount}개
               </p>
               <p className="mt-0.5 text-[11px] text-zinc-400">
                 맞히면 목록에서 빠집니다
@@ -212,27 +239,46 @@ export default function HomePage() {
         된다. 아직 안 본 것 중 가장 자주 나오는 것 하나를 골라 눌러만 두면
         되게 한다.
       */}
-      {nextUp && (
-        <Link href={`/concept/${nextUp.id}`} className="mt-2.5 block">
-          <div className="glass rounded-2xl p-4 transition-transform active:scale-[0.99]">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-indigo-300">
-                이어서 볼 개념
-              </span>
-              <ImportanceBadge importance={nextUp.importance} compact />
-            </div>
-            <p className="mt-1.5 text-[15px] font-bold leading-snug">
-              {nextUp.title}
-            </p>
-            <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-zinc-400">
-              {nextUp.summary}
-            </p>
-            <p className="mt-2 text-[11px] text-zinc-600">
-              {SUBJECT_MAP[nextUp.subject]?.name} · {nextUp.topic}
-            </p>
-          </div>
-        </Link>
-      )}
+      {practical
+        ? nextFormula && (
+            <Link href="/practical/formula" className="mt-2.5 block">
+              <div className="glass rounded-2xl p-4 transition-transform active:scale-[0.99]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-emerald-300">
+                    이어서 풀 수식
+                  </span>
+                  <ImportanceBadge importance={nextFormula.importance} compact />
+                </div>
+                <p className="mt-1.5 text-[15px] font-bold leading-snug">
+                  {nextFormula.prompt}
+                </p>
+                <p className="mt-2 text-[11px] text-zinc-600">
+                  {nextFormula.topic}
+                </p>
+              </div>
+            </Link>
+          )
+        : nextUp && (
+            <Link href={`/concept/${nextUp.id}`} className="mt-2.5 block">
+              <div className="glass rounded-2xl p-4 transition-transform active:scale-[0.99]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-indigo-300">
+                    이어서 볼 개념
+                  </span>
+                  <ImportanceBadge importance={nextUp.importance} compact />
+                </div>
+                <p className="mt-1.5 text-[15px] font-bold leading-snug">
+                  {nextUp.title}
+                </p>
+                <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-zinc-400">
+                  {nextUp.summary}
+                </p>
+                <p className="mt-2 text-[11px] text-zinc-600">
+                  {SUBJECT_MAP[nextUp.subject]?.name} · {nextUp.topic}
+                </p>
+              </div>
+            </Link>
+          )}
 
       {/*
         오늘 할 일(복습·오답·이어 볼 개념) 아래에 둔다.
@@ -241,59 +287,87 @@ export default function HomePage() {
       */}
       <InstallHint />
 
+      {/*
+        바로 시작.
+        네 칸의 내용은 같고 **순서만** 바뀐다. 실기를 준비하는 사람에게
+        첫 칸이 개념 학습이면, 정작 손을 풀어야 할 수식은 아래에 깔린다.
+        반대쪽도 그대로 두는 이유는 — 실기만 보는 사람도 개념을 아주 안
+        보지는 않기 때문이다. 순서만 바꾸고 없애지는 않는다.
+      */}
       <SectionTitle>바로 시작</SectionTitle>
       <div className="grid grid-cols-2 gap-2.5">
-        <QuickCard
-          href="/learn"
-          icon={<BookOpen size={18} />}
-          title="개념 학습"
-          desc={`${totals.studied} / ${totals.concepts}개`}
-          value={totals.studied}
-          max={totals.concepts}
-          color="#6366f1"
-        />
-        <QuickCard
-          href="/quiz"
-          icon={<Brain size={18} />}
-          title="필기 퀴즈"
-          desc={accuracy === null ? "아직 기록 없음" : `최근 정답률 ${accuracy}%`}
-          value={accuracy ?? 0}
-          max={100}
-          color="#8b5cf6"
-        />
-        <QuickCard
-          href="/practical/formula"
-          icon={<Sigma size={18} />}
-          title="함수 수식"
-          desc={`${totals.formulasDone} / ${totals.formulas}개`}
-          value={totals.formulasDone}
-          max={totals.formulas}
-          color="#10b981"
-        />
-        <QuickCard
-          href="/practical/shortcut"
-          icon={<Keyboard size={18} />}
-          title="단축키"
-          desc={`${totals.shortcutsDone} / ${totals.shortcuts}개`}
-          value={totals.shortcutsDone}
-          max={totals.shortcuts}
-          color="#f59e0b"
-        />
+        {(practical
+          ? ["formula", "shortcut", "concept", "quiz"]
+          : ["concept", "quiz", "formula", "shortcut"]
+        ).map((k) =>
+          k === "concept" ? (
+            <QuickCard
+              key={k}
+              href="/learn"
+              icon={<BookOpen size={18} />}
+              title="개념 학습"
+              desc={`${totals.studied} / ${totals.concepts}개`}
+              value={totals.studied}
+              max={totals.concepts}
+              color="#6366f1"
+            />
+          ) : k === "quiz" ? (
+            <QuickCard
+              key={k}
+              href="/quiz"
+              icon={<Brain size={18} />}
+              title="필기 퀴즈"
+              desc={accuracy === null ? "아직 기록 없음" : `최근 정답률 ${accuracy}%`}
+              value={accuracy ?? 0}
+              max={100}
+              color="#8b5cf6"
+            />
+          ) : k === "formula" ? (
+            <QuickCard
+              key={k}
+              href="/practical/formula"
+              icon={<Sigma size={18} />}
+              title="함수 수식"
+              desc={`${totals.formulasDone} / ${totals.formulas}개`}
+              value={totals.formulasDone}
+              max={totals.formulas}
+              color="#10b981"
+            />
+          ) : (
+            <QuickCard
+              key={k}
+              href="/practical/shortcut"
+              icon={<Keyboard size={18} />}
+              title="단축키"
+              desc={`${totals.shortcutsDone} / ${totals.shortcuts}개`}
+              value={totals.shortcutsDone}
+              max={totals.shortcuts}
+              color="#f59e0b"
+            />
+          ),
+        )}
       </div>
 
       <SectionTitle
         action={
           // 손가락으로 누르는 자리다 — 글자 높이만큼만 두면 너무 얇다
           <Link
-            href="/learn"
+            href={practical ? "/practical" : "/learn"}
             className="-mr-2 inline-flex items-center px-2 py-2 text-xs text-zinc-400 hover:text-zinc-200"
           >
             전체 보기
           </Link>
         }
       >
-        과목별 진도
+        {practical ? "갈래별 진도" : "과목별 진도"}
       </SectionTitle>
+      {practical ? (
+        <PracticalProgress
+          grade={grade}
+          clearedFormulaIds={clearedFormulaIds}
+          clearedShortcutIds={clearedShortcutIds}
+        />
+      ) : (
       <div className="flex flex-col gap-2.5">
         {SUBJECTS.map((s) => {
           const included = subjectsFor(grade).some((x) => x.id === s.id);
@@ -340,24 +414,41 @@ export default function HomePage() {
           );
         })}
       </div>
+      )}
 
       <SectionTitle>시험처럼 풀어 보기</SectionTitle>
       <Card>
         <div className="flex items-start gap-3">
-          <CalendarDays size={18} className="mt-0.5 shrink-0 text-indigo-300" />
+          {practical ? (
+            <Keyboard size={18} className="mt-0.5 shrink-0 text-emerald-300" />
+          ) : (
+            <CalendarDays size={18} className="mt-0.5 shrink-0 text-indigo-300" />
+          )}
           <div className="min-w-0">
-            <p className="text-sm font-bold">필기 모의고사</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-zinc-400">
-              {grade}급 기준 {subjectsFor(grade).length}과목 ×
-              20문항, 제한 시간 {subjectsFor(grade).length * 20}분.
-              한 과목이라도 40점 미만이면 과락이므로 과목별 점수까지 함께
-              보여 드립니다.
+            <p className="text-sm font-bold">
+              {practical ? "실기 모의고사" : "필기 모의고사"}
             </p>
-            <Link href="/mock">
+            <p className="mt-1 text-[13px] leading-relaxed text-zinc-400">
+              {practical
+                ? `수식 20문항과 단축키 10개를 ${grade === 1 ? 45 : 30}분 안에 풉니다. 실기 합격선은 70점이고 과락은 없습니다.`
+                : `${grade}급 기준 ${subjectsFor(grade).length}과목 × 20문항, 제한 시간 ${subjectsFor(grade).length * 20}분. 한 과목이라도 40점 미만이면 과락이므로 과목별 점수까지 함께 보여 드립니다.`}
+            </p>
+            <Link href={practical ? "/practical/mock" : "/mock"}>
               <Button size="sm" className="mt-3">
                 응시하기
                 <ArrowRight size={14} />
               </Button>
+            </Link>
+            {/*
+              반대쪽도 한 번은 봐야 한다 — 길을 열어 둔다.
+              손가락으로 누르는 자리라 글자 높이만큼만 두면 안 눌린다.
+              위아래로 여백을 줘서 누를 만한 크기를 만든다.
+            */}
+            <Link
+              href={practical ? "/mock" : "/practical/mock"}
+              className="-my-1 ml-3 inline-flex items-center py-3 text-[12px] text-zinc-500 hover:text-zinc-300"
+            >
+              {practical ? "필기 모의고사도 보기" : "실기 모의고사도 보기"} →
             </Link>
           </div>
         </div>
@@ -399,5 +490,92 @@ function QuickCard({
         <ProgressBar value={value} max={max} color={color} className="mt-3" />
       </div>
     </Link>
+  );
+}
+
+/**
+ * 실기 진도 — 수식은 갈래별로, 단축키는 한 줄로.
+ *
+ * 필기의 '과목별 진도'와 같은 자리에 놓인다. 실기에는 과목이 없고
+ * 대신 수식 갈래(찾기·조건·통계…)가 있어서, 그것으로 나눈다.
+ * 어느 갈래가 비어 있는지 보이면 오늘 뭘 풀지가 정해진다.
+ */
+function PracticalProgress({
+  grade,
+  clearedFormulaIds,
+  clearedShortcutIds,
+}: {
+  grade: 1 | 2;
+  clearedFormulaIds: string[];
+  clearedShortcutIds: string[];
+}) {
+  const rows = useMemo(() => {
+    const all = formulasFor(grade);
+    return formulaTopics(grade).map((topic) => {
+      const list = all.filter((f) => f.topic === topic);
+      return {
+        topic,
+        done: list.filter((f) => clearedFormulaIds.includes(f.id)).length,
+        total: list.length,
+      };
+    });
+  }, [grade, clearedFormulaIds]);
+
+  const sc = shortcutsFor(grade);
+  const scDone = sc.filter((s) => clearedShortcutIds.includes(s.id)).length;
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      {rows.map((r) => (
+        <Link key={r.topic} href="/practical/formula">
+          <Card>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Sigma size={16} className="text-emerald-300" />
+                <div>
+                  <p className="text-sm font-bold">{r.topic}</p>
+                  <p className="text-[11px] text-zinc-500">
+                    {r.done} / {r.total}개 맞힘
+                  </p>
+                </div>
+              </div>
+              <span className="text-sm font-bold text-emerald-300">
+                {r.total ? `${Math.round((r.done / r.total) * 100)}%` : "—"}
+              </span>
+            </div>
+            <ProgressBar
+              value={r.done}
+              max={r.total}
+              color="#10b981"
+              className="mt-3"
+            />
+          </Card>
+        </Link>
+      ))}
+      <Link href="/practical/shortcut">
+        <Card>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Keyboard size={16} className="text-amber-300" />
+              <div>
+                <p className="text-sm font-bold">단축키</p>
+                <p className="text-[11px] text-zinc-500">
+                  {scDone} / {sc.length}개 맞힘
+                </p>
+              </div>
+            </div>
+            <span className="text-sm font-bold text-amber-300">
+              {sc.length ? `${Math.round((scDone / sc.length) * 100)}%` : "—"}
+            </span>
+          </div>
+          <ProgressBar
+            value={scDone}
+            max={sc.length}
+            color="#f59e0b"
+            className="mt-3"
+          />
+        </Card>
+      </Link>
+    </div>
   );
 }

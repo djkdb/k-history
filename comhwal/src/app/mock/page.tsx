@@ -9,7 +9,7 @@ import {
   NotebookPen,
   TriangleAlert,
 } from "lucide-react";
-import { useApp, useGrade } from "@/lib/store";
+import { useApp, useGrade, usePractical } from "@/lib/store";
 import { SUBJECT_MAP, subjectsFor } from "@/data/subjects";
 import { Button, Card, EmptyState, SectionTitle } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ import { PROGRESS_KEY, readProgress, type MockProgress } from "./progress";
 
 export default function MockPage() {
   const grade = useGrade();
+  const practical = usePractical();
   // 실기 응시는 실기 화면에서 따로 보여 준다
   const attempts = useApp((s) => s.mockAttempts).filter((a) =>
     a.examId.endsWith("-written"),
@@ -37,6 +38,28 @@ export default function MockPage() {
         {grade}급 기준 {subjects.length}과목 × 20문항, 제한 시간 {total}분.
         실제 시험과 같은 구성입니다.
       </p>
+
+      {/*
+        실기를 준비 중인데 필기 시험지에 들어왔다면, 잘못 왔을 가능성이
+        크다. 막지는 않되 한 줄 띄워 준다.
+      */}
+      {practical && (
+        <Link href="/practical/mock" className="mt-4 block">
+          <Card className="border-emerald-500/30 bg-emerald-500/[0.08]">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[13px] font-bold text-emerald-200">
+                  실기를 준비하고 계시네요
+                </p>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-400">
+                  실기 모의고사는 수식 20문항 + 단축키 10개입니다.
+                </p>
+              </div>
+              <ArrowRight size={18} className="shrink-0 text-emerald-300" />
+            </div>
+          </Card>
+        </Link>
+      )}
 
       {resume && resume.grade === grade && (
         <Card className="mt-4 border-amber-500/30 bg-amber-500/[0.08]">
