@@ -1,4 +1,5 @@
 import type { Band, GrammarCategory, GrammarPoint } from "@/lib/types";
+import { GRAMMAR_MORE } from "./grammar-more";
 
 export const CATEGORY_LABEL: Record<GrammarCategory, string> = {
   pos: "품사 자리",
@@ -21,7 +22,7 @@ export const CATEGORY_LABEL: Record<GrammarCategory, string> = {
  * 그 차이가 Part 7 을 끝까지 풀 시간을 만든다. 그래서 항목마다
  * "시험지에서 어떤 모습으로 나오는지"와 "빈칸 앞뒤만 보는 요령"을 붙였다.
  */
-export const GRAMMAR: GrammarPoint[] = [
+const GRAMMAR_CORE: GrammarPoint[] = [
   /* ─────────────── 품사 자리 ─────────────── */
   {
     id: "g-pos-noun",
@@ -553,18 +554,41 @@ export const GRAMMAR: GrammarPoint[] = [
   },
 ];
 
+/**
+ * 갈래별로 파일을 갈라 둔다. 한 파일에 다 넣으면 한 갈래만 손보려 해도
+ * 수천 줄을 스크롤해야 하고, 그러다 보면 손이 덜 가는 갈래가 생긴다.
+ */
+export const GRAMMAR: GrammarPoint[] = [...GRAMMAR_CORE, ...GRAMMAR_MORE];
+
 export const GRAMMAR_MAP: Record<string, GrammarPoint> = Object.fromEntries(
   GRAMMAR.map((g) => [g.id, g]),
 );
 
+/**
+ * 목표 점수대에 드는 문법.
+ *
+ * 어휘와 달리 문법은 **잘라 내지 않는다.** 900점대 낱말은 600점 목표에
+ * 시간 낭비지만, 문법은 점수대와 상관없이 같은 규칙을 쓴다. 600을
+ * 노린다고 관계대명사를 아예 안 보는 것이 아니고, 실제로 Part 5 에서
+ * 그 문항을 만난다. 그래서 band 는 '차단'이 아니라 '먼저 볼 것'을
+ * 정하는 데만 쓴다.
+ *
+ * (이 함수는 목표 안쪽만 돌려준다 — 화면에서 그 뒤에 나머지를 이어 붙인다)
+ */
 export function grammarFor(band: Band): GrammarPoint[] {
   return GRAMMAR.filter((g) => g.band <= band);
 }
 
+/** 목표 점수대를 넘어서는 것들 — 먼저 볼 것 뒤에 이어 붙인다 */
+export function grammarBeyond(band: Band): GrammarPoint[] {
+  return GRAMMAR.filter((g) => g.band > band);
+}
+
 export function grammarByCategory(
   band: Band,
+  scope: "target" | "beyond" = "target",
 ): { category: GrammarCategory; items: GrammarPoint[] }[] {
-  const list = grammarFor(band);
+  const list = scope === "target" ? grammarFor(band) : grammarBeyond(band);
   const order = Object.keys(CATEGORY_LABEL) as GrammarCategory[];
   return order
     .map((category) => ({ category, items: list.filter((g) => g.category === category) }))
