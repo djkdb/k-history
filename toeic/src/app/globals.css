@@ -309,6 +309,27 @@ body {
    (WCAG AA 4.5:1 — 카드 배경 #f4f4f5 위에서 잰 값) */
 [data-theme="light"] .text-zinc-500 { color: #5b5b64; }
 [data-theme="light"] .text-zinc-600 { color: #67676f; }
+
+/*
+ * 어두운 테마의 흐린 회색 — 대비를 맞춘 값.
+ *
+ * Tailwind 의 zinc-500(#71717b)·zinc-600(#52525c)을 어두운 바탕에
+ * 그대로 쓰면 각각 3.6~4.1:1, 2.4~2.6:1 밖에 안 나온다. WCAG AA 는
+ * 작은 글자에 4.5:1 을 요구한다. 밝은 테마 쪽은 진작 손봐 두었는데
+ * (바로 위 줄들) 어두운 쪽은 기본값 그대로였다.
+ *
+ * 이 색으로 쓰이는 것이 대부분 "보조 설명" 이라 눈에 덜 띄어도 된다고
+ * 여기기 쉽지만, 복습 간격 안내나 문항 수처럼 정작 읽어야 하는 글이
+ * 여기 들어 있다.
+ *
+ * 값은 가장 밝은 바탕(차림표 #1a1a1e)에서도 4.5:1 을 넘도록 잡았다.
+ *   zinc-500 → 5.70~6.54:1
+ *   zinc-600 → 4.62~5.30:1
+ * 둘 사이의 층은 그대로 남는다.
+ */
+[data-theme="dark"] .text-zinc-500 { color: #93939d; }
+[data-theme="dark"] .text-zinc-600 { color: #83838d; }
+[data-theme="dark"] .hover\:text-zinc-300:hover { color: #d4d4d8; }
 [data-theme="light"] .hover\:text-zinc-200:hover,
 [data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }
 
