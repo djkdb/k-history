@@ -400,7 +400,7 @@ export function SqlBlock({ children, className }: { children: string; className?
   return (
     <pre
       className={cn(
-        "sql-block rounded-xl border border-white/10 bg-black/25 px-3.5 py-3 text-[12.5px] leading-[1.75] text-zinc-200",
+        "sql-block sql-surface rounded-xl border border-white/10 px-3.5 py-3 text-[12.5px] leading-[1.75] text-zinc-200",
         className,
       )}
     >

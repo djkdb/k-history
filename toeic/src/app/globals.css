@@ -377,3 +377,28 @@ body {
 [data-theme="light"] .on-dark .text-zinc-300 { color: #d4d4d8; }
 [data-theme="light"] .on-dark .text-zinc-400 { color: #a1a1aa; }
 [data-theme="light"] .on-dark .border-white\/20 { border-color: rgba(255, 255, 255, 0.2); }
+
+
+/*
+ * 밝은 테마에서 빠져 있던 글자색.
+ *
+ * 재정의 표에 zinc-200~600 은 있는데 zinc-100 이 없었다. zinc-100 은
+ * 본문에 쓰는 색이라, 밝은 테마에서 흰 바탕 위 흰 글자(#f4f4f5 on
+ * #ffffff, 1.10:1)가 되어 있었다. 하단 차림표의 지금 탭 이름이 사라진
+ * 것과 같은 종류의 빠짐이다 — 어두운 테마 기준 색이 그대로 남은 것.
+ *
+ * 이 색이 쓰인 자리는 모두 밝은 테마에서 밝아지는 바탕(카드, 옅게 깐
+ * 색 상자)이라 글자만 어둡게 하면 된다.
+ */
+[data-theme="light"] .text-zinc-100 { color: #18181b; }
+
+/*
+ * 옅은 색 이름표도 같은 빠짐이 있었다.
+ * 모두 bg-indigo-500/20 처럼 옅게 깐 상자 위에 놓이는 글자다 —
+ * 그 상자가 밝은 테마에서 연해지므로 글자는 진해져야 한다.
+ */
+[data-theme="light"] .text-indigo-50,
+[data-theme="light"] .text-indigo-100 { color: #312e81; }
+[data-theme="light"] .text-violet-100 { color: #4c1d95; }
+[data-theme="light"] .text-violet-200 { color: #5b21b6; }
+[data-theme="light"] .text-sky-200 { color: #075985; }

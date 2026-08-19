@@ -92,7 +92,7 @@ export function SqlRunner({
 
   return (
     <div className={cn("flex flex-col", compact ? "gap-2" : "gap-3")}>
-      <div className="overflow-hidden rounded-xl border border-white/12 bg-black/25">
+      <div className="sql-surface overflow-hidden rounded-xl border border-white/12">
         <textarea
           value={sql}
           onChange={(e) => setSql(e.target.value)}
