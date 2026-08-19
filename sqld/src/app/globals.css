@@ -177,6 +177,21 @@ body {
   막대 자체를 불투명하게 해도 옆과 아래 틈으로 글이 지나간다. 막대 위쪽에
   바탕색으로 녹아드는 띠를 깔아, 본문이 탭바에 닿기 전에 사라지게 한다.
 */
+/*
+ * 온보딩 아래에 붙는 시작 단추.
+ * 글이 그 밑으로 비쳐 지나가면 글자가 겹쳐 보이므로, 차림표와 같은
+ * 바탕을 깔고 위쪽만 부드럽게 흐린다.
+ */
+.onboard-cta {
+  background: linear-gradient(
+    to top,
+    var(--nav-bg) 0%,
+    var(--nav-bg) 65%,
+    transparent 100%
+  );
+  backdrop-filter: blur(12px);
+}
+
 .nav-shell {
   padding-top: 1.5rem;
   background: linear-gradient(

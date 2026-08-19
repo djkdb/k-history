@@ -374,6 +374,24 @@ export function questionsFor(c: Concept, all: Concept[] = CONCEPTS): QuizQuestio
 }
 
 /** 과목에 맞는 문제 은행 전체 */
+/**
+ * 한 회차에 나올 수 있는 문항 수의 웃돌이.
+ *
+ * 문제 은행의 크기(questionBank().length)와는 다르다. 한 개념에서
+ * 여러 유형을 만들 수 있지만 makeQuiz 는 한 회차에 같은 개념을 거듭
+ * 내지 않는다 — 앞 문제의 보기가 뒤 문제의 답이 되기 때문이다.
+ * 그래서 실제로 뽑히는 수는 **문제를 낼 수 있는 개념의 수**에 가깝다.
+ *
+ * 화면에 은행 크기를 적어 두었더니 실제의 두 배 넘는 숫자가 나왔다
+ * (261 이라고 적혀 있었지만 실제로는 107). 고를 수 있는 최대가 30
+ * 이라 기능이 깨지지는 않았지만, 적힌 숫자가 사실이 아니었다.
+ */
+export function quizConceptCount(subject?: SubjectId): number {
+  return CONCEPTS.filter(
+    (c) => (!subject || c.subject === subject) && questionsFor(c).length > 0,
+  ).length;
+}
+
 export function questionBank(subject?: SubjectId): QuizQuestion[] {
   const targets = subject ? CONCEPTS.filter((c) => c.subject === subject) : CONCEPTS;
   return [

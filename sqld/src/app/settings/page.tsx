@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, TriangleAlert } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { CONCEPTS } from "@/data/concepts";
@@ -10,6 +11,7 @@ import { ThemePicker } from "@/components/theme";
 import { Button, Card, SectionTitle } from "@/components/ui";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const hydrated = useApp((s) => s.hydrated);
   const settings = useApp((s) => s.settings);
   const setExamDate = useApp((s) => s.setExamDate);
@@ -26,6 +28,16 @@ export default function SettingsPage() {
   useEffect(() => {
     setDate(settings?.examDate ?? "");
   }, [settings?.examDate]);
+
+  /*
+   * 아직 시작하지 않은 사람이 이 화면으로 바로 들어올 수 있다 —
+   * 즐겨찾기, 남이 보내 준 주소, 브라우저 기록 지운 뒤 재방문.
+   * 홈은 온보딩으로 보내 주는데 여기에는 그 처리가 없어서, 저장된
+   * 설정이 없으면 "불러오는 중…" 에서 영영 끝나지 않았다.
+   */
+  useEffect(() => {
+    if (hydrated && !settings) router.replace("/onboarding");
+  }, [hydrated, settings, router]);
 
   if (!hydrated || !settings) {
     return (

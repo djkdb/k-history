@@ -35,7 +35,10 @@ export function BottomNav() {
               href={href}
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-[11px] transition-colors",
-                active ? "text-zinc-50" : "text-zinc-500 hover:text-zinc-300",
+                // 밝은 테마에서는 zinc-50 이 흰 막대 위의 흰 글자가 된다.
+                // 지금 있는 화면의 이름만 사라져, 어디에 있는지 알 수 없게 된다.
+                // text-fg 는 테마를 따라간다.
+                active ? "text-fg" : "text-zinc-500 hover:text-zinc-300",
               )}
             >
               <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />

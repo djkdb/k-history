@@ -194,13 +194,26 @@ export default function OnboardingPage() {
         </div>
       </section>
 
-      <Button size="lg" className="mt-6 w-full" onClick={start}>
-        시작하기
-        <ArrowRight size={18} />
-      </Button>
-      <p className="mt-2 text-center text-[11px] text-zinc-600">
-        시험일은 나중에 설정에서 바꿀 수 있습니다
-      </p>
+      {/*
+        시작 단추를 화면 아래에 붙여 둔다.
+
+        이 화면은 1700px 이 넘어서, 글 끝에만 두면 첫 화면에서 두 번을
+        더 내려야 시작할 수 있었다. 처음 들어온 사람이 가장 먼저 하고
+        싶은 일이 그것인데 말이다. 설명은 그대로 두고 단추만 따라다니게
+        한다. 아래 차림표는 이 화면에서 숨겨져 있어 겹칠 것이 없다.
+      */}
+      <div className="h-24" aria-hidden />
+      <div className="onboard-cta fixed inset-x-0 bottom-0 z-40 px-4 pb-safe">
+        <div className="mx-auto max-w-2xl pb-3 pt-3">
+          <Button size="lg" className="w-full" onClick={start}>
+            시작하기
+            <ArrowRight size={18} />
+          </Button>
+          <p className="mt-2 text-center text-[11px] text-zinc-600">
+            시험일은 나중에 설정에서 바꿀 수 있습니다
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

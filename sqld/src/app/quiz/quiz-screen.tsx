@@ -9,7 +9,7 @@ import { useApp } from "@/lib/store";
 import type { QuizQuestion, SubjectId } from "@/lib/types";
 import { SUBJECTS } from "@/data/exam";
 import { CONCEPT_MAP } from "@/data/concepts";
-import { makeQuiz, questionBank, QUIZ_TYPE_LABELS } from "@/lib/quiz";
+import { makeQuiz, quizConceptCount, QUIZ_TYPE_LABELS } from "@/lib/quiz";
 import {
   Button,
   Card,
@@ -56,8 +56,10 @@ export function QuizScreen() {
     setSaved(readQuizProgress());
   }, []);
 
-  const available = useMemo(
-    () => questionBank(subject ?? undefined).length,
+  // 문제 은행의 크기가 아니라 "문제를 낼 수 있는 개념의 수"다.
+  // 한 회차에 같은 개념을 거듭 내지 않으므로 이쪽이 실제에 맞는다.
+  const conceptCount = useMemo(
+    () => quizConceptCount(subject ?? undefined),
     [subject],
   );
 
@@ -133,8 +135,13 @@ export function QuizScreen() {
         <p className="mt-1 text-sm text-zinc-400">
           {onlyWrong
             ? `틀렸던 개념 ${wrongIds.length}개에서만 출제합니다`
-            : `${available}문항까지 만들 수 있습니다`}
+            : `개념 ${conceptCount}개에서 뽑습니다`}
         </p>
+        {!onlyWrong && count > conceptCount && (
+          <p className="mt-1 text-[12px] leading-relaxed text-zinc-500">
+            고른 문항 수가 개념 수보다 많아, 한 개념에서 두 문항까지 나옵니다.
+          </p>
+        )}
 
         {saved && (
           <Card className="mt-4 border-amber-500/30 bg-amber-500/[0.08]">
