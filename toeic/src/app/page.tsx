@@ -7,17 +7,17 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   BookA,
-  Brain,
   Flame,
   Headphones,
   RotateCcw,
   ScrollText,
   Settings as Cog,
+  Target,
   Timer,
 } from "lucide-react";
 import { Button, Card, ProgressBar, SectionTitle, StatCard } from "@/components/ui";
 import { useApp, useBand } from "@/lib/store";
-import { dueCards, retentionRate } from "@/lib/srs";
+import { dueCards } from "@/lib/srs";
 import { vocabFor } from "@/data/vocab";
 import { grammarFor } from "@/data/grammar";
 import { readingFor, countReadingQuestions } from "@/data/reading";
@@ -37,6 +37,7 @@ export default function Home() {
   const clearedQuestionIds = useApp((s) => s.clearedQuestionIds);
   const reviewCards = useApp((s) => s.reviewCards);
   const wrongIds = useApp((s) => s.wrongIds);
+  const mockAttempts = useApp((s) => s.mockAttempts);
   const band = useBand();
 
   // 설정이 없으면 첫 방문이다 — 안내부터 보여 준다
@@ -50,7 +51,53 @@ export default function Home() {
   const lcCount = useMemo(() => countListeningQuestions(listeningFor(band)), [band]);
 
   const due = useMemo(() => dueCards(reviewCards).length, [reviewCards]);
-  const retention = useMemo(() => retentionRate(reviewCards), [reviewCards]);
+
+  /*
+   * 최근 모의 점수.
+   *
+   * 이 자리에는 원래 '기억 보존율'이 있었다. 복습 카드가 얼마나 삭았는지를
+   * 지수 감쇠로 셈한 값인데, 앱을 열 때는 대개 복습이 밀려 있어서 늘 한 자리
+   * 숫자가 떴다 — 엿새를 이어 공부한 사람에게 "8%"를 보여 주는 셈이다.
+   * 게다가 그 값이 말하는 것("복습할 게 밀렸다")은 바로 아래 카드가 개수로
+   * 더 정확하게 말해 준다.
+   *
+   * 토익을 준비하는 사람이 매일 궁금해하는 것은 하나다 — 지금 몇 점쯤인가.
+   * 그래서 실제로 본 모의고사의 환산 점수를 그대로 보여 준다. 셈해서 지어낸
+   * '예상 점수'가 아니라 본인이 푼 결과다.
+   *
+   * 듣기만·읽기만 본 회차는 495점 만점짜리라, 990점처럼 보이지 않게 무엇을
+   * 본 것인지 함께 적는다.
+   */
+  const lastMock = useMemo(() => {
+    if (!mockAttempts.length) return null;
+    const a = mockAttempts[mockAttempts.length - 1];
+    const kind =
+      a.examId === "lc" ? "listening" : a.examId === "rc" ? "reading" : "full";
+    const score =
+      kind === "listening"
+        ? a.scaled.listening
+        : kind === "reading"
+          ? a.scaled.reading
+          : a.scaled.total;
+    // 같은 종류끼리만 견준다 — 듣기 회차와 전체 회차를 빼면 뜻이 없다
+    const prev = [...mockAttempts]
+      .slice(0, -1)
+      .reverse()
+      .find((x) => x.examId === a.examId);
+    const prevScore = prev
+      ? kind === "listening"
+        ? prev.scaled.listening
+        : kind === "reading"
+          ? prev.scaled.reading
+          : prev.scaled.total
+      : null;
+    return {
+      score,
+      max: kind === "full" ? 990 : 495,
+      name: kind === "listening" ? "듣기" : kind === "reading" ? "읽기" : "전체",
+      diff: prevScore === null ? null : score - prevScore,
+    };
+  }, [mockAttempts]);
 
   const knownHere = knownVocabIds.filter((id) => vocab.some((v) => v.id === id)).length;
   const grammarHere = studiedGrammarIds.filter((id) =>
@@ -110,12 +157,31 @@ export default function Home() {
           sub={stats.lastStudyDate ? `마지막 ${stats.lastStudyDate}` : "오늘 시작해 보세요"}
           icon={<Flame size={18} className="text-orange-400" />}
         />
-        <StatCard
-          label="기억 보존율"
-          value={`${Math.round(retention * 100)}%`}
-          sub={`복습 카드 ${reviewCards.length}장`}
-          icon={<Brain size={18} className="text-indigo-400" />}
-        />
+        {lastMock ? (
+          <Link href="/mock" className="contents">
+            <StatCard
+              label={`최근 모의 · ${lastMock.name}`}
+              value={`${lastMock.score}점`}
+              sub={
+                lastMock.diff === null
+                  ? `${lastMock.max}점 만점`
+                  : lastMock.diff === 0
+                    ? "지난번과 같습니다"
+                    : `지난번보다 ${lastMock.diff > 0 ? "+" : ""}${lastMock.diff}점`
+              }
+              icon={<Target size={18} className="text-indigo-400" />}
+            />
+          </Link>
+        ) : (
+          <Link href="/mock" className="contents">
+            <StatCard
+              label="모의 점수"
+              value="아직"
+              sub="한 번 보면 지금 위치가 나옵니다"
+              icon={<Target size={18} className="text-indigo-400" />}
+            />
+          </Link>
+        )}
       </div>
 
       {due > 0 && (
@@ -161,6 +227,13 @@ export default function Home() {
           </Link>
         </div>
       )}
+
+      <TodayPlan
+        left={left}
+        remaining={vocab.length - knownHere}
+        known={knownHere}
+        total={vocab.length}
+      />
 
       {/*
         오늘 할 일(복습·오답) 아래에 둔다. 공부하러 들어온 사람의 첫 화면을
@@ -307,6 +380,108 @@ function QuickCard({
         {max > 0 && (
           <ProgressBar value={value} max={max} color={color} className="mt-3" />
         )}
+      </Card>
+    </Link>
+  );
+}
+
+/**
+ * 오늘 얼마나 보면 되는지.
+ *
+ * 화면마다 "401개 중 46개" 같은 숫자는 있었지만, 그래서 **오늘** 몇 개를
+ * 보면 되는지는 어디에도 없었다. 남은 날짜와 남은 개수는 앱이 이미 알고
+ * 있으니 나눠 주기만 하면 된다. 시험공부에서 가장 자주 막히는 곳이
+ * "얼마나 해야 하지" 인데, 그 답을 사람이 매번 계산하게 두고 있었다.
+ *
+ * 나눠 본 값이 하루 60개를 넘으면 숫자를 들이밀지 않는다. 그 숫자는
+ * 계획이 아니라 압박이고, 그 지경이면 전부 훑는 것보다 자주 나오는 것부터
+ * 잡는 편이 낫다 — 시험 직전 모드가 하는 일이 그것이다.
+ */
+function TodayPlan({
+  left,
+  remaining,
+  known,
+  total,
+}: {
+  left: number | null;
+  remaining: number;
+  known: number;
+  total: number;
+}) {
+  // 한 바퀴 돌았으면 이제 확인할 차례다
+  if (remaining <= 0 && total > 0) {
+    return (
+      <Link href="/vocab/test" className="mt-3 block">
+        <Card className="border-indigo-500/25 bg-indigo-500/[0.07]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[15px] font-bold text-indigo-200">
+                어휘 {total}개를 한 바퀴 돌았습니다
+              </p>
+              <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-400">
+                이제 뜻만 주고 낱말이 떠오르는지 확인해 보세요
+              </p>
+            </div>
+            <ArrowRight size={18} className="shrink-0 text-indigo-300" />
+          </div>
+        </Card>
+      </Link>
+    );
+  }
+
+  if (left === null) {
+    return (
+      <Link href="/settings" className="mt-3 block">
+        <Card>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[14px] font-bold text-zinc-200">
+                시험일을 넣어 두시겠어요?
+              </p>
+              <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-500">
+                남은 날에 맞춰 하루 분량을 계산해 드립니다
+              </p>
+            </div>
+            <ArrowRight size={17} className="shrink-0 text-zinc-500" />
+          </div>
+        </Card>
+      </Link>
+    );
+  }
+
+  if (left <= 0) return null;
+
+  const perDay = Math.ceil(remaining / left);
+  const tooMuch = perDay > 60;
+
+  return (
+    <Link href={tooMuch ? "/cram" : "/vocab"} className="mt-3 block">
+      <Card>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            {tooMuch ? (
+              <>
+                <p className="text-[14px] font-bold text-zinc-200">
+                  남은 {left}일에 어휘 {remaining}개는 벅찹니다
+                </p>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-500">
+                  전부 훑는 대신 자주 나오는 것부터 — 시험 직전 모드로 가세요
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[14px] font-bold text-zinc-200">
+                  하루 어휘 {perDay}개면 시험 전에 한 바퀴
+                </p>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-zinc-500">
+                  {left}일 남았고 안 본 낱말이 {remaining}개
+                  {known > 0 && ` · 지금까지 ${known}개`}
+                </p>
+              </>
+            )}
+          </div>
+          <ArrowRight size={17} className="shrink-0 text-zinc-500" />
+        </div>
       </Card>
     </Link>
   );

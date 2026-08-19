@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import {
   ArrowLeftRight,
   Check,
@@ -83,6 +83,17 @@ function VocabScreen() {
     setAt((i) => Math.min(list.length - 1, Math.max(0, i + d)));
   };
 
+  /*
+   * 낱말을 넘기는 것은 이 앱에서 가장 많이 하는 동작이다. 401개를 한 장씩
+   * 보려면 단추를 400번 눌러야 한다. 손가락으로 밀어서도 넘어가게 둔다 —
+   * 종이 단어장을 넘기듯이. (단추는 그대로 남겨 둔다. 미는 동작을 모르는
+   * 사람도 있고, 마우스로 쓰는 사람도 있다.)
+   */
+  const onDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.x < -70) go(1);
+    else if (info.offset.x > 70) go(-1);
+  };
+
   return (
     <main className="py-6">
       <header>
@@ -160,11 +171,15 @@ function VocabScreen() {
           <AnimatePresence mode="wait">
             <motion.div
               key={current.id}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.6}
+              onDragEnd={onDragEnd}
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -16 }}
               transition={{ duration: 0.18 }}
-              className="mt-2"
+              className="mt-2 cursor-grab active:cursor-grabbing"
             >
               <VocabCard
                 vocab={current}
@@ -180,7 +195,11 @@ function VocabScreen() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="mt-4 flex items-center gap-2">
+          <p className="mt-2 text-center text-[11px] text-zinc-600">
+            좌우로 밀어서 넘길 수 있습니다
+          </p>
+
+          <div className="mt-2 flex items-center gap-2">
             <Button
               variant="ghost"
               className="flex-1"

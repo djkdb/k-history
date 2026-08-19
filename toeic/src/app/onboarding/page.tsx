@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, Check, Headphones, Info, Volume2 } from "lucide-react";
+import { ArrowRight, CalendarDays, Check, Headphones, Info, Volume2 } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { BANDS, type Band } from "@/lib/types";
 import { BAND_LABEL } from "@/data/parts";
@@ -22,6 +22,7 @@ export default function Onboarding() {
   const router = useRouter();
   const setSettings = useApp((s) => s.setSettings);
   const [band, setBand] = useState<Band>(700);
+  const [examDate, setExamDate] = useState("");
   const [voiceCount, setVoiceCount] = useState<number | null>(null);
 
   // 이 기기에 영어 음성이 있는지 미리 알아본다 — 없으면 시작하기 전에 알려야 한다
@@ -34,7 +35,7 @@ export default function Onboarding() {
   }, []);
 
   const start = () => {
-    setSettings({ band, examDate: null, speechRate: 1, showScript: false });
+    setSettings({ band, examDate: examDate || null, speechRate: 1, showScript: false });
     router.replace("/");
   };
 
@@ -116,6 +117,35 @@ export default function Onboarding() {
                 들려주고, 속도는 0.7~1.3배로 조절할 수 있습니다.
               </p>
             )}
+          </div>
+        </div>
+      </Card>
+
+      {/*
+        시험일.
+
+        그동안 이것을 묻지 않아 examDate 가 늘 null 로 시작했다. 그래서
+        새로 온 사람은 남은 날짜도, 하루에 얼마씩 봐야 하는지도 볼 수
+        없었고(둘 다 시험일이 있어야 셈이 된다), 시험 직전 모드도 켜지지
+        않았다. 설정 화면에 들어가야 넣을 수 있었는데, 그런 것은 아무도
+        찾아 들어가지 않는다. 한 번 물어보는 값이 세 가지를 살린다.
+      */}
+      <Card className="mt-6">
+        <div className="flex items-start gap-2.5">
+          <CalendarDays size={16} className="mt-0.5 shrink-0 text-indigo-300" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-bold text-zinc-200">시험일이 정해져 있나요?</p>
+            <input
+              type="date"
+              value={examDate}
+              onChange={(e) => setExamDate(e.target.value)}
+              aria-label="시험일"
+              className="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-[15px] text-zinc-100 outline-none focus:border-indigo-400/50"
+            />
+            <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
+              비워 두어도 됩니다. 넣어 두면 남은 날에 맞춰 하루 분량을 계산하고,
+              시험이 일주일 안으로 들어오면 직전 모드로 바꿔 드립니다.
+            </p>
           </div>
         </div>
       </Card>

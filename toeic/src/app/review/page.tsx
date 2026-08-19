@@ -159,7 +159,12 @@ function ReviewScreen() {
           {at + 1} / {queue.length}
         </span>
         <span>
-          {KIND_LABEL[item.kind]} · {item.where}
+          {/*
+            어휘·문법 항목은 kind 와 where 가 같은 말이라 "어휘 · 어휘" 로
+            찍혔다. 문항만 어디서 나온 것인지(Part 5 …)가 따로 있다.
+          */}
+          {KIND_LABEL[item.kind]}
+          {item.where && item.where !== KIND_LABEL[item.kind] && ` · ${item.where}`}
         </span>
       </div>
       <ProgressBar value={at} max={queue.length} color="#10b981" className="mt-2" />

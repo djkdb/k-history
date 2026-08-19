@@ -159,20 +159,51 @@ export default function MockHome() {
                     {a.scaled.total}
                     <span className="ml-0.5 text-[12px] font-medium text-zinc-500">점</span>
                   </p>
+                  {/*
+                    듣기만·읽기만 본 회차에 "LC 0 · RC 250" 이라고 적으면
+                    듣기를 0점 맞은 것처럼 읽힌다. 안 본 쪽은 적지 않는다.
+                  */}
                   <p className="mt-0.5 text-[11px] text-zinc-500">
-                    LC {a.scaled.listening} · RC {a.scaled.reading}
+                    {a.examId === "lc"
+                      ? "듣기 495점 만점"
+                      : a.examId === "rc"
+                        ? "읽기 495점 만점"
+                        : `LC ${a.scaled.listening} · RC ${a.scaled.reading}`}
                   </p>
                 </div>
               </div>
+              {/*
+                파트별 정답률만 보여 주고 끝내면 "그래서 뭘 해야 하지" 가
+                남는다. 눌러서 그 파트 훈련으로 바로 넘어가게 하고, 가장
+                낮은 파트는 표시해 둔다 — 시험이 끝난 직후가 그 파트를
+                다시 볼 마음이 가장 큰 때다.
+              */}
               <div className="mt-3 flex flex-wrap gap-1.5 border-t border-white/[0.07] pt-3">
-                {a.byPart.map((p) => (
-                  <span
-                    key={p.part}
-                    className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-zinc-300"
-                  >
-                    Part {p.part} {p.correct}/{p.total}
-                  </span>
-                ))}
+                {a.byPart.map((p) => {
+                  const rate = p.total ? p.correct / p.total : 1;
+                  const weakest =
+                    a.byPart.length > 1 &&
+                    p.total > 0 &&
+                    rate ===
+                      Math.min(
+                        ...a.byPart.filter((x) => x.total > 0).map((x) => x.correct / x.total),
+                      );
+                  return (
+                    <Link key={p.part} href={`/part/${p.part}`}>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] transition-colors",
+                          weakest
+                            ? "border-rose-500/40 bg-rose-500/10 text-rose-200 hover:bg-rose-500/15"
+                            : "border-white/10 bg-white/5 text-zinc-300 hover:bg-white/10",
+                        )}
+                      >
+                        Part {p.part} {p.correct}/{p.total}
+                        {weakest && <span className="font-bold">· 여기부터</span>}
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
               <Link href={`/mock/note?at=${a.startedAt}`}>
                 <Button size="sm" variant="ghost" className="mt-3 w-full">
