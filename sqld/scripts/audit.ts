@@ -502,6 +502,81 @@ async function runSqlChecks() {
 }
 
 runSqlChecks().then(({ ran, conceptQueries, sqlQuiz }) => {
+  /*
+   * 시험지 모양으로 벌려 놓았는가.
+   *
+   * 시험지의 SQL 은 절마다 줄을 바꿔 싣는다. 자료에 한 줄로 붙여 놓으면
+   * 실제 시험과 다르게 보일 뿐 아니라, 좁은 화면에서 아무 데서나 접혀
+   * 어디가 절의 시작인지 알 수 없게 된다. 실제로 모범 답안 26개 가운데
+   * 25개가 그렇게 붙어 있었다.
+   *
+   * 괄호 안(인라인 뷰·서브쿼리·CASE)은 세지 않는다. 그 안까지 벌리면
+   * 짧은 것이 층층이 갈라져 오히려 읽기 어렵다.
+   */
+  const CLAUSE_RE =
+    /\b(SELECT|FROM|WHERE|GROUP BY|ORDER BY|HAVING|UNION ALL|UNION|INTERSECT|EXCEPT|MINUS|VALUES|SET|LIMIT)\b/gi;
+
+  /**
+   * 괄호 안과 따옴표 안을 공백으로 지운 줄들.
+   *
+   * 괄호 깊이는 **문장 전체를 이어서** 세야 한다. 줄마다 따로 세면
+   * 앞 줄에서 열린 괄호를 못 보고, 인라인 뷰 안쪽을 "한 줄에 절이 셋"
+   * 이라고 잘못 짚는다.
+   */
+  function outsideByLine(sql: string): string[] {
+    const lines: string[] = [];
+    let cur = "";
+    let depth = 0;
+    let quote: string | null = null;
+    for (const ch of sql) {
+      if (ch === "\n") {
+        lines.push(cur);
+        cur = "";
+        continue;
+      }
+      if (quote) {
+        cur += " ";
+        if (ch === quote) quote = null;
+        continue;
+      }
+      if (ch === "'" || ch === '"') {
+        quote = ch;
+        cur += " ";
+        continue;
+      }
+      if (ch === "(") {
+        depth++;
+        cur += " ";
+        continue;
+      }
+      if (ch === ")") {
+        depth = Math.max(0, depth - 1);
+        cur += " ";
+        continue;
+      }
+      cur += depth > 0 ? " " : ch;
+    }
+    lines.push(cur);
+    return lines;
+  }
+
+  function checkLayout(where: string, sql: string) {
+    const raw = sql.split("\n");
+    outsideByLine(sql).forEach((line, i) => {
+      const hits = line.match(CLAUSE_RE) ?? [];
+      if (hits.length > 1) {
+        fail(
+          `${where}: 한 줄에 절이 ${hits.length}개 있습니다 (${hits.join(" · ")})\n` +
+            `    시험지는 절마다 줄을 바꿔 싣습니다 — ${(raw[i] ?? "").trim()}`,
+        );
+      }
+    });
+  }
+
+  for (const t of SQL_TASKS) checkLayout(`실습 ${t.id} 모범 답안`, t.answer);
+  for (const q of SQL_QUIZ) checkLayout(`결과 맞히기 ${q.id} 지문`, q.sql);
+  for (const c of CONCEPTS) if (c.sql) checkLayout(`개념 ${c.id} 곁들임 쿼리`, c.sql.query);
+
   console.log(
     `개념 ${CONCEPTS.length}개 · SQL 실습 ${SQL_TASKS.length}문항 · 문제 은행 ${bank.length}문항`,
   );

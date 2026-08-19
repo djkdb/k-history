@@ -74,7 +74,8 @@ export const CONCEPTS_SQL_MORE: Concept[] = [
             WHEN sal >= 300 THEN '중' ELSE '하' END AS "바른 순서",
        CASE WHEN sal >= 300 THEN '중'
             WHEN sal >= 500 THEN '상' ELSE '하' END AS "뒤집은 순서"
-FROM emp ORDER BY sal DESC;`,
+FROM emp
+ORDER BY sal DESC;`,
     },
   },
   {
@@ -138,7 +139,9 @@ FROM emp ORDER BY sal DESC;`,
     sql: {
       caption: "입사일에서 연도만 뽑아 세어 본다",
       query: `SELECT SUBSTR(hiredate, 1, 4) AS "입사 연도", COUNT(*) AS "인원"
-FROM emp GROUP BY SUBSTR(hiredate, 1, 4) ORDER BY 1;`,
+FROM emp
+GROUP BY SUBSTR(hiredate, 1, 4)
+ORDER BY 1;`,
     },
   },
   {
@@ -236,7 +239,8 @@ FROM emp GROUP BY SUBSTR(hiredate, 1, 4) ORDER BY 1;`,
     sql: {
       caption: "대상이 없을 때 COUNT 와 SUM 이 갈린다",
       query: `SELECT COUNT(*) AS "COUNT", SUM(sal) AS "SUM", MAX(sal) AS "MAX"
-FROM emp WHERE deptno = 99;`,
+FROM emp
+WHERE deptno = 99;`,
     },
   },
   {
@@ -292,7 +296,8 @@ FROM emp WHERE deptno = 99;`,
   SELECT deptno, AVG(sal) AS avg_sal FROM emp GROUP BY deptno
 )
 SELECT e.ename, e.sal, a.avg_sal
-FROM emp e JOIN avg_by_dept a ON a.deptno = e.deptno
+FROM emp e
+JOIN avg_by_dept a ON a.deptno = e.deptno
 WHERE e.sal > a.avg_sal
 ORDER BY e.ename;`,
     },

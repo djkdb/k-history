@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangle, Loader2, Play, RotateCcw, Table2 } from "lucide-react";
+import { AlertTriangle, Loader2, Play, RotateCcw, Table2, WrapText } from "lucide-react";
 import { Button } from "@/components/ui";
 import { TABLES } from "@/data/schema";
+import { formatSqlScript } from "@/lib/sql-format";
 import { compare, expectedOf, reset, run, warmUp, type QueryResult } from "@/lib/sqlite";
 import { cn } from "@/lib/utils";
 
@@ -108,6 +109,19 @@ export function SqlRunner({
         <Button onClick={execute} disabled={!ready || busy} className="flex-1">
           {busy ? <Loader2 size={15} className="animate-spin" /> : <Play size={15} />}
           {ready ? "실행하기" : "SQL 엔진 준비 중…"}
+        </Button>
+        {/*
+          한 줄로 길게 친 쿼리를 시험지 모양으로 벌려 준다.
+          좁은 화면에서 한 줄짜리는 아무 데서나 접혀 어디가 절의 시작인지
+          알아볼 수가 없다. 시험지는 절마다 줄을 바꿔 싣는다.
+        */}
+        <Button
+          variant="ghost"
+          onClick={() => setSql((v) => formatSqlScript(v))}
+          disabled={!sql.trim() || sql.includes("\n")}
+          aria-label="절마다 줄 바꿔 정리하기"
+        >
+          <WrapText size={15} />
         </Button>
         <Button
           variant="ghost"

@@ -220,7 +220,8 @@ export const CONCEPTS_MODELING_MORE: Concept[] = [
       caption:
         "관계선이 그대로 조인 조건이 된다. 부서 한 줄이 사원 수만큼 늘어나는 것을 확인해 보자.",
       query: `SELECT d.dname, e.ename
-FROM dept d JOIN emp e ON d.deptno = e.deptno
+FROM dept d
+JOIN emp e ON d.deptno = e.deptno
 ORDER BY d.deptno, e.empno;`,
     },
   },

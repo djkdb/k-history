@@ -43,6 +43,10 @@ export function Button({
   onClick,
   children,
   type = "button",
+  // 아이콘만 있는 단추는 이름이 없다. 그동안 aria-label 을 넘겨도
+  // 여기서 받지 않아 조용히 버려지고 있었다 — 화면 낭독기에는 그냥
+  // "단추" 라고만 읽혔다.
+  "aria-label": ariaLabel,
 }: {
   variant?: "primary" | "ghost" | "outline" | "danger";
   size?: "sm" | "md" | "lg";
@@ -51,6 +55,7 @@ export function Button({
   onClick?: () => void;
   children: ReactNode;
   type?: "button" | "submit";
+  "aria-label"?: string;
 }) {
   const variants = {
     primary:
@@ -73,6 +78,7 @@ export function Button({
       type={type}
       disabled={disabled}
       onClick={onClick}
+      aria-label={ariaLabel}
       className={cn(
         "inline-flex items-center justify-center gap-2 font-medium transition-all active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none",
         variants[variant],

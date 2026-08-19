@@ -42,10 +42,12 @@ export const CONCEPTS_SQL_ADVANCED: Concept[] = [
     sql: {
       caption: "ANY 와 ALL 을 나란히 — 어느 쪽이 더 많이 걸리는가",
       query: `SELECT '> ANY (10,20,30)' AS 조건, COUNT(*) AS 건수
-FROM emp WHERE sal > (SELECT MIN(x) FROM (SELECT 1000 AS x UNION SELECT 2000 UNION SELECT 3000))
+FROM emp
+WHERE sal > (SELECT MIN(x) FROM (SELECT 1000 AS x UNION SELECT 2000 UNION SELECT 3000))
 UNION ALL
 SELECT '> ALL (10,20,30)', COUNT(*)
-FROM emp WHERE sal > (SELECT MAX(x) FROM (SELECT 1000 AS x UNION SELECT 2000 UNION SELECT 3000));`,
+FROM emp
+WHERE sal > (SELECT MAX(x) FROM (SELECT 1000 AS x UNION SELECT 2000 UNION SELECT 3000));`,
     },
   },
   {
@@ -107,11 +109,13 @@ ORDER BY e.ename;`,
     ],
     sql: {
       caption: "중복이 있을 때 둘의 행 수가 갈린다",
-      query: `SELECT 'UNION' AS 연산, COUNT(*) AS 행수 FROM (
+      query: `SELECT 'UNION' AS 연산, COUNT(*) AS 행수
+FROM (
   SELECT deptno FROM emp UNION SELECT deptno FROM emp
 )
 UNION ALL
-SELECT 'UNION ALL', COUNT(*) FROM (
+SELECT 'UNION ALL', COUNT(*)
+FROM (
   SELECT deptno FROM emp UNION ALL SELECT deptno FROM emp
 );`,
     },
@@ -205,9 +209,11 @@ ORDER BY sal DESC;`,
     ],
     sql: {
       caption: "정렬한 뒤에 자른 상위 3명",
-      query: `SELECT ename, sal FROM (
+      query: `SELECT ename, sal
+FROM (
   SELECT ename, sal FROM emp ORDER BY sal DESC
-) LIMIT 3;`,
+)
+LIMIT 3;`,
     },
   },
   {
@@ -241,7 +247,9 @@ ORDER BY sal DESC;`,
   SELECT e.empno, e.ename, e.mgr, t.lvl + 1
   FROM emp e JOIN t ON e.mgr = t.empno
 )
-SELECT lvl AS "층", ename AS "이름" FROM t ORDER BY lvl, ename;`,
+SELECT lvl AS "층", ename AS "이름"
+FROM t
+ORDER BY lvl, ename;`,
     },
   },
   {

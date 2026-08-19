@@ -51,7 +51,9 @@ export const SQL_QUIZ: SqlQuizItem[] = [
     subject: "sql",
     chapter: "s-basic",
     question: "다음 SQL 의 실행 결과로 알맞은 것은?",
-    sql: "SELECT COUNT(*) FROM emp WHERE bonus = NULL;",
+    sql: `SELECT COUNT(*)
+FROM emp
+WHERE bonus = NULL;`,
     check: "cell",
     answer: "0",
     wrong: ["4", "10", "오류가 발생한다"],
@@ -65,7 +67,8 @@ export const SQL_QUIZ: SqlQuizItem[] = [
     subject: "sql",
     chapter: "s-basic",
     question: "다음 SQL 로 조회했을 때, total 이 NULL 로 나오는 행은 몇 개인가?",
-    sql: "SELECT ename, sal + bonus AS total FROM emp;",
+    sql: `SELECT ename, sal + bonus AS total
+FROM emp;`,
     verify: "SELECT COUNT(*) FROM emp WHERE sal + bonus IS NULL;",
     check: "cell",
     answer: "4개",
@@ -80,7 +83,8 @@ export const SQL_QUIZ: SqlQuizItem[] = [
     subject: "sql",
     chapter: "s-basic",
     question: "다음 SQL 의 실행 결과로 알맞은 것은?",
-    sql: "SELECT COUNT(*), COUNT(bonus) FROM emp;",
+    sql: `SELECT COUNT(*), COUNT(bonus)
+FROM emp;`,
     check: "list",
     answer: "10, 6",
     wrong: ["10, 10", "6, 6", "6, 10"],
@@ -95,9 +99,11 @@ export const SQL_QUIZ: SqlQuizItem[] = [
     chapter: "s-basic",
     question: "다음 SQL 을 실행했을 때 '감사' 부서의 값으로 알맞은 것은?",
     sql: `SELECT d.dname, COUNT(*) AS cnt
-FROM dept d LEFT JOIN emp e ON d.deptno = e.deptno
+FROM dept d
+LEFT JOIN emp e ON d.deptno = e.deptno
 GROUP BY d.dname;`,
-    verify: `SELECT COUNT(*) FROM dept d LEFT JOIN emp e ON d.deptno = e.deptno
+    verify: `SELECT COUNT(*) FROM dept d
+LEFT JOIN emp e ON d.deptno = e.deptno
 WHERE d.dname = '감사';`,
     check: "cell",
     answer: "1 — 사원이 없는데도 1로 세어진다",
@@ -116,7 +122,11 @@ WHERE d.dname = '감사';`,
     subject: "sql",
     chapter: "s-basic",
     question: "다음 SQL 의 실행 결과로 알맞은 것은?",
-    sql: "SELECT COUNT(*) FROM emp WHERE deptno = 20 OR deptno = 30 AND sal >= 450;",
+    sql: `SELECT COUNT(*)
+FROM emp
+WHERE deptno = 20
+  OR deptno = 30
+  AND sal >= 450;`,
     check: "cell",
     answer: "6",
     wrong: ["3", "4", "8"],
@@ -130,7 +140,8 @@ WHERE d.dname = '감사';`,
     subject: "sql",
     chapter: "s-advanced",
     question: "다음 SQL 을 실행했을 때, 급여가 세 번째로 높은 사람들의 순위 값은?",
-    sql: "SELECT ename, sal, RANK() OVER (ORDER BY sal DESC) AS rnk FROM emp;",
+    sql: `SELECT ename, sal, RANK() OVER (ORDER BY sal DESC) AS rnk
+FROM emp;`,
     verify: `SELECT rnk FROM (
   SELECT sal, RANK() OVER (ORDER BY sal DESC) AS rnk FROM emp
 ) WHERE sal = 600 LIMIT 1;`,
@@ -168,9 +179,13 @@ HAVING COUNT(*) >= 4;`,
     subject: "sql",
     chapter: "s-advanced",
     question: "다음 SQL 의 실행 결과로 알맞은 것은?",
-    sql: `SELECT deptno FROM emp WHERE sal >= 600
+    sql: `SELECT deptno
+FROM emp
+WHERE sal >= 600
 UNION
-SELECT deptno FROM emp WHERE bonus >= 100;`,
+SELECT deptno
+FROM emp
+WHERE bonus >= 100;`,
     check: "rows",
     answer: "3행",
     wrong: ["5행", "6행", "2행"],
@@ -185,7 +200,8 @@ SELECT deptno FROM emp WHERE bonus >= 100;`,
     chapter: "s-basic",
     question: "다음 SQL 의 실행 결과 행 수로 알맞은 것은?",
     sql: `SELECT e.ename, m.ename AS mgr_name
-FROM emp e JOIN emp m ON e.mgr = m.empno;`,
+FROM emp e
+JOIN emp m ON e.mgr = m.empno;`,
     check: "rows",
     answer: "9행",
     wrong: ["10행", "8행", "100행"],
@@ -199,7 +215,8 @@ FROM emp e JOIN emp m ON e.mgr = m.empno;`,
     subject: "sql",
     chapter: "s-basic",
     question: "다음 SQL 의 실행 결과로 알맞은 것은?",
-    sql: "SELECT SUM(bonus), COUNT(bonus), AVG(bonus) FROM emp;",
+    sql: `SELECT SUM(bonus), COUNT(bonus), AVG(bonus)
+FROM emp;`,
     check: "list",
     answer: "400, 6, 66.67 — 분모가 10이 아니라 6이다",
     wrong: [
@@ -217,7 +234,8 @@ FROM emp e JOIN emp m ON e.mgr = m.empno;`,
     subject: "sql",
     chapter: "s-advanced",
     question: "다음 SQL 의 실행 결과로 알맞은 것은?",
-    sql: `SELECT COUNT(*) FROM emp
+    sql: `SELECT COUNT(*)
+FROM emp
 WHERE empno NOT IN (SELECT mgr FROM emp);`,
     check: "cell",
     answer: "0",

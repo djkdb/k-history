@@ -135,10 +135,12 @@ ORDER BY empno;`,
       caption:
         "괄호 하나로 결과가 갈린다. 두 줄의 행 수가 왜 다른지 직접 세어 보자.",
       query: `SELECT '괄호 없음' AS 구분, COUNT(*) AS 행수
-FROM emp WHERE deptno = 20 OR deptno = 30 AND sal >= 450
+FROM emp
+WHERE deptno = 20 OR deptno = 30 AND sal >= 450
 UNION ALL
 SELECT '괄호 있음', COUNT(*)
-FROM emp WHERE (deptno = 20 OR deptno = 30) AND sal >= 450;`,
+FROM emp
+WHERE (deptno = 20 OR deptno = 30) AND sal >= 450;`,
     },
   },
   {
@@ -168,7 +170,9 @@ FROM emp WHERE (deptno = 20 OR deptno = 30) AND sal >= 450;`,
       caption:
         "사원 옆에 관리자 이름을 붙인다. INNER 로 바꾸면 대표 한 명이 사라지는 것도 확인해 보자.",
       query: `SELECT e.ename AS 사원, m.ename AS 관리자
-FROM emp e LEFT JOIN emp m ON e.mgr = m.empno
+FROM emp e
+LEFT
+JOIN emp m ON e.mgr = m.empno
 ORDER BY e.empno;`,
     },
   },
@@ -199,10 +203,14 @@ ORDER BY e.empno;`,
       caption:
         "같은 450 이라는 숫자를 WHERE 에 둘 때와 HAVING 에 둘 때 부서별 인원이 어떻게 달라지는지 본다.",
       query: `SELECT 'WHERE 로 먼저' AS 방식, deptno, COUNT(*) AS 인원
-FROM emp WHERE sal >= 450 GROUP BY deptno
+FROM emp
+WHERE sal >= 450
+GROUP BY deptno
 UNION ALL
 SELECT 'HAVING 으로 나중', deptno, COUNT(*)
-FROM emp GROUP BY deptno HAVING AVG(sal) >= 450
+FROM emp
+GROUP BY deptno
+HAVING AVG(sal) >= 450
 ORDER BY 1, 2;`,
     },
   },
@@ -280,9 +288,12 @@ ORDER BY d.deptno;`,
     sql: {
       caption:
         "부서를 가진 사원의 부서 번호에서, 급여 400 이상인 사원의 부서를 빼 본다.",
-      query: `SELECT deptno FROM emp
+      query: `SELECT deptno
+FROM emp
 EXCEPT
-SELECT deptno FROM emp WHERE sal >= 400
+SELECT deptno
+FROM emp
+WHERE sal >= 400
 ORDER BY deptno;`,
     },
   },

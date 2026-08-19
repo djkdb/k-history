@@ -118,9 +118,13 @@ FROM emp;`,
     ],
     sql: {
       caption: "NOT IN 에 NULL 이 섞이면 결과가 사라진다",
-      query: `SELECT '결과 있음' AS a FROM emp WHERE deptno IN (10, 20)
+      query: `SELECT '결과 있음' AS a
+FROM emp
+WHERE deptno IN (10, 20)
 UNION ALL
-SELECT '결과 없음' FROM emp WHERE deptno NOT IN (10, NULL);`,
+SELECT '결과 없음'
+FROM emp
+WHERE deptno NOT IN (10, NULL);`,
     },
   },
   {
@@ -239,10 +243,13 @@ FROM emp;`,
     sql: {
       caption: "INNER 와 LEFT OUTER 의 행 수 차이",
       query: `SELECT 'INNER' AS 종류, COUNT(*) AS 행수
-FROM emp e JOIN dept d ON e.deptno = d.deptno
+FROM emp e
+JOIN dept d ON e.deptno = d.deptno
 UNION ALL
 SELECT 'LEFT OUTER', COUNT(*)
-FROM emp e LEFT JOIN dept d ON e.deptno = d.deptno;`,
+FROM emp e
+LEFT
+JOIN dept d ON e.deptno = d.deptno;`,
     },
   },
   {
