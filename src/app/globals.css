@@ -297,7 +297,11 @@ body {
   0.38 까지 내려야 시대 열둘이 모두 AA(4.5:1)를 넘는다.
 */
 [data-theme="light"] .era-ink {
-  filter: brightness(0.38) saturate(1.6);
+  /*
+   * 0.38 이었는데 초록 계열(고려 #10B981)이 옅은 초록 카드 위에서
+   * 4.26:1 로 살짝 모자랐다. 한 칸 더 어둡게 내린다.
+   */
+  filter: brightness(0.33) saturate(1.6);
 }
 
 /*
