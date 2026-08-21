@@ -22,6 +22,8 @@ import { cn } from "@/lib/utils";
 export default function MockHome() {
   const band = useBand();
   const attempts = useApp((s) => s.mockAttempts);
+  const onePlay = useApp((s) => s.settings?.onePlay ?? false);
+  const setOnePlay = useApp((s) => s.setOnePlay);
   const [resume, setResume] = useState<MockProgress | null>(null);
 
   useEffect(() => setResume(readProgress()), []);
@@ -88,6 +90,46 @@ export default function MockHome() {
             </span>
           </p>
         </div>
+      </Card>
+
+      {/*
+        실전처럼 — 한 번만 재생.
+
+        실제 시험은 음성이 한 번 나가면 끝이다. 되돌릴 수 없다는 것이
+        듣기를 어렵게 만드는 큰 부분인데, 그동안은 몇 번이고 다시 들을 수
+        있어서 실제보다 쉬웠다. 끄고 켜게 두는 이유는, 처음 연습할 때는
+        여러 번 듣는 편이 낫기 때문이다.
+      */}
+      <Card className="mt-4">
+        <button
+          type="button"
+          onClick={() => setOnePlay(!onePlay)}
+          className="flex w-full items-center justify-between gap-3 text-left"
+        >
+          <span className="min-w-0">
+            <span className="block text-[14px] font-bold">실전처럼 — 한 번만 재생</span>
+            <span className="mt-0.5 block text-[12px] leading-relaxed text-zinc-500">
+              실제 시험은 음성이 한 번 나가면 되돌릴 수 없습니다. 켜면 지문마다
+              한 번씩만 들려줍니다.
+            </span>
+          </span>
+          <span
+            role="switch"
+            aria-checked={onePlay}
+            aria-label="한 번만 재생"
+            className={cn(
+              "relative h-6 w-11 shrink-0 rounded-full transition-colors",
+              onePlay ? "bg-indigo-500" : "bg-white/15",
+            )}
+          >
+            <span
+              className={cn(
+                "absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all",
+                onePlay ? "left-[22px]" : "left-0.5",
+              )}
+            />
+          </span>
+        </button>
       </Card>
 
       <SectionTitle>고르기</SectionTitle>

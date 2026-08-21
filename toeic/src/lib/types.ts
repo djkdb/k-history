@@ -266,6 +266,11 @@ export interface Settings {
   noise?: "none" | "hall" | "cafe" | "construction";
   /** 소음 크기 0~1 */
   noiseLevel?: number;
+  /*
+   * 모의고사에서 듣기를 한 번만 틀어 줄지.
+   * 실제 시험은 되돌아갈 수 없다. 없으면 예전처럼 다시 들을 수 있다.
+   */
+  onePlay?: boolean;
 }
 
 export interface Stats {

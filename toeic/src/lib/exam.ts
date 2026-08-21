@@ -42,7 +42,7 @@ export const EXAMS: ExamDef[] = [
     id: "lc",
     name: "듣기 모의고사",
     description:
-      "Part 1~4. 문항이 흘러가면 되돌아갈 수 없는 실제 시험과 달리, 여기서는 다시 들을 수 있습니다.",
+      "Part 1~4. 실제 시험은 음성이 한 번 나가면 되돌릴 수 없습니다 — 그대로 해 보려면 아래에서 '한 번만 재생'을 켜세요.",
     sections: ["listening"],
   },
   {

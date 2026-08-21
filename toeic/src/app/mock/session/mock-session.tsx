@@ -46,6 +46,14 @@ import {
 } from "../progress";
 
 export function MockSession() {
+  /*
+   * 이미 틀어 준 듣기 지문.
+   *
+   * 한 번만 재생 설정을 켜면 지문마다 한 번씩만 나간다. 문항을 앞뒤로
+   * 오가도 유지되어야 뜻이 있으므로, 문항 화면이 아니라 시험 전체가
+   * 들고 있는다.
+   */
+  const played = useRef<Set<string>>(new Set());
   const router = useRouter();
   const params = useSearchParams();
   const band = useBand();
@@ -241,7 +249,7 @@ export function MockSession() {
           transition={{ duration: 0.15 }}
         >
           {item.section === "listening" ? (
-            <ListeningItem item={item} />
+            <ListeningItem item={item} playedRef={played} />
           ) : (
             <ReadingItem item={item} answers={answers} exam={exam} />
           )}
@@ -363,7 +371,13 @@ function isAudioOnly(item: ExamItem): boolean {
  * 실제 시험은 한 번만 들려주지만 여기서는 다시 들을 수 있게 둔다 — 훈련이
  * 목적이고, 못 들었을 때 아무것도 못 하는 것이 학습에 도움이 되지 않는다.
  */
-function ListeningItem({ item }: { item: ExamItem }) {
+function ListeningItem({
+  item,
+  playedRef,
+}: {
+  item: ExamItem;
+  playedRef: React.MutableRefObject<Set<string>>;
+}) {
   const rate = useApp((s) => s.settings?.speechRate ?? 1);
   const set = item.listening!;
   const [voices, setVoices] = useState<Record<Speaker, SpeechSynthesisVoice | null> | null>(
@@ -372,6 +386,19 @@ function ListeningItem({ item }: { item: ExamItem }) {
   const [noVoice, setNoVoice] = useState(false);
   const [playing, setPlaying] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+
+  /*
+   * 실전처럼 — 한 번만 재생.
+   *
+   * 실제 시험은 음성이 한 번 나가면 끝이다. 되돌릴 수 없다는 것이
+   * 듣기를 어렵게 만드는 큰 부분인데, 여기서는 몇 번이고 다시 들을 수
+   * 있어서 실제보다 쉬웠다. 켜 두면 지문마다 한 번만 틀어 준다.
+   *
+   * 이미 들은 지문은 화면을 오갔다 와도 다시 못 듣게 해야 뜻이 있다.
+   * 그래서 componentned 상태가 아니라 시험 단위로 들고 다닌다.
+   */
+  const onePlay = useApp((st) => st.settings?.onePlay ?? false);
+  const spent = playedRef.current.has(set.id);
 
   useEffect(() => {
     if (!supported()) {
@@ -398,6 +425,8 @@ function ListeningItem({ item }: { item: ExamItem }) {
 
   const play = async () => {
     if (!voices) return;
+    if (onePlay && playedRef.current.has(set.id)) return;
+    playedRef.current.add(set.id);
     abortRef.current?.abort();
     const ctrl = new AbortController();
     abortRef.current = ctrl;
@@ -444,6 +473,11 @@ function ListeningItem({ item }: { item: ExamItem }) {
             <p className="text-[12px] leading-relaxed text-zinc-400">
               이 기기에는 영어 음성이 없습니다. 아래 스크립트를 읽고 푸세요.
             </p>
+          </div>
+        ) : onePlay && spent && !playing ? (
+          <div className="flex items-center justify-center gap-2 py-2.5 text-[13px] text-zinc-500">
+            <Square size={14} />
+            이 지문은 이미 나갔습니다
           </div>
         ) : !playing ? (
           <Button className="w-full" onClick={play} disabled={!voices}>
