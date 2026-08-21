@@ -259,6 +259,13 @@ export interface Settings {
   speechRate: number;
   /** 듣기에서 스크립트를 처음부터 보여 줄지 */
   showScript: boolean;
+  /*
+   * 소음 훈련. 이 기능이 생기기 전 기록에는 없으므로 선택 항목이다 —
+   * 없으면 "조용히" 로 본다. (있는 기록을 버리지 않는다)
+   */
+  noise?: "none" | "hall" | "cafe" | "construction";
+  /** 소음 크기 0~1 */
+  noiseLevel?: number;
 }
 
 export interface Stats {

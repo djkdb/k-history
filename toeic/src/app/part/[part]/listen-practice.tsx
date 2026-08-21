@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, ChevronRight, Layers, PenLine } from "lucide-react";
 import { Button, Card, Chip, EmptyState } from "@/components/ui";
 import { DictationDrill } from "@/components/dictation";
-import { ListeningSetView, SpeechRateCard } from "@/components/listening-set";
+import { ListeningSetView, NoiseCard, SpeechRateCard } from "@/components/listening-set";
 import { listeningFor } from "@/data/listening";
 import { LISTENING_PARTS, PART_MAP } from "@/data/parts";
 import { useApp, useBand } from "@/lib/store";
@@ -114,6 +114,7 @@ function Screen({ part }: { part: ListenPartId }) {
       )}
 
       <SpeechRateCard />
+      <NoiseCard />
 
       {!current ? (
         <EmptyState

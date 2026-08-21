@@ -64,9 +64,7 @@ export function sentencesOf(set: ListeningSet): Sentence[] {
 
 export function DictationDrill({ set, rate }: { set: ListeningSet; rate: number }) {
   const sentences = useMemo(() => sentencesOf(set), [set]);
-  const [voices, setVoices] = useState<Record<Speaker, SpeechSynthesisVoice | null> | null>(
-    null,
-  );
+  const [rawVoices, setRawVoices] = useState<SpeechSynthesisVoice[] | null>(null);
   const [noVoice, setNoVoice] = useState(false);
   const [at, setAt] = useState(0);
   const [typed, setTyped] = useState("");
@@ -86,7 +84,7 @@ export function DictationDrill({ set, rate }: { set: ListeningSet; rate: number 
     loadVoices().then((v) => {
       if (!alive) return;
       if (!v.length) setNoVoice(true);
-      else setVoices(assignVoices(v));
+      else setRawVoices(v);
     });
     return () => {
       alive = false;
@@ -109,6 +107,22 @@ export function DictationDrill({ set, rate }: { set: ListeningSet; rate: number 
       stop();
     };
   }, [set.id]);
+
+  /*
+   * 지문마다 다른 발음 조합으로 들려준다.
+   *
+   * 목소리를 한 번 정해 두고 계속 쓰면 앱 전체가 같은 발음으로만 들린다.
+   * 실제 시험은 문항마다 국적이 바뀐다. 지문 id 에서 뽑은 값으로 돌려 주면
+   * 같은 지문은 늘 같게, 다른 지문은 다르게 들린다.
+   */
+  const rotate = useMemo(
+    () => [...set.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 97, 7),
+    [set.id],
+  );
+  const voices = useMemo(
+    () => (rawVoices ? assignVoices(rawVoices, rotate) : null),
+    [rawVoices, rotate],
+  );
 
   const current = sentences[Math.min(at, Math.max(0, sentences.length - 1))];
 

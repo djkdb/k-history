@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -10,8 +10,9 @@ import {
   Play,
   RotateCcw,
   Square,
+  Volume2,
 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Badge, Button, Card, Chip } from "@/components/ui";
 import { SKILL_LABEL } from "@/data/reading";
 import { useApp } from "@/lib/store";
 import type { ListeningSet, Speaker } from "@/lib/types";
@@ -23,6 +24,16 @@ import {
   stop,
   supported,
 } from "@/lib/tts";
+import {
+  NOISE_KINDS,
+  NOISE_LABEL,
+  NOISE_NOTE,
+  noiseRunning,
+  setNoiseLevel,
+  startNoise,
+  stopNoise,
+  type NoiseKind,
+} from "@/lib/noise";
 import { cn } from "@/lib/utils";
 
 export const SPEAKER_LABEL: Record<Speaker, string> = {
@@ -70,13 +81,80 @@ export function SpeechRateCard() {
   );
 }
 
+/**
+ * 소음 훈련 조절판.
+ *
+ * 실제 시험장은 조용하지 않다. 집에서 이어폰으로 또렷하게만 듣던 사람은
+ * 그날 처음으로 "안 들리는 상태"를 겪는다. 미리 겪어 두게 한다.
+ *
+ * 소리는 브라우저에서 만들어 낸다 — 받아 오는 파일이 없다.
+ */
+export function NoiseCard() {
+  const kind = useApp((s) => s.settings?.noise ?? "none");
+  const level = useApp((s) => s.settings?.noiseLevel ?? 0.35);
+  const setNoise = useApp((s) => s.setNoise);
+
+  // 화면을 떠나면 소리를 끈다
+  useEffect(() => () => stopNoise(), []);
+
+  return (
+    <Card className="mt-3">
+      <div className="flex items-center gap-2">
+        <Volume2 size={16} className="shrink-0 text-zinc-400" />
+        <span className="text-[13px] font-bold">소음 속에서 듣기</span>
+      </div>
+      <div className="-mx-4 mt-2.5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {NOISE_KINDS.map((k) => (
+          <Chip
+            key={k}
+            active={kind === k}
+            onClick={() => {
+              setNoise(k, level);
+              // 누른 그 순간에 켜야 한다 — 브라우저가 그 밖에서는 소리를 막는다
+              if (k === "none") stopNoise();
+              else startNoise(k as NoiseKind, level);
+            }}
+          >
+            {NOISE_LABEL[k]}
+          </Chip>
+        ))}
+      </div>
+      {kind !== "none" && (
+        <div className="mt-3 flex items-center gap-3">
+          <span className="shrink-0 text-[12px] text-zinc-500">크기</span>
+          <input
+            type="range"
+            min={0.1}
+            max={1}
+            step={0.05}
+            value={level}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setNoise(kind, v);
+              setNoiseLevel(v);
+            }}
+            className="h-1.5 w-full accent-indigo-500"
+            aria-label="소음 크기"
+          />
+          <span className="w-9 shrink-0 text-right text-[12px] font-bold text-zinc-300">
+            {Math.round(level * 100)}
+          </span>
+        </div>
+      )}
+      <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">
+        {NOISE_NOTE[kind]}
+      </p>
+    </Card>
+  );
+}
+
 export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: number }) {
   const record = useApp((s) => s.recordAnswer);
+  const noiseKind = useApp((s) => s.settings?.noise ?? "none");
+  const noiseLevel = useApp((s) => s.settings?.noiseLevel ?? 0.35);
   const showScriptDefault = useApp((s) => s.settings?.showScript ?? false);
 
-  const [voices, setVoices] = useState<Record<Speaker, SpeechSynthesisVoice | null> | null>(
-    null,
-  );
+  const [rawVoices, setRawVoices] = useState<SpeechSynthesisVoice[] | null>(null);
   const [noVoice, setNoVoice] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [line, setLine] = useState(-1);
@@ -94,7 +172,7 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
     loadVoices().then((v) => {
       if (!alive) return;
       if (!v.length) setNoVoice(true);
-      else setVoices(assignVoices(v));
+      else setRawVoices(v);
     });
     return () => {
       alive = false;
@@ -115,6 +193,22 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
       stop();
     };
   }, [set.id, showScriptDefault]);
+
+  /*
+   * 지문마다 다른 발음 조합으로 들려준다.
+   *
+   * 목소리를 한 번 정해 두고 계속 쓰면 앱 전체가 같은 발음으로만 들린다.
+   * 실제 시험은 문항마다 국적이 바뀐다. 지문 id 에서 뽑은 값으로 돌려 주면
+   * 같은 지문은 늘 같게, 다른 지문은 다르게 들린다.
+   */
+  const rotate = useMemo(
+    () => [...set.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 97, 7),
+    [set.id],
+  );
+  const voices = useMemo(
+    () => (rawVoices ? assignVoices(rawVoices, rotate) : null),
+    [rawVoices, rotate],
+  );
 
   /**
    * 무엇을 읽어 줄지 만든다.
@@ -145,6 +239,8 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
 
   const play = async () => {
     if (!voices) return;
+    // 소음을 골라 두었으면 듣기 시작과 함께 깔아 준다
+    if (noiseKind !== "none" && noiseRunning() === "none") startNoise(noiseKind, noiseLevel);
     abortRef.current?.abort();
     const ctrl = new AbortController();
     abortRef.current = ctrl;

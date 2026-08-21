@@ -32,6 +32,7 @@ export interface AppState {
   setBand: (b: Band) => void;
   setSpeechRate: (r: number) => void;
   setShowScript: (v: boolean) => void;
+  setNoise: (kind: NonNullable<Settings["noise"]>, level: number) => void;
   markVocabKnown: (id: string) => void;
   unmarkVocabKnown: (id: string) => void;
   markGrammarStudied: (id: string) => void;
@@ -128,6 +129,13 @@ export const useApp = create<AppState>()(
           settings: s.settings
             ? { ...s.settings, speechRate }
             : { band: 700, examDate: null, speechRate, showScript: false },
+        })),
+
+      setNoise: (noise, noiseLevel) =>
+        set((s) => ({
+          settings: s.settings
+            ? { ...s.settings, noise, noiseLevel }
+            : { band: 700, examDate: null, speechRate: 1, showScript: false, noise, noiseLevel },
         })),
 
       setShowScript: (showScript) =>

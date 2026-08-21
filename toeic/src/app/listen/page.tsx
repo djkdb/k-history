@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { Button, Chip, EmptyState } from "@/components/ui";
-import { ListeningSetView, SpeechRateCard } from "@/components/listening-set";
+import { ListeningSetView, NoiseCard, SpeechRateCard } from "@/components/listening-set";
 import { listeningFor } from "@/data/listening";
 import { LISTENING_PARTS, PART_MAP } from "@/data/parts";
 import { useApp, useBand } from "@/lib/store";
@@ -76,6 +76,7 @@ function ListenScreen() {
       </p>
 
       <SpeechRateCard />
+      <NoiseCard />
 
       {!current ? (
         <EmptyState title="문항이 없습니다" desc="목표 점수대를 올리면 더 나올 수 있습니다." />
