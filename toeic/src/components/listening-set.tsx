@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, Chip } from "@/components/ui";
 import { SKILL_LABEL } from "@/data/reading";
+import { PART1_ART } from "@/components/part1-art";
 import { useApp } from "@/lib/store";
 import type { ListeningSet, Speaker } from "@/lib/types";
 import {
@@ -148,6 +149,60 @@ export function NoiseCard() {
   );
 }
 
+/**
+ * Part 1 의 그림.
+ *
+ * 그림이 있으면 한국어 장면 설명은 감춘다. 둘을 같이 주면 그림을 볼
+ * 이유가 없어지고 — 설명이 답을 거의 다 알려 준다 — 실제 시험과 다른
+ * 일을 하게 된다. 설명은 눈으로 보기 어려운 사람을 위해 접어 두고,
+ * 화면 낭독기에는 alt 로 그대로 읽힌다.
+ */
+function SceneView({ set }: { set: ListeningSet }) {
+  const art = PART1_ART[set.id];
+  const [showText, setShowText] = useState(false);
+
+  if (!art) {
+    return (
+      <Card className="border-sky-500/25 bg-sky-500/[0.07]">
+        <div className="flex items-start gap-2.5">
+          <ImageOff size={16} className="mt-0.5 shrink-0 text-sky-300" />
+          <div>
+            <p className="text-[12px] font-bold text-sky-200">사진 대신 장면 설명입니다</p>
+            <p className="mt-1.5 text-[14px] leading-relaxed text-zinc-200">{set.scene}</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <div>
+      <figure
+        className="overflow-hidden rounded-2xl border border-white/10"
+        aria-label={set.scene}
+        role="img"
+      >
+        {art}
+      </figure>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <p className="text-[11px] text-zinc-500">사진 대신 그린 그림입니다</p>
+        <button
+          type="button"
+          onClick={() => setShowText((v) => !v)}
+          className="shrink-0 text-[11px] text-zinc-500 underline decoration-dotted hover:text-zinc-300"
+        >
+          {showText ? "설명 접기" : "글로 된 설명"}
+        </button>
+      </div>
+      {showText && (
+        <p className="mt-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-[13px] leading-relaxed text-zinc-300">
+          {set.scene}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: number }) {
   const record = useApp((s) => s.recordAnswer);
   const noiseKind = useApp((s) => s.settings?.noise ?? "none");
@@ -276,26 +331,7 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
 
   return (
     <div className="mt-2">
-      {set.scene && (
-        <Card className="border-sky-500/25 bg-sky-500/[0.07]">
-          <div className="flex items-start gap-2.5">
-            <ImageOff size={16} className="mt-0.5 shrink-0 text-sky-300" />
-            <div>
-              <p className="text-[12px] font-bold text-sky-200">
-                사진 대신 장면 설명입니다
-              </p>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-zinc-200">
-                {set.scene}
-              </p>
-              <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">
-                실제 시험은 사진을 봅니다. 이 앱은 사진을 실을 수 없어 글로 대신합니다.
-                이 파트의 훈련 목표 — 들리는 명사에 낚이지 말고 동사와 태를 듣는 것 —
-                는 그대로입니다.
-              </p>
-            </div>
-          </div>
-        </Card>
-      )}
+      {set.scene && <SceneView set={set} />}
 
       <Card className="mt-3">
         {noVoice ? (

@@ -27,6 +27,7 @@ import {
 } from "@/lib/exam";
 import { scaledScore } from "@/data/parts";
 import { SKILL_LABEL } from "@/data/reading";
+import { PART1_ART } from "@/components/part1-art";
 import { useApp, useBand } from "@/lib/store";
 import type { MockAttempt, PartId, Speaker } from "@/lib/types";
 import {
@@ -457,14 +458,24 @@ function ListeningItem({
 
   return (
     <div className="mt-2">
-      {set.scene && (
-        <Card className="border-sky-500/25 bg-sky-500/[0.07]">
-          <div className="flex items-start gap-2.5">
-            <ImageOff size={15} className="mt-0.5 shrink-0 text-sky-300" />
-            <p className="text-[14px] leading-relaxed text-zinc-200">{set.scene}</p>
-          </div>
-        </Card>
-      )}
+      {/* 시험 중에는 글 설명을 주지 않는다 — 실제 시험도 사진만 준다 */}
+      {set.scene &&
+        (PART1_ART[set.id] ? (
+          <figure
+            className="overflow-hidden rounded-2xl border border-white/10"
+            aria-label={set.scene}
+            role="img"
+          >
+            {PART1_ART[set.id]}
+          </figure>
+        ) : (
+          <Card className="border-sky-500/25 bg-sky-500/[0.07]">
+            <div className="flex items-start gap-2.5">
+              <ImageOff size={15} className="mt-0.5 shrink-0 text-sky-300" />
+              <p className="text-[14px] leading-relaxed text-zinc-200">{set.scene}</p>
+            </div>
+          </Card>
+        ))}
 
       <Card className="mt-3">
         {noVoice ? (
