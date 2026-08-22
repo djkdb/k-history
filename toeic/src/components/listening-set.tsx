@@ -91,7 +91,7 @@ export function SpeechRateCard() {
  */
 export function NoiseCard() {
   const kind = useApp((s) => s.settings?.noise ?? "none");
-  const level = useApp((s) => s.settings?.noiseLevel ?? 0.35);
+  const level = useApp((s) => s.settings?.noiseLevel ?? 0.5);
   const setNoise = useApp((s) => s.setNoise);
 
   // 화면을 떠나면 소리를 끈다
@@ -151,7 +151,7 @@ export function NoiseCard() {
 export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: number }) {
   const record = useApp((s) => s.recordAnswer);
   const noiseKind = useApp((s) => s.settings?.noise ?? "none");
-  const noiseLevel = useApp((s) => s.settings?.noiseLevel ?? 0.35);
+  const noiseLevel = useApp((s) => s.settings?.noiseLevel ?? 0.5);
   const showScriptDefault = useApp((s) => s.settings?.showScript ?? false);
 
   const [rawVoices, setRawVoices] = useState<SpeechSynthesisVoice[] | null>(null);

@@ -14,11 +14,22 @@
  *
  * 만드는 방법은 간단하다. 잡음(white noise)을 걸러 내면 대부분의 생활
  * 소음이 된다.
- *   · 낮은 쪽만 남기면  → 에어컨·환풍기의 웅웅거림
- *   · 가운데만 남기면   → 사람들 웅성거림
+ *   · 낮은 쪽을 남기면  → 에어컨·환풍기의 웅웅거림
+ *   · 가운데를 남기면   → 사람들 웅성거림
  *   · 낮게 깔고 쿵쿵    → 공사장
  * 여기에 소리 크기를 천천히 흔들어 주면 "가만히 있는 잡음"이 아니라
  * 살아 있는 소리로 들린다.
+ *
+ * ── 대역을 어디에 두는가 ──────────────────────────────────────
+ * 처음에는 에어컨을 420Hz 아래, 공사장을 220Hz 아래로 잡았다. 계산상
+ * 그럴듯했지만 **휴대폰 스피커는 500Hz 아래를 거의 못 낸다.** 실제로
+ * 출력을 재 보니 -26dBFS 라, 이어폰으로도 희미하고 스피커로는 없는 것과
+ * 같았다. "소음이 안 켜진다" 는 말이 나온 이유다.
+ *
+ * 그래서 세 가지를 고쳤다.
+ *   · 들리는 대역으로 올렸다 (스피커가 실제로 내는 곳)
+ *   · 들리지도 않으면서 헤드룸만 먹는 80Hz 아래를 잘라 냈다
+ *   · 종류마다 크기를 맞춰 두어 바꿔도 확 커지거나 작아지지 않게 했다
  */
 
 export type NoiseKind = "none" | "hall" | "cafe" | "construction";
@@ -119,25 +130,32 @@ export function startNoise(kind: NoiseKind, level: number) {
   const body = c.createGain();
   chain = [shape, body];
 
+  // 들리지도 않으면서 헤드룸만 먹는 아주 낮은 쪽을 먼저 잘라 낸다
+  const floor = c.createBiquadFilter();
+  floor.type = "highpass";
+  floor.frequency.value = 90;
+  chain.push(floor);
+
   if (kind === "hall") {
-    // 에어컨: 낮은 쪽만. 사람 목소리 대역(300~3000Hz)을 비워 둬야 말이 들린다.
+    // 에어컨·환풍기. 사람 목소리의 한가운데(1~3kHz)는 비워 둬야 말이 들린다.
     shape.type = "lowpass";
-    shape.frequency.value = 420;
-    body.gain.value = 1;
+    shape.frequency.value = 1100;
+    body.gain.value = 2.6;
   } else if (kind === "cafe") {
-    // 웅성거림: 사람 목소리 대역만 남긴다. 그래서 가장 방해가 된다.
+    // 웅성거림: 사람 목소리 대역에 걸쳐 둔다. 그래서 가장 방해가 된다.
     shape.type = "bandpass";
-    shape.frequency.value = 900;
-    shape.Q.value = 0.7;
-    body.gain.value = 1.5;
+    shape.frequency.value = 1000;
+    shape.Q.value = 0.5;
+    body.gain.value = 5.5;
   } else {
-    // 공사장: 아주 낮게 깔고, 아래에서 쿵 소리를 따로 얹는다.
+    // 공사장: 낮게 깔되 스피커가 낼 수 있는 데까지. 쿵 소리는 따로 얹는다.
     shape.type = "lowpass";
-    shape.frequency.value = 220;
-    body.gain.value = 1.4;
+    shape.frequency.value = 700;
+    body.gain.value = 2.4;
   }
 
-  source.connect(shape);
+  source.connect(floor);
+  floor.connect(shape);
   shape.connect(body);
   body.connect(master);
   source.start();
@@ -160,12 +178,13 @@ export function startNoise(kind: NoiseKind, level: number) {
         const t = ctx.currentTime;
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(90, t);
-        osc.frequency.exponentialRampToValueAtTime(38, t + 0.28);
+        // 180 → 70Hz. 처음 잡았던 90 → 38Hz 는 휴대폰 스피커가 못 낸다.
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(180, t);
+        osc.frequency.exponentialRampToValueAtTime(70, t + 0.25);
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.9, t + 0.015);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+        g.gain.exponentialRampToValueAtTime(0.45, t + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
         osc.connect(g);
         g.connect(master);
         osc.start(t);
@@ -176,7 +195,7 @@ export function startNoise(kind: NoiseKind, level: number) {
   }
 
   // 갑자기 켜지면 놀란다. 0.4초에 걸쳐 올린다.
-  const target = Math.min(0.5, Math.max(0, level)) * 0.5;
+  const target = gainFor(level);
   master.gain.setValueAtTime(0.0001, c.currentTime);
   master.gain.exponentialRampToValueAtTime(
     Math.max(0.0002, target),
@@ -184,9 +203,27 @@ export function startNoise(kind: NoiseKind, level: number) {
   );
 }
 
+/**
+ * 슬라이더 값(0~1)을 실제 소리 크기로.
+ *
+ * 예전에는 여기서 반으로 줄이고 있었다(0.35 → 0.175). 재 보니 -26dBFS 라
+ * 안 들렸다. 사람 목소리 위에 얹는 소리이므로 목소리를 덮지는 않되
+ * 있는 줄은 알 만큼 — 기본값에서 -18dBFS 언저리를 노린다.
+ */
+function gainFor(level: number): number {
+  // 위쪽은 눌러 둔다 — 슬라이더를 끝까지 올려도 찌그러지지 않게
+  return Math.min(0.32, Math.min(1, Math.max(0, level)) * 0.42);
+}
+
+/*
+ * 크기를 맞출 때 잰 값 (기본값 0.5, scripts 밖의 noise-meter.js 로 측정).
+ * 목표는 RMS 0.10~0.16 — 말소리를 덮지 않으면서 있는 줄은 아는 정도다.
+ * 처음에는 -26dBFS 라 안 들렸고, 고치다가 -7dBFS 까지 올라가 찌그러졌다.
+ */
+
 export function setNoiseLevel(level: number) {
   if (!ctx || !master) return;
-  const target = Math.min(0.5, Math.max(0, level)) * 0.5;
+  const target = gainFor(level);
   master.gain.linearRampToValueAtTime(target, ctx.currentTime + 0.15);
 }
 
