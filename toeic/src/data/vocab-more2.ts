@@ -295,7 +295,7 @@ export const VOCAB_MORE2: Vocab[] = [
     meaning: "이의를 제기하다; 분쟁",
     band: 700,
     topic: "contract",
-    example: "She called to dispute a charge on the invoice.",
+    example: "A customer called to dispute a charge on the invoice.",
     exampleKo: "청구서의 한 항목에 이의를 제기하려고 전화했습니다.",
     collocations: ["dispute a charge", "settle a dispute", "in dispute"],
   },

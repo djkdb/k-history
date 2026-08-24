@@ -239,7 +239,7 @@ export const VOCAB_ADD_800: Vocab[] = [
     meaning: "부지런한, 꼼꼼한",
     band: 800,
     topic: "hr",
-    example: "Her diligent record keeping made the audit go quickly.",
+    example: "The bookkeeper's diligent record keeping made the audit go quickly.",
     exampleKo: "그의 꼼꼼한 기록 덕분에 감사가 빨리 끝났습니다.",
     collocations: ["diligent effort", "diligent about"],
   },
@@ -619,15 +619,21 @@ export const VOCAB_ADD_800: Vocab[] = [
     collocations: ["take over a role", "take over from"],
   },
   {
+    /*
+     * id 와 낱말이 어긋난다.
+     * 원래 abide by 가 들어 있었는데 v-abide 와 사실상 같은 항목이라
+     * 목록에 두 번 나왔다. id 는 이미 내보낸 것이라 바꿀 수 없어
+     * (외운 표시가 이 id 를 가리킨다) 낱말만 갈아 끼운다.
+     */
     id: "v-adhere-alt",
-    word: "abide by",
-    pos: "v.",
-    meaning: "(규칙을) 따르다",
+    word: "amenity",
+    pos: "n.",
+    meaning: "편의 시설",
     band: 800,
-    topic: "contract",
-    example: "All contractors must abide by the site safety rules.",
-    exampleKo: "모든 시공사는 현장 안전 규칙을 따라야 합니다.",
-    collocations: ["abide by the terms", "abide by a decision"],
+    topic: "travel",
+    example: "The hotel lists every amenity on its reservation page.",
+    exampleKo: "호텔은 예약 안내에 모든 편의 시설을 적어 둡니다.",
+    collocations: ["hotel amenities", "on-site amenities"],
   },
   {
     id: "v-vacancy-alt",

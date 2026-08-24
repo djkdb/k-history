@@ -396,7 +396,7 @@ export const VOCAB_700: Vocab[] = [
     meaning: "승진; 판촉",
     band: 700,
     topic: "hr",
-    example: "She received a promotion to senior analyst.",
+    example: "Ms. Devi received a promotion to senior analyst.",
     exampleKo: "그는 선임 분석가로 승진했습니다.",
     collocations: ["earn a promotion", "promotional offer", "sales promotion"],
     confusable: {

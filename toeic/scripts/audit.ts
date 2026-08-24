@@ -176,6 +176,26 @@ for (const v of VOCAB) {
 for (const [w, ids] of byWord) {
   if (ids.length > 1) fail(`어휘: "${w}" 가 ${ids.length}번 들어 있습니다 — ${ids.join(", ")}`);
 }
+/*
+ * 한쪽이 다른 쪽으로 시작하는 짝도 사실상 같은 항목이다.
+ *
+ * abide / abide by, contingent / contingent on, provisional /
+ * provisional approval 처럼 뒤에 말을 하나 붙인 것을 따로 실으면
+ * 목록에 같은 것이 두 번 나온다. abide 는 예문까지 "abide by" 였다.
+ * 낱말이 글자로 같지 않아 위의 검사에는 안 걸린다.
+ */
+const words = VOCAB.map((v) => ({ id: v.id, w: v.word.trim().toLowerCase() }));
+for (const a of words) {
+  for (const b of words) {
+    if (a.id >= b.id) continue;
+    if (b.w.startsWith(`${a.w} `) || a.w.startsWith(`${b.w} `)) {
+      fail(
+        `어휘: "${a.w}" 와 "${b.w}" 는 사실상 같은 항목입니다 — ${a.id}, ${b.id}`,
+      );
+    }
+  }
+}
+
 for (const [m, ids] of byMeaning) {
   if (ids.length > 1)
     fail(

@@ -271,7 +271,7 @@ export const VOCAB_900: Vocab[] = [
     meaning: "재직 기간",
     band: 900,
     topic: "hr",
-    example: "During her tenure, the division doubled in size.",
+    example: "During Ms. Iqbal's tenure, the division doubled in size.",
     exampleKo: "그의 재직 기간에 그 부서는 규모가 두 배가 되었습니다.",
     collocations: ["during one's tenure", "tenure track"],
   },

@@ -24,15 +24,21 @@ export const VOCAB_ADD_900: Vocab[] = [
     collocations: ["a feasibility study", "assess feasibility"],
   },
   {
+    /*
+     * id 와 낱말이 어긋난다.
+     * 원래 contingent on 가 들어 있었는데 v-contingent 와 사실상 같은 항목이라
+     * 목록에 두 번 나왔다. id 는 이미 내보낸 것이라 바꿀 수 없어
+     * (외운 표시가 이 id 를 가리킨다) 낱말만 갈아 끼운다.
+     */
     id: "v-contingency-alt",
-    word: "contingent on",
-    pos: "adj.",
-    meaning: "~을 조건으로 하는",
+    word: "prerequisite",
+    pos: "n.",
+    meaning: "먼저 갖춰야 할 조건",
     band: 900,
-    topic: "contract",
-    example: "The bonus is contingent on meeting the annual target.",
-    exampleKo: "상여금은 연간 목표 달성 여부에 달려 있습니다.",
-    collocations: ["contingent on approval", "contingent upon"],
+    topic: "hr",
+    example: "A safety certificate is a prerequisite for site access.",
+    exampleKo: "현장 출입에는 안전 교육 수료증이 먼저 있어야 합니다.",
+    collocations: ["a prerequisite for", "meet the prerequisites"],
   },
   {
     id: "v-provision-alt",
@@ -387,15 +393,21 @@ export const VOCAB_ADD_900: Vocab[] = [
     collocations: ["a negligible amount", "negligible impact"],
   },
   {
+    /*
+     * id 와 낱말이 어긋난다.
+     * 원래 provisional approval 가 들어 있었는데 v-provisional 와 사실상 같은 항목이라
+     * 목록에 두 번 나왔다. id 는 이미 내보낸 것이라 바꿀 수 없어
+     * (외운 표시가 이 id 를 가리킨다) 낱말만 갈아 끼운다.
+     */
     id: "v-feasible-alt",
-    word: "provisional-approval",
-    pos: "n.",
-    meaning: "조건부 승인",
+    word: "escalate",
+    pos: "v.",
+    meaning: "(윗선으로) 넘기다; 커지다",
     band: 900,
-    topic: "contract",
-    example: "The design received provisional approval pending a safety review.",
-    exampleKo: "설계는 안전 검토를 조건으로 조건부 승인을 받았습니다.",
-    collocations: ["grant provisional approval", "under provisional approval"],
+    topic: "office",
+    example: "Unresolved complaints are escalated to the regional manager.",
+    exampleKo: "해결되지 않은 항의는 지역 관리자에게 넘어갑니다.",
+    collocations: ["escalate an issue", "escalate to"],
   },
   {
     id: "v-ubiquitous-alt",
@@ -580,7 +592,7 @@ export const VOCAB_ADD_900: Vocab[] = [
     meaning: "(자리·권한을) 내놓다",
     band: 900,
     topic: "contract",
-    example: "She relinquished her seat on the board after twelve years.",
+    example: "The treasurer relinquished a seat on the board after twelve years.",
     exampleKo: "그는 12년 만에 이사회 자리를 내놓았습니다.",
     collocations: ["relinquish control", "relinquish a claim"],
   },
@@ -662,14 +674,20 @@ export const VOCAB_ADD_900: Vocab[] = [
     collocations: ["a resilient supply chain", "remain resilient"],
   },
   {
+    /*
+     * id 와 낱말이 어긋난다.
+     * 원래 contingency plan 가 들어 있었는데 v-contingency 와 사실상 같은 항목이라
+     * 목록에 두 번 나왔다. id 는 이미 내보낸 것이라 바꿀 수 없어
+     * (외운 표시가 이 id 를 가리킨다) 낱말만 갈아 끼운다.
+     */
     id: "v-oversight-alt",
-    word: "contingency plan",
+    word: "outage",
     pos: "n.",
-    meaning: "비상 계획",
+    meaning: "(전기·서비스의) 중단",
     band: 900,
-    topic: "office",
-    example: "Every site keeps a contingency plan for power failures.",
-    exampleKo: "모든 현장은 정전에 대비한 비상 계획을 갖추고 있습니다.",
-    collocations: ["draw up a contingency plan", "activate the contingency plan"],
+    topic: "facility",
+    example: "A brief outage is expected during the server upgrade.",
+    exampleKo: "서버 교체 동안 잠깐 중단이 있을 예정입니다.",
+    collocations: ["a power outage", "a service outage"],
   },
 ];

@@ -205,15 +205,21 @@ export const VOCAB_ADD_600: Vocab[] = [
     collocations: ["a revised version", "revise a policy"],
   },
   {
+    /*
+     * id 와 낱말이 어긋난다.
+     * 원래 arrange for 가 들어 있었는데 v-arrange 와 사실상 같은 항목이라
+     * 목록에 두 번 나왔다. id 는 이미 내보낸 것이라 바꿀 수 없어
+     * (외운 표시가 이 id 를 가리킨다) 낱말만 갈아 끼운다.
+     */
     id: "v-schedule-v",
-    word: "arrange for",
+    word: "cancel",
     pos: "v.",
-    meaning: "~을 마련하다, 준비해 두다",
+    meaning: "취소하다",
     band: 600,
     topic: "office",
-    example: "We will arrange for a shuttle to pick up the guests.",
-    exampleKo: "손님을 모실 셔틀을 마련하겠습니다.",
-    collocations: ["arrange for delivery", "arrange for a replacement"],
+    example: "The workshop was cancelled because of low enrollment.",
+    exampleKo: "등록자가 적어 워크숍이 취소되었습니다.",
+    collocations: ["cancel a reservation", "cancel an order"],
   },
   {
     id: "v-upcoming",

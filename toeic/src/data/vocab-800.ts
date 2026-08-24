@@ -297,7 +297,7 @@ export const VOCAB_800: Vocab[] = [
     meaning: "설득력 있는",
     band: 800,
     topic: "general",
-    example: "She made a compelling case for expanding the program.",
+    example: "The director made a compelling case for expanding the program.",
     exampleKo: "그는 그 프로그램 확대에 설득력 있는 근거를 댔습니다.",
     collocations: ["compelling argument", "compelling evidence"],
   },
