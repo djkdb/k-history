@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
+  Eye,
   Search,
   Volume2,
 } from "lucide-react";
@@ -240,6 +241,10 @@ function VocabCard({
 }) {
   const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const [canSpeak, setCanSpeak] = useState(false);
+  const [peek, setPeek] = useState(false);
+
+  // 낱말이 바뀌면 눌러 두었던 것이 남아 다음 낱말의 뜻을 보여 주면 안 된다
+  useEffect(() => setPeek(false), [vocab.id]);
 
   useEffect(() => {
     if (!supported()) return;
@@ -282,13 +287,64 @@ function VocabCard({
       </div>
 
       {!flipped ? (
-        <button
-          onClick={onFlip}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 py-6 text-[13px] text-zinc-500 hover:bg-white/[0.03]"
-        >
-          <ArrowLeftRight size={15} />
-          눌러서 뜻 보기
-        </button>
+        <div className="mt-5">
+          {/*
+            꾹 눌러 보기.
+
+            뜻을 아예 펼쳐 버리면 그 낱말은 그 회차에서 끝난다. 그런데
+            대개 필요한 것은 "맞나 한 번만" 확인하는 것이다. 손을 대고
+            있는 동안만 보여 주고 떼면 다시 가린다 — 종이 단어장을
+            손가락으로 덮었다 살짝 들춰 보는 것과 같다.
+
+            떼는 경우가 여럿이라 다 잡아야 한다. 손을 떼거나(up), 누른 채
+            칸 밖으로 밀거나(leave), 전화가 와서 눌림이 취소되거나(cancel),
+            창을 벗어나거나(blur). 하나라도 놓치면 뜻이 펼쳐진 채로 남는다.
+          */}
+          <button
+            type="button"
+            /*
+              이 단추에서 시작한 누름은 카드로 넘기지 않는다.
+              카드는 좌우로 밀어 넘길 수 있게 해 두었는데, 꾹 누른 채
+              손가락이 조금만 떨려도 밀기로 잡혀 다음 낱말로 넘어가
+              버린다. 여기서 끊어 준다.
+            */
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setPeek(true);
+            }}
+            onPointerUp={() => setPeek(false)}
+            onPointerLeave={() => setPeek(false)}
+            onPointerCancel={() => setPeek(false)}
+            onBlur={() => setPeek(false)}
+            onContextMenu={(e) => e.preventDefault()}
+            aria-label="꾹 눌러 뜻 보기"
+            className={cn(
+              "flex w-full select-none items-center justify-center gap-2 rounded-xl border py-6 text-[13px] transition-colors [-webkit-touch-callout:none] [touch-action:manipulation]",
+              peek
+                ? "border-indigo-400/50 bg-indigo-500/10"
+                : "border-dashed border-white/15 text-zinc-500 hover:bg-white/[0.03]",
+            )}
+          >
+            {peek ? (
+              <span className="text-[17px] font-bold text-indigo-200">
+                {vocab.meaning}
+              </span>
+            ) : (
+              <>
+                <Eye size={15} />
+                꾹 누르면 잠깐 보입니다
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={onFlip}
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-[13px] text-zinc-500 hover:bg-white/[0.03]"
+          >
+            <ArrowLeftRight size={15} />
+            펼쳐서 자세히 보기
+          </button>
+        </div>
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 6 }}
