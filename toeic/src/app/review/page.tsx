@@ -34,12 +34,25 @@ function ReviewScreen() {
     return base.filter((c) => itemOf(c.sourceId));
   }, [cards, wrongIds, onlyWrong]);
 
+  /*
+   * 시작할 때 이번 회차에 볼 것을 한 번 찍어 둔다.
+   *
+   * 예전에는 화면이 그릴 때마다 큐를 다시 셈했다. 그런데 한 장을 채점하면
+   * 그 카드의 다음 복습 시각이 미래로 밀려 "지금 볼 것" 에서 빠진다.
+   * 큐는 한 장 줄고 커서는 한 칸 나아가니, 결과가 이랬다.
+   *
+   *   15장 중 8장만 보고 "복습 완료" · 홈에는 7장이 그대로 남음
+   *
+   * 건너뛴 일곱 장은 다음에도 같은 이유로 또 건너뛰어질 수 있었다.
+   * 한 번 정한 목록을 회차 내내 그대로 쓴다.
+   */
+  const [deck, setDeck] = useState<typeof queue>([]);
   const [started, setStarted] = useState(false);
   const [at, setAt] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState({ correct: 0, wrong: 0 });
 
-  const card = queue[at];
+  const card = deck[at];
   const item = card ? itemOf(card.sourceId) : undefined;
 
   const grade = (correct: boolean) => {
@@ -106,7 +119,16 @@ function ReviewScreen() {
               );
             })}
           </div>
-          <Button size="lg" className="mt-4 w-full" onClick={() => setStarted(true)}>
+          <Button
+            size="lg"
+            className="mt-4 w-full"
+            onClick={() => {
+              setDeck(queue);
+              setAt(0);
+              setDone({ correct: 0, wrong: 0 });
+              setStarted(true);
+            }}
+          >
             {queue.length}장 복습 시작
             <ArrowRight size={17} />
           </Button>
@@ -156,7 +178,7 @@ function ReviewScreen() {
     <main className="py-6">
       <div className="flex items-center justify-between text-[12px] text-zinc-500">
         <span>
-          {at + 1} / {queue.length}
+          {at + 1} / {deck.length}
         </span>
         <span>
           {/*
@@ -167,7 +189,7 @@ function ReviewScreen() {
           {item.where && item.where !== KIND_LABEL[item.kind] && ` · ${item.where}`}
         </span>
       </div>
-      <ProgressBar value={at} max={queue.length} color="#10b981" className="mt-2" />
+      <ProgressBar value={at} max={deck.length} color="#10b981" className="mt-2" />
 
       <AnimatePresence mode="wait">
         <motion.div

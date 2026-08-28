@@ -336,14 +336,37 @@ function VocabCard({
               </>
             )}
           </button>
-          <button
-            type="button"
-            onClick={onFlip}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-[13px] text-zinc-500 hover:bg-white/[0.03]"
-          >
-            <ArrowLeftRight size={15} />
-            펼쳐서 자세히 보기
-          </button>
+          {/*
+            외운 것으로 표시하는 길을 여기에도 둔다.
+
+            그동안은 펼쳐야만 이 단추가 나왔다. 홈은 "하루 14개" 라고
+            일러 주는데, 그 14개를 기록하려면 낱말마다 펼치고 · 누르고 ·
+            넘기고 — 세 번씩 마흔두 번을 눌러야 했다. 뜻만 확인하고
+            넘어가는 사람에게는 펼치는 한 번이 통째로 군더더기다.
+          */}
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onFlip}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-[13px] text-zinc-500 hover:bg-white/[0.03]"
+            >
+              <ArrowLeftRight size={15} />
+              펼쳐서 자세히 보기
+            </button>
+            <button
+              type="button"
+              onClick={onToggleKnown}
+              className={cn(
+                "flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-bold transition-colors",
+                known
+                  ? "bg-emerald-500/15 text-emerald-200"
+                  : "bg-white/5 text-zinc-300 hover:bg-white/10",
+              )}
+            >
+              <Check size={15} />
+              {known ? "외웠음" : "외웠어요"}
+            </button>
+          </div>
         </div>
       ) : (
         <motion.div
