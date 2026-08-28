@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
+  TriangleAlert,
   Clock,
   Headphones,
-  Info,
   NotebookPen,
   Play,
   ScrollText,
@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, EmptyState, SectionTitle } from "@/components/ui";
 import { EXAMS, buildExam, type ExamId } from "@/lib/exam";
-import { SECTION_MINUTES } from "@/data/parts";
 import { useApp, useBand } from "@/lib/store";
 import { clearProgress, readProgress, type MockProgress } from "./progress";
 import { cn } from "@/lib/utils";
@@ -25,6 +24,7 @@ export default function MockHome() {
   const onePlay = useApp((s) => s.settings?.onePlay ?? false);
   const setOnePlay = useApp((s) => s.setOnePlay);
   const [resume, setResume] = useState<MockProgress | null>(null);
+  const [more, setMore] = useState(false);
 
   useEffect(() => setResume(readProgress()), []);
 
@@ -73,22 +73,75 @@ export default function MockHome() {
         </Card>
       )}
 
-      <Card className="mt-4">
+      {/*
+        시작하기 전에 부족한 점을 먼저 말한다.
+
+        모의고사는 "지금 몇 점쯤인가" 를 재려고 보는 것이다. 그런데 이
+        시험지는 실제와 다른 데가 있고, 그것을 모르고 점수만 받아 가면
+        엉뚱한 판단을 하게 된다 — 여기서 800이 나왔다고 시험장에서
+        800이 나오지 않는다.
+        감추는 편이 좋아 보일 수 있지만, 어차피 두 번째 응시에서 본
+        문항이 섞여 나오는 순간 사용자가 먼저 안다. 그때 알게 되는 것보다
+        먼저 말해 두는 편이 낫다. 숫자는 실제로 센 값을 적는다.
+      */}
+      <Card className="mt-4 border-amber-500/25 bg-amber-500/[0.06]">
         <div className="flex items-start gap-2.5">
-          <Info size={15} className="mt-0.5 shrink-0 text-zinc-400" />
-          <p className="text-[12px] leading-relaxed text-zinc-400">
-            실제 시험은 듣기 {SECTION_MINUTES.listening}분 100문항, 읽기{" "}
-            {SECTION_MINUTES.reading}분 100문항입니다. 여기는{" "}
-            <b className="text-zinc-300">파트별 비율은 그대로 두고 분량만 절반</b>으로
-            줄였고, <b className="text-zinc-300">문항당 시간은 실제와 같게</b> 맞췄습니다.
-            쫓기는 감각은 같습니다.
-            <br />
-            <span className="mt-1 block">
-              모의고사만은 목표 점수대로 걸러 내지 않습니다. 실제 시험은 목표에 따라
-              쉬워지지 않고, 어려운 문항을 몇 개 버리고 갈지 정하는 것까지가 실력이기
-              때문입니다. 응시할 때마다 문항이 새로 뽑힙니다.
-            </span>
-          </p>
+          <TriangleAlert size={16} className="mt-0.5 shrink-0 text-amber-300" />
+          <div className="min-w-0">
+            <p className="text-[13px] font-bold text-amber-200">
+              보시기 전에 — 이 시험지가 부족한 점
+            </p>
+
+            <p className="mt-2 text-[12px] font-bold text-zinc-300">문항이 넉넉하지 않습니다</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">
+              가진 문항은 듣기 143 · 읽기 173, 모두 316개입니다. 실제 시험 한 회가
+              200문항이니 넉넉히 잡아도 한 벌 반입니다. 특히{" "}
+              <b className="text-zinc-300">Part 3 과 Part 7 은 실제 시험 한 회 분량뿐</b>
+              입니다. 그래서 두 번째 응시부터는 본 문항이 섞여 나옵니다 — 연달아 두 벌을
+              보면 평균 38%가 겹치고, 열다섯 벌쯤이면 가진 문항을 거의 다 만납니다.
+              답을 외운 문항은 점수를 부풀립니다.
+            </p>
+
+            <p className="mt-3 text-[12px] font-bold text-zinc-300">듣기는 실제와 많이 다릅니다</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">
+              사람이 녹음한 음원이 아니라 기기의 음성으로 읽어 줍니다. 실제 시험의
+              미국·영국·캐나다·호주 발음과는 결이 다르고, 기기에 영어 음성이 없으면
+              스크립트를 읽는 방식으로 넘어갑니다. Part 1 은 사진이 아니라 그린 그림이고,
+              Part 3·4 지문은 평균 82단어로 실제(100~130단어)보다 짧습니다.{" "}
+              <b className="text-zinc-300">듣기 점수는 실제보다 높게 나오기 쉽습니다.</b>
+            </p>
+
+            {/*
+              부족한 점 둘은 늘 펼쳐 둔다 — 그것이 이 카드의 목적이다.
+              나머지(쓸모 있는 점·출처)는 한 번 읽으면 되는 것이라 접는다.
+              다 펼쳐 두었더니 응시하기 단추가 한 화면 아래로 밀렸다.
+            */}
+            {!more ? (
+              <button
+                type="button"
+                onClick={() => setMore(true)}
+                className="mt-3 text-[12px] font-bold text-amber-200 underline decoration-dotted"
+              >
+                그래도 쓸모가 있는 것 · 문항 출처
+              </button>
+            ) : (
+              <>
+                <p className="mt-3 text-[12px] font-bold text-zinc-300">그래도 쓸모가 있는 것</p>
+                <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">
+                  파트별 비율은 실제와 같고, 문항당 시간도 36초로 똑같이 맞췄습니다. 분량만
+                  절반으로 줄였습니다. 그래서{" "}
+                  <b className="text-zinc-300">시간에 쫓기는 감각과 어느 파트에서 무너지는지</b>
+                  는 그대로 드러납니다. 점수 자체보다 파트별 정답률을 보세요.
+                </p>
+                <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">
+                  문항은 공개된 출제 범위에 맞춰 직접 쓴 것입니다. ETS 는 기출문제를
+                  공개하지 않아, 실제 시험지를 옮겨 온 것이 아닙니다. 모의고사만은 목표
+                  점수대로 걸러 내지 않습니다 — 실제 시험은 목표에 따라 쉬워지지 않기
+                  때문입니다.
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </Card>
 
