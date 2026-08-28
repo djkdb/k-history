@@ -211,6 +211,9 @@ export function MockSession() {
   const choices = choicesOf(item);
   const picked = answers[at];
   const urgent = left < 60_000;
+  const blanks = exam.items
+    .map((_, i) => i)
+    .filter((i) => answers[i] === undefined);
 
   return (
     <main className="py-4">
@@ -312,19 +315,41 @@ export function MockSession() {
       </div>
 
       <div className="mt-6">
-        <p className="mb-2 text-[12px] text-zinc-500">문항 이동</p>
+        {/*
+          안 푼 문항을 한눈에.
+
+          예전에는 푼 것과 안 푼 것을 밝기로만 갈랐다. 어두운 칸 백 개
+          중에서 조금 더 어두운 것을 찾는 일이라, 정작 급한 순간 —
+          제출 확인 창이 "44문항은 오답으로 처리됩니다" 라고 말하는
+          그때 — 어느 것이 그 44개인지 눈으로 못 찾는다.
+          점선으로 갈라 두면 멀리서도 바로 보인다. 첫 번째로 뛰는 길도
+          같이 둔다.
+        */}
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="text-[12px] text-zinc-500">문항 이동</p>
+          {blanks.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setAt(blanks[0])}
+              className="text-[12px] font-bold text-amber-300 underline decoration-dotted"
+            >
+              안 푼 문항 {blanks.length}개 · 첫 번째로
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-8 gap-1.5">
           {exam.items.map((_, i) => (
             <button
               key={i}
               onClick={() => setAt(i)}
+              aria-label={`${i + 1}번${answers[i] === undefined ? " (안 풂)" : ""}`}
               className={cn(
-                "aspect-square rounded-lg text-[11px] font-bold transition-colors",
+                "aspect-square rounded-lg border text-[11px] font-bold transition-colors",
                 i === at
-                  ? "bg-indigo-500 text-white"
+                  ? "border-indigo-400 bg-indigo-500 text-white"
                   : answers[i] !== undefined
-                    ? "bg-white/15 text-zinc-200"
-                    : "bg-white/5 text-zinc-600",
+                    ? "border-transparent bg-white/15 text-zinc-200"
+                    : "border-dashed border-amber-400/45 bg-transparent text-zinc-500",
               )}
             >
               {i + 1}
