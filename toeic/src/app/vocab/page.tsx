@@ -358,8 +358,13 @@ function VocabCard({
               onClick={onToggleKnown}
               className={cn(
                 "flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-bold transition-colors",
+                /*
+                  옅은 초록 바탕 위에 놓이므로 글자를 한 칸 더 진하게
+                  잡는다. emerald-200 은 밝은 테마에서 3.82:1 로 모자랐다
+                  (대비 검사가 잡았다). emerald-100 이 5.35:1 이다.
+                */
                 known
-                  ? "bg-emerald-500/15 text-emerald-200"
+                  ? "bg-emerald-500/15 text-emerald-100"
                   : "bg-white/5 text-zinc-300 hover:bg-white/10",
               )}
             >
