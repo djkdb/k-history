@@ -141,8 +141,9 @@ export default function SettingsPage() {
       )}
 
       <p className="mt-10 text-center text-[11px] leading-relaxed text-zinc-600">
-        SQLD 마스터 · 한국데이터산업진흥원이 기출문제를 공개하지 않아, 이 앱의
-        문제는 공개된 출제 범위와 표준 SQL 명세를 근거로 새로 만든 것입니다.
+        SQLD 마스터 · 한국데이터산업진흥원이 기출문제를 공개하지 않고 시중 교재는
+        저작권이 있어, 이 앱의 문제는 공개된 출제 범위와 표준 SQL 명세만을 근거로
+        AI 가 새로 쓴 것입니다.
       </p>
     </div>
   );

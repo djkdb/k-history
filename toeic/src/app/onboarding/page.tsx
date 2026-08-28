@@ -58,11 +58,17 @@ export default function Onboarding() {
         <div className="flex items-start gap-2.5">
           <Info size={16} className="mt-0.5 shrink-0 text-zinc-400" />
           <div className="text-[13px] leading-relaxed text-zinc-400">
-            <p className="font-bold text-zinc-200">문제는 직접 만든 것입니다</p>
+            <p className="font-bold text-zinc-200">문항은 AI 가 새로 쓴 것입니다</p>
             <p className="mt-1">
-              ETS 는 기출문제를 공개하지 않습니다. 그래서 여기 있는 문항은 공개된
-              시험 구성(파트별 문항 수·유형·배점)에 맞춰 새로 쓴 것입니다. 실제
-              시험지를 옮긴 것이 아닙니다.
+              ETS 는 기출문제를 공개하지 않습니다. 시중 교재의 문제를 옮겨 오는 것은
+              저작권 침해라 쓸 수 없습니다. 그래서 여기 있는 문항은 공개된 시험
+              구성(파트별 문항 수·유형·배점)만을 근거로{" "}
+              <b className="text-zinc-300">AI 가 새로 쓴 것</b>입니다. 실제 시험지를
+              옮긴 것이 아닙니다.
+            </p>
+            <p className="mt-1.5 text-[12px] text-zinc-500">
+              쓰고 나서 정답이 하나뿐인지, 선택지가 겹치지 않는지, 뜻과 예문이 맞는지
+              하나씩 확인했습니다. 그래도 사람이 만든 교재만큼 다듬어지지는 않았습니다.
             </p>
           </div>
         </div>

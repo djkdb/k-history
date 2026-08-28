@@ -192,8 +192,9 @@ export default function SettingsPage() {
       </Card>
 
       <p className="mt-8 text-center text-[11px] leading-relaxed text-zinc-600">
-        토익 마스터 · ETS 가 기출문제를 공개하지 않으므로 모든 문항은 공개된 시험
-        구성에 맞춰 직접 만든 것입니다. 학습 기록은 이 기기 안에만 저장됩니다.
+        토익 마스터 · ETS 가 기출문제를 공개하지 않고 시중 교재는 저작권이 있어,
+        모든 문항은 공개된 시험 구성만을 근거로 AI 가 새로 쓴 것입니다. 학습 기록은
+        이 기기 안에만 저장됩니다.
       </p>
     </main>
   );

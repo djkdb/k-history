@@ -185,8 +185,9 @@ export default function SettingsPage() {
       )}
 
       <p className="mt-10 text-center text-[11px] leading-relaxed text-zinc-600">
-        컴활 마스터 · 대한상공회의소가 기출문제를 공개하지 않아, 이 앱의
-        문제는 공개된 출제기준을 근거로 새로 만든 것입니다.
+        컴활 마스터 · 대한상공회의소가 기출문제를 공개하지 않고 시중 교재는
+        저작권이 있어, 이 앱의 문제는 공개된 출제기준만을 근거로 AI 가 새로 쓴
+        것입니다.
       </p>
     </div>
   );
