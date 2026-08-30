@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, Chip, EmptyState, ProgressBar } from "@/components/ui";
 import { TOPIC_LABEL, vocabFor } from "@/data/vocab";
+import { BandLadder } from "@/components/band-ladder";
 import { BAND_LABEL } from "@/data/parts";
 import { useApp, useBand } from "@/lib/store";
 import type { Vocab, VocabTopic } from "@/lib/types";
@@ -103,6 +104,7 @@ function VocabScreen() {
           {BAND_LABEL[band]} 기준 {all.length}개 · 외운 것 {knownCount}개
         </p>
         <ProgressBar value={knownCount} max={all.length} color="#6366f1" className="mt-3" />
+        <BandLadder countOf={(b) => vocabFor(b).length} />
       </header>
 
       {/*

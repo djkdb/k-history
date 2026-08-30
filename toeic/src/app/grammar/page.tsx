@@ -10,6 +10,7 @@ import {
   grammarByCategory,
   grammarFor,
 } from "@/data/grammar";
+import { BandLadder } from "@/components/band-ladder";
 import { BAND_LABEL } from "@/data/parts";
 import { useApp, useBand } from "@/lib/store";
 import type { GrammarCategory, GrammarPoint } from "@/lib/types";
@@ -43,6 +44,7 @@ export default function GrammarList() {
         <p className="mt-1 text-[13px] text-zinc-400">
           Part 5·6 에서 자리로 푸는 문제들 · {BAND_LABEL[band]} 기준 {all.length}개
         </p>
+        <BandLadder countOf={(b) => grammarFor(b).length} />
         <ProgressBar value={doneCount} max={all.length} color="#10b981" className="mt-3" />
         <p className="mt-2 text-[12px] text-zinc-500">
           {doneCount} / {all.length}개 학습
