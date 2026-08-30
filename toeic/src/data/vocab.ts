@@ -9,6 +9,8 @@ import { VOCAB_ADD_600 } from "./vocab-add-600";
 import { VOCAB_ADD_700 } from "./vocab-add-700";
 import { VOCAB_ADD_800 } from "./vocab-add-800";
 import { VOCAB_ADD_900 } from "./vocab-add-900";
+import { VOCAB_ADD2_600 } from "./vocab-add2-600";
+import { VOCAB_ADD2_700 } from "./vocab-add2-700";
 
 export const VOCAB: Vocab[] = [
   ...VOCAB_600,
@@ -21,6 +23,8 @@ export const VOCAB: Vocab[] = [
   ...VOCAB_ADD_700,
   ...VOCAB_ADD_800,
   ...VOCAB_ADD_900,
+  ...VOCAB_ADD2_600,
+  ...VOCAB_ADD2_700,
 ];
 
 export const VOCAB_MAP: Record<string, Vocab> = Object.fromEntries(
