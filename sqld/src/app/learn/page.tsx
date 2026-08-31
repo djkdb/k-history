@@ -43,7 +43,7 @@ export default function LearnPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="개념·용어·키워드 검색 (JOIN, 정규화, NULL …)"
-          className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-600"
+          className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-zinc-600"
         />
       </div>
 

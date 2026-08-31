@@ -29,7 +29,7 @@ export function InfographicFrame({
           type="button"
           onClick={onReplay}
           aria-label="애니메이션 다시 보기"
-          className="text-zinc-600 transition-colors hover:text-zinc-300"
+          className="-m-2.5 p-2.5 text-zinc-600 transition-colors hover:text-zinc-300"
         >
           <RotateCw size={13} />
         </button>

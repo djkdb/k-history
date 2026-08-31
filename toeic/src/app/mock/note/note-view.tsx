@@ -189,7 +189,7 @@ function Back() {
   return (
     <Link
       href="/mock"
-      className="inline-flex items-center gap-1 text-[13px] text-zinc-400 hover:text-zinc-200"
+      className="-my-2 inline-flex items-center gap-1 py-2 text-[13px] text-zinc-400 hover:text-zinc-200"
     >
       <ChevronLeft size={15} />
       모의고사

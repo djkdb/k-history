@@ -120,7 +120,7 @@ export default function MockHome() {
               <button
                 type="button"
                 onClick={() => setMore(true)}
-                className="mt-3 text-[12px] font-bold text-amber-200 underline decoration-dotted"
+                className="-mb-1.5 mt-1.5 py-1.5 text-[12px] font-bold text-amber-200 underline decoration-dotted"
               >
                 그래도 쓸모가 있는 것 · 문항 출처
               </button>

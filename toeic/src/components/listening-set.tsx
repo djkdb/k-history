@@ -67,7 +67,7 @@ export function SpeechRateCard() {
           step={0.05}
           value={rate}
           onChange={(e) => setSpeechRate(Number(e.target.value))}
-          className="h-1.5 w-full accent-indigo-500"
+          className="h-8 w-full accent-indigo-500"
           aria-label="읽는 속도"
         />
         <span className="w-10 shrink-0 text-right text-[13px] font-bold text-zinc-300">
@@ -134,7 +134,7 @@ export function NoiseCard() {
               setNoise(kind, v);
               setNoiseLevel(v);
             }}
-            className="h-1.5 w-full accent-indigo-500"
+            className="h-8 w-full accent-indigo-500"
             aria-label="소음 크기"
           />
           <span className="w-9 shrink-0 text-right text-[12px] font-bold text-zinc-300">
@@ -189,7 +189,7 @@ function SceneView({ set }: { set: ListeningSet }) {
         <button
           type="button"
           onClick={() => setShowText((v) => !v)}
-          className="shrink-0 text-[11px] text-zinc-500 underline decoration-dotted hover:text-zinc-300"
+          className="-my-1.5 shrink-0 py-1.5 text-[11px] text-zinc-500 underline decoration-dotted hover:text-zinc-300"
         >
           {showText ? "설명 접기" : "글로 된 설명"}
         </button>

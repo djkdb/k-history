@@ -333,7 +333,7 @@ export function ScrollRow({
             type="button"
             aria-label="오른쪽으로 넘기기"
             onClick={nudge}
-            className="pill-on absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform active:scale-90"
+            className="pill-on absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform active:scale-90 before:absolute before:-inset-2 before:content-['']"
           >
             <ChevronRight size={15} />
           </button>

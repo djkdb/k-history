@@ -63,7 +63,7 @@ export default function CramPage() {
     <div className="pt-5">
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200"
+        className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
       >
         <ArrowLeft size={15} />
         홈으로

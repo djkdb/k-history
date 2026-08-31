@@ -134,7 +134,7 @@ function VocabScreen() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="단어·뜻·예문 검색"
-          className="w-full bg-transparent text-[14px] outline-none placeholder:text-zinc-600"
+          className="w-full bg-transparent py-2 text-[14px] outline-none placeholder:text-zinc-600"
         />
       </div>
 

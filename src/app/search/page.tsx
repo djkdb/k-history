@@ -72,7 +72,7 @@ export default function SearchPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="왕·사건·연도·인물·문화재 검색"
-          className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-600"
+          className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-zinc-600"
         />
         {query && (
           <button

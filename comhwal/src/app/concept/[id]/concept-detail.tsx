@@ -124,7 +124,7 @@ export function ConceptDetail() {
     <div className="pt-6">
       <Link
         href={`/learn/${concept.subject}`}
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200"
+        className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
       >
         <ArrowLeft size={15} />
         {subject.name}

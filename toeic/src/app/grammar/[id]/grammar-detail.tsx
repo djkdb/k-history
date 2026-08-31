@@ -54,7 +54,7 @@ export function GrammarDetail({ id }: { id: string }) {
     <main className="py-6">
       <Link
         href="/grammar"
-        className="inline-flex items-center gap-1.5 text-[13px] text-zinc-400 hover:text-zinc-200"
+        className="-my-2 inline-flex items-center gap-1.5 py-2 text-[13px] text-zinc-400 hover:text-zinc-200"
       >
         <ArrowLeft size={15} />
         문법

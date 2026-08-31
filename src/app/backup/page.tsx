@@ -101,7 +101,7 @@ export default function BackupPage() {
     <div className="pt-6">
       <Link
         href="/"
-        className="mb-4 inline-flex items-center gap-1 text-xs text-zinc-500"
+        className="-mt-2 mb-2 inline-flex items-center gap-1 py-2 text-xs text-zinc-500"
       >
         <ChevronLeft size={14} /> 홈
       </Link>

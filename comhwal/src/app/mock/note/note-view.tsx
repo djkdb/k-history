@@ -168,7 +168,7 @@ function BackLink({ practical }: { practical?: boolean }) {
   return (
     <Link
       href={practical ? "/practical" : "/mock"}
-      className="inline-flex items-center gap-1 text-[13px] text-zinc-400 hover:text-zinc-200"
+      className="-my-2 inline-flex items-center gap-1 py-2 text-[13px] text-zinc-400 hover:text-zinc-200"
     >
       <ArrowLeft size={14} />
       {practical ? "실기" : "모의고사"}
