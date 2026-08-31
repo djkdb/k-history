@@ -68,6 +68,10 @@ export function MockSession() {
       const p = readProgress();
       if (p && p.examId === examId) return p.seed;
     }
+    // 목록 화면이 카드에 적은 문항 수·시간은 이 씨앗으로 만든 것이다.
+    // 여기서 다시 뽑으면 카드가 말한 것과 다른 시험지가 나온다.
+    const fromCard = Number(params.get("seed"));
+    if (Number.isFinite(fromCard) && fromCard > 0) return fromCard;
     return Math.floor(Math.random() * 1_000_000) + 1;
   });
 

@@ -26,11 +26,26 @@ export default function MockHome() {
   const [resume, setResume] = useState<MockProgress | null>(null);
   const [more, setMore] = useState(false);
 
-  useEffect(() => setResume(readProgress()), []);
+  /*
+   * 카드에 적는 문항 수·제한 시간은 "이 씨앗으로 만든 시험지"의 것이다.
+   *
+   * 예전에는 카드를 씨앗 1 로 만들어 놓고 응시할 때 다시 무작위로 뽑았다.
+   * Part 7 은 지문을 쪼갤 수 없어 목표 문항 수를 넘길 때가 있으므로, 카드가
+   * "52문항 39분"이라 해 놓고 실제로는 54문항 41분이 나오는 일이 세 번에
+   * 두 번 꼴이었다. 그래서 카드가 뽑은 씨앗을 그대로 응시로 넘긴다.
+   *
+   * 서버에서 미리 그려 둔 화면과 어긋나지 않도록 처음에는 1 로 두고,
+   * 화면이 붙은 뒤에 바꾼다.
+   */
+  const [seed, setSeed] = useState(1);
+  useEffect(() => {
+    setResume(readProgress());
+    setSeed(Math.floor(Math.random() * 1_000_000) + 1);
+  }, []);
 
   const built = useMemo(
-    () => Object.fromEntries(EXAMS.map((e) => [e.id, buildExam(e.id, band, 1)])),
-    [band],
+    () => Object.fromEntries(EXAMS.map((e) => [e.id, buildExam(e.id, band, seed)])),
+    [band, seed],
   );
 
   const past = [...attempts].reverse();
@@ -219,7 +234,7 @@ export default function MockHome() {
                 </div>
               </div>
               {!empty && (
-                <Link href={`/mock/session?exam=${e.id}`}>
+                <Link href={`/mock/session?exam=${e.id}&seed=${seed}`}>
                   <Button size="lg" className="mt-4 w-full">
                     <Play size={16} />
                     응시하기
