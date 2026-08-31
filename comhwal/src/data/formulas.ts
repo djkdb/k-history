@@ -290,6 +290,8 @@ export const FORMULA_TASKS: FormulaTask[] = [
     prompt:
       "B2의 입사일부터 오늘까지의 근속 연수를 정수로 구하시오.",
     answer: '=DATEDIF(B2,TODAY(),"Y")',
+    // 단위는 대소문자를 가리지 않는다. 소문자로 쳤다고 오답이 되면 안 된다.
+    alternatives: ['=DATEDIF(B2,TODAY(),"y")'],
     explanation:
       "DATEDIF(시작일, 종료일, 단위)이며 단위는 \"Y\"(년), \"M\"(월), \"D\"(일)이다. 함수 목록에 뜨지 않지만 정상적으로 동작한다.",
     trap: "시작일이 뒤에 오면 #NUM! 오류가 난다. 항상 이른 날짜가 먼저다.",
@@ -613,6 +615,8 @@ export const FORMULA_TASKS: FormulaTask[] = [
     prompt:
       "B2에 적힌 숫자(예: 5)를 행 번호로 삼아 A열의 그 행 값을 가져오시오.",
     answer: '=INDIRECT("A"&B2)',
+    // 셀 주소는 대소문자를 가리지 않아 "a5" 도 A5 를 가리킨다.
+    alternatives: ['=INDIRECT("a"&B2)'],
     explanation:
       "INDIRECT는 문자로 만든 주소를 진짜 셀 참조로 바꿔 준다. \"A\"와 행 번호를 &로 이어 \"A5\" 같은 주소를 만든다.",
     trap: "따옴표를 빼고 A&B2로 쓰면 A라는 이름을 찾다가 #NAME? 오류가 난다.",
@@ -733,6 +737,12 @@ export const FORMULA_TASKS: FormulaTask[] = [
     prompt:
       "A2의 날짜를 \"2026년 08월\" 처럼 보이는 문자열로 만드시오.",
     answer: '=TEXT(A2,"yyyy년 mm월")',
+    // 날짜 서식 코드는 대소문자를 가리지 않는다 (YYYY·MM 도 같다).
+    alternatives: [
+      '=TEXT(A2,"YYYY년 MM월")',
+      '=TEXT(A2,"YYYY년 mm월")',
+      '=TEXT(A2,"yyyy년 MM월")',
+    ],
     explanation:
       "TEXT는 값을 지정한 서식의 문자열로 바꾼다. 결과가 문자가 되므로 계산에는 쓸 수 없다.",
     trap: "셀 서식을 바꾸는 것과 다르다. TEXT는 값 자체를 문자로 만든다.",
