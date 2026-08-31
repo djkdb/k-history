@@ -63,7 +63,7 @@ export default function SettingsPage() {
               showScript: settings?.showScript ?? false,
             })
           }
-          className="w-full bg-transparent text-[15px] outline-none"
+          className="w-full bg-transparent py-2.5 text-[15px] outline-none"
         />
         <p className="mt-2 text-[11px] text-zinc-500">
           시험이 일주일 안으로 들어오면 홈에 직전 모드가 뜹니다.

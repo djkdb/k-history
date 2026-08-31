@@ -899,39 +899,79 @@ function makeEvent(ctx: Ctx): QuizQuestion | null {
 /**
  * 부정형 — "옳지 않은 것은?" 실제 시험의 단골 발문.
  * 참 3개는 이 사건의 사실에서, 거짓 1개는 다른 사건의 사실에서 만든다.
+ * 거짓 보기의 길이가 참 보기와 비슷하도록 두 가지 꼴을 번갈아 쓴다.
  * 세 개가 모두 참임을 확인해야 하므로 부분 지식으로는 풀기 어렵다.
  */
 function makeNegative(ctx: Ctx): QuizQuestion | null {
   const { event, all, seed, pool } = ctx;
 
-  const truths: string[] = [event.summary10s];
-  if (event.king) truths.push(`${event.king} 때의 일이다.`);
-  truths.push(`${event.yearDisplay}에 있었던 일이다.`);
-  if (event.significance) truths.push(event.significance);
-  if (event.keywords.length)
-    truths.push(`${event.keywords.slice(0, 3).join("·")} 등이 핵심 키워드다.`);
-
-  const picked = shuffle(truths, seed).slice(0, 3);
-  if (picked.length < 3) return null;
-
-  // 거짓 보기: 다른 사건의 요약문 (이 사건에 대한 설명으로는 틀리다)
-  const wrong = nearestOthers(event, all, pool + 2, ctx.spread).find(
-    (e) => !picked.includes(e.summary10s) && e.summary10s !== event.summary10s,
+  // 참 보기는 "내용을 담은 문장"을 먼저 쓴다.
+  //
+  // 거짓 보기가 늘 다른 사건의 summary10s(한 문장)이라, 참 보기가 죄다
+  // "○○ 때의 일이다" 같은 짧은 꼬리표면 역사를 몰라도 혼자 긴 것을 고르면
+  // 맞는다. 실제로 재 보니 이 유형만 "정답이 최단인 경우 0%"였다.
+  // "…등이 핵심 키워드다"는 아예 뺐다 — 역사 서술이 아니라 앱 말투다.
+  const core = shuffle(
+    [event.summary10s, event.significance].filter(Boolean) as string[],
+    seed,
   );
-  if (!wrong) return null;
+  const tags = shuffle(
+    [
+      event.king ? `${event.king} 때의 일이다.` : null,
+      `${event.yearDisplay}에 있었던 일이다.`,
+    ].filter(Boolean) as string[],
+    seed === undefined ? undefined : seed + 1,
+  );
+  const others = nearestOthers(event, all, pool + 2, ctx.spread);
+
+  // 거짓 보기를 늘 "다른 사건의 한 문장"으로 만들면 정답이 절대 제일 짧지
+  // 않게 되어, 제일 짧은 보기를 지우고 시작할 수 있다. 그래서 연도가 한
+  // 시점으로 딱 떨어지는 사건에서는 거짓 보기도 짧은 꼴로 만든다.
+  // 이때는 참 보기에서 연도를 빼야 한다 — 연도가 둘이면 그 둘 중 하나가
+  // 답이라는 것이 드러나 오히려 반으로 좁혀진다.
+  const pointYear = (y: string) => !/[~\-–—]/.test(y);
+  const wantShortFalse =
+    !!event.king &&
+    pointYear(event.yearDisplay) &&
+    core.length >= 2 &&
+    (seed === undefined ? false : seed % 2 === 1);
+
+  let picked: string[];
+  let falseOption: string;
+  let wrong: (typeof others)[number] | undefined;
+
+  if (wantShortFalse) {
+    // 같은 시대라도 연도가 다르면 이 사건의 설명으로는 명백히 거짓이다.
+    // 오히려 시대가 같을수록 연도를 정확히 알아야 풀리는 좋은 문제가 된다.
+    wrong = others.find(
+      (e) => pointYear(e.yearDisplay) && e.yearDisplay !== event.yearDisplay,
+    );
+    picked = [core[0], core[1], `${event.king} 때의 일이다.`];
+    falseOption = wrong ? `${wrong.yearDisplay}에 있었던 일이다.` : "";
+  } else {
+    picked = [...core.slice(0, 2), ...tags].slice(0, 3);
+    wrong = others.find(
+      (e) => !picked.includes(e.summary10s) && e.summary10s !== event.summary10s,
+    );
+    falseOption = wrong ? wrong.summary10s : "";
+  }
+  if (!wrong || !falseOption || picked.length < 3) return null;
+  if (picked.includes(falseOption)) return null;
 
   const options = shuffle(
-    [...picked, wrong.summary10s],
+    [...picked, falseOption],
     seed === undefined ? undefined : seed + 3,
   );
   return finish(ctx, "negative", {
     question: `다음 중 "${event.title}"에 대한 설명으로 옳지 않은 것은?`,
     options,
-    answerIndex: options.indexOf(wrong.summary10s),
+    answerIndex: options.indexOf(falseOption),
     explanation: explain(
       event,
-      wrong.summary10s,
-      `이 설명은 ${event.title}이 아니라 ${wrong.title}(${wrong.yearDisplay})에 해당한다. ${wrong.summary30s || ""}`.trim(),
+      falseOption,
+      wantShortFalse
+        ? `${event.title}은 ${event.yearDisplay}의 일이다. ${wrong.yearDisplay}은 ${wrong.title} 때다.`
+        : `이 설명은 ${event.title}이 아니라 ${wrong.title}(${wrong.yearDisplay})에 해당한다. ${wrong.summary30s || ""}`.trim(),
       {
         others:
           "다음은 모두 " +

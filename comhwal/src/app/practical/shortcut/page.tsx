@@ -132,7 +132,7 @@ export default function ShortcutTrainerPage() {
       <div className="pt-6">
         <Link
           href="/practical"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200"
+          className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
         >
           <ArrowLeft size={15} />
           실기 훈련
@@ -191,7 +191,7 @@ export default function ShortcutTrainerPage() {
             type="checkbox"
             checked={choiceMode}
             onChange={(e) => setChoiceMode(e.target.checked)}
-            className="h-4 w-4 accent-indigo-500"
+            className="h-5 w-5 accent-indigo-500"
           />
         </label>
 

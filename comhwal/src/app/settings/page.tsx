@@ -120,7 +120,7 @@ export default function SettingsPage() {
             setDate(e.target.value);
             update({ examDate: e.target.value || null });
           }}
-          className="w-full bg-transparent text-base outline-none"
+          className="w-full bg-transparent py-2.5 text-base outline-none"
         />
         {date && (
           <button

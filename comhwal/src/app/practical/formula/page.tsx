@@ -63,7 +63,7 @@ export default function FormulaTrainerPage() {
       <div className="pt-6">
         <Link
           href="/practical"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200"
+          className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
         >
           <ArrowLeft size={15} />
           실기 훈련

@@ -193,11 +193,13 @@ export function TaskDetail() {
           <div className="mt-2 flex flex-col gap-1.5">
             {task.links
               .filter((id) => CONCEPT_MAP[id])
+              // 손가락으로 누르는 자리를 넓힌다. -my-1 로 보이는 간격은
+              // 그대로 두고 누를 수 있는 높이만 20px → 36px 로 키운다.
               .map((id) => (
                 <Link
                   key={id}
                   href={`/concept/${id}`}
-                  className="text-[13px] text-indigo-300 hover:text-indigo-200"
+                  className="-my-1 py-2 text-[13px] text-indigo-300 hover:text-indigo-200"
                 >
                   {CONCEPT_MAP[id].title} →
                 </Link>

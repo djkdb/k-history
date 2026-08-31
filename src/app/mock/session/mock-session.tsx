@@ -83,7 +83,7 @@ function PageViewer({
               type="button"
               onClick={() => onPage(i)}
               className={cn(
-                "h-7 w-7 shrink-0 rounded-md text-[11px] font-bold transition-colors",
+                "h-9 w-9 shrink-0 rounded-md text-[12px] font-bold transition-colors",
                 i === page ? "pill-on" : "bg-white/5 text-zinc-500",
               )}
             >

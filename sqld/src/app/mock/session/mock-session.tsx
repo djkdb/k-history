@@ -282,7 +282,7 @@ export function MockSession() {
               type="button"
               onClick={() => setAt(i)}
               className={cn(
-                "h-7 rounded-lg text-[11px] font-bold transition-colors",
+                "h-9 rounded-lg text-[12px] font-bold transition-colors",
                 i === at
                   ? "pill-on"
                   : ok

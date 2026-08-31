@@ -124,7 +124,7 @@ export default function OnboardingPage() {
             type="date"
             value={examDate}
             onChange={(e) => setExamDate(e.target.value)}
-            className="w-full bg-transparent text-base outline-none"
+            className="w-full bg-transparent py-2.5 text-base outline-none"
           />
           <p className="mt-2 text-[11px] text-zinc-500">
             비워 두어도 됩니다. 넣어 두면 남은 날에 맞춰 무엇을 먼저 볼지

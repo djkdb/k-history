@@ -307,11 +307,13 @@ export function ScrollRow({
                 "linear-gradient(to left, var(--bg), color-mix(in srgb, var(--bg) 0%, transparent))",
             }}
           />
+          {/* before 로 누를 수 있는 범위만 사방 8px 넓혔다 — 28px 동그라미는
+              그대로 두고 실제로는 44px 를 누르는 셈이 된다. */}
           <button
             type="button"
             aria-label="오른쪽으로 넘기기"
             onClick={nudge}
-            className="pill-on absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform active:scale-90"
+            className="pill-on absolute right-0 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform active:scale-90 before:absolute before:-inset-2 before:content-['']"
           >
             <ChevronRight size={15} />
           </button>
