@@ -331,7 +331,7 @@ export function MockSession() {
             <button
               type="button"
               onClick={() => setAt(blanks[0])}
-              className="text-[12px] font-bold text-amber-300 underline decoration-dotted"
+              className="-my-1.5 py-1.5 text-[12px] font-bold text-amber-300 underline decoration-dotted"
             >
               안 푼 문항 {blanks.length}개 · 첫 번째로
             </button>

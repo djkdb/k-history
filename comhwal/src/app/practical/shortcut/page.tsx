@@ -191,7 +191,7 @@ export default function ShortcutTrainerPage() {
             type="checkbox"
             checked={choiceMode}
             onChange={(e) => setChoiceMode(e.target.checked)}
-            className="h-5 w-5 accent-indigo-500"
+            className="h-6 w-6 accent-indigo-500"
           />
         </label>
 

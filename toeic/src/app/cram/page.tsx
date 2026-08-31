@@ -139,7 +139,7 @@ export default function CramPage() {
         <>
           <SectionTitle
             action={
-              <Link href="/vocab?filter=todo" className="text-xs text-zinc-400">
+              <Link href="/vocab?filter=todo" className="-my-2 inline-block py-2 text-xs text-zinc-400">
                 더 보기
               </Link>
             }

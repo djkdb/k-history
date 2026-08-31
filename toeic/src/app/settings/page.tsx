@@ -82,7 +82,7 @@ export default function SettingsPage() {
             step={0.05}
             value={rate}
             onChange={(e) => setSpeechRate(Number(e.target.value))}
-            className="h-1.5 w-full accent-indigo-500"
+            className="h-8 w-full accent-indigo-500"
             aria-label="읽는 속도"
           />
           <span className="w-10 shrink-0 text-right text-[13px] font-bold text-zinc-300">
@@ -101,7 +101,7 @@ export default function SettingsPage() {
             type="checkbox"
             checked={settings?.showScript ?? false}
             onChange={(e) => setShowScript(e.target.checked)}
-            className="h-5 w-5 shrink-0 accent-indigo-500"
+            className="h-6 w-6 shrink-0 accent-indigo-500"
           />
         </label>
       </Card>
