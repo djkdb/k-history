@@ -371,7 +371,7 @@ const GRAMMAR_CORE: GrammarPoint[] = [
     summary:
       "than 이 보이면 비교급, the ...est / of all 이 보이면 최상급이다.",
     detail:
-      "비교 문제는 문장 안에 짝이 되는 표시가 있다. than → 비교급. the + 최상급 + in/of ~ → 최상급. as ... as 사이에는 원급이 들어간다. 비교급을 강조할 때는 very 가 아니라 much·far·even·considerably 를 쓴다.",
+      "비교 문제는 문장 안에 짝이 되는 표시가 있다. than → 비교급. the + 최상급 + in/of ~ → 최상급. as ... as 사이에는 원급이 들어간다. 비교급을 강조할 때는 very 가 아니라 much · far · even · considerably 를 쓴다.",
     examShape: "선택지에 원급·비교급·최상급이 나란히 선다.",
     shortcut: "than / as ... as / the ...est 중 무엇이 보이는지부터 찾는다.",
     trap: {

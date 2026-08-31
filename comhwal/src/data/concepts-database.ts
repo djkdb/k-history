@@ -356,7 +356,7 @@ export const DATABASE_CONCEPTS: Concept[] = [
     summary:
       "구조를 만드는 CREATE류가 DDL, 데이터를 다루는 SELECT류가 DML, 권한을 다루는 GRANT류가 DCL이다.",
     detail:
-      "DDL은 CREATE·ALTER·DROP으로 테이블 구조 자체를 정의한다. DML은 SELECT·INSERT·UPDATE·DELETE로 행을 다룬다. DCL은 GRANT·REVOKE로 권한을, COMMIT·ROLLBACK으로 트랜잭션을 처리한다. DELETE는 행을 지우고 구조는 남기지만, DROP은 테이블 자체를 없앤다.",
+      "DDL은 CREATE·ALTER·DROP으로 테이블 구조 자체를 정의한다. DML은 SELECT · INSERT · UPDATE · DELETE로 행을 다룬다. DCL은 GRANT·REVOKE로 권한을, COMMIT·ROLLBACK으로 트랜잭션을 처리한다. DELETE는 행을 지우고 구조는 남기지만, DROP은 테이블 자체를 없앤다.",
     examPoint:
       "명령어를 나열하고 다른 갈래 하나를 섞어 놓는 문제다. 'DELETE는 DML, DROP은 DDL'이 가장 자주 나오는 함정이다.",
     importance: 5,

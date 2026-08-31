@@ -19,7 +19,7 @@ import type { ListeningSet } from "@/lib/types";
  * 오답마다 넷 중 무엇인지 밝혀 둔다.
  */
 export const LISTENING_P2: ListeningSet[] = [
-  /* ── 의문사 의문문 (What·When·Where·Who·Why·How) ── */
+  /* ── 의문사 의문문 (What · When · Where · Who · Why · How) ── */
   {
     id: "l2-where-supplies",
     part: 2,

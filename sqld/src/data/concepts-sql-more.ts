@@ -82,7 +82,7 @@ ORDER BY sal DESC;`,
     id: "s-string-func",
     subject: "sql",
     chapter: "s-basic",
-    title: "문자 함수 — SUBSTR·INSTR·REPLACE·TRIM",
+    title: "문자 함수 — SUBSTR · INSTR · REPLACE · TRIM",
     term: "문자 함수",
     summary:
       "SUBSTR 은 잘라 내고, INSTR 은 위치를 찾고, REPLACE 는 바꾸고, TRIM 은 양끝을 다듬는다.",

@@ -352,7 +352,7 @@ export const READING_PART5: ReadingSet[] = [
           { text: "so", why: "마찬가지다." },
           {
             text: "considerably",
-            why: "정답. 비교급 강조는 much·far·even·considerably 로 한다.",
+            why: "정답. 비교급 강조는 much · far · even · considerably 로 한다.",
           },
         ],
       },

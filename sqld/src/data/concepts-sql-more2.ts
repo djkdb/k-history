@@ -60,7 +60,7 @@ export const CONCEPTS_SQL_MORE2: Concept[] = [
     id: "s-null-functions",
     subject: "sql",
     chapter: "s-basic",
-    title: "NULL 을 다루는 함수 — NVL·NVL2·NULLIF·COALESCE",
+    title: "NULL 을 다루는 함수 — NVL · NVL2 · NULLIF · COALESCE",
     term: "NULL 관련 함수",
     summary:
       "NVL 은 NULL 일 때 대신 쓸 값을, NVL2 는 NULL 여부에 따라 서로 다른 값을, NULLIF 는 두 값이 같으면 NULL 을, COALESCE 는 여럿 중 처음 만나는 NULL 아닌 값을 돌려준다.",

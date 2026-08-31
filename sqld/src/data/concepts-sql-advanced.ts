@@ -131,7 +131,7 @@ FROM (
     detail:
       "OVER 절이 붙으면 윈도우 함수다. PARTITION BY 로 묶을 범위를 정하고, ORDER BY 로 그 안의 순서를 정한다. 순위 함수는 셋이 갈린다 — RANK 는 같은 순위 뒤를 건너뛰고(1,1,3), DENSE_RANK 는 건너뛰지 않으며(1,1,2), ROW_NUMBER 는 같아도 무조건 다른 번호를 준다(1,2,3). LAG·LEAD 는 앞뒤 행의 값을 끌어온다.",
     examPoint:
-      "RANK·DENSE_RANK·ROW_NUMBER 의 결과를 나란히 놓고 고르게 하는 문제가 거의 매회 나온다. 동점이 있는 자료로 직접 돌려 보면 한 번에 외워진다.",
+      "RANK · DENSE_RANK · ROW_NUMBER 의 결과를 나란히 놓고 고르게 하는 문제가 거의 매회 나온다. 동점이 있는 자료로 직접 돌려 보면 한 번에 외워진다.",
     importance: 5,
     keywords: ["OVER", "PARTITION BY", "RANK", "DENSE_RANK", "ROW_NUMBER", "LAG", "LEAD"],
     traps: [
@@ -289,7 +289,7 @@ FROM emp;`,
     id: "s-dml",
     subject: "sql",
     chapter: "s-manage",
-    title: "DML — INSERT·UPDATE·DELETE·MERGE",
+    title: "DML — INSERT · UPDATE · DELETE · MERGE",
     term: "DML",
     summary:
       "DML 은 데이터를 바꾸는 명령이고, 아직 확정되지 않아 COMMIT 전까지는 되돌릴 수 있다.",
@@ -322,7 +322,7 @@ FROM emp;`,
     id: "s-tcl",
     subject: "sql",
     chapter: "s-manage",
-    title: "TCL — COMMIT·ROLLBACK·SAVEPOINT",
+    title: "TCL — COMMIT · ROLLBACK · SAVEPOINT",
     term: "TCL",
     summary:
       "COMMIT 은 확정, ROLLBACK 은 되돌리기, SAVEPOINT 는 중간에 표시를 찍어 거기까지만 되돌리는 것이다.",
@@ -349,7 +349,7 @@ FROM emp;`,
     title: "DDL 과 DCL",
     term: "DDL 과 DCL",
     summary:
-      "DDL 은 구조를 만들고 바꾸는 것(CREATE·ALTER·DROP·TRUNCATE), DCL 은 권한을 주고 뺏는 것(GRANT·REVOKE)이다.",
+      "DDL 은 구조를 만들고 바꾸는 것(CREATE · ALTER · DROP · TRUNCATE), DCL 은 권한을 주고 뺏는 것(GRANT·REVOKE)이다.",
     detail:
       "ALTER TABLE 로 열을 더하거나(ADD) 이름을 바꾸거나(RENAME) 없앨(DROP) 수 있다. 열의 자료형을 줄이는 것은 이미 든 값보다 작게는 못 줄인다. DDL 은 실행 즉시 확정되어 ROLLBACK 으로 되돌릴 수 없다. DCL 의 GRANT 는 권한을 주고 REVOKE 는 거둬들이며, WITH GRANT OPTION 으로 받은 사람이 다시 남에게 줄 수 있게 할 수 있다.",
     examPoint:

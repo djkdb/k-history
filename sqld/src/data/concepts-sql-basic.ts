@@ -136,7 +136,7 @@ WHERE deptno NOT IN (10, NULL);`,
     summary:
       "단일행 함수는 행마다 하나씩 결과를 내고, 집계 함수는 여러 행을 묶어 하나를 낸다.",
     detail:
-      "문자 함수(SUBSTR·INSTR·REPLACE·TRIM), 숫자 함수(ROUND·TRUNC·MOD), 날짜 함수, 변환 함수(TO_CHAR·TO_NUMBER·TO_DATE), NULL 함수(NVL·NVL2·COALESCE·NULLIF)가 있다. ROUND 는 반올림, TRUNC 는 자리를 잘라 버린다. 자료형이 다른 값을 비교하면 데이터베이스가 알아서 바꾸는데(암시적 형 변환), 이때 인덱스를 못 쓰게 되는 일이 있어 되도록 명시적으로 바꿔 준다.",
+      "문자 함수(SUBSTR · INSTR · REPLACE · TRIM), 숫자 함수(ROUND·TRUNC·MOD), 날짜 함수, 변환 함수(TO_CHAR · TO_NUMBER · TO_DATE), NULL 함수(NVL · NVL2 · COALESCE · NULLIF)가 있다. ROUND 는 반올림, TRUNC 는 자리를 잘라 버린다. 자료형이 다른 값을 비교하면 데이터베이스가 알아서 바꾸는데(암시적 형 변환), 이때 인덱스를 못 쓰게 되는 일이 있어 되도록 명시적으로 바꿔 준다.",
     examPoint:
       "ROUND 와 TRUNC 를 음수 자릿수로 주었을 때의 결과를 묻는다. -1 은 십의 자리에서 처리한다는 뜻이다. NVL2 는 인자가 셋(값이 있으면 두 번째, 없으면 세 번째)이라는 점도 나온다.",
     importance: 4,
