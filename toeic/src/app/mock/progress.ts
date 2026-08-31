@@ -33,6 +33,15 @@ export interface MockProgress {
    *  남은 시간을 저장하면 앱을 닫아 둔 동안 시간이 멈춘다. */
   endsAt: number;
   startedAt: number;
+  /**
+   * "한 번만 재생"에서 이미 나간 지문들.
+   *
+   * 화면 안에만 두면 새로고침 한 번에 풀린다. 실제 시험은 음성이 한 번
+   * 나가면 되돌릴 수 없고, iOS 는 잠깐 다른 앱을 봐도 화면을 버리므로
+   * 뜻하지 않게 다시 듣게 된다. 그래서 답과 같이 적어 둔다.
+   * (예전 기록에는 없으므로 없으면 빈 것으로 본다)
+   */
+  played?: string[];
 }
 
 export function readProgress(): MockProgress | null {

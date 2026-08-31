@@ -155,7 +155,14 @@ export function speak(text: string, opts: SpeakOptions = {}): Promise<void> {
     if (signal?.aborted) return resolve();
 
     const u = new SpeechSynthesisUtterance(text);
-    if (voice) u.voice = voice;
+    // 목소리 목록이 바뀐 뒤의 낡은 객체를 넣으면 브라우저가 예외를 던진다.
+    // 여기서 터지면 재생이 멈춘 채로 굳어 "멈추기"만 남는다. 목소리를
+    // 못 지정하면 기본 목소리로라도 읽는 편이 낫다.
+    try {
+      if (voice) u.voice = voice;
+    } catch {
+      // 기본 목소리로 간다
+    }
     u.lang = voice?.lang ?? "en-US";
     u.rate = Math.min(2, Math.max(0.5, rate));
     u.pitch = 1;

@@ -54,7 +54,12 @@ export function MockSession() {
    * 오가도 유지되어야 뜻이 있으므로, 문항 화면이 아니라 시험 전체가
    * 들고 있는다.
    */
+  // 이미 나간 지문. 새로고침해도 되살아나도록 진행 기록에서 읽어 온다.
+  //
+  // ref 만 두면 값이 바뀌어도 다시 그리지 않아 "이미 나갔습니다"가 늦게
+  // 뜨고, 저장하는 effect 도 돌지 않는다. 그래서 세는 값을 같이 둔다.
   const played = useRef<Set<string>>(new Set());
+  const [playedTick, setPlayedTick] = useState(0);
   const router = useRouter();
   const params = useSearchParams();
   const band = useBand();
@@ -75,39 +80,45 @@ export function MockSession() {
     return Math.floor(Math.random() * 1_000_000) + 1;
   });
 
+  /*
+   * 이 시험지에 대해 저장해 둔 진행.
+   *
+   * 예전에는 주소에 resume=1 이 붙었을 때만 이어 붙였다. 그래서 시험 도중
+   * 새로고침하면 (iOS 는 잠깐 다른 앱만 봐도 화면을 버린다) 빈 답으로
+   * 시작했고, 아래 저장 effect 가 그 빈 답으로 저장본을 덮어써서 풀던
+   * 답이 통째로 사라졌다.
+   *
+   * 같은 시험지(같은 examId·seed)면 새로 시작한 것이 아니라 이어 푸는
+   * 것이다. 새로 시작할 때는 목록 화면이 새 seed 를 넘기므로 여기에
+   * 걸리지 않는다.
+   */
+  const [saved] = useState(() => {
+    const p = readProgress();
+    return p && p.examId === examId && p.seed === seed ? p : null;
+  });
+
   const exam: Exam = useMemo(
     () => buildExam(examId, band, seed),
     [examId, band, seed],
   );
 
-  const [startedAt] = useState(() => {
-    if (resuming) {
-      const p = readProgress();
-      if (p && p.examId === examId) return p.startedAt;
-    }
-    return Date.now();
-  });
-  const [endsAt] = useState(() => {
-    if (resuming) {
-      const p = readProgress();
-      if (p && p.examId === examId) return p.endsAt;
-    }
-    return Date.now() + exam.minutes * 60_000;
-  });
+  const [startedAt] = useState(() => saved?.startedAt ?? Date.now());
+  const [endsAt] = useState(
+    () => saved?.endsAt ?? Date.now() + exam.minutes * 60_000,
+  );
 
-  const [at, setAt] = useState(() => {
-    if (resuming) {
-      const p = readProgress();
-      if (p && p.examId === examId) return Math.min(p.at, exam.items.length - 1);
-    }
-    return 0;
-  });
-  const [answers, setAnswers] = useState<Record<number, number>>(() => {
-    if (resuming) {
-      const p = readProgress();
-      if (p && p.examId === examId) return p.answers;
-    }
-    return {};
+  const [at, setAt] = useState(() =>
+    saved ? Math.min(saved.at, exam.items.length - 1) : 0,
+  );
+  const [answers, setAnswers] = useState<Record<number, number>>(
+    () => saved?.answers ?? {},
+  );
+
+  // 이미 나간 지문도 되살린다 (첫 그리기 전에 채워야 "이미 나갔습니다"가
+  // 곧바로 뜬다)
+  useState(() => {
+    if (Array.isArray(saved?.played)) played.current = new Set(saved.played);
+    return null;
   });
 
   const [left, setLeft] = useState(() => Math.max(0, endsAt - Date.now()));
@@ -182,8 +193,11 @@ export function MockSession() {
   // 풀던 자리를 남긴다 — 앱을 닫았다 켜도 이어서 볼 수 있게
   useEffect(() => {
     if (submitted) return;
-    writeProgress({ examId, band, seed, answers, at, endsAt, startedAt });
-  }, [answers, at, band, endsAt, examId, seed, startedAt, submitted]);
+    writeProgress({
+      examId, band, seed, answers, at, endsAt, startedAt,
+      played: [...played.current],
+    });
+  }, [answers, at, band, endsAt, examId, playedTick, seed, startedAt, submitted]);
 
   useEffect(() => () => stop(), []);
 
@@ -257,7 +271,11 @@ export function MockSession() {
           transition={{ duration: 0.15 }}
         >
           {item.section === "listening" ? (
-            <ListeningItem item={item} playedRef={played} />
+            <ListeningItem
+              item={item}
+              playedRef={played}
+              onPlayed={() => setPlayedTick((t) => t + 1)}
+            />
           ) : (
             <ReadingItem item={item} answers={answers} exam={exam} />
           )}
@@ -404,9 +422,12 @@ function isAudioOnly(item: ExamItem): boolean {
 function ListeningItem({
   item,
   playedRef,
+  onPlayed,
 }: {
   item: ExamItem;
   playedRef: React.MutableRefObject<Set<string>>;
+  /** 지문이 나갔음을 위에 알린다 — 저장과 다시 그리기를 위해 */
+  onPlayed?: () => void;
 }) {
   const rate = useApp((s) => s.settings?.speechRate ?? 1);
   const set = item.listening!;
@@ -457,6 +478,7 @@ function ListeningItem({
     if (!voices) return;
     if (onePlay && playedRef.current.has(set.id)) return;
     playedRef.current.add(set.id);
+    onPlayed?.();
     abortRef.current?.abort();
     const ctrl = new AbortController();
     abortRef.current = ctrl;
