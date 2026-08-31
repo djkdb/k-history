@@ -269,9 +269,13 @@ function WeakSkills({
                 <span className="text-[13px] font-bold">
                   {SKILL_LABEL[r.skill] ?? r.skill}
                 </span>
+                {/*
+                  같은 화면의 파트 머리글은 (맞힌 수/전체)로 적는다. 여기만
+                  (틀린 수/전체)라 "7 / 7"이 다 맞힌 것처럼 읽혔다. 무엇을
+                  세는지 글자로 밝힌다.
+                */}
                 <span className="text-[12px] font-bold tabular-nums text-rose-200">
-                  {r.wrong}
-                  <span className="font-medium text-zinc-500"> / {r.total}</span>
+                  {r.total}개 중 {r.wrong}개 틀림
                 </span>
               </div>
               <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">

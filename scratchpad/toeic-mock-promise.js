@@ -10,7 +10,11 @@ const BASE = process.argv[2];
     await p.goto(BASE + "/mock", { waitUntil: "networkidle" });
     await p.waitForTimeout(900);
     const cards = await p.evaluate(() =>
-      [...document.querySelectorAll("a[href*='/mock/session']")].map((a) => {
+      // "이어서 풀기" 카드는 시험 카드가 아니다 — 문항 수 대신 "N문항까지
+      // 풀었습니다"를 적는다. 세면 거짓 실패가 난다.
+      [...document.querySelectorAll("a[href*='/mock/session']")]
+        .filter((a) => !a.getAttribute("href").includes("resume=1"))
+        .map((a) => {
         let el = a;
         for (let i = 0; i < 5 && el.parentElement; i++) {
           el = el.parentElement;
