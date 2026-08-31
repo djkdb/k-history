@@ -122,7 +122,7 @@ export default function ReviewPage() {
           <button
             type="button"
             onClick={() => setQueue(null)}
-            className="hover:text-zinc-200"
+            className="-my-2 py-2 hover:text-zinc-200"
           >
             그만두기
           </button>
@@ -155,7 +155,7 @@ export default function ReviewPage() {
               )}
               <Link
                 href={item.href}
-                className="mt-3 inline-block text-[12px] text-indigo-300 hover:text-indigo-200"
+                className="mt-3 -mb-2 inline-block py-2 text-[12px] text-indigo-300 hover:text-indigo-200"
               >
                 자세히 보기 →
               </Link>

@@ -229,7 +229,7 @@ function ReviewScreen() {
                 <p className="text-[15px] leading-relaxed text-zinc-200">{item.back}</p>
                 <Link
                   href={item.href}
-                  className="mt-3 inline-flex items-center gap-1 text-[12px] text-indigo-300 hover:text-indigo-200"
+                  className="-mb-2 mt-3 inline-flex items-center gap-1 py-2 text-[12px] text-indigo-300 hover:text-indigo-200"
                 >
                   자세히 보기
                   <ArrowRight size={13} />

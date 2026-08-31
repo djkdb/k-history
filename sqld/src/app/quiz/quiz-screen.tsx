@@ -395,7 +395,7 @@ export function QuizScreen() {
             setQuestions(null);
             setSaved(readQuizProgress());
           }}
-          className="hover:text-zinc-200"
+          className="-my-2 py-2 hover:text-zinc-200"
         >
           그만두기
         </button>
@@ -498,7 +498,7 @@ export function QuizScreen() {
                 </p>
                 <Link
                   href={`/concept/${q.sourceId}`}
-                  className="mt-2 inline-block text-[12px] text-indigo-300 hover:text-indigo-200"
+                  className="mt-2 -mb-2 inline-block py-2 text-[12px] text-indigo-300 hover:text-indigo-200"
                 >
                   개념 전체 보기 →
                 </Link>

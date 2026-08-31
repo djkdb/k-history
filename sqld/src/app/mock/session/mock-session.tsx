@@ -393,7 +393,7 @@ export function MockSession() {
           {CONCEPT_MAP[q.sourceId] && (
             <Link
               href={`/concept/${q.sourceId}`}
-              className="mt-2 inline-block text-[12px] text-indigo-300 hover:text-indigo-200"
+              className="mt-2 -mb-2 inline-block py-2 text-[12px] text-indigo-300 hover:text-indigo-200"
             >
               개념 전체 보기 →
             </Link>
