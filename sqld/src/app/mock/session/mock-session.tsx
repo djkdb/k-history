@@ -271,7 +271,10 @@ export function MockSession() {
       </div>
 
       {/* 문항 번호 격자 — 50문항이라 두 줄로 접어 한눈에 보이게 한다 */}
-      <div className="mt-3 grid grid-cols-10 gap-1.5">
+      {/* 50문항이라 한 줄에 10개가 번호 세기에 맞다. 다만 320px 폰에서는
+          칸 폭이 23px 로 떨어져 기준(24px)에 못 미쳤다. 칸 수는 두고
+          간격을 6px → 4px 로 줄여 폭을 벌었다 (320px 에서 25px). */}
+      <div className="mt-3 grid grid-cols-10 gap-1">
         {questions.map((qq, i) => {
           const done = answers[i] !== undefined;
           const ok = paperReview && answers[i] === qq.answerIndex;
