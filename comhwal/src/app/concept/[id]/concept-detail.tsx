@@ -346,7 +346,7 @@ export function ConceptDetail() {
       {/* 앞뒤 개념 */}
       <div className="mt-6 flex items-stretch gap-2">
         {prev ? (
-          <Link href={`/concept/${prev.id}`} className="flex-1">
+          <Link href={`/concept/${prev.id}`} className="min-w-0 flex-1">
             <div className="glass h-full rounded-2xl p-3 transition-transform active:scale-[0.98]">
               <span className="flex items-center gap-1 text-[11px] text-zinc-500">
                 <ArrowLeft size={12} />
@@ -361,7 +361,7 @@ export function ConceptDetail() {
           <div className="flex-1" />
         )}
         {next ? (
-          <Link href={`/concept/${next.id}`} className="flex-1">
+          <Link href={`/concept/${next.id}`} className="min-w-0 flex-1">
             <div className="glass h-full rounded-2xl p-3 text-right transition-transform active:scale-[0.98]">
               <span className="flex items-center justify-end gap-1 text-[11px] text-zinc-500">
                 다음

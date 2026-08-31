@@ -201,7 +201,7 @@ ORDER BY 1;`,
     summary:
       "LIKE 로는 어려운 형태(숫자 세 자리, 특정 글자 반복)를 REGEXP_LIKE 로 찾는다.",
     detail:
-      "^ 는 시작, $ 는 끝, . 은 아무 글자 하나, * 는 0번 이상, + 는 1번 이상, ? 는 0 또는 1번을 뜻한다. [ ] 안에 넣으면 그중 하나, [^ ] 는 그것이 아닌 것이다. 오라클은 REGEXP_LIKE·REGEXP_REPLACE·REGEXP_SUBSTR·REGEXP_INSTR 을 제공한다. LIKE 의 % 와 _ 에 견주면 훨씬 정교하지만 인덱스를 타지 못하는 일이 많다.",
+      "^ 는 시작, $ 는 끝, . 은 아무 글자 하나, * 는 0번 이상, + 는 1번 이상, ? 는 0 또는 1번을 뜻한다. [ ] 안에 넣으면 그중 하나, [^ ] 는 그것이 아닌 것이다. 오라클은 REGEXP_LIKE · REGEXP_REPLACE · REGEXP_SUBSTR · REGEXP_INSTR 을 제공한다. LIKE 의 % 와 _ 에 견주면 훨씬 정교하지만 인덱스를 타지 못하는 일이 많다.",
     examPoint:
       "메타 문자의 뜻을 묻는다. 특히 * 와 + 의 차이(0번 이상 vs 1번 이상)가 나온다.",
     importance: 2,

@@ -210,7 +210,7 @@ export function TaskDetail() {
 
       <div className="mt-6 flex items-stretch gap-2">
         {prev ? (
-          <Link href={`/practice/${prev.id}`} className="flex-1">
+          <Link href={`/practice/${prev.id}`} className="min-w-0 flex-1">
             <div className="glass h-full rounded-2xl p-3 transition-transform active:scale-[0.98]">
               <span className="flex items-center gap-1 text-[11px] text-zinc-500">
                 <ArrowLeft size={12} />
@@ -225,7 +225,7 @@ export function TaskDetail() {
           <div className="flex-1" />
         )}
         {next ? (
-          <Link href={`/practice/${next.id}`} className="flex-1">
+          <Link href={`/practice/${next.id}`} className="min-w-0 flex-1">
             <div className="glass h-full rounded-2xl p-3 text-right transition-transform active:scale-[0.98]">
               <span className="flex items-center justify-end gap-1 text-[11px] text-zinc-500">
                 다음

@@ -85,7 +85,11 @@ function FlowContent() {
   );
 
   return (
-    <div className="pt-4" ref={containerRef}>
+    // 카드가 x:±32 에서 미끄러져 들어온다. 아직 화면에 안 들어온 카드는
+    // 그 자리에 그대로 서 있어서 페이지가 가로로 32px 넓어진다 — 폰에서
+    // 좌우로 흔들린다. overflow-x-clip 은 스크롤 칸을 만들지 않아
+    // sticky 를 깨지 않는다.
+    <div className="overflow-x-clip pt-4" ref={containerRef}>
       {/* 스크롤 진행 바 */}
       <motion.div
         className="fixed right-1.5 top-1/2 z-40 h-40 w-1 origin-top -translate-y-1/2 rounded-full bg-indigo-400/70"
