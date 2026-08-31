@@ -1,6 +1,7 @@
 // 배포 직전 전수조사 — out/ 에 실제로 나가는 모든 화면을 하나씩 연다.
 // 잡는 것: 콘솔 오류 · 페이지 예외 · 실패한 요청 · 가로 넘침 ·
-//          너무 작은 탭 타깃 · 화면에 새어 나온 undefined/NaN/[object Object]
+//          너무 작은 탭 타깃(WCAG 2.5.8 의 24×24 기준, 넓혀 둔 누름 범위까지 포함해서 잰다)
+//          · 화면에 새어 나온 undefined/NaN/[object Object]
 const { chromium } = require("playwright");
 const http = require("http");
 const fs = require("fs");
@@ -104,9 +105,24 @@ const noisy = (t) => NOISE.some((r) => r.test(t));
           // 버튼이므로 감싸기만 하는 것은 세지 않는다.
           if (el.querySelector('button,a[href],[role="button"],input,select')) continue;
           if (b.height < 30 || b.width < 30) {
-            const lbl = (el.getAttribute("aria-label") || el.innerText || el.tagName)
-              .trim().replace(/\s+/g, " ").slice(0, 26);
-            out.small.push(`${lbl} ${Math.round(b.width)}×${Math.round(b.height)}`);
+            // 보이는 상자가 작아도 before/after 로 누를 범위를 넓혀 둔 것이
+            // 있다. getBoundingClientRect 로는 그게 안 보이므로, 상자
+            // 밖에서 무엇이 눌리는지를 실제로 물어 실효 크기를 잰다.
+            const cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+            const reaches = (dx, dy) => {
+              const t = document.elementFromPoint(cx + dx, cy + dy);
+              return !!t && (t === el || el.contains(t) || t.parentElement === el);
+            };
+            let padX = 0, padY = 0;
+            for (const d of [4, 8, 12, 16]) { if (reaches(-(b.width / 2 + d), 0) && reaches(b.width / 2 + d, 0)) padX = d; else break; }
+            for (const d of [4, 8, 12, 16]) { if (reaches(0, -(b.height / 2 + d)) && reaches(0, b.height / 2 + d)) padY = d; else break; }
+            const w = b.width + padX * 2, h = b.height + padY * 2;
+            if (h < 24 || w < 24) {
+              const lbl = (el.getAttribute("aria-label") || el.innerText || el.tagName)
+                .trim().replace(/\s+/g, " ").slice(0, 26);
+              const seen = padX || padY ? ` (보이는 크기 ${Math.round(b.width)}×${Math.round(b.height)})` : "";
+              out.small.push(`${lbl} ${Math.round(w)}×${Math.round(h)}${seen}`);
+            }
           }
         }
         return out;
