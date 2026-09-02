@@ -1,0 +1,569 @@
+{
+ "state": {
+  "settings": {
+   "band": 800,
+   "examDate": "2026-09-06",
+   "speechRate": 1,
+   "showScript": false
+  },
+  "stats": {
+   "xp": 2470,
+   "streak": 6,
+   "lastStudyDate": "2026-08-17",
+   "studyMinutes": 340
+  },
+  "knownVocabIds": [
+   "v-attend",
+   "v-confirm",
+   "v-submit",
+   "v-schedule",
+   "v-available",
+   "v-receipt",
+   "v-refund",
+   "v-invoice",
+   "v-deadline",
+   "v-apply",
+   "v-hire",
+   "v-employee",
+   "v-department",
+   "v-delay",
+   "v-shipment",
+   "v-order",
+   "v-inventory",
+   "v-customer",
+   "v-discount",
+   "v-purchase",
+   "v-branch",
+   "v-facility",
+   "v-maintenance",
+   "v-repair",
+   "v-reserve",
+   "v-itinerary",
+   "v-depart",
+   "v-attachment",
+   "v-notify",
+   "v-approve",
+   "v-require",
+   "v-provide",
+   "v-complimentary",
+   "v-renovate",
+   "v-expand",
+   "v-increase",
+   "v-reduce",
+   "v-effective",
+   "v-additional",
+   "v-following",
+   "v-accommodate",
+   "v-anticipate",
+   "v-comply",
+   "v-mandatory",
+   "v-eligible",
+   "v-reimburse"
+  ],
+  "studiedGrammarIds": [
+   "g-pos-noun",
+   "g-pos-adj",
+   "g-pos-adv",
+   "g-verb-agree",
+   "g-verb-passive",
+   "g-verb-tense",
+   "g-conj-vs-prep",
+   "g-conj-adverb",
+   "g-relative-basic",
+   "g-toinf-vs-gerund",
+   "g-participle"
+  ],
+  "clearedQuestionIds": [
+   "q-r5-noun-place",
+   "q-r5-adj-place",
+   "q-r5-adv-place",
+   "q-r5-agreement",
+   "q-r5-passive",
+   "q-r5-tense-since",
+   "q-r5-conj-prep",
+   "q-r5-conj-adverb",
+   "q-r5-relative",
+   "q-r5-gerund",
+   "q-r5-participle",
+   "q-r5-pronoun",
+   "q-r5-subjunctive",
+   "q-r5-comparison",
+   "q-r5-prep-by-until",
+   "q-r5-countable",
+   "q-r5-vocab-deadline",
+   "q-r5-vocab-eligible",
+   "q-r5-vocab-comply",
+   "q-r5-vocab-reimburse",
+   "q-r5-vocab-subject",
+   "q-r5-vocab-notwithstanding",
+   "q-r5-vocab-thorough",
+   "q-r5-vocab-prior",
+   "q-r5m-noun-after-article-1",
+   "q-r5m-adv-between-be-pp-1",
+   "q-r5m-adj-before-noun-1",
+   "q-r5m-noun-vs-gerund-1",
+   "q-r5m-agreement-each-1",
+   "q-r5m-passive-report-1",
+   "q-r5m-tense-by-the-time-1",
+   "q-r5m-tense-for-years-1",
+   "q-r5m-agreement-number-of-1",
+   "q-r5m-prep-during-while-1",
+   "q-r5m-conj-because-of-1",
+   "q-r5m-prep-within-1",
+   "q-r5m-conj-adverb-however-1",
+   "q-r5m-conj-unless-1"
+  ],
+  "reviewCards": [
+   {
+    "sourceId": "v-attend",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 0,
+    "nextDueAt": 1786443600000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "v-confirm",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 1,
+    "nextDueAt": 1786702800000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "v-submit",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 2,
+    "nextDueAt": 1786702800000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "v-schedule",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 3,
+    "nextDueAt": 1786443600000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "v-available",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 0,
+    "nextDueAt": 1786702800000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "v-receipt",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 1,
+    "nextDueAt": 1786702800000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "v-refund",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 2,
+    "nextDueAt": 1786443600000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "v-invoice",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 3,
+    "nextDueAt": 1786702800000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "v-deadline",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 0,
+    "nextDueAt": 1786702800000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "q-r5-noun-place",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 1,
+    "nextDueAt": 1786443600000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "q-r5-adj-place",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 2,
+    "nextDueAt": 1786702800000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "q-r5-adv-place",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 3,
+    "nextDueAt": 1786702800000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "q-r5-agreement",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 0,
+    "nextDueAt": 1786443600000,
+    "lapses": 0
+   },
+   {
+    "sourceId": "q-r5-passive",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 1,
+    "nextDueAt": 1786702800000,
+    "lapses": 1
+   },
+   {
+    "sourceId": "q-r5-tense-since",
+    "addedAt": 1785666000000,
+    "lastReviewedAt": 1786270800000,
+    "stage": 2,
+    "nextDueAt": 1786702800000,
+    "lapses": 0
+   }
+  ],
+  "quizHistory": [
+   {
+    "sourceId": "q-r5-noun-place",
+    "correct": false,
+    "at": 1786530000000
+   },
+   {
+    "sourceId": "q-r5-adj-place",
+    "correct": true,
+    "at": 1786526400000
+   },
+   {
+    "sourceId": "q-r5-adv-place",
+    "correct": true,
+    "at": 1786522800000
+   },
+   {
+    "sourceId": "q-r5-agreement",
+    "correct": false,
+    "at": 1786519200000
+   },
+   {
+    "sourceId": "q-r5-passive",
+    "correct": true,
+    "at": 1786515600000
+   },
+   {
+    "sourceId": "q-r5-tense-since",
+    "correct": true,
+    "at": 1786512000000
+   },
+   {
+    "sourceId": "q-r5-conj-prep",
+    "correct": false,
+    "at": 1786508400000
+   },
+   {
+    "sourceId": "q-r5-conj-adverb",
+    "correct": true,
+    "at": 1786504800000
+   },
+   {
+    "sourceId": "q-r5-relative",
+    "correct": true,
+    "at": 1786501200000
+   },
+   {
+    "sourceId": "q-r5-gerund",
+    "correct": false,
+    "at": 1786497600000
+   },
+   {
+    "sourceId": "q-r5-participle",
+    "correct": true,
+    "at": 1786494000000
+   },
+   {
+    "sourceId": "q-r5-pronoun",
+    "correct": true,
+    "at": 1786490400000
+   },
+   {
+    "sourceId": "q-r5-subjunctive",
+    "correct": false,
+    "at": 1786486800000
+   },
+   {
+    "sourceId": "q-r5-comparison",
+    "correct": true,
+    "at": 1786483200000
+   },
+   {
+    "sourceId": "q-r5-prep-by-until",
+    "correct": true,
+    "at": 1786479600000
+   },
+   {
+    "sourceId": "q-r5-countable",
+    "correct": false,
+    "at": 1786476000000
+   },
+   {
+    "sourceId": "q-r5-vocab-deadline",
+    "correct": true,
+    "at": 1786472400000
+   },
+   {
+    "sourceId": "q-r5-vocab-eligible",
+    "correct": true,
+    "at": 1786468800000
+   },
+   {
+    "sourceId": "q-r5-vocab-comply",
+    "correct": false,
+    "at": 1786465200000
+   },
+   {
+    "sourceId": "q-r5-vocab-reimburse",
+    "correct": true,
+    "at": 1786461600000
+   },
+   {
+    "sourceId": "q-r5-vocab-subject",
+    "correct": true,
+    "at": 1786458000000
+   },
+   {
+    "sourceId": "q-r5-vocab-notwithstanding",
+    "correct": false,
+    "at": 1786454400000
+   },
+   {
+    "sourceId": "q-r5-vocab-thorough",
+    "correct": true,
+    "at": 1786450800000
+   },
+   {
+    "sourceId": "q-r5-vocab-prior",
+    "correct": true,
+    "at": 1786447200000
+   },
+   {
+    "sourceId": "q-r5m-noun-after-article-1",
+    "correct": false,
+    "at": 1786443600000
+   }
+  ],
+  "wrongIds": [
+   "q-r5-agreement",
+   "q-r5-passive",
+   "q-r5-tense-since",
+   "q-r5-conj-prep",
+   "q-r5-conj-adverb",
+   "q-r5-relative",
+   "q-r5-gerund",
+   "q-r5-participle",
+   "q-r5-pronoun",
+   "q-r5-subjunctive",
+   "q-r5-comparison",
+   "q-r5-prep-by-until",
+   "q-r5-countable",
+   "q-r5-vocab-deadline"
+  ],
+  "mockAttempts": [
+   {
+    "examId": "lc",
+    "startedAt": 1786443600000,
+    "finishedAt": 1786444920000,
+    "answers": {},
+    "byPart": [
+     {
+      "part": 1,
+      "correct": 2,
+      "total": 3
+     },
+     {
+      "part": 2,
+      "correct": 8,
+      "total": 13
+     },
+     {
+      "part": 3,
+      "correct": 11,
+      "total": 18
+     },
+     {
+      "part": 4,
+      "correct": 9,
+      "total": 15
+     }
+    ],
+    "correct": 30,
+    "total": 49,
+    "scaled": {
+     "listening": 305,
+     "reading": 0,
+     "total": 305
+    }
+   },
+   {
+    "examId": "rc",
+    "startedAt": 1786530000000,
+    "finishedAt": 1786532340000,
+    "answers": {
+     "0": 1,
+     "1": 1,
+     "2": 1,
+     "4": 2,
+     "5": 0,
+     "6": 0,
+     "8": 3,
+     "9": 3,
+     "10": 1,
+     "12": 2,
+     "13": 1,
+     "14": 0,
+     "16": 0,
+     "17": 1,
+     "18": 0,
+     "20": 1,
+     "21": 1,
+     "22": 3,
+     "24": 2,
+     "25": 3,
+     "26": 0,
+     "28": 0,
+     "29": 1,
+     "30": 0,
+     "32": 1,
+     "33": 0,
+     "34": 3,
+     "36": 3,
+     "37": 0,
+     "38": 2,
+     "40": 3,
+     "41": 3,
+     "42": 1,
+     "44": 1,
+     "45": 3,
+     "46": 0,
+     "48": 0,
+     "49": 2
+    },
+    "byPart": [
+     {
+      "part": 5,
+      "correct": 8,
+      "total": 15
+     },
+     {
+      "part": 6,
+      "correct": 4,
+      "total": 8
+     },
+     {
+      "part": 7,
+      "correct": 13,
+      "total": 27
+     }
+    ],
+    "correct": 25,
+    "total": 50,
+    "scaled": {
+     "listening": 0,
+     "reading": 250,
+     "total": 250
+    },
+    "seed": 515151,
+    "qids": [
+     "q-r5-prep-by-until",
+     "q-r5m-quantifier-fewer-1",
+     "q-r5-tense-since",
+     "q-r5-agreement",
+     "q-r5m-toinf-purpose-1",
+     "q-r5-participle",
+     "q-r5-vocab-notwithstanding",
+     "q-r5m-noun-after-article-1",
+     "q-r5-conj-adverb",
+     "q-r5-countable",
+     "q-r5-subjunctive",
+     "q-r5m-pronoun-reflexive-1",
+     "q-r5m-tense-for-years-1",
+     "q-r5m-relative-whose-1",
+     "q-r5m-agreement-each-1",
+     "q-r6m-cafe-opening-1",
+     "q-r6m-cafe-opening-2",
+     "q-r6m-cafe-opening-3",
+     "q-r6m-cafe-opening-4",
+     "q-r6m-office-move-1",
+     "q-r6m-office-move-2",
+     "q-r6m-office-move-3",
+     "q-r6m-office-move-4",
+     "q-r7-double-1",
+     "q-r7-double-2",
+     "q-r7-double-3",
+     "q-r7-double-4",
+     "q-r7m-double-conference-room-1",
+     "q-r7m-double-conference-room-2",
+     "q-r7m-double-conference-room-3",
+     "q-r7m-double-conference-room-4",
+     "q-r7m-form-warranty-1",
+     "q-r7m-form-warranty-2",
+     "q-r7m-form-warranty-3",
+     "q-r7m-ad-storage-1",
+     "q-r7m-ad-storage-2",
+     "q-r7m-ad-storage-3",
+     "q-r7-article-1",
+     "q-r7-article-2",
+     "q-r7-article-3",
+     "q-r7-article-4",
+     "q-r7m-review-restaurant-1",
+     "q-r7m-review-restaurant-2",
+     "q-r7m-review-restaurant-3",
+     "q-r7m-review-restaurant-4",
+     "q-r7m-triple-supplier-1",
+     "q-r7m-triple-supplier-2",
+     "q-r7m-triple-supplier-3",
+     "q-r7m-triple-supplier-4",
+     "q-r7m-triple-supplier-5"
+    ],
+    "fmt": 2,
+    "wrongIds": [
+     "q-r5-prep-by-until",
+     "q-r5-agreement",
+     "q-r5-vocab-notwithstanding",
+     "q-r5m-noun-after-article-1",
+     "q-r5-countable",
+     "q-r5m-pronoun-reflexive-1",
+     "q-r5m-tense-for-years-1",
+     "q-r6m-cafe-opening-1",
+     "q-r6m-cafe-opening-4",
+     "q-r6m-office-move-1",
+     "q-r6m-office-move-3",
+     "q-r7-double-1",
+     "q-r7-double-2",
+     "q-r7m-double-conference-room-1",
+     "q-r7m-double-conference-room-4",
+     "q-r7m-form-warranty-1",
+     "q-r7m-form-warranty-3",
+     "q-r7m-ad-storage-2",
+     "q-r7m-ad-storage-3",
+     "q-r7-article-3",
+     "q-r7m-review-restaurant-2",
+     "q-r7m-review-restaurant-3",
+     "q-r7m-triple-supplier-1",
+     "q-r7m-triple-supplier-3",
+     "q-r7m-triple-supplier-4"
+    ]
+   }
+  ]
+ }
+}
