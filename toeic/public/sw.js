@@ -12,9 +12,28 @@ const PRECACHE = [
   "/fonts/pretendard-700.woff2",
 ];
 
+/*
+ * 미리 담기는 하나씩 담는다.
+ *
+ * cache.addAll 은 목록 중 하나만 실패해도 통째로 거부한다. 그러면 서비스
+ * 워커가 아예 설치되지 않아 오프라인이 통째로 죽는다. 확장자 없는 주소를
+ * 서버가 한 번 넘겨주기만 해도(리다이렉트는 addAll 이 거부한다) 그렇게 된다.
+ *
+ * 하나가 빠지는 것과 전부 없는 것은 크게 다르다. 담을 수 있는 것만 담고,
+ * 못 담은 것은 그때그때 받아 오면 된다.
+ */
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)),
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(
+        PRECACHE.map((url) =>
+          fetch(new Request(url, { redirect: "follow" })).then((res) => {
+            if (res.ok) return cache.put(url, res);
+            return undefined;
+          }),
+        ),
+      ),
+    ),
   );
   self.skipWaiting();
 });
@@ -48,9 +67,14 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() =>
-        caches
-          .match(request)
-          .then((cached) => cached || caches.match("/")),
+        caches.match(request).then((cached) => {
+          if (cached) return cached;
+          // 캐시에 없을 때 홈을 내주는 것은 화면 이동일 때만이다.
+          // 자바스크립트·글꼴 자리에 HTML 을 돌려주면 화면이 더 이상하게
+          // 깨진다 — 차라리 실패하는 편이 낫다.
+          if (request.mode === "navigate") return caches.match("/");
+          return Response.error();
+        }),
       ),
   );
 });
