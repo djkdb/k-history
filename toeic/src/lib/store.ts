@@ -27,6 +27,13 @@ export interface AppState {
   /** 틀린 것 (최근 순) */
   wrongIds: string[];
   mockAttempts: MockAttempt[];
+  /**
+   * 선구독 훈련에서 한 지문(3문항)을 미리 읽는 데 걸린 시간(ms).
+   *
+   * 늘고 줄어드는 것이 보여야 훈련이 된다. 최근 것만 남긴다.
+   * (예전 판에는 없던 값이다 — 없으면 빈 배열로 시작한다)
+   */
+  previewRuns: number[];
 
   setSettings: (s: Settings) => void;
   setBand: (b: Band) => void;
@@ -41,6 +48,7 @@ export interface AppState {
   reviewItem: (id: string, correct: boolean) => void;
   recordMockAttempt: (attempt: MockAttempt, wrongIds: string[]) => void;
   addStudyMinutes: (min: number) => void;
+  recordPreview: (ms: number) => void;
   resetAll: () => void;
 }
 
@@ -115,6 +123,7 @@ export const useApp = create<AppState>()(
       quizHistory: [],
       wrongIds: [],
       mockAttempts: [],
+      previewRuns: [],
 
       setSettings: (settings) => set({ settings }),
 
@@ -200,6 +209,12 @@ export const useApp = create<AppState>()(
           stats: bumpStreak({ ...s.stats, xp: s.stats.xp + 5 }),
         })),
 
+      recordPreview: (ms) =>
+        set((s) => ({
+          // 최근 40회만 — 오래된 것까지 섞으면 지금 실력이 안 보인다
+          previewRuns: [...s.previewRuns, Math.round(ms)].slice(-40),
+        })),
+
       recordMockAttempt: (attempt, wrongSourceIds) =>
         set((s) => {
           // 채점 뒤 되돌아가 다시 제출하면 같은 응시를 두 번 세면 안 된다.
@@ -246,6 +261,7 @@ export const useApp = create<AppState>()(
           quizHistory: [],
           wrongIds: [],
           mockAttempts: [],
+          previewRuns: [],
         }),
     }),
     {
@@ -265,6 +281,7 @@ export const useApp = create<AppState>()(
         quizHistory: s.quizHistory,
         wrongIds: s.wrongIds,
         mockAttempts: s.mockAttempts,
+        previewRuns: s.previewRuns,
       }),
       // 불러오기에 실패해도 화면은 떠야 한다. 다만 그때 빈 상태를 저장하지는 않는다.
       onRehydrateStorage: () => (_state, error) => {

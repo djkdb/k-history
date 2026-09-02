@@ -35,7 +35,18 @@ self.addEventListener("install", (event) => {
       ),
     ),
   );
-  self.skipWaiting();
+  /*
+   * 여기서 곧바로 자리를 넘겨받지 않는다.
+   *
+   * 웹은 새 판이 올라와도 화면을 껐다 켜야 바뀐다. 사용자가 모르는 사이에
+   * 갈아치우면 시험을 보던 중에 화면이 바뀔 수 있으므로, 새 판이 준비되면
+   * 화면에 알려 주고 사용자가 "지금 켜기"를 눌렀을 때 넘겨받는다.
+   * (첫 설치는 넘겨받을 것이 없어 그대로 자리를 잡는다)
+   */
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {

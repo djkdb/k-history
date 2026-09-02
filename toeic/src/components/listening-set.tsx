@@ -16,6 +16,7 @@ import { Badge, Button, Card, Chip } from "@/components/ui";
 import { SKILL_LABEL } from "@/data/reading";
 import { PART1_ART } from "@/components/part1-art";
 import { useApp } from "@/lib/store";
+import { useSetAudio } from "@/lib/use-set-audio";
 import type { ListeningSet, Speaker } from "@/lib/types";
 import {
   assignVoices,
@@ -209,116 +210,16 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
   const noiseLevel = useApp((s) => s.settings?.noiseLevel ?? 0.5);
   const showScriptDefault = useApp((s) => s.settings?.showScript ?? false);
 
-  const [rawVoices, setRawVoices] = useState<SpeechSynthesisVoice[] | null>(null);
-  const [noVoice, setNoVoice] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [line, setLine] = useState(-1);
-  const [played, setPlayed] = useState(false);
+  // 읽어 주는 일은 선구독 훈련과 똑같아서 한 곳(useSetAudio)에 모아 두었다
+  const { noVoice, playing, line, played, play, halt, ready } = useSetAudio(set, rate);
   const [showScript, setShowScript] = useState(showScriptDefault);
   const [picked, setPicked] = useState<Record<string, number>>({});
-  const abortRef = useRef<AbortController | null>(null);
 
+  // 지문이 바뀌면 처음 상태로 (하던 재생을 끊는 것은 훅이 한다)
   useEffect(() => {
-    if (!supported()) {
-      setNoVoice(true);
-      return;
-    }
-    let alive = true;
-    loadVoices().then((v) => {
-      if (!alive) return;
-      if (!v.length) setNoVoice(true);
-      else setRawVoices(v);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  // 지문이 바뀌면 하던 재생을 끊고 처음 상태로 되돌린다
-  useEffect(() => {
-    abortRef.current?.abort();
-    stop();
-    setPlaying(false);
-    setLine(-1);
-    setPlayed(false);
     setShowScript(showScriptDefault);
     setPicked({});
-    return () => {
-      abortRef.current?.abort();
-      stop();
-    };
   }, [set.id, showScriptDefault]);
-
-  /*
-   * 지문마다 다른 발음 조합으로 들려준다.
-   *
-   * 목소리를 한 번 정해 두고 계속 쓰면 앱 전체가 같은 발음으로만 들린다.
-   * 실제 시험은 문항마다 국적이 바뀐다. 지문 id 에서 뽑은 값으로 돌려 주면
-   * 같은 지문은 늘 같게, 다른 지문은 다르게 들린다.
-   */
-  const rotate = useMemo(
-    () => [...set.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 97, 7),
-    [set.id],
-  );
-  const voices = useMemo(
-    () => (rawVoices ? assignVoices(rawVoices, rotate) : null),
-    [rawVoices, rotate],
-  );
-
-  /**
-   * 무엇을 읽어 줄지 만든다.
-   *
-   * Part 1·2 는 선택지도 귀로만 듣는 것이 실제 시험이다. 그래서 지문 뒤에
-   * (A)(B)(C)(D) 를 이어 읽는다. Part 3·4 는 선택지가 시험지에 있으므로
-   * 대화·담화만 읽는다.
-   */
-  const buildLines = useCallback(() => {
-    if (!voices) return [];
-    const out: { text: string; voice: SpeechSynthesisVoice | null }[] = [];
-    for (const l of set.script ?? []) {
-      out.push({ text: l.text, voice: voices[l.speaker] });
-    }
-    const audioOnly = set.questions.some((q) => q.audioOnlyChoices);
-    if (audioOnly) {
-      for (const q of set.questions) {
-        q.choices.forEach((c, i) => {
-          out.push({
-            text: `${letterOf(i)}. ${c.text}`,
-            voice: voices[set.part === 1 ? "narrator" : i % 2 === 0 ? "man" : "woman"],
-          });
-        });
-      }
-    }
-    return out;
-  }, [set, voices]);
-
-  const play = async () => {
-    if (!voices) return;
-    // 소음을 골라 두었으면 듣기 시작과 함께 깔아 준다
-    if (noiseKind !== "none" && noiseRunning() === "none") startNoise(noiseKind, noiseLevel);
-    abortRef.current?.abort();
-    const ctrl = new AbortController();
-    abortRef.current = ctrl;
-    setPlaying(true);
-    setPlayed(true);
-    await speakSequence(buildLines(), {
-      rate,
-      gapMs: 400,
-      signal: ctrl.signal,
-      onLine: setLine,
-    });
-    if (!ctrl.signal.aborted) {
-      setPlaying(false);
-      setLine(-1);
-    }
-  };
-
-  const halt = () => {
-    abortRef.current?.abort();
-    stop();
-    setPlaying(false);
-    setLine(-1);
-  };
 
   const choose = (qid: string, i: number, answer: number) => {
     if (picked[qid] !== undefined) return;
@@ -350,7 +251,7 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
           <>
             <div className="flex items-center gap-2">
               {!playing ? (
-                <Button className="flex-1" onClick={play} disabled={!voices}>
+                <Button className="flex-1" onClick={play} disabled={!ready}>
                   <Play size={16} />
                   {played ? "다시 듣기" : "듣기"}
                 </Button>
@@ -366,7 +267,7 @@ export function ListeningSetView({ set, rate }: { set: ListeningSet; rate: numbe
                 </Button>
               )}
             </div>
-            {!voices && !noVoice && (
+            {!ready && !noVoice && (
               <p className="mt-2 text-center text-[11px] text-zinc-500">음성을 준비하는 중…</p>
             )}
             {audioOnly && (

@@ -4,9 +4,10 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, ChevronRight, Layers, PenLine } from "lucide-react";
+import { AlertTriangle, ChevronRight, Layers, PenLine, Timer } from "lucide-react";
 import { Button, Card, Chip, EmptyState } from "@/components/ui";
 import { DictationDrill } from "@/components/dictation";
+import { PreviewDrill } from "@/components/preview-drill";
 import { ListeningSetView, NoiseCard, SpeechRateCard } from "@/components/listening-set";
 import { listeningFor } from "@/data/listening";
 import { LISTENING_PARTS, PART_MAP } from "@/data/parts";
@@ -15,10 +16,16 @@ import { stop } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 
 type ListenPartId = 1 | 2 | 3 | 4;
-type Mode = "quiz" | "dictation";
+type Mode = "quiz" | "dictation" | "preview";
 
 /** 받아쓰기는 문장이 한 줄로 끝나는 파트에서만 훈련이 된다 */
 const DICTATION_PARTS: ListenPartId[] = [1, 2];
+
+/**
+ * 선구독은 "문항이 시험지에 있는" 파트에서만 뜻이 있다.
+ * Part 1·2 는 선택지를 귀로만 듣기 때문에 미리 읽을 것이 없다.
+ */
+const PREVIEW_PARTS: ListenPartId[] = [3, 4];
 
 export function ListenPractice({ part }: { part: ListenPartId }) {
   return (
@@ -36,6 +43,7 @@ function Screen({ part }: { part: ListenPartId }) {
   const rate = useApp((s) => s.settings?.speechRate ?? 1);
   const sets = useMemo(() => listeningFor(band, part), [band, part]);
   const [at, setAt] = useState(0);
+  // 기본은 늘 문제 풀기다. 훈련 모드는 눌러서 켠다.
   const [mode, setMode] = useState<Mode>("quiz");
 
   // 복습·검색에서 특정 지문으로 건너뛰어 올 수 있다
@@ -52,6 +60,10 @@ function Screen({ part }: { part: ListenPartId }) {
   const info = PART_MAP[part];
   const current = sets[Math.min(at, Math.max(0, sets.length - 1))];
   const canDictate = DICTATION_PARTS.includes(part);
+  const canPreview = PREVIEW_PARTS.includes(part);
+
+  // 파트를 옮기면 훈련 모드는 풀린다 — 기본은 문제 풀기다
+  useEffect(() => setMode("quiz"), [part]);
 
   return (
     <main className="py-6">
@@ -85,32 +97,56 @@ function Screen({ part }: { part: ListenPartId }) {
         </p>
       </Card>
 
-      {canDictate && (
-        <div className="mt-3 flex gap-2">
-          <Button
-            size="sm"
-            variant={mode === "quiz" ? "primary" : "outline"}
-            className="flex-1"
-            onClick={() => {
-              stop();
-              setMode("quiz");
-            }}
-          >
-            문제 풀기
-          </Button>
-          <Button
-            size="sm"
-            variant={mode === "dictation" ? "primary" : "outline"}
-            className="flex-1"
-            onClick={() => {
-              stop();
-              setMode("dictation");
-            }}
-          >
-            <PenLine size={15} />
-            받아쓰기
-          </Button>
-        </div>
+      {(canDictate || canPreview) && (
+        <>
+          <div className="mt-3 flex gap-2">
+            <Button
+              size="sm"
+              variant={mode === "quiz" ? "primary" : "outline"}
+              className="flex-1"
+              onClick={() => {
+                stop();
+                setMode("quiz");
+              }}
+            >
+              문제 풀기
+            </Button>
+            {canDictate && (
+              <Button
+                size="sm"
+                variant={mode === "dictation" ? "primary" : "outline"}
+                className="flex-1"
+                onClick={() => {
+                  stop();
+                  setMode("dictation");
+                }}
+              >
+                <PenLine size={15} />
+                받아쓰기
+              </Button>
+            )}
+            {canPreview && (
+              <Button
+                size="sm"
+                variant={mode === "preview" ? "primary" : "outline"}
+                className="flex-1"
+                onClick={() => {
+                  stop();
+                  setMode("preview");
+                }}
+              >
+                <Timer size={15} />
+                선구독 훈련
+              </Button>
+            )}
+          </div>
+          {canPreview && mode !== "preview" && (
+            <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">
+              선구독 훈련은 문제를 먼저 읽고, 가린 채로 듣습니다. 실제 시험의 순서
+              그대로라 Part 3·4 에서 제일 크게 벌어지는 자리를 연습할 수 있습니다.
+            </p>
+          )}
+        </>
       )}
 
       <SpeechRateCard />
@@ -142,6 +178,8 @@ function Screen({ part }: { part: ListenPartId }) {
             >
               {mode === "dictation" && canDictate ? (
                 <DictationDrill set={current} rate={rate} />
+              ) : mode === "preview" && canPreview ? (
+                <PreviewDrill set={current} rate={rate} />
               ) : (
                 <ListeningSetView set={current} rate={rate} />
               )}
