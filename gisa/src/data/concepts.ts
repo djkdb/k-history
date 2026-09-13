@@ -5,6 +5,7 @@ import { DEVELOP_CONCEPTS } from "@/data/concepts-develop";
 import { DATABASE_CONCEPTS } from "@/data/concepts-database";
 import { LANGUAGE_CONCEPTS } from "@/data/concepts-language";
 import { SYSTEM_CONCEPTS } from "@/data/concepts-system";
+import { GAP_CONCEPTS } from "@/data/concepts-gap";
 
 export const CONCEPTS: Concept[] = [
   ...DESIGN_CONCEPTS,
@@ -12,6 +13,7 @@ export const CONCEPTS: Concept[] = [
   ...DATABASE_CONCEPTS,
   ...LANGUAGE_CONCEPTS,
   ...SYSTEM_CONCEPTS,
+  ...GAP_CONCEPTS,
 ];
 
 export const CONCEPT_MAP: Record<string, Concept> = Object.fromEntries(

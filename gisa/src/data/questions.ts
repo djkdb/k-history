@@ -14,6 +14,7 @@ import { DEVELOP2_QUESTIONS } from "@/data/questions-develop2";
 import { DATABASE2_QUESTIONS } from "@/data/questions-database2";
 import { LANGUAGE2_QUESTIONS } from "@/data/questions-language2";
 import { SYSTEM2_QUESTIONS } from "@/data/questions-system2";
+import { GAP_QUESTIONS } from "@/data/questions-gap";
 
 export const QUESTIONS: WrittenQuestion[] = [
   ...DESIGN_QUESTIONS,
@@ -30,6 +31,7 @@ export const QUESTIONS: WrittenQuestion[] = [
   ...DATABASE2_QUESTIONS,
   ...LANGUAGE2_QUESTIONS,
   ...SYSTEM2_QUESTIONS,
+  ...GAP_QUESTIONS,
 ];
 
 export const QUESTION_MAP: Record<string, WrittenQuestion> = Object.fromEntries(

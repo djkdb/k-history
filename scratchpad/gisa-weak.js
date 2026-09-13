@@ -3,7 +3,8 @@ const { chromium } = require("/home/user/k-history/node_modules/playwright");
 const jiti = require("jiti")("/home/user/k-history/gisa", { alias: { "@": "/home/user/k-history/gisa/src" } });
 const { analyze } = jiti("/home/user/k-history/gisa/src/lib/weakness.ts");
 const { cutoff, SUBJECT_MAP } = jiti("/home/user/k-history/gisa/src/data/exam.ts");
-const BASE = "http://127.0.0.1:4830";
+// 포트를 박아 두면 서버가 바뀔 때마다 검사가 통째로 죽는다
+const BASE = process.argv[2] || "http://127.0.0.1:4830";
 let bad = 0;
 const ok = (s) => console.log("  ✓ " + s);
 const no = (s) => { bad++; console.log("  ✗ " + s); };

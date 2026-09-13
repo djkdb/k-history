@@ -17,6 +17,7 @@ import {
 } from "@/data/exam";
 import { gradeByKind } from "@/lib/grade";
 import { readFileSync } from "node:fs";
+import { flatSyllabus } from "@/data/syllabus";
 import { makeWrittenMock, makePracticalMock, shuffleOptions } from "@/lib/quiz";
 
 const problems: string[] = [];
@@ -257,6 +258,58 @@ const fail = (s: string) => problems.push(s);
       }
     }
   }
+}
+
+// ── 출제기준을 얼마나 덮고 있는가 ─────────────────────
+{
+  /*
+   * 문항을 아무리 많이 써도 시험 범위 밖으로만 쓰면 소용이 없다.
+   * 공개된 출제기준의 세부항목마다 우리 문항이 붙어 있는지 센다.
+   *
+   * ⚠️ 큐넷은 이 환경의 이그레스 프록시에서 막혀 공식 문서를 직접 받아 오지
+   *    못했다. src/data/syllabus.ts 의 구조는 널리 공개된 출제기준을 옮겨
+   *    적은 것이며, 시험 전에 큐넷에서 직접 확인해야 한다.
+   */
+  const flat = flatSyllabus();
+  const bare: string[] = [];
+  const thin: string[] = [];
+  for (const f of flat) {
+    for (const id of f.covers)
+      if (!CONCEPT_MAP[id])
+        fail(`출제기준 "${f.item}" 이 없는 개념 ${id} 를 가리킨다`);
+    if (f.covers.length === 0) {
+      bare.push(`${SUBJECT_MAP[f.subject].short}/${f.item}`);
+      continue;
+    }
+    const n =
+      QUESTIONS.filter((q) => f.covers.includes(q.sourceId)).length +
+      PRACTICAL_QUESTIONS.filter((q) => f.covers.includes(q.sourceId)).length;
+    if (n < 3) thin.push(`${SUBJECT_MAP[f.subject].short}/${f.item}(${n}문항)`);
+  }
+  if (bare.length)
+    fail(
+      `출제기준 세부항목 ${bare.length}개를 아예 다루지 않는다 — ${bare.slice(0, 4).join(", ")}${bare.length > 4 ? " 외" : ""}`,
+    );
+  if (thin.length > 4)
+    warn.push(
+      `문항이 세 개도 안 되는 세부항목이 ${thin.length}개 — ${thin.slice(0, 3).join(", ")} 외`,
+    );
+
+  /*
+   * 부정형("옳지 않은 것은?")이 너무 적지 않은가.
+   *
+   * 부정형은 네 선지를 모두 판단해야 해서 긍정형보다 어렵다. 실제 필기에는
+   * 부정형이 잦은데 우리 문항은 한때 11% 였다 — 그만큼 앱이 실제보다 쉬웠다.
+   * 아래 값은 하한선이다. 넘기라는 목표가 아니라 밑으로 떨어지면 알리는 선이다.
+   */
+  const NEG =
+    /옳지 않은|아닌 것|해당하지 않|없는 것|틀린 것|보기 어려운|않은 것은/;
+  const negRatio =
+    QUESTIONS.filter((q) => NEG.test(q.question)).length / QUESTIONS.length;
+  if (negRatio < 0.12)
+    fail(
+      `부정형 문항이 ${Math.round(negRatio * 100)}% 뿐이다 — 실제 필기보다 쉬워진다`,
+    );
 }
 
 // ── 화면이 사용자에게 말한 숫자가 아직 참인가 ──────────
