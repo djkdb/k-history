@@ -171,7 +171,10 @@ export default function Page() {
       )}
 
       <div className="mt-8 text-center">
-        <Link href="/onboarding" className="text-[12px] text-zinc-500 hover:text-zinc-300">
+        <Link
+          href="/onboarding"
+          className="-m-2 inline-block p-2 text-[12px] text-zinc-500 hover:text-zinc-300"
+        >
           처음 안내 다시 보기
         </Link>
       </div>

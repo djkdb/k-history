@@ -6,6 +6,9 @@ import { DATABASE_QUESTIONS } from "@/data/questions-database";
 import { LANGUAGE_QUESTIONS } from "@/data/questions-language";
 import { SYSTEM_QUESTIONS } from "@/data/questions-system";
 import { MORE_QUESTIONS } from "@/data/questions-more";
+import { EXTRA_A_QUESTIONS } from "@/data/questions-extra-a";
+import { EXTRA_B_QUESTIONS } from "@/data/questions-extra-b";
+import { EXTRA_C_QUESTIONS } from "@/data/questions-extra-c";
 
 export const QUESTIONS: WrittenQuestion[] = [
   ...DESIGN_QUESTIONS,
@@ -14,6 +17,9 @@ export const QUESTIONS: WrittenQuestion[] = [
   ...LANGUAGE_QUESTIONS,
   ...SYSTEM_QUESTIONS,
   ...MORE_QUESTIONS,
+  ...EXTRA_A_QUESTIONS,
+  ...EXTRA_B_QUESTIONS,
+  ...EXTRA_C_QUESTIONS,
 ];
 
 export const QUESTION_MAP: Record<string, WrittenQuestion> = Object.fromEntries(
