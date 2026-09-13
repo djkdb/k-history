@@ -221,6 +221,30 @@ export function MockSession() {
                   {b.total}문항 중 {b.correct}개 정답
                   {under && ` · 과락 (${cutoff(b.subject)}개는 맞혀야 합니다)`}
                 </p>
+                {/*
+                  점수만 보여 주고 끝내면 "그래서 뭘 하지" 가 남는다.
+                  무너진 과목에서 곧바로 공부로 이어 준다.
+                */}
+                {under && (
+                  <div className="mt-3 flex gap-2">
+                    <Link
+                      href={`/quiz?subject=${b.subject}`}
+                      className="min-w-0 flex-1"
+                    >
+                      <Button size="sm" className="w-full">
+                        이 과목 문제 풀기
+                      </Button>
+                    </Link>
+                    <Link
+                      href={`/learn?subject=${b.subject}`}
+                      className="min-w-0 flex-1"
+                    >
+                      <Button size="sm" variant="outline" className="w-full">
+                        개념 보기
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </Card>
             );
           })}
