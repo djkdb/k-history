@@ -324,9 +324,9 @@ export function PracticalSession() {
       </div>
 
       {sheet && (
-        <div className="fixed inset-0 z-40 flex items-end bg-black/60" onClick={() => setSheet(false)}>
+        <div className="fixed inset-0 z-[60] flex items-end bg-black/60" onClick={() => setSheet(false)}>
           <div
-            className="max-h-[80vh] w-full overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[var(--bg)] p-4 pb-8"
+            className="max-h-[80dvh] w-full overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[var(--bg)] p-4 pb-28"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center">
@@ -377,7 +377,7 @@ export function PracticalSession() {
       )}
 
       {confirming && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-6">
           <div className="w-full max-w-sm rounded-3xl border border-white/10 bg-[var(--bg)] p-5">
             <div className="flex items-center gap-2">
               <AlertTriangle size={16} className="text-amber-300" />

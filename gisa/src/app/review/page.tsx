@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Brain, Check, RotateCcw, X } from "lucide-react";
 import {
@@ -21,16 +21,26 @@ import { useApp, useTrack } from "@/lib/store";
 /**
  * 복습.
  *
- * ⚠️ 큐는 화면에 들어온 순간 한 번만 고정한다. 매 렌더마다 다시 계산하면
- *    한 장을 풀자마자 그 카드가 목록에서 빠지면서 남은 장 수가 튀고,
- *    마지막 한 장이 화면에서 사라져 끝낼 수 없게 된다.
+ * ⚠️ 큐는 한 번만 고정한다. 매 렌더마다 다시 계산하면 한 장을 풀자마자
+ *    그 카드가 목록에서 빠지면서 남은 장 수가 튀고, 마지막 한 장이 화면에서
+ *    사라져 끝낼 수 없게 된다.
+ *
+ * ⚠️ 다만 "첫 렌더" 에 고정하면 안 된다. 저장된 기록은 IndexedDB 에서 비동기로
+ *    올라오므로 첫 렌더 시점의 reviewCards 는 늘 빈 배열이다. 그대로 고정하면
+ *    쌓아 둔 복습 카드가 몇 장이든 화면은 언제나 "복습할 것이 없습니다" 가 된다.
+ *    기록을 다 불러온 뒤에 한 번 고정한다.
  */
 export default function Page() {
+  const hydrated = useApp((s) => s.hydrated);
   const cards = useApp((s) => s.reviewCards);
   const reviewItem = useApp((s) => s.reviewItem);
   const track = useTrack();
 
-  const [queue] = useState(() => dueCards(cards).map((c) => c.sourceId));
+  const [queue, setQueue] = useState<string[] | null>(null);
+  useEffect(() => {
+    if (!hydrated || queue !== null) return;
+    setQueue(dueCards(cards).map((c) => c.sourceId));
+  }, [cards, hydrated, queue]);
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -47,7 +57,7 @@ export default function Page() {
     [cards],
   );
 
-  const sourceId = queue[at];
+  const sourceId = queue ? queue[at] : undefined;
   const concept = sourceId ? CONCEPT_MAP[sourceId] : undefined;
   // 실기를 준비하는 사람에게는 같은 개념을 "적어 보는" 쪽으로 낸다
   const practical = useMemo(() => {
@@ -56,12 +66,19 @@ export default function Page() {
   }, [track, sourceId]);
 
   function answer(correct: boolean) {
+    if (!sourceId) return;
     reviewItem(sourceId, correct);
     setMarks((m) => [...m, correct]);
     setAt((a) => a + 1);
     setOpen(false);
     setValue("");
     setResult(null);
+  }
+
+  if (queue === null) {
+    return (
+      <main className="py-20 text-center text-sm text-zinc-500">불러오는 중…</main>
+    );
   }
 
   if (queue.length === 0) {
