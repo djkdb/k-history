@@ -25,6 +25,41 @@ function shuffle<T>(arr: T[], seed: number): T[] {
   return out;
 }
 
+/**
+ * 선지 자리를 섞는다.
+ *
+ * 문항을 손으로 쓰다 보면 정답을 무심코 비슷한 자리에 놓게 된다. 실제로
+ * 재 보니 2번이 42%, 4번이 10% 였다 — 아무것도 모르고 2번만 찍어도 42점이
+ * 나온다는 뜻이다. 시험을 재는 도구로서 이건 고장이다.
+ *
+ * 자료를 손보는 대신 낼 때 섞는다. 같은 씨앗이면 같은 순서가 나오므로
+ * 시험 도중 새로고침해도 고른 자리가 어긋나지 않는다 — 이것이 중요하다.
+ * 저장된 답안은 "몇 번을 골랐다" 이지 "무엇을 골랐다" 가 아니기 때문이다.
+ */
+export function shuffleOptions(
+  q: WrittenQuestion,
+  seed: number,
+): WrittenQuestion {
+  // 문항마다 다른 씨앗을 준다. 그러지 않으면 한 시험지 안의 모든 문항이
+  // 같은 순열로 섞여 자리 쏠림이 그대로 옮겨 간다.
+  let h = seed >>> 0;
+  for (let i = 0; i < q.id.length; i++)
+    h = (Math.imul(h, 31) + q.id.charCodeAt(i)) >>> 0;
+
+  const order = shuffle(
+    q.options.map((_, i) => i),
+    h || 1,
+  );
+  return {
+    ...q,
+    options: order.map((i) => q.options[i]),
+    answerIndex: order.indexOf(q.answerIndex),
+    optionNotes: q.optionNotes
+      ? order.map((i) => q.optionNotes![i])
+      : undefined,
+  };
+}
+
 export interface QuizOptions {
   subject?: SubjectId;
   count: number;
@@ -41,7 +76,9 @@ export function makeQuiz(opts: QuizOptions): WrittenQuestion[] {
     const set = new Set(opts.onlySourceIds);
     pool = pool.filter((q) => set.has(q.sourceId));
   }
-  return shuffle(pool, opts.seed).slice(0, opts.count);
+  return shuffle(pool, opts.seed)
+    .slice(0, opts.count)
+    .map((q) => shuffleOptions(q, opts.seed));
 }
 
 /**
@@ -56,7 +93,9 @@ export function makeWrittenMock(seed = Date.now()): WrittenQuestion[] {
     shuffle(
       QUESTIONS.filter((q) => q.subject === s.id),
       seed + i * 1000,
-    ).slice(0, s.count),
+    )
+      .slice(0, s.count)
+      .map((q) => shuffleOptions(q, seed)),
   );
 }
 
