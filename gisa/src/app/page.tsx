@@ -11,6 +11,7 @@ import {
   RotateCw,
   Settings,
   Sparkles,
+  TriangleAlert,
 } from "lucide-react";
 import {
   Button,
@@ -24,6 +25,7 @@ import { CONCEPTS, conceptsFor } from "@/data/concepts";
 import { QUESTIONS } from "@/data/questions";
 import { PRACTICAL_QUESTIONS } from "@/data/practical";
 import { dueCards, retentionRate } from "@/lib/srs";
+import { analyze } from "@/lib/weakness";
 import { useApp, useTrack } from "@/lib/store";
 import { daysUntil } from "@/lib/utils";
 
@@ -45,6 +47,20 @@ export default function Home() {
   }, [hydrated, router, settings]);
 
   const due = useMemo(() => dueCards(cards).length, [cards]);
+  const mockAttempts = useApp((s) => s.mockAttempts);
+  const wrongIds = useApp((s) => s.wrongIds);
+  /*
+   * 기록이 쌓여도 읽어 주는 곳이 없으면 사용자는 늘 1과목부터 다시 시작한다.
+   * 과락 난 과목이 있으면 그것부터, 없으면 가장 흔들리는 과목부터 짚어 준다.
+   */
+  const weak = useMemo(
+    () => analyze(mockAttempts, wrongIds, studiedIds),
+    [mockAttempts, wrongIds, studiedIds],
+  );
+  const worst = weak[0];
+  // 시험을 봤거나 틀린 적이 있을 때만 짚는다 — 안 본 개념이 많은 것은
+  // 약점이 아니라 아직 시작하지 않았다는 뜻이다
+  const showWorst = worst && worst.grounded;
   const retention = useMemo(() => retentionRate(cards), [cards]);
   const trackConcepts = useMemo(() => conceptsFor(track), [track]);
   const studiedHere = trackConcepts.filter((c) =>
@@ -121,6 +137,59 @@ export default function Home() {
           icon={<Sparkles size={15} />}
         />
       </div>
+
+      {showWorst && (
+        <Card
+          className={
+            worst.failed
+              ? "mt-3 border-rose-400/30 bg-rose-500/10"
+              : "mt-3 border-amber-400/25 bg-amber-500/[0.07]"
+          }
+        >
+          <div className="flex items-start gap-2.5">
+            <TriangleAlert
+              size={16}
+              className={
+                worst.failed
+                  ? "mt-0.5 shrink-0 text-rose-300"
+                  : "mt-0.5 shrink-0 text-amber-300"
+              }
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] text-zinc-400">지금 가장 급한 곳</p>
+              <p
+                className="mt-0.5 text-[15px] font-bold"
+                style={{ color: subjectInk(worst.subject) }}
+              >
+                {SUBJECTS.find((s) => s.id === worst.subject)?.symbol}{" "}
+                {SUBJECTS.find((s) => s.id === worst.subject)?.name}
+              </p>
+              <p className="mt-1 text-[12px] leading-relaxed text-zinc-300">
+                {worst.why}
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex gap-2">
+            <Link
+              href={`/quiz?subject=${worst.subject}`}
+              className="min-w-0 flex-1"
+            >
+              <Button className="w-full">
+                이 과목 문제 풀기
+                <ArrowRight size={15} />
+              </Button>
+            </Link>
+            <Link
+              href={`/learn?subject=${worst.subject}`}
+              className="min-w-0 flex-1"
+            >
+              <Button variant="outline" className="w-full">
+                개념 보기
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      )}
 
       {due > 0 && (
         <Link href="/review">

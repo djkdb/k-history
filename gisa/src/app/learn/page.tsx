@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Check, Search } from "lucide-react";
 import {
   Card,
@@ -16,10 +17,35 @@ import { useApp, useTrack } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export default function LearnPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="py-20 text-center text-sm text-zinc-500">
+          불러오는 중…
+        </main>
+      }
+    >
+      <LearnScreen />
+    </Suspense>
+  );
+}
+
+const SUBJECT_IDS = SUBJECTS.map((s) => s.id);
+
+function LearnScreen() {
   const track = useTrack();
   const studied = useApp((s) => s.studiedIds);
-  const [subject, setSubject] = useState<SubjectId | null>(null);
+  const params = useSearchParams();
+  // 홈의 "개념 보기" 에서 과목을 달고 넘어온다
+  const fromUrl = params.get("subject");
+  const [subject, setSubject] = useState<SubjectId | null>(() =>
+    fromUrl && SUBJECT_IDS.includes(fromUrl as SubjectId)
+      ? (fromUrl as SubjectId)
+      : null,
+  );
   const [q, setQ] = useState("");
+  /** 아직 안 본 개념을 앞으로 — 이미 본 것을 다시 훑느라 시간을 쓰지 않게 */
+  const [unseenFirst, setUnseenFirst] = useState(false);
 
   const list = useMemo(() => {
     let out = CONCEPTS.filter((c) => c.tracks.includes(track));
@@ -31,8 +57,20 @@ export default function LearnPage() {
           c.title.toLowerCase().includes(needle) ||
           c.summary.toLowerCase().includes(needle),
       );
+    /*
+     * 안 본 것부터 — 목록은 늘 같은 순서라 이미 본 개념이 계속 맨 위에 온다.
+     * 55개 중 40개를 본 사람에게는 남은 15개를 찾는 일이 곧 일거리다.
+     * 과목 안의 순서(쉬운 것 → 어려운 것)는 그대로 지킨다.
+     */
+    if (unseenFirst) {
+      const seen = new Set(studied);
+      out = [
+        ...out.filter((c) => !seen.has(c.id)),
+        ...out.filter((c) => seen.has(c.id)),
+      ];
+    }
     return out;
-  }, [track, subject, q]);
+  }, [track, subject, q, unseenFirst, studied]);
 
   const done = list.filter((c) => studied.includes(c.id)).length;
 
@@ -82,9 +120,25 @@ export default function LearnPage() {
 
       <div className="mt-4">
         <ProgressBar value={done} max={Math.max(1, list.length)} />
-        <p className="mt-1.5 text-[12px] text-zinc-500">
-          {`${list.length}개 가운데 ${done}개를 봤습니다`}
-        </p>
+        <div className="mt-1.5 flex items-center gap-2">
+          <p className="min-w-0 flex-1 text-[12px] text-zinc-500">
+            {`${list.length}개 가운데 ${done}개를 봤습니다`}
+          </p>
+          {done > 0 && done < list.length && (
+            <button
+              type="button"
+              onClick={() => setUnseenFirst((v) => !v)}
+              className={cn(
+                "-my-1 shrink-0 rounded-full px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
+                unseenFirst
+                  ? "bg-indigo-500/20 text-indigo-200"
+                  : "bg-white/5 text-zinc-400 hover:text-zinc-200",
+              )}
+            >
+              안 본 것부터
+            </button>
+          )}
+        </div>
       </div>
 
       <SectionTitle>개념</SectionTitle>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight, Check, RotateCcw, X } from "lucide-react";
 import {
   Button,
@@ -22,8 +23,31 @@ type Phase = "setup" | "run" | "done";
 const COUNTS = [5, 10, 20];
 
 export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <main className="py-20 text-center text-sm text-zinc-500">
+          불러오는 중…
+        </main>
+      }
+    >
+      <QuizScreen />
+    </Suspense>
+  );
+}
+
+const SUBJECT_IDS = SUBJECTS.map((s) => s.id);
+
+function QuizScreen() {
+  const params = useSearchParams();
+  // 홈의 "이 과목 문제 풀기" 에서 넘어온다. 모르는 값이면 그냥 전체로 둔다.
+  const fromUrl = params.get("subject");
   const [phase, setPhase] = useState<Phase>("setup");
-  const [subject, setSubject] = useState<SubjectId | null>(null);
+  const [subject, setSubject] = useState<SubjectId | null>(() =>
+    fromUrl && SUBJECT_IDS.includes(fromUrl as SubjectId)
+      ? (fromUrl as SubjectId)
+      : null,
+  );
   const [count, setCount] = useState(10);
   const [wrongOnly, setWrongOnly] = useState(false);
   const [seed, setSeed] = useState(1);
