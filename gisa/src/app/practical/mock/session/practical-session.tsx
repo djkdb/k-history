@@ -139,6 +139,15 @@ export function PracticalSession() {
   ]);
 
   const writtenCount = Object.values(inputs).filter((v) => v.trim()).length;
+  /** 답을 적어 둔 문항의 배점 합계 — 맞았는지는 제출 전에는 알려 주지 않는다 */
+  const attempted = useMemo(
+    () =>
+      questions.reduce(
+        (n, q, i) => n + ((inputs[i] ?? "").trim() ? q.points : 0),
+        0,
+      ),
+    [questions, inputs],
+  );
 
   if (submitted) {
     return (
@@ -298,8 +307,10 @@ export function PracticalSession() {
             <Clock size={14} />
             {formatExamClock(left)}
           </span>
+          {/* 실기는 문항 수가 아니라 점수가 목표다. 60점을 넘겨야 하는데
+              "0 / 19" 만 보이면 지금 몇 점어치를 적었는지 알 수 없다. */}
           <span className="text-[12px] tabular-nums text-zinc-500">
-            {writtenCount} / {questions.length}
+            {writtenCount}/{questions.length}문항 · {attempted}점어치
           </span>
           <button
             type="button"
@@ -318,8 +329,8 @@ export function PracticalSession() {
         </div>
         <ProgressBar
           className="mt-2"
-          value={writtenCount}
-          max={questions.length}
+          value={attempted}
+          max={max}
           color="#6366f1"
         />
       </div>
