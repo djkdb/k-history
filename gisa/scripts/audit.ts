@@ -202,6 +202,46 @@ const fail = (s: string) => problems.push(s);
       fail(`선지를 섞으니 ${q.id} 의 선지 해설이 어긋난다`);
   }
 
+  /*
+   * 실기 한 벌이 한 과목으로 쏠리지 않는가.
+   *
+   * 언어 문항을 늘렸더니 한 벌의 36%가 언어가 된 적이 있다. 문항이 많은
+   * 과목이 그만큼 더 뽑히기 때문이다. 지금은 과목별로 나눠 채우지만,
+   * 그 장치가 빠지면 조용히 돌아온다.
+   */
+  {
+    const byS: Record<string, number> = {};
+    const papers = 200;
+    for (let t = 0; t < papers; t++) {
+      for (const q of makePracticalMock(40000 + t))
+        byS[q.subject] = (byS[q.subject] ?? 0) + q.points;
+    }
+    const all = Object.values(byS).reduce((a, b) => a + b, 0);
+    const worst = Math.max(...Object.values(byS)) / all;
+    if (worst > 0.3)
+      fail(
+        `실기 시험지가 한 과목으로 쏠린다 — ` +
+          SUBJECTS.map(
+            (x) =>
+              `${x.short} ${Math.round(((byS[x.id] ?? 0) / papers) * 10) / 10}점`,
+          ).join(" · "),
+      );
+
+    // 그래도 늘 딱 100점이어야 한다
+    for (let t = 0; t < 100; t++) {
+      const p = makePracticalMock(41000 + t);
+      const sum = p.reduce((a, q) => a + q.points, 0);
+      if (sum !== 100) {
+        fail(`실기 한 벌이 ${sum}점이다 (100점이어야 한다)`);
+        break;
+      }
+      if (new Set(p.map((q) => q.id)).size !== p.length) {
+        fail("실기 한 벌 안에 같은 문항이 두 번 들어간다");
+        break;
+      }
+    }
+  }
+
   // 같은 씨앗이면 늘 같은 시험지여야 한다 — 시험 도중 새로고침의 목숨줄이다
   for (let t = 0; t < 20; t++) {
     const a = makeWrittenMock(600 + t);

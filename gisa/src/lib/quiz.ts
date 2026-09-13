@@ -110,18 +110,53 @@ export function makePracticalMock(
   seed = Date.now(),
   target = 100,
 ): PracticalQuestion[] {
-  const pool = shuffle(PRACTICAL_QUESTIONS, seed);
-  const out: PracticalQuestion[] = [];
+  /*
+   * 과목을 고르게 채운다.
+   *
+   * 그냥 전체에서 섞어 뽑으면 문항이 많은 과목이 그만큼 더 뽑힌다. 실제로
+   * 언어 문항을 늘렸더니 한 벌의 36%가 언어가 되었다 — 나머지 네 과목을
+   * 합친 것과 맞먹는다. 실기는 다섯 과목에서 고루 나오므로 그렇게 두면
+   * 연습이 실제와 달라진다.
+   *
+   * 과목마다 target/5 만큼을 먼저 채우고, 딱 떨어지지 않아 남은 몫만
+   * 전체에서 메운다.
+   */
+  const per = Math.floor(target / SUBJECTS.length);
+  const picked: PracticalQuestion[] = [];
+  const taken = new Set<string>();
   let sum = 0;
-  for (const q of pool) {
-    if (sum + q.points > target) continue;
-    out.push(q);
-    sum += q.points;
-    if (sum === target) break;
+
+  for (const [i, s] of SUBJECTS.entries()) {
+    const pool = shuffle(
+      PRACTICAL_QUESTIONS.filter((q) => q.subject === s.id),
+      seed + i * 977,
+    );
+    let mine = 0;
+    for (const q of pool) {
+      if (mine + q.points > per) continue;
+      if (sum + q.points > target) continue;
+      picked.push(q);
+      taken.add(q.id);
+      mine += q.points;
+      sum += q.points;
+      if (mine === per) break;
+    }
   }
-  // 과목이 한쪽으로 쏠리지 않게 과목 → 유형 순으로 정렬해 내보낸다
+
+  if (sum < target) {
+    for (const q of shuffle(PRACTICAL_QUESTIONS, seed + 13)) {
+      if (taken.has(q.id)) continue;
+      if (sum + q.points > target) continue;
+      picked.push(q);
+      taken.add(q.id);
+      sum += q.points;
+      if (sum === target) break;
+    }
+  }
+
+  // 과목 순으로 내보낸다 — 결과 화면에서 과목별로 읽기 위해서다
   const order = new Map(SUBJECTS.map((s, i) => [s.id, i]));
-  return out.sort(
+  return picked.sort(
     (a, b) => (order.get(a.subject) ?? 9) - (order.get(b.subject) ?? 9),
   );
 }

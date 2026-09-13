@@ -44,18 +44,29 @@ export function analyze(
   wrongIds: string[],
   studiedIds: string[],
 ): Weakness[] {
-  const lastWritten = [...attempts].reverse().find((a) => a.track === "written");
+  const lastWritten = [...attempts]
+    .reverse()
+    .find((a) => a.track === "written");
   const wrongSet = new Set(wrongIds);
 
   return SUBJECTS.map((s) => {
     const mine = lastWritten?.bySubject.find((b) => b.subject === s.id);
-    const mockScore = mine && mine.total > 0 ? Math.round((mine.correct / mine.total) * 100) : null;
+    const mockScore =
+      mine && mine.total > 0
+        ? Math.round((mine.correct / mine.total) * 100)
+        : null;
     const failed = mine ? mine.correct < cutoff(s.id) : false;
 
     // 이 과목에 속한 개념 중 지금 틀린 채로 남은 것
-    const wrong = [...wrongSet].filter((id) => CONCEPT_MAP[id]?.subject === s.id).length;
-    const conceptsHere = Object.values(CONCEPT_MAP).filter((c) => c.subject === s.id);
-    const studied = conceptsHere.filter((c) => studiedIds.includes(c.id)).length;
+    const wrong = [...wrongSet].filter(
+      (id) => CONCEPT_MAP[id]?.subject === s.id,
+    ).length;
+    const conceptsHere = Object.values(CONCEPT_MAP).filter(
+      (c) => c.subject === s.id,
+    );
+    const studied = conceptsHere.filter((c) =>
+      studiedIds.includes(c.id),
+    ).length;
     const total = conceptsHere.length;
 
     /*
@@ -78,7 +89,8 @@ export function analyze(
     urgency += (total - studied) * 5;
     if (!why) {
       if (wrong > 0) why = `틀린 채로 남은 개념이 ${wrong}개 있습니다`;
-      else if (studied < total) why = `아직 안 본 개념이 ${total - studied}개 있습니다`;
+      else if (studied < total)
+        why = `아직 안 본 개념이 ${total - studied}개 있습니다`;
       else why = "이 과목은 한 바퀴 돌았습니다";
     }
 
@@ -97,7 +109,10 @@ export function analyze(
 }
 
 /** 그 과목에 남은 문항이 몇 개인가 — 권하기 전에 실제로 풀 것이 있는지 본다 */
-export function stock(subject: SubjectId): { written: number; practical: number } {
+export function stock(subject: SubjectId): {
+  written: number;
+  practical: number;
+} {
   return {
     written: QUESTIONS.filter((q) => q.subject === subject).length,
     practical: PRACTICAL_QUESTIONS.filter((q) => q.subject === subject).length,
