@@ -1,6 +1,7 @@
 import type { PracticalQuestion } from "@/lib/types";
 import type { SubjectId } from "@/data/exam";
 import { PRACTICAL_MORE } from "@/data/practical-more";
+import { PRACTICAL2_QUESTIONS } from "@/data/practical2";
 
 /**
  * 실기 — 필답형.
@@ -349,6 +350,7 @@ const BASE_PRACTICAL: PracticalQuestion[] = [
 export const PRACTICAL_QUESTIONS: PracticalQuestion[] = [
   ...BASE_PRACTICAL,
   ...PRACTICAL_MORE,
+  ...PRACTICAL2_QUESTIONS,
 ];
 
 export const PRACTICAL_MAP: Record<string, PracticalQuestion> =

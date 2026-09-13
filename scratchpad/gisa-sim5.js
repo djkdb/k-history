@@ -9,7 +9,9 @@ const M = Object.fromEntries(PRACTICAL_QUESTIONS.map((q) => [q.id, q]));
 const CASES = [
   ["pq-encapsulation", "캡슐화 ", true, "뒤에 공백"],
   ["pq-encapsulation", "encapsulation", true, "소문자 영문"],
-  ["pq-encapsulation", "캡슐화(정보은닉)", false, "괄호에 다른 말"],
+  // 괄호 안은 덧붙인 설명으로 보고 떼어 낸다 — 채점기 머리말에 그렇게 적혀 있다.
+  // 처음에 이것을 오답으로 기대했다가 매번 "어긋남 1건" 을 보고 있었다.
+  ["pq-encapsulation", "캡슐화(정보은닉)", true, "괄호에 다른 말 (괄호는 떼어 본다)"],
   ["pq-encapsulation", "정보은닉", false, "비슷하지만 다른 용어"],
   ["pq-acid", "원자성, 일관성, 고립성, 지속성", true, "가운뎃점 대신 쉼표"],
   ["pq-acid", "원자성 일관성 격리성 지속성", true, "공백으로만 나열"],
