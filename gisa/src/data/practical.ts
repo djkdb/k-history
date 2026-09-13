@@ -1,5 +1,6 @@
 import type { PracticalQuestion } from "@/lib/types";
 import type { SubjectId } from "@/data/exam";
+import { PRACTICAL_MORE } from "@/data/practical-more";
 
 /**
  * 실기 — 필답형.
@@ -10,7 +11,7 @@ import type { SubjectId } from "@/data/exam";
  * 배점은 실제 시험처럼 문항마다 다르게 두었다. 실기는 100점 만점에 60점
  * 이상이면 합격이고 과락은 없다.
  */
-export const PRACTICAL_QUESTIONS: PracticalQuestion[] = [
+const BASE_PRACTICAL: PracticalQuestion[] = [
   // ── 용어 ──────────────────────────────────────────────
   {
     id: "pq-encapsulation",
@@ -346,6 +347,11 @@ export const PRACTICAL_QUESTIONS: PracticalQuestion[] = [
       "ALTER TABLE ~ ADD 다. VARCHAR 와 VARCHAR2, 괄호 유무, COLUMN 키워드 유무는 모두 받아 준다.",
     importance: "high",
   },
+];
+
+export const PRACTICAL_QUESTIONS: PracticalQuestion[] = [
+  ...BASE_PRACTICAL,
+  ...PRACTICAL_MORE,
 ];
 
 export const PRACTICAL_MAP: Record<string, PracticalQuestion> = Object.fromEntries(
