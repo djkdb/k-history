@@ -16,7 +16,8 @@ import {
   judgePractical,
 } from "@/data/exam";
 import { gradeByKind } from "@/lib/grade";
-import { makeWrittenMock, shuffleOptions } from "@/lib/quiz";
+import { readFileSync } from "node:fs";
+import { makeWrittenMock, makePracticalMock, shuffleOptions } from "@/lib/quiz";
 
 const problems: string[] = [];
 const warn: string[] = [];
@@ -216,6 +217,85 @@ const fail = (s: string) => problems.push(s);
       }
     }
   }
+}
+
+// ── 화면이 사용자에게 말한 숫자가 아직 참인가 ──────────
+{
+  /*
+   * 화면에 "재어 본 중앙값 42%" 라고 적어 두면 그것은 사용자와의 약속이다.
+   * 그런데 문항을 더 넣으면 실제 값이 바뀌고, 문구는 그대로 남는다.
+   * 실제로 실기 안내가 42% 라고 말하는 동안 진짜 값은 20% 였다.
+   *
+   * 사람이 기억해서 고치는 일에 맡기지 않는다. 화면에서 숫자를 읽어 와
+   * 지금 값과 견준다.
+   */
+  const read = (file: string) => {
+    try {
+      return readFileSync(new URL(file, import.meta.url), "utf8");
+    } catch {
+      return "";
+    }
+  };
+
+  const median = (xs: number[]) => {
+    const a = [...xs].sort((p, q) => p - q);
+    return a[Math.floor(a.length / 2)];
+  };
+
+  // 필기 — 연속 두 벌의 겹침 문항 수
+  const wOverlap: number[] = [];
+  for (let t = 0; t < 200; t++) {
+    const a = new Set(makeWrittenMock(5000 + t).map((q) => q.id));
+    wOverlap.push(
+      makeWrittenMock(5000 + t + 1).filter((q) => a.has(q.id)).length,
+    );
+  }
+  const wMid = median(wOverlap);
+
+  // 실기 — 연속 두 벌의 겹침 비율
+  const pOverlap: number[] = [];
+  for (let t = 0; t < 200; t++) {
+    const a = new Set(makePracticalMock(7000 + t).map((q) => q.id));
+    const b = makePracticalMock(7000 + t + 1);
+    pOverlap.push(
+      Math.round((b.filter((q) => a.has(q.id)).length / b.length) * 100),
+    );
+  }
+  const pMid = median(pOverlap);
+
+  const WORD: Record<number, string> = {
+    2: "스물",
+    3: "서른",
+    4: "마흔",
+    5: "쉰",
+    6: "예순",
+    7: "일흔",
+    8: "여든",
+    9: "아흔",
+  };
+  const wWord = WORD[Math.round(wMid / 10)];
+  const wPage = read("../src/app/mock/page.tsx");
+  if (wPage && wWord && !wPage.includes(`${wWord} 문항쯤`))
+    fail(
+      `필기 모의고사 화면이 말하는 겹침이 지금 값과 다르다 — 지금은 ${wMid}문항(약 ${wWord} 문항)이다`,
+    );
+
+  const pPage = read("../src/app/practical/mock/page.tsx");
+  if (pPage) {
+    const m = pPage.match(/중앙값 (\d+)%/);
+    if (!m) fail("실기 모의고사 화면에 겹침 중앙값이 적혀 있지 않다");
+    else if (Math.abs(Number(m[1]) - pMid) > 5)
+      fail(
+        `실기 모의고사 화면은 겹침을 ${m[1]}% 라고 말하는데 지금은 ${pMid}% 다`,
+      );
+  }
+
+  // 화면이 말하는 문항 수도 실제와 같아야 한다 (설정 화면은 코드에서 세어 쓴다)
+  const settings = read("../src/app/settings/page.tsx");
+  if (settings && !settings.includes("QUESTIONS.length"))
+    fail(
+      "설정 화면이 문항 수를 손으로 적고 있다 — 자료에서 세어 쓰게 해야 한다",
+    );
 }
 
 // ── 요약 ────────────────────────────────────────────────

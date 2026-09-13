@@ -82,8 +82,8 @@ export default function Page() {
             </p>
             <p className="mt-2 text-[12px] leading-relaxed text-zinc-400">
               지금 가진 실기 문항은 {PRACTICAL_QUESTIONS.length}개입니다. 두
-              회를 연달아 보면 넷에 하나 남짓은 같은 문항이 다시 나옵니다(200번
-              재어 본 중앙값 42%). 점수보다 어떤 유형에서 손이 멎는지를 보세요.
+              회를 연달아 보면 다섯에 하나쯤은 같은 문항이 다시 나옵니다(200번
+              재어 본 중앙값 20%). 점수보다 어떤 유형에서 손이 멎는지를 보세요.
             </p>
           </div>
         </div>

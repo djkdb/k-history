@@ -96,9 +96,10 @@ export default function Page() {
             </p>
             <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-300">
               이 앱이 가진 문항은 {QUESTIONS.length}개입니다. 100문항을 뽑으므로
-              두 회를 연달아 보면 예순 문항쯤은 같은 문항이 다시 나옵니다(200번
+              두 회를 연달아 보면 마흔 문항쯤은 같은 문항이 다시 나옵니다(200번
               재어 본 중앙값). 점수를 실력으로 읽지 마시고, 과목별로 어디가
-              무너지는지를 보는 용도로 쓰세요.
+              무너지는지를 보는 용도로 쓰세요. 선지 순서는 회차마다 섞이므로
+              자리를 외워 맞히는 일은 없습니다.
             </p>
             <p className="mt-2 text-[12px] leading-relaxed text-zinc-400">
               문항은 공개된 출제 범위에 맞춰 새로 쓴 것입니다.
