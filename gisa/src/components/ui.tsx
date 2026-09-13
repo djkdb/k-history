@@ -113,22 +113,32 @@ export function Badge({
   );
 }
 
+/**
+ * 얼마나 자주 나오는가.
+ *
+ * 이 앱은 "반드시 / 자주 / 보통" 세 단계만 쓴다. 별을 다섯 개까지 두면
+ * 세 개와 네 개의 차이를 설명할 수 없어 오히려 안 믿게 된다.
+ */
 export function ImportanceBadge({
-  importance,
+  level,
   compact = false,
 }: {
-  importance: number;
+  level: "must" | "high" | "normal";
   compact?: boolean;
 }) {
+  const look = {
+    must: { label: "반드시", cls: "border-rose-400/30 bg-rose-500/10 text-rose-200" },
+    high: { label: "자주", cls: "border-amber-400/30 bg-amber-500/10 text-amber-200" },
+    normal: { label: "보통", cls: "border-white/10 bg-white/5 text-zinc-400" },
+  }[level];
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
-        importanceBg(importance),
+        "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
+        look.cls,
       )}
     >
-      <span className="tracking-tighter">{importanceStars(importance)}</span>
-      {!compact && importanceLabel(importance)}
+      {compact ? look.label.slice(0, 1) : look.label}
     </span>
   );
 }

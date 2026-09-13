@@ -1,0 +1,102 @@
+import type { PracticalQuestion, WrittenQuestion } from "@/lib/types";
+import type { SubjectId } from "@/data/exam";
+import { SUBJECTS } from "@/data/exam";
+import { QUESTIONS } from "@/data/questions";
+import { PRACTICAL_QUESTIONS } from "@/data/practical";
+
+/** 씨앗으로 도는 난수 — 같은 씨앗이면 늘 같은 시험지가 나온다 */
+function rng(seed: number) {
+  let s = seed >>> 0 || 1;
+  return () => {
+    s ^= s << 13;
+    s ^= s >>> 17;
+    s ^= s << 5;
+    return ((s >>> 0) % 100000) / 100000;
+  };
+}
+
+function shuffle<T>(arr: T[], seed: number): T[] {
+  const r = rng(seed);
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+export interface QuizOptions {
+  subject?: SubjectId;
+  count: number;
+  seed: number;
+  /** 이 개념들만 — 오답 노트에서 쓴다 */
+  onlySourceIds?: string[];
+}
+
+/** 연습용 필기 문제 뽑기 */
+export function makeQuiz(opts: QuizOptions): WrittenQuestion[] {
+  let pool = QUESTIONS;
+  if (opts.subject) pool = pool.filter((q) => q.subject === opts.subject);
+  if (opts.onlySourceIds?.length) {
+    const set = new Set(opts.onlySourceIds);
+    pool = pool.filter((q) => set.has(q.sourceId));
+  }
+  return shuffle(pool, opts.seed).slice(0, opts.count);
+}
+
+/**
+ * 필기 모의고사 한 벌.
+ *
+ * 실제 시험은 과목마다 20문항이고 한 과목이라도 40점에 못 미치면 과락이다.
+ * 그래서 과목을 섞지 않고 과목별로 20문항씩 순서대로 담는다 — 결과 화면에서
+ * 과목별 점수를 그대로 보여 주기 위해서다.
+ */
+export function makeWrittenMock(seed = Date.now()): WrittenQuestion[] {
+  return SUBJECTS.flatMap((s, i) =>
+    shuffle(
+      QUESTIONS.filter((q) => q.subject === s.id),
+      seed + i * 1000,
+    ).slice(0, s.count),
+  );
+}
+
+/**
+ * 실기 모의고사 한 벌.
+ *
+ * 실기는 100점 만점이다. 문항마다 배점이 달라 딱 100점을 맞추기 어려우므로,
+ * 100점을 넘기지 않는 선에서 최대한 채운다. 모자란 점수는 결과 화면에
+ * 그대로 밝힌다 — 만점이 몇 점인지 숨기면 점수를 읽을 수 없다.
+ */
+export function makePracticalMock(seed = Date.now(), target = 100): PracticalQuestion[] {
+  const pool = shuffle(PRACTICAL_QUESTIONS, seed);
+  const out: PracticalQuestion[] = [];
+  let sum = 0;
+  for (const q of pool) {
+    if (sum + q.points > target) continue;
+    out.push(q);
+    sum += q.points;
+    if (sum === target) break;
+  }
+  // 과목이 한쪽으로 쏠리지 않게 과목 → 유형 순으로 정렬해 내보낸다
+  const order = new Map(SUBJECTS.map((s, i) => [s.id, i]));
+  return out.sort(
+    (a, b) => (order.get(a.subject) ?? 9) - (order.get(b.subject) ?? 9),
+  );
+}
+
+/** 과목별로 몇 개를 맞혔는가 */
+export function tallyBySubject(
+  questions: WrittenQuestion[],
+  answers: Record<number, number>,
+): { subject: SubjectId; correct: number; total: number }[] {
+  return SUBJECTS.map((s) => {
+    const mine = questions
+      .map((q, i) => ({ q, i }))
+      .filter(({ q }) => q.subject === s.id);
+    return {
+      subject: s.id,
+      correct: mine.filter(({ q, i }) => answers[i] === q.answerIndex).length,
+      total: mine.length,
+    };
+  }).filter((r) => r.total > 0);
+}
