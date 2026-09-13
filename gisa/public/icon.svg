@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111114"/>
+      <stop offset="1" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a5b4fc"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!--
+    설계도 — 위 하나에서 아래 둘로 갈라지는 흐름.
+    정보처리기사는 "요구사항을 그림으로 옮기고 그 아래로 나눠 만드는" 시험이라
+    한 덩어리가 갈라지는 모양으로 잡았다. SQLD 의 원기둥과 헷갈리지 않게
+    색도 남색으로 둔다.
+  -->
+  <rect x="196" y="104" width="120" height="76" rx="20" fill="url(#ink)"/>
+  <path d="M256 180v52" stroke="url(#ink)" stroke-width="18" stroke-linecap="round"/>
+  <path d="M144 232h224" stroke="url(#ink)" stroke-width="18" stroke-linecap="round"/>
+  <path d="M144 232v40M368 232v40" stroke="url(#ink)" stroke-width="18" stroke-linecap="round"/>
+  <rect x="84" y="272" width="120" height="76" rx="20" fill="none" stroke="url(#ink)" stroke-width="18"/>
+  <rect x="308" y="272" width="120" height="76" rx="20" fill="none" stroke="url(#ink)" stroke-width="18"/>
+  <!-- 코드 — 실기는 결국 코드를 읽는다 -->
+  <path d="M186 396l-30 28 30 28" fill="none" stroke="#52525b" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M326 396l30 28-30 28" fill="none" stroke="#52525b" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M276 390l-40 68" stroke="#52525b" stroke-width="20" stroke-linecap="round"/>
+</svg>
