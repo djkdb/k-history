@@ -145,12 +145,27 @@ export function judgeWritten(
     .map((b) => b.subject);
 
   if (failed.length) {
+    /*
+     * 조사를 붙이지 않는다.
+     *
+     * "구축관리이(가)" 처럼 받침에 따라 달라지는 조사를 붙이면 어느 과목이
+     * 마지막에 오느냐에 따라 어색해진다. 과목 이름을 목록으로 떼어 두면
+     * 조사가 아예 필요 없고, 다섯 과목이 모두 걸렸을 때도 읽기 쉽다.
+     */
+    if (failed.length === bySubject.length && bySubject.length > 1) {
+      return {
+        score,
+        passed: false,
+        failedSubjects: failed,
+        reason: "과락 — 모든 과목이 40점에 못 미칩니다",
+      };
+    }
     const names = failed.map((f) => SUBJECT_MAP[f].short).join("·");
     return {
       score,
       passed: false,
       failedSubjects: failed,
-      reason: `과락 — ${names}이(가) 40점에 못 미칩니다`,
+      reason: `과락 — 40점에 못 미치는 과목: ${names}`,
     };
   }
   if (score < WRITTEN.passScore) {

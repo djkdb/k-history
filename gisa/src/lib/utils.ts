@@ -113,3 +113,19 @@ export function formatClock(ms: number): string {
   const s = String(total % 60).padStart(2, "0");
   return `${m}:${s}`;
 }
+
+/**
+ * 한 시간이 넘는 시계.
+ *
+ * 모의고사는 150분이다. 분:초로만 적으면 시작하자마자 "149:56" 이 뜨는데,
+ * 이것이 149분인지 149시간인지 한눈에 알 수 없다. 한 시간을 넘으면
+ * 시:분:초로 적는다.
+ */
+export function formatExamClock(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  if (total < 3600) return formatClock(ms);
+  const h = Math.floor(total / 3600);
+  const m = String(Math.floor((total % 3600) / 60)).padStart(2, "0");
+  const s = String(total % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}

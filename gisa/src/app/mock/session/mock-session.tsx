@@ -10,6 +10,7 @@ import {
   Check,
   Clock,
   Flag,
+  Home,
   X,
 } from "lucide-react";
 import { Button, Card, ProgressBar, SectionTitle } from "@/components/ui";
@@ -25,7 +26,7 @@ import {
 import { makeWrittenMock, tallyBySubject } from "@/lib/quiz";
 import { useApp } from "@/lib/store";
 import { clearWritten, readWritten, writeWritten } from "@/lib/mock-progress";
-import { cn, formatClock } from "@/lib/utils";
+import { cn, formatExamClock } from "@/lib/utils";
 
 export function MockSession() {
   const params = useSearchParams();
@@ -60,6 +61,8 @@ export function MockSession() {
   const [submitted, setSubmitted] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [sheet, setSheet] = useState(false);
+  /** 채점 화면에서 한 번에 펼쳐 보여 줄 오답 수 */
+  const [shown, setShown] = useState(20);
   const topRef = useRef<HTMLDivElement>(null);
 
   const submit = useCallback(() => {
@@ -122,14 +125,46 @@ export function MockSession() {
   const answeredCount = Object.keys(answers).length;
 
   if (submitted) {
-    const wrongList = questions
+    /*
+     * 틀린 문항을 두 무리로 가른다.
+     *
+     * 답을 골랐는데 틀린 것과, 시간이 모자라 비워 둔 것은 전혀 다른 일이다.
+     * 앞엣것은 잘못 알고 있는 것이고 뒤엣것은 속도 문제다. 한 줄로 99개를
+     * 쏟아 놓으면 그 차이가 묻히고, 정작 봐야 할 것을 찾지 못한다.
+     */
+    const missed = questions
       .map((q, i) => ({ q, i }))
-      .filter(({ q, i }) => answers[i] !== q.answerIndex);
+      .filter(
+        ({ q, i }) => answers[i] !== undefined && answers[i] !== q.answerIndex,
+      );
+    const blank = questions
+      .map((q, i) => ({ q, i }))
+      .filter(({ i }) => answers[i] === undefined);
 
     return (
       <main className="py-6">
+        {/* 시험 중에는 아래 길잡이를 감춰 두었다. 채점 화면에서 틀린 문항
+            100개를 다 내려가야 나갈 수 있으면 갇힌 느낌이 나므로 위에도
+            나가는 길을 둔다. */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/mock"
+            className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
+          >
+            <ArrowLeft size={15} />
+            모의고사
+          </Link>
+          <Link
+            href="/"
+            className="-my-2 ml-auto inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
+          >
+            <Home size={15} />홈
+          </Link>
+        </div>
+
         <Card
           className={cn(
+            "mt-4",
             verdict.passed
               ? "border-emerald-400/30 bg-emerald-500/10"
               : "border-rose-400/30 bg-rose-500/10",
@@ -191,21 +226,77 @@ export function MockSession() {
           })}
         </div>
 
-        <SectionTitle>틀린 문항 {wrongList.length}개</SectionTitle>
-        <div className="flex flex-col gap-3">
-          {wrongList.map(({ q, i }) => (
-            <Card key={q.id}>
-              <WrittenQuestionCard
-                q={q}
-                index={i}
-                total={questions.length}
-                picked={answers[i] ?? null}
-                onPick={() => {}}
-                revealed
-              />
+        {missed.length > 0 && (
+          <>
+            <SectionTitle>골랐는데 틀린 문항 {missed.length}개</SectionTitle>
+            <p className="-mt-1 mb-3 text-[12px] leading-relaxed text-zinc-500">
+              잘못 알고 있던 것들입니다. 해설 아래의 개념으로 가서 한 번 더
+              보세요.
+            </p>
+            <div className="flex flex-col gap-3">
+              {missed.slice(0, shown).map(({ q, i }) => (
+                <Card key={q.id}>
+                  <WrittenQuestionCard
+                    q={q}
+                    index={i}
+                    total={questions.length}
+                    picked={answers[i] ?? null}
+                    onPick={() => {}}
+                    revealed
+                  />
+                </Card>
+              ))}
+            </div>
+            {missed.length > shown && (
+              <Button
+                variant="outline"
+                className="mt-3 w-full"
+                onClick={() => setShown((n) => n + 20)}
+              >
+                {missed.length - shown}개 더 보기
+              </Button>
+            )}
+          </>
+        )}
+
+        {blank.length > 0 && (
+          <>
+            <SectionTitle>비워 둔 문항 {blank.length}개</SectionTitle>
+            <Card>
+              <p className="text-[13px] leading-relaxed text-zinc-300">
+                손대지 못한 문항입니다. 몰라서가 아니라 시간이 모자랐다면 풀이
+                속도를 재 보는 편이 낫습니다 — 실제 시험은 100문항을 150분에
+                풉니다(한 문항 90초).
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {blank.slice(0, 40).map(({ q, i }) => (
+                  <span
+                    key={q.id}
+                    className="rounded-lg border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] tabular-nums text-zinc-500"
+                  >
+                    {i + 1}
+                  </span>
+                ))}
+                {blank.length > 40 && (
+                  <span className="px-1 text-[11px] text-zinc-600">
+                    … 그리고 {blank.length - 40}개 더
+                  </span>
+                )}
+              </div>
             </Card>
-          ))}
-        </div>
+          </>
+        )}
+
+        {missed.length === 0 && blank.length === 0 && (
+          <>
+            <SectionTitle>틀린 문항</SectionTitle>
+            <Card>
+              <p className="text-[13px] text-zinc-300">
+                하나도 틀리지 않았습니다.
+              </p>
+            </Card>
+          </>
+        )}
 
         <div className="mt-6 flex flex-col gap-2">
           <Link href="/mock">
@@ -237,7 +328,7 @@ export function MockSession() {
             )}
           >
             <Clock size={14} />
-            {formatClock(left)}
+            {formatExamClock(left)}
           </span>
           <span className="text-[12px] tabular-nums text-zinc-500">
             {answeredCount} / {questions.length}
@@ -249,6 +340,13 @@ export function MockSession() {
           >
             답안지
           </button>
+          <Link
+            href="/mock"
+            aria-label="시험에서 나가기"
+            className="-m-2 shrink-0 p-2 text-zinc-500 hover:text-zinc-300"
+          >
+            <X size={16} />
+          </Link>
         </div>
         <ProgressBar
           className="mt-2"
@@ -294,7 +392,11 @@ export function MockSession() {
         />
       </div>
 
-      <div className="mt-6 flex items-center gap-2">
+      <p className="mt-6 text-center text-[11px] text-zinc-600">
+        답은 고를 때마다 저장됩니다. 나갔다 와도 이어서 볼 수 있습니다.
+      </p>
+
+      <div className="mt-3 flex items-center gap-2">
         <Button
           variant="outline"
           className="flex-1"

@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Check,
   Clock,
+  Home,
   X,
 } from "lucide-react";
 import {
@@ -28,7 +29,7 @@ import {
   readPractical,
   writePractical,
 } from "@/lib/mock-progress";
-import { cn, formatClock } from "@/lib/utils";
+import { cn, formatExamClock } from "@/lib/utils";
 
 const KIND_LABEL = {
   term: "용어 쓰기",
@@ -142,8 +143,25 @@ export function PracticalSession() {
   if (submitted) {
     return (
       <main className="py-6">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/practical/mock"
+            className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
+          >
+            <ArrowLeft size={15} />
+            모의고사
+          </Link>
+          <Link
+            href="/"
+            className="-my-2 ml-auto inline-flex items-center gap-1.5 py-2 text-sm text-zinc-400 hover:text-zinc-200"
+          >
+            <Home size={15} />홈
+          </Link>
+        </div>
+
         <Card
           className={cn(
+            "mt-4",
             verdict.passed
               ? "border-emerald-400/30 bg-emerald-500/10"
               : "border-rose-400/30 bg-rose-500/10",
@@ -278,7 +296,7 @@ export function PracticalSession() {
             )}
           >
             <Clock size={14} />
-            {formatClock(left)}
+            {formatExamClock(left)}
           </span>
           <span className="text-[12px] tabular-nums text-zinc-500">
             {writtenCount} / {questions.length}
@@ -290,6 +308,13 @@ export function PracticalSession() {
           >
             답안지
           </button>
+          <Link
+            href="/practical/mock"
+            aria-label="시험에서 나가기"
+            className="-m-2 shrink-0 p-2 text-zinc-500 hover:text-zinc-300"
+          >
+            <X size={16} />
+          </Link>
         </div>
         <ProgressBar
           className="mt-2"
@@ -338,7 +363,8 @@ export function PracticalSession() {
         />
         <p className="mt-1.5 text-[11px] text-zinc-500">
           채점은 제출한 뒤에 한꺼번에 합니다. 시험 중에는 맞았는지 알려 주지
-          않습니다 — 실제 시험과 같게 두었습니다.
+          않습니다 — 실제 시험과 같게 두었습니다. 적은 것은 그때그때 저장되므로
+          나갔다 와도 이어서 볼 수 있습니다.
         </p>
       </div>
 

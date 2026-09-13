@@ -97,11 +97,23 @@ const no = (s) => { bad++; console.log("  ✗ " + s); };
   await p.getByRole("button", { name: "제출", exact: true }).click();
   await p.waitForSelector("text=평균");
   const shown = Number((await p.locator("text=/^\\d+점$/").first().textContent()).replace("점", ""));
-  const wrongHeader = await p.locator("text=/틀린 문항 \\d+개/").first().textContent();
-  const wrongN = Number(wrongHeader.match(/(\d+)/)[1]);
+  // 오답은 "골랐는데 틀린 것" 과 "비워 둔 것" 으로 나뉘어 있다. 둘을 더해야
+  // 100 - 점수 가 되어야 한다 — 한쪽만 세면 앞뒤가 맞는지 알 수 없다.
+  const grab = async (re) => {
+    const el = p.locator(`text=${re}`).first();
+    if (!(await el.count())) return 0;
+    return Number((await el.textContent()).match(/(\d+)개/)[1]);
+  };
+  const missedN = await grab("/골랐는데 틀린 문항 \\d+개/");
+  const blankN = await grab("/비워 둔 문항 \\d+개/");
+  const wrongN = missedN + blankN;
   const answered = Object.keys(truth).length;
-  if (wrongN === 100 - shown) ok(`평균 ${shown}점 ↔ 틀린 문항 ${wrongN}개 — 앞뒤가 맞는다`);
-  else no(`평균 ${shown}점인데 틀린 문항이 ${wrongN}개다 (100-${shown}=${100 - shown} 이어야 한다)`);
+  if (wrongN === 100 - shown)
+    ok(`평균 ${shown}점 ↔ 고르고 틀린 것 ${missedN} + 비워 둔 것 ${blankN} = ${wrongN} — 앞뒤가 맞는다`);
+  else no(`평균 ${shown}점인데 오답이 ${missedN}+${blankN}=${wrongN}개다 (100-${shown}=${100 - shown} 이어야 한다)`);
+  if (blankN === 100 - answered)
+    ok(`비워 둔 것 ${blankN}개 = 답하지 않은 문항 수와 같다`);
+  else no(`비워 둔 것이 ${blankN}개인데 답하지 않은 문항은 ${100 - answered}개다`);
   if (answered === 6) ok("답한 것은 6문항, 나머지 94문항은 빈칸으로 채점되었다");
   const gwarak = await p.locator("text=/과락/").count();
   if (shown < 40 && gwarak > 0) ok("과락이 화면에 표시되었다");

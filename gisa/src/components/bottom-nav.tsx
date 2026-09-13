@@ -13,8 +13,16 @@ const TABS = [
   { href: "/review", label: "복습", icon: RotateCw },
 ];
 
-/** 길잡이를 감출 곳 — 첫 안내는 끝까지 따라오게 해야 한다 */
-const HIDE_ON = ["/onboarding"];
+/**
+ * 길잡이를 감출 곳.
+ *
+ *   첫 안내  — 끝까지 따라오게 해야 한다
+ *   시험 중  — 150분짜리 시험 아래에 한 번 누르면 나가지는 단추를 두지
+ *              않는다. 답안은 저장되지만, 나가려고 누른 것이 아닌데
+ *              시험지가 사라지는 경험은 그 자체로 나쁘다. 나가는 길은
+ *              시험 화면 안에 따로 둔다.
+ */
+const HIDE_ON = ["/onboarding", "/mock/session", "/practical/mock/session"];
 
 export function BottomNav() {
   const path = usePathname();

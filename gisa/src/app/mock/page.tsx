@@ -14,7 +14,7 @@ import {
 import { QUESTIONS } from "@/data/questions";
 import { useApp } from "@/lib/store";
 import { readWritten } from "@/lib/mock-progress";
-import { formatClock } from "@/lib/utils";
+import { formatExamClock } from "@/lib/utils";
 
 export default function Page() {
   const attempts = useApp((s) => s.mockAttempts).filter(
@@ -48,7 +48,7 @@ export default function Page() {
           </div>
           <p className="mt-1.5 text-[12px] text-zinc-300">
             {Object.keys(resume.answers).length}문항까지 답했고, 남은 시간{" "}
-            {formatClock(Math.max(0, resume.endsAt - Date.now()))} 입니다.
+            {formatExamClock(Math.max(0, resume.endsAt - Date.now()))} 입니다.
           </p>
           <Link href={`/mock/session?seed=${resume.seed}`}>
             <Button className="mt-3 w-full">
