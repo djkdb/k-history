@@ -8,7 +8,12 @@ export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
     sourceId: "s-estimation",
     question:
       "COCOMO 모형에서 5만 라인 이하의 비교적 단순한 소프트웨어에 적용하는 유형은?",
-    options: ["조직형(Organic)", "반분리형(Semi-detached)", "내장형(Embedded)", "확장형(Extended)"],
+    options: [
+      "조직형(Organic)",
+      "반분리형(Semi-detached)",
+      "내장형(Embedded)",
+      "확장형(Extended)",
+    ],
     answerIndex: 0,
     explanation:
       "조직형은 5만 라인 이하의 간단한 업무용 소프트웨어, 반분리형은 30만 라인 이하, 내장형은 30만 라인을 넘는 복잡한 시스템에 쓴다.",
@@ -112,7 +117,8 @@ export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
     id: "qs-secure-coding-input",
     subject: "system",
     sourceId: "s-secure-coding",
-    question: "시큐어 코딩에서 \"입력 데이터 검증 및 표현\" 항목에 해당하는 취약점은?",
+    question:
+      '시큐어 코딩에서 "입력 데이터 검증 및 표현" 항목에 해당하는 취약점은?',
     options: [
       "SQL 삽입",
       "하드코딩된 비밀번호",
@@ -121,12 +127,12 @@ export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
     ],
     answerIndex: 0,
     explanation:
-      "SQL 삽입·XSS·경로 조작은 모두 입력값을 그대로 믿어서 생기는 문제로 \"입력 데이터 검증 및 표현\" 항목이다.",
+      'SQL 삽입·XSS·경로 조작은 모두 입력값을 그대로 믿어서 생기는 문제로 "입력 데이터 검증 및 표현" 항목이다.',
     optionNotes: [
       null,
-      "하드코딩된 비밀번호는 \"보안 기능\" 항목이다.",
-      "예외 처리는 \"에러 처리\" 항목이다.",
-      "메모리 누수는 \"코드 오류\" 항목이다.",
+      '하드코딩된 비밀번호는 "보안 기능" 항목이다.',
+      '예외 처리는 "에러 처리" 항목이다.',
+      '메모리 누수는 "코드 오류" 항목이다.',
     ],
     importance: "must",
   },
@@ -136,7 +142,12 @@ export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
     sourceId: "s-methodology",
     question:
       "이미 만들어 둔 부품(컴포넌트)을 조립해 시스템을 만드는 개발 방법론은?",
-    options: ["구조적 방법론", "정보공학 방법론", "객체지향 방법론", "컴포넌트 기반 방법론"],
+    options: [
+      "구조적 방법론",
+      "정보공학 방법론",
+      "객체지향 방법론",
+      "컴포넌트 기반 방법론",
+    ],
     answerIndex: 3,
     explanation:
       "CBD(Component Based Development)다. 재사용으로 개발 기간을 줄이고 품질을 안정시키는 것이 목적이다.",
@@ -220,7 +231,12 @@ export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "RTO 는 복구까지 걸리는 목표 시간, RPO(Recovery Point Objective)는 어느 시점의 데이터까지 되살릴 것인가다. 둘을 바꿔 낸다.",
-    optionNotes: ["이것이 RPO 다.", null, "백업 주기는 RPO 를 맞추기 위한 수단이다.", "훈련 주기는 별개다."],
+    optionNotes: [
+      "이것이 RPO 다.",
+      null,
+      "백업 주기는 RPO 를 맞추기 위한 수단이다.",
+      "훈련 주기는 별개다.",
+    ],
     importance: "high",
   },
 ];

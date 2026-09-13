@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, CalendarDays, Check, FileText, PenLine } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Check,
+  FileText,
+  PenLine,
+} from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { PRACTICAL, SUBJECTS, WRITTEN, cutoff } from "@/data/exam";
 import { useApp } from "@/lib/store";
@@ -40,8 +46,7 @@ export default function Page() {
         <div className="mt-8">
           <h1 className="text-2xl font-bold leading-snug tracking-tight">
             정보처리기사는
-            <br />
-            두 번 봅니다
+            <br />두 번 봅니다
           </h1>
           <p className="mt-3 text-[14px] leading-relaxed text-zinc-400">
             필기를 붙어야 실기를 볼 수 있고, 두 시험은 공부하는 방법이 전혀
@@ -56,8 +61,8 @@ export default function Page() {
               </div>
               <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-400">
                 다섯 과목 각 20문항, 모두 {WRITTEN.totalQuestions}문항{" "}
-                {WRITTEN.minutes}분. 평균 {WRITTEN.passScore}점을 넘어도 한 과목이
-                40점에 못 미치면 떨어집니다.
+                {WRITTEN.minutes}분. 평균 {WRITTEN.passScore}점을 넘어도 한
+                과목이 40점에 못 미치면 떨어집니다.
               </p>
             </Card>
             <Card>
@@ -66,9 +71,9 @@ export default function Page() {
                 <span className="text-[14px] font-bold">실기</span>
               </div>
               <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-400">
-                필답형 {PRACTICAL.minutes}분. 100점 만점에 {PRACTICAL.passScore}점
-                이상이면 합격이고 과락은 없습니다. 눈으로 아는 것과 손으로 적는
-                것은 다릅니다.
+                필답형 {PRACTICAL.minutes}분. 100점 만점에 {PRACTICAL.passScore}
+                점 이상이면 합격이고 과락은 없습니다. 눈으로 아는 것과 손으로
+                적는 것은 다릅니다.
               </p>
             </Card>
           </div>
@@ -148,8 +153,8 @@ export default function Page() {
             시험일을 알려 주세요
           </h1>
           <p className="mt-3 text-[14px] leading-relaxed text-zinc-400">
-            남은 날에 맞춰 하루치를 나눠 보여 줍니다. 아직 정하지 않았다면 건너뛰어도
-            됩니다.
+            남은 날에 맞춰 하루치를 나눠 보여 줍니다. 아직 정하지 않았다면
+            건너뛰어도 됩니다.
           </p>
 
           <Card className="mt-6">
@@ -172,7 +177,9 @@ export default function Page() {
           </Card>
 
           <Card className="mt-3">
-            <p className="text-[12px] font-bold text-zinc-300">필기 과목별 과락선</p>
+            <p className="text-[12px] font-bold text-zinc-300">
+              필기 과목별 과락선
+            </p>
             <div className="mt-2 flex flex-col gap-1">
               {SUBJECTS.map((s) => (
                 <div key={s.id} className="flex items-center gap-2 text-[12px]">

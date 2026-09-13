@@ -58,7 +58,11 @@ export function paragraphs(text: string, per = 2): string[] {
   for (let i = 0; i < sentences.length; i += per) {
     out.push(sentences.slice(i, i + per).join(" "));
   }
-  if (out.length > 1 && splitSentences(out[out.length - 1]).length === 1 && per > 1) {
+  if (
+    out.length > 1 &&
+    splitSentences(out[out.length - 1]).length === 1 &&
+    per > 1
+  ) {
     const tail = out.pop()!;
     out[out.length - 1] += " " + tail;
   }

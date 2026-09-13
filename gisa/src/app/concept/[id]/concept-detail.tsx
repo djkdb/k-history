@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { ArrowLeft, Check, Lightbulb, Target } from "lucide-react";
-import { Button, Card, ImportanceBadge, SectionTitle } from "@/components/ui";
+import {
+  Button,
+  Card,
+  ImportanceBadge,
+  RichText,
+  SectionTitle,
+} from "@/components/ui";
 import { CONCEPTS, CONCEPT_MAP } from "@/data/concepts";
 import { SUBJECT_MAP } from "@/data/exam";
 import { useApp } from "@/lib/store";
@@ -39,19 +45,24 @@ export function ConceptDetail({ id }: { id: string }) {
       <header className="mt-4">
         <div className="flex items-center gap-2">
           <span>{subject.symbol}</span>
-          <span className="text-[12px] font-bold" style={{ color: subject.color }}>
+          <span
+            className="text-[12px] font-bold"
+            style={{ color: subject.color }}
+          >
             {subject.name}
           </span>
           <ImportanceBadge level={concept.importance} />
         </div>
         <h1 className="mt-2 text-xl font-bold leading-snug">{concept.title}</h1>
-        <p className="mt-2 text-[14px] leading-relaxed text-zinc-300">{concept.summary}</p>
+        <p className="mt-2 text-[14px] leading-relaxed text-zinc-300">
+          <RichText>{concept.summary}</RichText>
+        </p>
       </header>
 
       <div className="mt-5 flex flex-col gap-3">
         {concept.body.map((p, i) => (
           <p key={i} className="text-[14px] leading-relaxed text-zinc-300">
-            {p}
+            <RichText>{p}</RichText>
           </p>
         ))}
       </div>
@@ -67,7 +78,7 @@ export function ConceptDetail({ id }: { id: string }) {
                     {k.term}
                   </span>
                   <span className="min-w-0 flex-1 text-[13px] leading-relaxed text-zinc-300">
-                    {k.mean}
+                    <RichText>{k.mean}</RichText>
                   </span>
                 </div>
               ))}
@@ -87,7 +98,9 @@ export function ConceptDetail({ id }: { id: string }) {
                   <span className="text-zinc-600">↔</span>
                   <span className="text-sky-200">{t.b}</span>
                 </div>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-400">{t.how}</p>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-400">
+                  <RichText>{t.how}</RichText>
+                </p>
               </Card>
             ))}
           </div>
@@ -98,7 +111,9 @@ export function ConceptDetail({ id }: { id: string }) {
       <Card>
         <div className="flex items-start gap-2.5">
           <Target size={16} className="mt-0.5 shrink-0 text-indigo-300" />
-          <p className="text-[13px] leading-relaxed text-zinc-300">{concept.examPoint}</p>
+          <p className="text-[13px] leading-relaxed text-zinc-300">
+            <RichText>{concept.examPoint}</RichText>
+          </p>
         </div>
       </Card>
 
@@ -107,8 +122,8 @@ export function ConceptDetail({ id }: { id: string }) {
           <div className="flex items-start gap-2.5">
             <Lightbulb size={16} className="mt-0.5 shrink-0 text-emerald-300" />
             <p className="text-[12px] leading-relaxed text-zinc-400">
-              실기에도 나오는 개념입니다. 실기는 고르는 것이 아니라 적으므로 용어를
-              글자 그대로 외워 두세요.
+              실기에도 나오는 개념입니다. 실기는 고르는 것이 아니라 적으므로
+              용어를 글자 그대로 외워 두세요.
             </p>
           </div>
         </Card>
@@ -130,7 +145,9 @@ export function ConceptDetail({ id }: { id: string }) {
           <Link href={`/concept/${prev.id}`} className="min-w-0 flex-1">
             <div className="glass h-full rounded-2xl p-3 transition-transform active:scale-[0.98]">
               <span className="text-[11px] text-zinc-500">이전</span>
-              <p className="mt-1 line-clamp-2 text-[13px] font-semibold">{prev.title}</p>
+              <p className="mt-1 line-clamp-2 text-[13px] font-semibold">
+                {prev.title}
+              </p>
             </div>
           </Link>
         ) : (
@@ -140,7 +157,9 @@ export function ConceptDetail({ id }: { id: string }) {
           <Link href={`/concept/${next.id}`} className="min-w-0 flex-1">
             <div className="glass h-full rounded-2xl p-3 text-right transition-transform active:scale-[0.98]">
               <span className="text-[11px] text-zinc-500">다음</span>
-              <p className="mt-1 line-clamp-2 text-[13px] font-semibold">{next.title}</p>
+              <p className="mt-1 line-clamp-2 text-[13px] font-semibold">
+                {next.title}
+              </p>
             </div>
           </Link>
         ) : (

@@ -66,7 +66,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
     id: "b-normalization",
     subject: "database",
     title: "정규화",
-    summary: "1NF 원자값 · 2NF 부분 함수 종속 제거 · 3NF 이행 종속 제거 · BCNF 결정자가 후보키.",
+    summary:
+      "1NF 원자값 · 2NF 부분 함수 종속 제거 · 3NF 이행 종속 제거 · BCNF 결정자가 후보키.",
     body: [
       "1NF: 모든 속성의 값이 원자값이어야 한다(반복되는 그룹을 없앤다).",
       "2NF: 1NF 이면서 기본키가 아닌 속성이 기본키 전체에 완전 함수 종속이어야 한다(부분 함수 종속 제거).",
@@ -111,7 +112,8 @@ export const DATABASE_CONCEPTS: Concept[] = [
     id: "b-sql-ddl",
     subject: "database",
     title: "SQL — DDL·DML·DCL",
-    summary: "CREATE/ALTER/DROP · SELECT/INSERT/UPDATE/DELETE · GRANT/REVOKE, 그리고 TCL.",
+    summary:
+      "CREATE/ALTER/DROP · SELECT/INSERT/UPDATE/DELETE · GRANT/REVOKE, 그리고 TCL.",
     body: [
       "DDL: CREATE · ALTER · DROP · TRUNCATE — 구조를 만들고 바꾼다.",
       "DML: SELECT · INSERT · UPDATE · DELETE — 데이터를 다룬다.",

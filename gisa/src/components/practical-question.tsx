@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Check, Eye, X } from "lucide-react";
-import { Button, SubjectBadge } from "@/components/ui";
+import { Button, RichText, SubjectBadge } from "@/components/ui";
 import { gradeByKind, type GradeResult } from "@/lib/grade";
 import type { PracticalQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -74,7 +74,9 @@ export function PracticalQuestionCard({
         </span>
       </div>
 
-      <h2 className="mt-3 text-[15px] font-bold leading-relaxed">{q.question}</h2>
+      <h2 className="mt-3 text-[15px] font-bold leading-relaxed">
+        {q.question}
+      </h2>
 
       {q.passage && (
         <pre className="sql-block sql-surface mt-3 overflow-x-auto rounded-xl border border-white/10 px-3.5 py-3 text-[12.5px] leading-[1.75] text-zinc-200">
@@ -153,7 +155,9 @@ export function PracticalQuestionCard({
             <span
               className={cn(
                 "text-[12px] font-bold",
-                result.judgement === "correct" ? "text-emerald-200" : "text-rose-200",
+                result.judgement === "correct"
+                  ? "text-emerald-200"
+                  : "text-rose-200",
               )}
             >
               {result.judgement === "correct"
@@ -185,7 +189,7 @@ export function PracticalQuestionCard({
           )}
 
           <p className="mt-2.5 text-[13px] leading-relaxed text-zinc-300">
-            {q.explanation}
+            <RichText>{q.explanation}</RichText>
           </p>
         </div>
       )}

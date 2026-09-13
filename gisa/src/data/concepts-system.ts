@@ -86,7 +86,8 @@ export const SYSTEM_CONCEPTS: Concept[] = [
     id: "s-security-crypto",
     subject: "system",
     title: "보안 — 암호화",
-    summary: "대칭키는 빠르고 키 관리가 어렵다. 비대칭키는 느리지만 키 배분이 쉽다.",
+    summary:
+      "대칭키는 빠르고 키 관리가 어렵다. 비대칭키는 느리지만 키 배분이 쉽다.",
     body: [
       "대칭키(비밀키): DES, 3DES, AES, SEED, ARIA, IDEA. 암호화와 복호화에 같은 키를 쓴다. 빠르지만 사람이 늘면 키가 급격히 는다(n(n−1)/2).",
       "비대칭키(공개키): RSA, ECC, ElGamal, Diffie-Hellman. 공개키로 잠그고 개인키로 연다.",
@@ -107,7 +108,8 @@ export const SYSTEM_CONCEPTS: Concept[] = [
     id: "s-secure-coding",
     subject: "system",
     title: "시큐어 코딩",
-    summary: "입력 검증·보안 기능·시간과 상태·에러 처리·코드 오류·캡슐화·API 오용.",
+    summary:
+      "입력 검증·보안 기능·시간과 상태·에러 처리·코드 오류·캡슐화·API 오용.",
     body: [
       "입력 데이터 검증 및 표현: SQL 삽입, XSS, 경로 조작을 막는다.",
       "보안 기능: 인증·권한 관리·암호화를 제대로 쓴다.",

@@ -87,8 +87,14 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
       "도출 → 명세 → 분석 → 확인",
     ],
     answerIndex: 0,
-    explanation: "도출(Elicitation) → 분석(Analysis) → 명세(Specification) → 확인(Validation) 순이다.",
-    optionNotes: [null, "도출이 먼저다.", "명세는 분석 뒤다.", "분석하고 나서 명세를 쓴다."],
+    explanation:
+      "도출(Elicitation) → 분석(Analysis) → 명세(Specification) → 확인(Validation) 순이다.",
+    optionNotes: [
+      null,
+      "도출이 먼저다.",
+      "명세는 분석 뒤다.",
+      "분석하고 나서 명세를 쓴다.",
+    ],
     importance: "must",
   },
   {
@@ -96,7 +102,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     subject: "design",
     sourceId: "d-uml-basic",
     question: "다음 중 UML 의 행위(Behavioral) 다이어그램이 아닌 것은?",
-    options: ["유스케이스 다이어그램", "시퀀스 다이어그램", "배치 다이어그램", "상태 다이어그램"],
+    options: [
+      "유스케이스 다이어그램",
+      "시퀀스 다이어그램",
+      "배치 다이어그램",
+      "상태 다이어그램",
+    ],
     answerIndex: 2,
     explanation:
       "배치(Deployment) 다이어그램은 구조 다이어그램이다. 행위 다이어그램은 유스케이스·시퀀스·커뮤니케이션·상태·활동·상호작용 개요·타이밍 일곱 가지다.",
@@ -109,7 +120,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     sourceId: "d-uml-basic",
     question:
       "전체가 없어지면 부분도 함께 없어지는 강한 소유 관계를 나타내는 UML 관계는?",
-    options: ["집합(Aggregation)", "포함(Composition)", "일반화(Generalization)", "의존(Dependency)"],
+    options: [
+      "집합(Aggregation)",
+      "포함(Composition)",
+      "일반화(Generalization)",
+      "의존(Dependency)",
+    ],
     answerIndex: 1,
     explanation:
       "포함(Composition)은 속이 찬 마름모로 그리며 전체가 없어지면 부분도 없어진다. 집합(Aggregation)은 속이 빈 마름모이고 부분이 따로 살 수 있다.",
@@ -131,7 +147,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "include 는 반드시 쓰는 관계다. '주문하기'가 '결제하기'를 반드시 포함하는 식이다. extend 는 조건에 따라 붙는다.",
-    optionNotes: ["조건부다.", null, "상속이다.", "액터와 유스케이스를 잇는다."],
+    optionNotes: [
+      "조건부다.",
+      null,
+      "상속이다.",
+      "액터와 유스케이스를 잇는다.",
+    ],
     importance: "high",
   },
   {
@@ -144,7 +165,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "캡슐화다. 결합도가 낮아지고 재사용이 쉬워지며, 안쪽 구현을 감추는 정보 은닉으로 이어진다.",
-    optionNotes: ["물려받는 것이다.", null, "같은 메시지에 다르게 응답하는 것이다.", "공통점만 뽑아내는 것이다."],
+    optionNotes: [
+      "물려받는 것이다.",
+      null,
+      "같은 메시지에 다르게 응답하는 것이다.",
+      "공통점만 뽑아내는 것이다.",
+    ],
     importance: "must",
   },
   {
@@ -174,9 +200,15 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     subject: "design",
     sourceId: "d-solid",
     question: "'확장에는 열려 있고 변경에는 닫혀 있어야 한다'는 설계 원칙은?",
-    options: ["단일 책임 원칙(SRP)", "개방 폐쇄 원칙(OCP)", "리스코프 치환 원칙(LSP)", "의존 역전 원칙(DIP)"],
+    options: [
+      "단일 책임 원칙(SRP)",
+      "개방 폐쇄 원칙(OCP)",
+      "리스코프 치환 원칙(LSP)",
+      "의존 역전 원칙(DIP)",
+    ],
     answerIndex: 1,
-    explanation: "개방 폐쇄 원칙(OCP)이다. 기능을 더할 때 기존 코드를 고치지 않아도 되게 설계한다.",
+    explanation:
+      "개방 폐쇄 원칙(OCP)이다. 기능을 더할 때 기존 코드를 고치지 않아도 되게 설계한다.",
     optionNotes: [
       "바뀔 이유가 하나여야 한다는 원칙이다.",
       null,
@@ -198,7 +230,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     ],
     answerIndex: 0,
     explanation: "GoF 23개는 생성 5, 구조 7, 행위 11로 나뉜다.",
-    optionNotes: [null, "생성과 구조가 바뀌었다.", "구조와 행위가 바뀌었다.", "합이 23이지만 분류 개수가 다르다."],
+    optionNotes: [
+      null,
+      "생성과 구조가 바뀌었다.",
+      "구조와 행위가 바뀌었다.",
+      "합이 23이지만 분류 개수가 다르다.",
+    ],
     importance: "must",
   },
   {
@@ -208,7 +245,8 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     question: "인스턴스가 오직 하나만 만들어지도록 보장하는 디자인 패턴은?",
     options: ["팩토리 메서드", "싱글톤", "프로토타입", "빌더"],
     answerIndex: 1,
-    explanation: "싱글톤은 인스턴스를 하나만 두고 어디서든 그 하나에 닿게 한다.",
+    explanation:
+      "싱글톤은 인스턴스를 하나만 두고 어디서든 그 하나에 닿게 한다.",
     optionNotes: [
       "무엇을 만들지 하위 클래스가 정하게 미룬다.",
       null,
@@ -221,8 +259,14 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     id: "qd-pattern-adapter",
     subject: "design",
     sourceId: "d-pattern-structural",
-    question: "서로 맞지 않는 인터페이스를 이어 주어 함께 동작하게 하는 패턴은?",
-    options: ["어댑터(Adapter)", "프록시(Proxy)", "퍼사드(Facade)", "데코레이터(Decorator)"],
+    question:
+      "서로 맞지 않는 인터페이스를 이어 주어 함께 동작하게 하는 패턴은?",
+    options: [
+      "어댑터(Adapter)",
+      "프록시(Proxy)",
+      "퍼사드(Facade)",
+      "데코레이터(Decorator)",
+    ],
     answerIndex: 0,
     explanation: "어댑터는 맞지 않는 인터페이스를 맞춰 준다.",
     optionNotes: [
@@ -239,7 +283,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     sourceId: "d-pattern-behavioral",
     question:
       "한 객체의 상태가 바뀌면 그 객체를 지켜보던 다른 객체들에게 자동으로 알리는 패턴은?",
-    options: ["전략(Strategy)", "옵서버(Observer)", "상태(State)", "커맨드(Command)"],
+    options: [
+      "전략(Strategy)",
+      "옵서버(Observer)",
+      "상태(State)",
+      "커맨드(Command)",
+    ],
     answerIndex: 1,
     explanation: "옵서버 패턴이다. 발행-구독 구조로도 부른다.",
     optionNotes: [
@@ -254,12 +303,23 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     id: "qd-arch-mvc",
     subject: "design",
     sourceId: "d-architecture",
-    question: "MVC 아키텍처에서 사용자의 입력을 받아 처리 흐름을 정하는 요소는?",
-    options: ["모델(Model)", "뷰(View)", "컨트롤러(Controller)", "서비스(Service)"],
+    question:
+      "MVC 아키텍처에서 사용자의 입력을 받아 처리 흐름을 정하는 요소는?",
+    options: [
+      "모델(Model)",
+      "뷰(View)",
+      "컨트롤러(Controller)",
+      "서비스(Service)",
+    ],
     answerIndex: 2,
     explanation:
       "컨트롤러가 입력을 받아 모델을 부르고 어떤 뷰를 보여 줄지 정한다. 모델은 데이터와 규칙, 뷰는 화면이다.",
-    optionNotes: ["데이터와 업무 규칙을 맡는다.", "화면을 맡는다.", null, "MVC 의 구성 요소가 아니다."],
+    optionNotes: [
+      "데이터와 업무 규칙을 맡는다.",
+      "화면을 맡는다.",
+      null,
+      "MVC 의 구성 요소가 아니다.",
+    ],
     importance: "high",
   },
   {
@@ -271,7 +331,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 2,
     explanation:
       "결합도는 낮은 것부터 자료 → 스탬프 → 제어 → 외부 → 공통 → 내용이다. 자료 결합도가 가장 낮고 좋다.",
-    optionNotes: ["가장 높다.", "전역 변수를 함께 쓰는 것으로 높은 편이다.", null, "가운데쯤이다."],
+    optionNotes: [
+      "가장 높다.",
+      "전역 변수를 함께 쓰는 것으로 높은 편이다.",
+      null,
+      "가운데쯤이다.",
+    ],
     importance: "must",
   },
   {
@@ -279,7 +344,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     subject: "design",
     sourceId: "d-coupling-cohesion",
     question: "응집도가 가장 높은 것은?",
-    options: ["우연적 응집도", "논리적 응집도", "절차적 응집도", "기능적 응집도"],
+    options: [
+      "우연적 응집도",
+      "논리적 응집도",
+      "절차적 응집도",
+      "기능적 응집도",
+    ],
     answerIndex: 3,
     explanation:
       "응집도는 낮은 것부터 우연 → 논리 → 시간 → 절차 → 통신 → 순차 → 기능이다. 기능적 응집도가 가장 높고 좋다.",
@@ -290,12 +360,18 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     id: "qd-ui-principle",
     subject: "design",
     sourceId: "d-ui",
-    question: "UI 설계 원칙 중 '누구나 쉽게 이해하고 사용할 수 있어야 한다'에 해당하는 것은?",
+    question:
+      "UI 설계 원칙 중 '누구나 쉽게 이해하고 사용할 수 있어야 한다'에 해당하는 것은?",
     options: ["직관성", "유효성", "학습성", "유연성"],
     answerIndex: 0,
     explanation:
       "직관성이다. 유효성은 정확하고 빠르게 목표를 이루는 것, 학습성은 쉽게 익히는 것, 유연성은 실수를 줄이고 잘 받아 주는 것이다.",
-    optionNotes: [null, "목표 달성의 정확성·신속성이다.", "익히기 쉬움이다.", "실수에 대한 너그러움이다."],
+    optionNotes: [
+      null,
+      "목표 달성의 정확성·신속성이다.",
+      "익히기 쉬움이다.",
+      "실수에 대한 너그러움이다.",
+    ],
     importance: "high",
   },
   {
@@ -308,7 +384,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "Hub & Spoke 다. 관리가 쉽지만 허브가 죽으면 전체가 멈춘다. Point-to-Point 는 1:1 로 직접 잇는다.",
-    optionNotes: ["1:1 로 직접 잇는다.", null, "공통 버스를 통해 주고받는다.", "그룹 안은 허브, 그룹끼리는 버스다."],
+    optionNotes: [
+      "1:1 로 직접 잇는다.",
+      null,
+      "공통 버스를 통해 주고받는다.",
+      "그룹 안은 허브, 그룹끼리는 버스다.",
+    ],
     importance: "high",
   },
   {
@@ -317,7 +398,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     sourceId: "d-requirement",
     question:
       "제3자인 중재자가 주도하여 명확한 절차에 따라 진행하는 공식적인 요구사항 검토 기법은?",
-    options: ["동료 검토(Peer Review)", "워크스루(Walk-through)", "인스펙션(Inspection)", "프로토타이핑"],
+    options: [
+      "동료 검토(Peer Review)",
+      "워크스루(Walk-through)",
+      "인스펙션(Inspection)",
+      "프로토타이핑",
+    ],
     answerIndex: 2,
     explanation:
       "인스펙션은 중재자(Moderator)가 이끄는 공식 검토다. 워크스루는 개발자가 주도하는 비공식 검토다.",
@@ -338,7 +424,12 @@ export const DESIGN_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "제품 책임자가 제품 백로그를 관리하고 우선순위를 정한다. 스크럼 마스터는 팀이 스크럼을 잘 따르도록 돕고 방해 요소를 없앤다.",
-    optionNotes: ["팀을 돕고 장애를 걷어 낸다.", null, "스프린트 백로그를 스스로 정한다.", "스크럼의 공식 역할이 아니다."],
+    optionNotes: [
+      "팀을 돕고 장애를 걷어 낸다.",
+      null,
+      "스프린트 백로그를 스스로 정한다.",
+      "스크럼의 공식 역할이 아니다.",
+    ],
     importance: "high",
   },
 ];

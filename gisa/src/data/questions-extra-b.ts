@@ -48,12 +48,7 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     subject: "database",
     sourceId: "b-key",
     question: "후보키(Candidate Key)가 반드시 만족해야 하는 성질은?",
-    options: [
-      "유일성과 최소성",
-      "유일성만",
-      "최소성만",
-      "참조 무결성",
-    ],
+    options: ["유일성과 최소성", "유일성만", "최소성만", "참조 무결성"],
     answerIndex: 0,
     explanation:
       "후보키는 튜플을 하나로 가려내는 유일성과, 속성을 하나라도 빼면 유일성이 깨지는 최소성을 함께 갖춰야 한다. 슈퍼키는 유일성만 있으면 된다.",
@@ -126,7 +121,8 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     id: "qb-schema-three",
     subject: "database",
     sourceId: "b-schema",
-    question: "3단계 스키마 중 데이터베이스 전체의 논리적 구조를 정의하는 것은?",
+    question:
+      "3단계 스키마 중 데이터베이스 전체의 논리적 구조를 정의하는 것은?",
     options: ["외부 스키마", "개념 스키마", "내부 스키마", "물리 스키마"],
     answerIndex: 1,
     explanation:
@@ -144,7 +140,12 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     subject: "database",
     sourceId: "b-nosql",
     question: "CAP 이론에서 말하는 세 가지에 해당하지 않는 것은?",
-    options: ["일관성(Consistency)", "가용성(Availability)", "분할 내성(Partition tolerance)", "원자성(Atomicity)"],
+    options: [
+      "일관성(Consistency)",
+      "가용성(Availability)",
+      "분할 내성(Partition tolerance)",
+      "원자성(Atomicity)",
+    ],
     answerIndex: 3,
     explanation:
       "CAP 은 일관성·가용성·분할 내성이며 셋을 동시에 만족할 수 없다는 이론이다. 원자성은 트랜잭션 성질(ACID)의 하나다.",
@@ -157,7 +158,7 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     sourceId: "l-c-pointer",
     question: "다음 C 프로그램의 출력 결과는?",
     passage:
-      "#include <stdio.h>\nint main() {\n    int a[5] = {1, 2, 3, 4, 5};\n    int *p = a;\n    printf(\"%d\", *(p + 2) + p[1]);\n    return 0;\n}",
+      '#include <stdio.h>\nint main() {\n    int a[5] = {1, 2, 3, 4, 5};\n    int *p = a;\n    printf("%d", *(p + 2) + p[1]);\n    return 0;\n}',
     options: ["3", "5", "7", "9"],
     answerIndex: 1,
     explanation:
@@ -176,7 +177,7 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     sourceId: "l-c-pointer",
     question: "다음 C 프로그램의 출력 결과는?",
     passage:
-      "#include <stdio.h>\nvoid f(int x, int *y) {\n    x = x + 10;\n    *y = *y + 10;\n}\nint main() {\n    int a = 1, b = 1;\n    f(a, &b);\n    printf(\"%d %d\", a, b);\n    return 0;\n}",
+      '#include <stdio.h>\nvoid f(int x, int *y) {\n    x = x + 10;\n    *y = *y + 10;\n}\nint main() {\n    int a = 1, b = 1;\n    f(a, &b);\n    printf("%d %d", a, b);\n    return 0;\n}',
     options: ["1 1", "1 11", "11 1", "11 11"],
     answerIndex: 1,
     explanation:
@@ -195,7 +196,7 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     sourceId: "l-java-oop",
     question: "다음 Java 프로그램의 출력 결과는?",
     passage:
-      "class A {\n    void print() { System.out.print(\"A\"); }\n}\nclass B extends A {\n    void print() { System.out.print(\"B\"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        A obj = new B();\n        obj.print();\n    }\n}",
+      'class A {\n    void print() { System.out.print("A"); }\n}\nclass B extends A {\n    void print() { System.out.print("B"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        A obj = new B();\n        obj.print();\n    }\n}',
     options: ["A", "B", "AB", "컴파일 오류"],
     answerIndex: 1,
     explanation:
@@ -271,7 +272,8 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     id: "ql-os-sjf",
     subject: "language",
     sourceId: "l-os-scheduling",
-    question: "SJF(Shortest Job First) 스케줄링에 대한 설명으로 옳지 않은 것은?",
+    question:
+      "SJF(Shortest Job First) 스케줄링에 대한 설명으로 옳지 않은 것은?",
     options: [
       "실행 시간이 짧은 작업을 먼저 처리한다.",
       "평균 대기 시간을 가장 짧게 만들 수 있다.",
@@ -354,7 +356,7 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     sourceId: "l-c-struct",
     question: "다음 C 프로그램의 출력 결과는?",
     passage:
-      "#include <stdio.h>\nstruct P { int x; int y; };\nint main() {\n    struct P p = {3, 4};\n    struct P *q = &p;\n    q->x = q->x + q->y;\n    printf(\"%d %d\", p.x, p.y);\n    return 0;\n}",
+      '#include <stdio.h>\nstruct P { int x; int y; };\nint main() {\n    struct P p = {3, 4};\n    struct P *q = &p;\n    q->x = q->x + q->y;\n    printf("%d %d", p.x, p.y);\n    return 0;\n}',
     options: ["3 4", "7 4", "3 7", "7 7"],
     answerIndex: 1,
     explanation:

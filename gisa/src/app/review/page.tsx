@@ -8,6 +8,7 @@ import {
   Card,
   EmptyState,
   ProgressBar,
+  RichText,
   SectionTitle,
   SubjectBadge,
 } from "@/components/ui";
@@ -77,7 +78,9 @@ export default function Page() {
 
   if (queue === null) {
     return (
-      <main className="py-20 text-center text-sm text-zinc-500">불러오는 중…</main>
+      <main className="py-20 text-center text-sm text-zinc-500">
+        불러오는 중…
+      </main>
     );
   }
 
@@ -87,7 +90,11 @@ export default function Page() {
         <h1 className="text-xl font-bold tracking-tight">복습</h1>
         <EmptyState
           icon="🌱"
-          title={cards.length === 0 ? "아직 복습할 것이 없습니다" : "오늘 몫은 끝났습니다"}
+          title={
+            cards.length === 0
+              ? "아직 복습할 것이 없습니다"
+              : "오늘 몫은 끝났습니다"
+          }
           desc={
             cards.length === 0
               ? "개념을 보거나 문제를 풀면 이곳에 쌓입니다."
@@ -95,7 +102,9 @@ export default function Page() {
           }
           action={
             <Link href={cards.length === 0 ? "/learn" : "/quiz"}>
-              <Button>{cards.length === 0 ? "학습하러 가기" : "문제 더 풀기"}</Button>
+              <Button>
+                {cards.length === 0 ? "학습하러 가기" : "문제 더 풀기"}
+              </Button>
             </Link>
           }
         />
@@ -170,14 +179,21 @@ export default function Page() {
   return (
     <main className="py-6">
       <div className="flex items-center gap-3">
-        <ProgressBar className="flex-1" value={at} max={queue.length} color="#6366f1" />
+        <ProgressBar
+          className="flex-1"
+          value={at}
+          max={queue.length}
+          color="#6366f1"
+        />
         <span className="shrink-0 text-[12px] font-bold tabular-nums text-zinc-500">
           {at + 1} / {queue.length}
         </span>
       </div>
-      <p className="mt-2 text-[11px] text-zinc-500">
-        지금 기억 보존율 {Math.round(retention * 100)}%
-      </p>
+      {cards.length > 0 && (
+        <p className="mt-2 text-[11px] text-zinc-500">
+          지금 기억 보존율 {Math.round(retention * 100)}%
+        </p>
+      )}
 
       {practical ? (
         <>
@@ -208,7 +224,9 @@ export default function Page() {
               <SubjectBadge subject={concept!.subject} />
               <Brain size={14} className="text-indigo-300" />
             </div>
-            <h2 className="mt-3 text-lg font-bold leading-snug">{concept!.title}</h2>
+            <h2 className="mt-3 text-lg font-bold leading-snug">
+              {concept!.title}
+            </h2>
             {!open ? (
               <p className="mt-2 text-[13px] leading-relaxed text-zinc-500">
                 이 개념을 설명할 수 있나요? 머릿속으로 말해 본 다음 펼치세요.
@@ -216,7 +234,7 @@ export default function Page() {
             ) : (
               <div className="mt-3 flex flex-col gap-2.5">
                 <p className="text-[14px] leading-relaxed text-zinc-200">
-                  {concept!.summary}
+                  <RichText>{concept!.summary}</RichText>
                 </p>
                 {concept!.keys?.slice(0, 3).map((k) => (
                   <div key={k.term} className="flex items-baseline gap-2">
@@ -224,12 +242,12 @@ export default function Page() {
                       {k.term}
                     </span>
                     <span className="min-w-0 flex-1 text-[12px] leading-relaxed text-zinc-400">
-                      {k.mean}
+                      <RichText>{k.mean}</RichText>
                     </span>
                   </div>
                 ))}
                 <p className="text-[12px] leading-relaxed text-zinc-400">
-                  {concept!.examPoint}
+                  <RichText>{concept!.examPoint}</RichText>
                 </p>
                 <Link
                   href={`/concept/${concept!.id}`}
@@ -242,7 +260,11 @@ export default function Page() {
           </Card>
 
           {!open ? (
-            <Button size="lg" className="mt-5 w-full" onClick={() => setOpen(true)}>
+            <Button
+              size="lg"
+              className="mt-5 w-full"
+              onClick={() => setOpen(true)}
+            >
               답 보기
             </Button>
           ) : (

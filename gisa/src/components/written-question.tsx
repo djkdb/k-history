@@ -1,7 +1,9 @@
 "use client";
 
-import { Check, X } from "lucide-react";
-import { SubjectBadge } from "@/components/ui";
+import Link from "next/link";
+import { ArrowRight, BookOpen, Check, X } from "lucide-react";
+import { RichText, SubjectBadge } from "@/components/ui";
+import { CONCEPT_MAP } from "@/data/concepts";
 import type { WrittenQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +22,7 @@ export function WrittenQuestionCard({
   onPick,
   revealed,
   showSubject = true,
+  linkConcept = true,
 }: {
   q: WrittenQuestion;
   index?: number;
@@ -28,7 +31,10 @@ export function WrittenQuestionCard({
   onPick: (i: number) => void;
   revealed: boolean;
   showSubject?: boolean;
+  /** 해설 아래에 "이 문항이 나온 개념" 으로 가는 길을 둘 것인가 */
+  linkConcept?: boolean;
 }) {
+  const concept = CONCEPT_MAP[q.sourceId];
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -41,7 +47,9 @@ export function WrittenQuestionCard({
         {showSubject && <SubjectBadge subject={q.subject} />}
       </div>
 
-      <h2 className="mt-3 text-[16px] font-bold leading-relaxed">{q.question}</h2>
+      <h2 className="mt-3 text-[16px] font-bold leading-relaxed">
+        {q.question}
+      </h2>
 
       {q.passage && (
         <pre className="sql-block sql-surface mt-3 overflow-x-auto rounded-xl border border-white/10 px-3.5 py-3 text-[12.5px] leading-[1.75] text-zinc-200">
@@ -73,7 +81,10 @@ export function WrittenQuestionCard({
                   isMine &&
                   !isAnswer &&
                   "border-rose-400/50 bg-rose-500/15",
-                revealed && !isAnswer && !isMine && "border-white/10 bg-white/[0.03]",
+                revealed &&
+                  !isAnswer &&
+                  !isMine &&
+                  "border-white/10 bg-white/[0.03]",
               )}
             >
               <div className="flex items-start gap-2.5">
@@ -98,7 +109,9 @@ export function WrittenQuestionCard({
                 <span
                   className={cn(
                     "min-w-0 flex-1 text-[14px] leading-relaxed",
-                    revealed && !isAnswer && !isMine ? "text-zinc-500" : "text-zinc-200",
+                    revealed && !isAnswer && !isMine
+                      ? "text-zinc-500"
+                      : "text-zinc-200",
                   )}
                 >
                   {opt}
@@ -106,7 +119,7 @@ export function WrittenQuestionCard({
               </div>
               {revealed && note && !isAnswer && (
                 <p className="mt-2 pl-[30px] text-[12px] leading-relaxed text-zinc-500">
-                  {note}
+                  <RichText>{note}</RichText>
                 </p>
               )}
             </button>
@@ -118,8 +131,23 @@ export function WrittenQuestionCard({
         <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3.5">
           <p className="text-[12px] font-bold text-indigo-200">해설</p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-300">
-            {q.explanation}
+            <RichText>{q.explanation}</RichText>
           </p>
+
+          {/*
+            틀렸을 때 "왜 틀렸는가" 만 알려 주고 끝내면 다음에 또 틀린다.
+            이 문항이 어느 개념에서 나왔는지까지 이어 준다.
+          */}
+          {linkConcept && concept && (
+            <Link
+              href={`/concept/${concept.id}`}
+              className="-mx-1 mt-3 flex items-center gap-1.5 rounded-lg px-1 py-1.5 text-[12px] font-semibold text-indigo-300 hover:text-indigo-200"
+            >
+              <BookOpen size={13} className="shrink-0" />
+              <span className="min-w-0 flex-1 truncate">{concept.title}</span>
+              <ArrowRight size={13} className="shrink-0" />
+            </Link>
+          )}
         </div>
       )}
     </div>

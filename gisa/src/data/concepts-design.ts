@@ -12,7 +12,8 @@ export const DESIGN_CONCEPTS: Concept[] = [
     id: "d-sdlc",
     subject: "design",
     title: "소프트웨어 생명 주기 모형",
-    summary: "폭포수는 순서대로, 프로토타입은 만들어 보여 주고, 나선형은 위험을 먼저 재며 돈다.",
+    summary:
+      "폭포수는 순서대로, 프로토타입은 만들어 보여 주고, 나선형은 위험을 먼저 재며 돈다.",
     body: [
       "폭포수 모형은 분석 → 설계 → 구현 → 시험 → 유지보수를 순서대로 밟는다. 앞 단계가 끝나야 다음으로 가므로 관리가 쉽지만, 요구사항이 바뀌면 되돌아가는 비용이 크다.",
       "프로토타입 모형은 쓸 만한 견본을 먼저 만들어 사용자에게 보여 준다. 말로 설명해서는 안 잡히던 요구사항이 화면을 보면 잡힌다. 견본은 버리는 것이 원칙이다.",
@@ -25,7 +26,10 @@ export const DESIGN_CONCEPTS: Concept[] = [
     keys: [
       { term: "나선형 4단계", mean: "계획 → 위험 분석 → 개발 → 고객 평가" },
       { term: "폭포수", mean: "단계가 겹치지 않는다. 되돌아가기 어렵다" },
-      { term: "프로토타입", mean: "견본으로 요구사항을 끌어낸다. 버리는 것이 원칙" },
+      {
+        term: "프로토타입",
+        mean: "견본으로 요구사항을 끌어낸다. 버리는 것이 원칙",
+      },
     ],
     traps: [
       {
@@ -51,7 +55,10 @@ export const DESIGN_CONCEPTS: Concept[] = [
     importance: "must",
     keys: [
       { term: "XP 5가지 가치", mean: "용기·단순성·의사소통·피드백·존중" },
-      { term: "스크럼 산출물", mean: "제품 백로그 · 스프린트 백로그 · 번다운 차트" },
+      {
+        term: "스크럼 산출물",
+        mean: "제품 백로그 · 스프린트 백로그 · 번다운 차트",
+      },
     ],
     tracks: ["written", "practical"],
   },
@@ -82,7 +89,8 @@ export const DESIGN_CONCEPTS: Concept[] = [
     id: "d-uml-basic",
     subject: "design",
     title: "UML — 구성과 다이어그램",
-    summary: "사물·관계·다이어그램. 구조 다이어그램은 정적, 행위 다이어그램은 동적이다.",
+    summary:
+      "사물·관계·다이어그램. 구조 다이어그램은 정적, 행위 다이어그램은 동적이다.",
     body: [
       "UML 은 사물(Things)·관계(Relationships)·다이어그램(Diagrams)으로 이루어진다.",
       "구조(정적) 다이어그램: 클래스, 객체, 컴포넌트, 배치(Deployment), 복합체 구조, 패키지.",
@@ -93,8 +101,14 @@ export const DESIGN_CONCEPTS: Concept[] = [
       "'다음 중 행위 다이어그램이 아닌 것은?' 형태로 거의 매회 나온다. 배치 다이어그램을 동적으로 착각하게 만드는 선지가 흔하다.",
     importance: "must",
     keys: [
-      { term: "구조 6가지", mean: "클래스·객체·컴포넌트·배치·복합체 구조·패키지" },
-      { term: "행위 7가지", mean: "유스케이스·시퀀스·커뮤니케이션·상태·활동·상호작용 개요·타이밍" },
+      {
+        term: "구조 6가지",
+        mean: "클래스·객체·컴포넌트·배치·복합체 구조·패키지",
+      },
+      {
+        term: "행위 7가지",
+        mean: "유스케이스·시퀀스·커뮤니케이션·상태·활동·상호작용 개요·타이밍",
+      },
     ],
     traps: [
       {
@@ -199,7 +213,8 @@ export const DESIGN_CONCEPTS: Concept[] = [
     id: "d-pattern-structural",
     subject: "design",
     title: "디자인 패턴 — 구조",
-    summary: "일곱 개: 어댑터·브리지·컴포지트·데코레이터·퍼사드·플라이웨이트·프록시.",
+    summary:
+      "일곱 개: 어댑터·브리지·컴포지트·데코레이터·퍼사드·플라이웨이트·프록시.",
     body: [
       "어댑터는 맞지 않는 인터페이스를 맞춰 준다. 브리지는 기능과 구현을 따로 두어 각자 늘릴 수 있게 한다.",
       "컴포지트는 전체와 부분을 같은 것으로 다루게 한다(트리). 데코레이터는 객체를 감싸 기능을 덧붙인다.",
@@ -263,8 +278,14 @@ export const DESIGN_CONCEPTS: Concept[] = [
       "'결합도가 가장 낮은 것은?'과 '응집도가 가장 높은 것은?'이 번갈아 나온다. 순서를 통째로 외워 두는 편이 빠르다.",
     importance: "must",
     keys: [
-      { term: "결합도 낮음→높음", mean: "자료 · 스탬프 · 제어 · 외부 · 공통 · 내용" },
-      { term: "응집도 낮음→높음", mean: "우연 · 논리 · 시간 · 절차 · 통신 · 순차 · 기능" },
+      {
+        term: "결합도 낮음→높음",
+        mean: "자료 · 스탬프 · 제어 · 외부 · 공통 · 내용",
+      },
+      {
+        term: "응집도 낮음→높음",
+        mean: "우연 · 논리 · 시간 · 절차 · 통신 · 순차 · 기능",
+      },
     ],
     traps: [
       {
@@ -285,7 +306,8 @@ export const DESIGN_CONCEPTS: Concept[] = [
       "UI 유형: CLI(명령 줄), GUI(그래픽), NUI(말·손짓 같은 자연스러운 입력), OUI(사물 자체가 입출력).",
       "와이어프레임·목업·스토리보드·프로토타입 순으로 구체화된다. 목업은 정적 화면, 프로토타입은 동작한다.",
     ],
-    examPoint: "네 가지 설계 원칙의 이름과 뜻을 짝짓게 한다. NUI 의 정의도 잦다.",
+    examPoint:
+      "네 가지 설계 원칙의 이름과 뜻을 짝짓게 한다. NUI 의 정의도 잦다.",
     importance: "high",
     tracks: ["written"],
   },
@@ -304,7 +326,10 @@ export const DESIGN_CONCEPTS: Concept[] = [
       "EAI 네 유형의 그림과 이름을 짝짓게 한다. 보안 프로토콜이 어느 계층인지도 묻는다.",
     importance: "high",
     keys: [
-      { term: "EAI 4유형", mean: "Point-to-Point · Hub & Spoke · Message Bus · Hybrid" },
+      {
+        term: "EAI 4유형",
+        mean: "Point-to-Point · Hub & Spoke · Message Bus · Hybrid",
+      },
     ],
     tracks: ["written", "practical"],
   },

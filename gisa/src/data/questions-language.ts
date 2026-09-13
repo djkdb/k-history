@@ -13,7 +13,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "배열 이름은 첫 원소의 주소다. *(p+2) 는 a[2] = 30, p[4] 는 a[4] = 50 이다.",
-    optionNotes: ["인덱스를 하나씩 앞으로 셌다.", null, "p[4] 를 a[3] 으로 봤다.", "*(p+2) 를 a[1] 로 봤다."],
+    optionNotes: [
+      "인덱스를 하나씩 앞으로 셌다.",
+      null,
+      "p[4] 를 a[3] 으로 봤다.",
+      "*(p+2) 를 a[1] 로 봤다.",
+    ],
     importance: "must",
   },
   {
@@ -27,7 +32,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 0,
     explanation:
       "값에 의한 호출이라 복사본만 바뀐다. 원본을 바꾸려면 주소를 넘겨야 한다(swap(int *x, int *y)).",
-    optionNotes: [null, "주소를 넘겼을 때의 결과다.", "그런 결과는 나오지 않는다.", "그런 결과는 나오지 않는다."],
+    optionNotes: [
+      null,
+      "주소를 넘겼을 때의 결과다.",
+      "그런 결과는 나오지 않는다.",
+      "그런 결과는 나오지 않는다.",
+    ],
     importance: "must",
   },
   {
@@ -41,7 +51,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "짝수는 continue 로 건너뛰므로 홀수만 더한다. 1 + 3 + 5 = 9 다.",
-    optionNotes: ["짝수만 더한 값이다.", null, "전부 더한 값이다.", "그런 합은 나오지 않는다."],
+    optionNotes: [
+      "짝수만 더한 값이다.",
+      null,
+      "전부 더한 값이다.",
+      "그런 합은 나오지 않는다.",
+    ],
     importance: "must",
   },
   {
@@ -55,19 +70,30 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "오버라이딩된 메서드는 참조 변수의 타입이 아니라 실제 객체(B)를 따른다(동적 바인딩).",
-    optionNotes: ["참조 타입을 따른다고 본 경우다. 필드라면 맞다.", null, "한 번만 호출된다.", "상위 타입으로 받는 것은 정상이다."],
+    optionNotes: [
+      "참조 타입을 따른다고 본 경우다. 필드라면 맞다.",
+      null,
+      "한 번만 호출된다.",
+      "상위 타입으로 받는 것은 정상이다.",
+    ],
     importance: "must",
   },
   {
     id: "ql-java-static",
     subject: "language",
     sourceId: "l-java-oop",
-    question: "Java 의 접근 제어자 중 같은 패키지 안에서만 접근할 수 있는 것은?",
+    question:
+      "Java 의 접근 제어자 중 같은 패키지 안에서만 접근할 수 있는 것은?",
     options: ["public", "protected", "default(package-private)", "private"],
     answerIndex: 2,
     explanation:
       "아무것도 안 쓴 default 는 같은 패키지에서만 접근된다. protected 는 같은 패키지 + 상속받은 클래스, private 는 같은 클래스 안에서만이다.",
-    optionNotes: ["어디서든 접근된다.", "같은 패키지와 하위 클래스에서 접근된다.", null, "같은 클래스 안에서만이다."],
+    optionNotes: [
+      "어디서든 접근된다.",
+      "같은 패키지와 하위 클래스에서 접근된다.",
+      null,
+      "같은 클래스 안에서만이다.",
+    ],
     importance: "high",
   },
   {
@@ -75,11 +101,17 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     subject: "language",
     sourceId: "l-python",
     question: "다음 Python 코드의 출력 결과는?",
-    passage: 'a = [1, 2, 3, 4, 5]\nprint(a[1:4])',
+    passage: "a = [1, 2, 3, 4, 5]\nprint(a[1:4])",
     options: ["[1, 2, 3]", "[2, 3, 4]", "[2, 3, 4, 5]", "[1, 2, 3, 4]"],
     answerIndex: 1,
-    explanation: "슬라이싱은 끝 번호를 포함하지 않는다. a[1:4] 는 1,2,3 번 자리이므로 [2, 3, 4] 다.",
-    optionNotes: ["0번부터 센 경우다.", null, "끝을 포함한다고 본 경우다.", "시작을 0으로 본 경우다."],
+    explanation:
+      "슬라이싱은 끝 번호를 포함하지 않는다. a[1:4] 는 1,2,3 번 자리이므로 [2, 3, 4] 다.",
+    optionNotes: [
+      "0번부터 센 경우다.",
+      null,
+      "끝을 포함한다고 본 경우다.",
+      "시작을 0으로 본 경우다.",
+    ],
     importance: "must",
   },
   {
@@ -101,7 +133,8 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     question: "Python 의 자료형 중 값을 바꿀 수 없는(immutable) 것은?",
     options: ["리스트(list)", "딕셔너리(dict)", "튜플(tuple)", "집합(set)"],
     answerIndex: 2,
-    explanation: "튜플은 한 번 만들면 바꿀 수 없다. 리스트·딕셔너리·집합은 바꿀 수 있다.",
+    explanation:
+      "튜플은 한 번 만들면 바꿀 수 없다. 리스트·딕셔너리·집합은 바꿀 수 있다.",
     optionNotes: ["바꿀 수 있다.", "바꿀 수 있다.", null, "바꿀 수 있다."],
     importance: "high",
   },
@@ -114,7 +147,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 3,
     explanation:
       "SJF 는 비선점이다. 한 번 CPU 를 잡으면 끝날 때까지 놓지 않는다. SRT 가 SJF 의 선점 버전이다.",
-    optionNotes: ["시간 할당량마다 교체하는 선점이다.", "SJF 의 선점 버전이다.", "선점이다.", "정답. 비선점이다."],
+    optionNotes: [
+      "시간 할당량마다 교체하는 선점이다.",
+      "SJF 의 선점 버전이다.",
+      "선점이다.",
+      "정답. 비선점이다.",
+    ],
     importance: "must",
   },
   {
@@ -125,8 +163,14 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
       "HRN 스케줄링에서 대기 시간이 10, 서비스 시간이 5인 작업의 우선순위 값은?",
     options: ["2", "3", "0.5", "15"],
     answerIndex: 1,
-    explanation: "HRN = (대기 시간 + 서비스 시간) ÷ 서비스 시간 = (10 + 5) ÷ 5 = 3 이다.",
-    optionNotes: ["대기 ÷ 서비스만 계산했다.", null, "서비스 ÷ 대기를 계산했다.", "나누기를 빠뜨렸다."],
+    explanation:
+      "HRN = (대기 시간 + 서비스 시간) ÷ 서비스 시간 = (10 + 5) ÷ 5 = 3 이다.",
+    optionNotes: [
+      "대기 ÷ 서비스만 계산했다.",
+      null,
+      "서비스 ÷ 대기를 계산했다.",
+      "나누기를 빠뜨렸다.",
+    ],
     importance: "must",
   },
   {
@@ -157,7 +201,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "최적 적합은 넣고 남는 공간이 가장 적은 곳을 고른다. 15KB 에 넣으면 3KB 만 남아 가장 적다.",
-    optionNotes: ["최초 적합의 결과다.", null, "최악 적합의 결과다.", "모두 12KB 보다 크다."],
+    optionNotes: [
+      "최초 적합의 결과다.",
+      null,
+      "최악 적합의 결과다.",
+      "모두 12KB 보다 크다.",
+    ],
     importance: "high",
   },
   {
@@ -169,7 +218,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "라우터는 3계층(네트워크)에서 경로를 정한다. 스위치·브리지는 2계층, 리피터·허브는 1계층이다.",
-    optionNotes: ["스위치·브리지가 여기다.", null, "게이트웨이 일부가 여기 이상이다.", "리피터·허브가 여기다."],
+    optionNotes: [
+      "스위치·브리지가 여기다.",
+      null,
+      "게이트웨이 일부가 여기 이상이다.",
+      "리피터·허브가 여기다.",
+    ],
     importance: "must",
   },
   {
@@ -184,8 +238,14 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
       "SYN+ACK → SYN → ACK",
     ],
     answerIndex: 1,
-    explanation: "클라이언트가 SYN, 서버가 SYN+ACK, 클라이언트가 ACK 를 보낸다.",
-    optionNotes: ["두 번째가 SYN+ACK 다.", null, "SYN 이 먼저다.", "SYN 이 먼저다."],
+    explanation:
+      "클라이언트가 SYN, 서버가 SYN+ACK, 클라이언트가 ACK 를 보낸다.",
+    optionNotes: [
+      "두 번째가 SYN+ACK 다.",
+      null,
+      "SYN 이 먼저다.",
+      "SYN 이 먼저다.",
+    ],
     importance: "must",
   },
   {
@@ -198,7 +258,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "/26 이면 호스트 비트가 6개라 2⁶ = 64개 주소가 나온다. 네트워크 주소와 브로드캐스트 주소를 빼면 62개를 쓸 수 있다.",
-    optionNotes: ["네트워크·브로드캐스트를 빼지 않았다.", null, "/27 의 경우다.", "/25 의 경우다."],
+    optionNotes: [
+      "네트워크·브로드캐스트를 빼지 않았다.",
+      null,
+      "/27 의 경우다.",
+      "/25 의 경우다.",
+    ],
     importance: "must",
   },
   {
@@ -215,7 +280,12 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "UDP 는 비연결형이라 헤더가 작고 빠르지만 순서·재전송을 보장하지 않는다. 실시간 스트리밍·DNS 에 쓴다.",
-    optionNotes: ["TCP 설명이다.", null, "TCP 가 하는 일이다.", "UDP 도 전송 계층이다."],
+    optionNotes: [
+      "TCP 설명이다.",
+      null,
+      "TCP 가 하는 일이다.",
+      "UDP 도 전송 계층이다.",
+    ],
     importance: "must",
   },
   {
@@ -225,7 +295,8 @@ export const LANGUAGE_QUESTIONS: WrittenQuestion[] = [
     question: "다음 중 논리형 언어에 해당하는 것은?",
     options: ["LISP", "PROLOG", "C", "Java"],
     answerIndex: 1,
-    explanation: "PROLOG 가 논리형이다. LISP 는 함수형, C 는 절차형, Java 는 객체지향이다.",
+    explanation:
+      "PROLOG 가 논리형이다. LISP 는 함수형, C 는 절차형, Java 는 객체지향이다.",
     optionNotes: ["함수형이다.", null, "절차형이다.", "객체지향이다."],
     importance: "normal",
   },

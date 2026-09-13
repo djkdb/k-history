@@ -29,13 +29,18 @@ export function SWRegister() {
     let alive = true;
     const watch = (reg: ServiceWorkerRegistration) => {
       // 이미 기다리고 있는 새 판이 있는가 (다른 창에서 받아 둔 경우)
-      if (reg.waiting && navigator.serviceWorker.controller) setWaiting(reg.waiting);
+      if (reg.waiting && navigator.serviceWorker.controller)
+        setWaiting(reg.waiting);
       reg.addEventListener("updatefound", () => {
         const next = reg.installing;
         if (!next) return;
         next.addEventListener("statechange", () => {
           // controller 가 없으면 첫 설치다 — 알릴 것이 없다
-          if (next.state === "installed" && navigator.serviceWorker.controller && alive) {
+          if (
+            next.state === "installed" &&
+            navigator.serviceWorker.controller &&
+            alive
+          ) {
             setWaiting(next);
             setHidden(false);
           }
@@ -78,7 +83,9 @@ export function SWRegister() {
       <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-indigo-400/40 bg-indigo-950/90 px-3.5 py-3 shadow-lg backdrop-blur">
         <RefreshCw size={16} className="shrink-0 text-indigo-300" />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-bold text-indigo-100">새 판이 준비됐습니다</p>
+          <p className="text-[13px] font-bold text-indigo-100">
+            새 판이 준비됐습니다
+          </p>
           <p className="mt-0.5 text-[11px] leading-relaxed text-indigo-200/70">
             눌러서 켜면 바뀐 것이 바로 보입니다. 학습 기록은 그대로입니다.
           </p>

@@ -51,7 +51,13 @@ const IN_APP: [RegExp, InAppName][] = [
 
 export function readEnv(): Env {
   if (typeof window === "undefined") {
-    return { inApp: null, ios: false, android: false, iosSafari: false, standalone: false };
+    return {
+      inApp: null,
+      ios: false,
+      android: false,
+      iosSafari: false,
+      standalone: false,
+    };
   }
   const ua = navigator.userAgent;
 

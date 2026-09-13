@@ -9,9 +9,11 @@
  *
  *   받아 준다
  *     · 앞뒤 공백, 사이 공백이 여러 개인 것
+ *     · 한국어 띄어쓰기 ("역할기반 접근통제" 와 "역할 기반 접근 통제")
  *     · 대소문자 ("RAID" 와 "raid")
  *     · 괄호로 덧붙인 원문 ("캡슐화(Encapsulation)")
  *     · 가운뎃점·쉼표·슬래시로 나열한 것의 순서
+ *     · 나열을 공백으로만 가른 것 ("원자성 일관성 고립성 지속성")
  *     · 답 목록에 적어 둔 다른 표기 (동의어·영문·약어)
  *
  *   받아 주지 않는다
@@ -38,12 +40,39 @@ export function normalize(raw: string): string {
   );
 }
 
+/**
+ * 띄어쓰기를 지운 꼴.
+ *
+ * 한국어 전문 용어의 띄어쓰기는 사람마다 다르다. "역할 기반 접근 통제"와
+ * "역할기반 접근통제"와 "역할기반접근통제"는 같은 답이다. 시험장에서도
+ * 띄어쓰기로 점수를 깎지 않는다. 다만 영문은 단어 사이 공백이 뜻을 가르므로
+ * (예: "hold and wait") 라틴 문자 사이의 공백 하나는 남긴다.
+ */
+function tight(s: string): string {
+  return s.replace(/(?<![a-z0-9])\s+|\s+(?![a-z0-9])/g, "");
+}
+
 /** 나열형 답을 조각으로 가른다 */
 function parts(raw: string): string[] {
   return normalize(raw)
     .split(/[·,،、/|]+|\s+및\s+|\s+and\s+/)
     .map((x) => x.trim())
     .filter(Boolean);
+}
+
+/**
+ * 나열을 공백으로만 가른 경우까지 본다.
+ *
+ * 모범 답안이 "원자성·일관성·고립성·지속성" 이어도 사람은 대개
+ * "원자성 일관성 고립성 지속성" 이라고 적는다. 그렇다고 공백을 늘 구분자로
+ * 보면 "상호 배제" 가 두 조각으로 쪼개진다. 그래서 조각 수가 모범 답안과
+ * 같을 때만 공백을 구분자로 인정한다.
+ */
+function partsLike(raw: string, want: number): string[] {
+  const byMark = parts(raw);
+  if (byMark.length === want) return byMark;
+  const bySpace = normalize(raw).split(/\s+/).filter(Boolean);
+  return bySpace.length === want ? bySpace : byMark;
 }
 
 export type Judgement = "correct" | "wrong" | "empty";
@@ -69,14 +98,18 @@ export function grade(input: string, answers: string[]): GradeResult {
     const want = normalize(a);
     if (!want) continue;
     if (mine === want) return { judgement: "correct", matched: a };
+    // 띄어쓰기만 다른 것은 같은 답이다
+    if (tight(mine) === tight(want))
+      return { judgement: "correct", matched: a };
 
     // 나열형 — 순서가 달라도 같은 것을 다 썼으면 맞다
     const wantParts = parts(a);
     if (wantParts.length > 1) {
-      const mineParts = parts(input);
+      const mineParts = partsLike(input, wantParts.length);
+      const wantTight = wantParts.map(tight);
       if (
         mineParts.length === wantParts.length &&
-        wantParts.every((w) => mineParts.includes(w))
+        wantTight.every((w) => mineParts.some((m) => tight(m) === w))
       ) {
         return { judgement: "correct", matched: a };
       }
@@ -84,8 +117,9 @@ export function grade(input: string, answers: string[]): GradeResult {
   }
 
   // 왜 틀렸는지 한마디 — 아까운 경우를 짚어 준다
-  const best = answers[0] ? normalize(answers[0]) : "";
-  if (best && (best.includes(mine) || mine.includes(best))) {
+  const best = answers[0] ? tight(normalize(answers[0])) : "";
+  const mineT = tight(mine);
+  if (best && mineT && (best.includes(mineT) || mineT.includes(best))) {
     return {
       judgement: "wrong",
       note: "일부만 적었습니다. 실제 시험도 빠진 말이 있으면 점수를 주지 않습니다.",

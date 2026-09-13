@@ -29,7 +29,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "중위 순회는 왼쪽 → 뿌리 → 오른쪽이다. B의 왼쪽 D, 뿌리 B, 오른쪽 E를 돈 뒤 뿌리 A, 그다음 C 이므로 D B E A C 다.",
-    optionNotes: ["전위 순회(뿌리 → 왼 → 오)다.", null, "후위 순회(왼 → 오 → 뿌리)다.", "순회 결과가 아니다."],
+    optionNotes: [
+      "전위 순회(뿌리 → 왼 → 오)다.",
+      null,
+      "후위 순회(왼 → 오 → 뿌리)다.",
+      "순회 결과가 아니다.",
+    ],
     importance: "must",
   },
   {
@@ -57,21 +62,30 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 2,
     explanation:
       "퀵 정렬은 평균 O(n log n)이지만, 이미 정렬된 자료에 한쪽 끝을 피벗으로 잡으면 분할이 한쪽으로만 쏠려 O(n²)이 된다.",
-    optionNotes: ["정렬로는 불가능하다.", "평균의 경우다.", null, "탐색의 복잡도다."],
+    optionNotes: [
+      "정렬로는 불가능하다.",
+      "평균의 경우다.",
+      null,
+      "탐색의 복잡도다.",
+    ],
     importance: "must",
   },
   {
     id: "qv-sort-bubble",
     subject: "develop",
     sourceId: "v-sort",
-    question:
-      "다음 자료를 버블 정렬로 오름차순 정렬할 때 1회전을 마친 상태는?",
+    question: "다음 자료를 버블 정렬로 오름차순 정렬할 때 1회전을 마친 상태는?",
     passage: "9, 4, 7, 2",
     options: ["4, 7, 2, 9", "2, 4, 7, 9", "4, 9, 7, 2", "9, 7, 4, 2"],
     answerIndex: 0,
     explanation:
       "버블 정렬은 옆자리와 비교해 큰 것을 뒤로 민다. (9,4)→(4,9), (9,7)→(7,9), (9,2)→(2,9) 이므로 4, 7, 2, 9 가 되고 가장 큰 9가 끝에 박힌다.",
-    optionNotes: [null, "정렬이 다 끝난 상태다.", "한 번만 교환한 상태다.", "내림차순이다."],
+    optionNotes: [
+      null,
+      "정렬이 다 끝난 상태다.",
+      "한 번만 교환한 상태다.",
+      "내림차순이다.",
+    ],
     importance: "must",
   },
   {
@@ -88,7 +102,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "이진 탐색은 가운데와 비교해 절반씩 버리므로 자료가 정렬되어 있어야 한다. O(log n)이다.",
-    optionNotes: ["임의 접근이 되는 배열이 유리하다.", null, "개수와 무관하다.", "중복이 있어도 된다."],
+    optionNotes: [
+      "임의 접근이 되는 배열이 유리하다.",
+      null,
+      "개수와 무관하다.",
+      "중복이 있어도 된다.",
+    ],
     importance: "must",
   },
   {
@@ -100,20 +119,29 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "충돌이다. 충돌한 키들을 동의어라 부르고, 버킷이 다 차면 오버플로가 난다. 해결은 개방 주소법과 체이닝이다.",
-    optionNotes: ["버킷이 가득 찬 상태다.", null, "충돌한 키들을 부르는 말이다.", "한 주소에 대응하는 저장 공간이다."],
+    optionNotes: [
+      "버킷이 가득 찬 상태다.",
+      null,
+      "충돌한 키들을 부르는 말이다.",
+      "한 주소에 대응하는 저장 공간이다.",
+    ],
     importance: "high",
   },
   {
     id: "qv-test-alpha",
     subject: "develop",
     sourceId: "v-test-level",
-    question:
-      "개발자가 있는 통제된 환경에서 사용자가 수행하는 인수 테스트는?",
+    question: "개발자가 있는 통제된 환경에서 사용자가 수행하는 인수 테스트는?",
     options: ["알파 테스트", "베타 테스트", "회귀 테스트", "성능 테스트"],
     answerIndex: 0,
     explanation:
       "알파 테스트는 개발자 앞에서 통제된 환경에서, 베타 테스트는 실제 사용자가 실제 환경에서 한다.",
-    optionNotes: [null, "실제 환경에서 사용자가 한다.", "고친 뒤 다른 곳이 안 망가졌는지 본다.", "인수 테스트 종류가 아니다."],
+    optionNotes: [
+      null,
+      "실제 환경에서 사용자가 한다.",
+      "고친 뒤 다른 곳이 안 망가졌는지 본다.",
+      "인수 테스트 종류가 아니다.",
+    ],
     importance: "must",
   },
   {
@@ -121,7 +149,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     subject: "develop",
     sourceId: "v-test-technique",
     question: "다음 중 블랙박스 테스트 기법이 아닌 것은?",
-    options: ["동치 분할 검사", "경계값 분석", "기초 경로 검사", "원인-결과 그래프"],
+    options: [
+      "동치 분할 검사",
+      "경계값 분석",
+      "기초 경로 검사",
+      "원인-결과 그래프",
+    ],
     answerIndex: 2,
     explanation:
       "기초 경로 검사는 코드 내부 구조를 보는 화이트박스 기법이다. 나머지는 명세만 보고 만드는 블랙박스 기법이다.",
@@ -134,23 +167,44 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     sourceId: "v-test-technique",
     question:
       "모든 조건문의 참과 거짓이 적어도 한 번씩 수행되도록 하는 커버리지는?",
-    options: ["구문 커버리지", "결정(분기) 커버리지", "조건 커버리지", "다중 조건 커버리지"],
+    options: [
+      "구문 커버리지",
+      "결정(분기) 커버리지",
+      "조건 커버리지",
+      "다중 조건 커버리지",
+    ],
     answerIndex: 1,
     explanation:
       "결정(분기) 커버리지다. 구문 커버리지는 모든 문장을 한 번 지나는 것이고, 조건 커버리지는 개별 조건의 참·거짓을 본다.",
-    optionNotes: ["모든 문장을 한 번 지난다.", null, "개별 조건 각각의 참·거짓이다.", "모든 조건 조합이다."],
+    optionNotes: [
+      "모든 문장을 한 번 지난다.",
+      null,
+      "개별 조건 각각의 참·거짓이다.",
+      "모든 조건 조합이다.",
+    ],
     importance: "must",
   },
   {
     id: "qv-integration-stub",
     subject: "develop",
     sourceId: "v-integration",
-    question: "하향식 통합 테스트에서 아직 개발되지 않은 하위 모듈을 대신하는 것은?",
-    options: ["드라이버(Driver)", "스텁(Stub)", "목 객체(Mock)", "테스트 하네스"],
+    question:
+      "하향식 통합 테스트에서 아직 개발되지 않은 하위 모듈을 대신하는 것은?",
+    options: [
+      "드라이버(Driver)",
+      "스텁(Stub)",
+      "목 객체(Mock)",
+      "테스트 하네스",
+    ],
     answerIndex: 1,
     explanation:
       "하향식은 스텁, 상향식은 드라이버다. 스텁은 불리는 쪽(하위)을, 드라이버는 부르는 쪽(상위)을 흉내 낸다.",
-    optionNotes: ["상향식에서 상위 모듈을 대신한다.", null, "행위까지 검증하는 가짜 객체다.", "테스트 환경 전체를 이르는 말이다."],
+    optionNotes: [
+      "상향식에서 상위 모듈을 대신한다.",
+      null,
+      "행위까지 검증하는 가짜 객체다.",
+      "테스트 환경 전체를 이르는 말이다.",
+    ],
     importance: "must",
   },
   {
@@ -179,7 +233,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "베이스라인은 그 시점의 산출물을 확정해 둔 기준선이다. 바꾸려면 변경 통제를 거쳐야 한다.",
-    optionNotes: ["확정된 것이라 수시로 바뀌지 않는다.", null, "문서·설계서도 포함한다.", "감사와 무관하게 단계마다 설정한다."],
+    optionNotes: [
+      "확정된 것이라 수시로 바뀌지 않는다.",
+      null,
+      "문서·설계서도 포함한다.",
+      "감사와 무관하게 단계마다 설정한다.",
+    ],
     importance: "high",
   },
   {
@@ -195,7 +254,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     ],
     answerIndex: 0,
     explanation: "식별 → 통제 → 감사 → 기록 순이다.",
-    optionNotes: [null, "무엇을 관리할지 식별이 먼저다.", "감사는 통제 뒤다.", "통제가 감사보다 앞이다."],
+    optionNotes: [
+      null,
+      "무엇을 관리할지 식별이 먼저다.",
+      "감사는 통제 뒤다.",
+      "통제가 감사보다 앞이다.",
+    ],
     importance: "high",
   },
   {
@@ -211,7 +275,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     ],
     answerIndex: 1,
     explanation: "초기 → 관리 → 정의 → 정량적 관리 → 최적화 순이다.",
-    optionNotes: ["관리가 정의보다 앞이다.", null, "초기가 가장 낮다.", "정의가 정량적 관리보다 앞이다."],
+    optionNotes: [
+      "관리가 정의보다 앞이다.",
+      null,
+      "초기가 가장 낮다.",
+      "정의가 정량적 관리보다 앞이다.",
+    ],
     importance: "high",
   },
   {
@@ -228,7 +297,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "리팩터링은 외부 동작을 바꾸지 않고 내부 구조만 개선하는 것이다. 기능 추가나 버그 수정과는 구분한다.",
-    optionNotes: ["기능 추가는 리팩터링이 아니다.", null, "성능만이 목적은 아니다.", "버그 수정과는 다르다."],
+    optionNotes: [
+      "기능 추가는 리팩터링이 아니다.",
+      null,
+      "성능만이 목적은 아니다.",
+      "버그 수정과는 다르다.",
+    ],
     importance: "normal",
   },
   {
@@ -240,7 +314,12 @@ export const DEVELOP_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "클리어링 하우스가 키를 관리하고 라이선스를 발급한다. 패키저는 콘텐츠를 배포 가능한 형태로 묶는다.",
-    optionNotes: ["콘텐츠를 묶는다.", null, "콘텐츠를 만들어 공급한다.", "사용자 기기에서 이용 권한을 통제한다."],
+    optionNotes: [
+      "콘텐츠를 묶는다.",
+      null,
+      "콘텐츠를 만들어 공급한다.",
+      "사용자 기기에서 이용 권한을 통제한다.",
+    ],
     importance: "normal",
   },
   {

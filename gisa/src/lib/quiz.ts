@@ -67,7 +67,10 @@ export function makeWrittenMock(seed = Date.now()): WrittenQuestion[] {
  * 100점을 넘기지 않는 선에서 최대한 채운다. 모자란 점수는 결과 화면에
  * 그대로 밝힌다 — 만점이 몇 점인지 숨기면 점수를 읽을 수 없다.
  */
-export function makePracticalMock(seed = Date.now(), target = 100): PracticalQuestion[] {
+export function makePracticalMock(
+  seed = Date.now(),
+  target = 100,
+): PracticalQuestion[] {
   const pool = shuffle(PRACTICAL_QUESTIONS, seed);
   const out: PracticalQuestion[] = [];
   let sum = 0;

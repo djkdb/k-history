@@ -5,7 +5,10 @@ export const REVIEW_INTERVALS_DAYS = [0, 1, 3, 7, 14, 30];
 
 const DAY_MS = 86_400_000;
 
-export function createCard(sourceId: string, now: number = Date.now()): ReviewCard {
+export function createCard(
+  sourceId: string,
+  now: number = Date.now(),
+): ReviewCard {
   return {
     sourceId,
     addedAt: now,
@@ -41,14 +44,20 @@ export function reviewCard(
   };
 }
 
-export function dueCards(cards: ReviewCard[], now: number = Date.now()): ReviewCard[] {
+export function dueCards(
+  cards: ReviewCard[],
+  now: number = Date.now(),
+): ReviewCard[] {
   return cards
     .filter((c) => c.nextDueAt <= now)
     .sort((a, b) => a.nextDueAt - b.nextDueAt);
 }
 
 /** 전체 기억 보존율 추정 (0~1) — R = exp(-경과일 / 안정도) */
-export function retentionRate(cards: ReviewCard[], now: number = Date.now()): number {
+export function retentionRate(
+  cards: ReviewCard[],
+  now: number = Date.now(),
+): number {
   if (cards.length === 0) return 0;
   const sum = cards.reduce((acc, c) => {
     const since = c.lastReviewedAt ?? c.addedAt;
@@ -59,7 +68,10 @@ export function retentionRate(cards: ReviewCard[], now: number = Date.now()): nu
   return sum / cards.length;
 }
 
-export function nextDueLabel(card: ReviewCard, now: number = Date.now()): string {
+export function nextDueLabel(
+  card: ReviewCard,
+  now: number = Date.now(),
+): string {
   const diff = card.nextDueAt - now;
   if (diff <= 0) return "지금";
   const hours = Math.round(diff / 3_600_000);

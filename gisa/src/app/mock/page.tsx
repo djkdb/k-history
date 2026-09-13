@@ -4,14 +4,22 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, Clock, FileText, Play } from "lucide-react";
 import { Button, Card, SectionTitle } from "@/components/ui";
-import { SUBJECTS, SUBJECT_MAP, WRITTEN, cutoff, subjectInk } from "@/data/exam";
+import {
+  SUBJECTS,
+  SUBJECT_MAP,
+  WRITTEN,
+  cutoff,
+  subjectInk,
+} from "@/data/exam";
 import { QUESTIONS } from "@/data/questions";
 import { useApp } from "@/lib/store";
 import { readWritten } from "@/lib/mock-progress";
 import { formatClock } from "@/lib/utils";
 
 export default function Page() {
-  const attempts = useApp((s) => s.mockAttempts).filter((a) => a.track === "written");
+  const attempts = useApp((s) => s.mockAttempts).filter(
+    (a) => a.track === "written",
+  );
   const [resume, setResume] = useState<ReturnType<typeof readWritten>>(null);
   const [seed, setSeed] = useState(1);
 
@@ -34,7 +42,9 @@ export default function Page() {
         <Card className="mt-4 border-indigo-400/30 bg-indigo-500/10">
           <div className="flex items-center gap-2">
             <Clock size={15} className="text-indigo-300" />
-            <span className="text-[13px] font-bold text-indigo-100">보던 시험이 있습니다</span>
+            <span className="text-[13px] font-bold text-indigo-100">
+              보던 시험이 있습니다
+            </span>
           </div>
           <p className="mt-1.5 text-[12px] text-zinc-300">
             {Object.keys(resume.answers).length}문항까지 답했고, 남은 시간{" "}
@@ -57,7 +67,10 @@ export default function Page() {
         <div className="mt-3 flex flex-col gap-1.5">
           {SUBJECTS.map((s) => (
             <div key={s.id} className="flex items-center gap-2 text-[12px]">
-              <span className="w-[74px] shrink-0 font-semibold" style={{ color: subjectInk(s.id) }}>
+              <span
+                className="w-[74px] shrink-0 font-semibold"
+                style={{ color: subjectInk(s.id) }}
+              >
                 {s.symbol} {s.short}
               </span>
               <span className="min-w-0 flex-1 text-zinc-500">
@@ -78,17 +91,19 @@ export default function Page() {
         <div className="flex items-start gap-2.5">
           <AlertTriangle size={15} className="mt-0.5 shrink-0 text-amber-300" />
           <div>
-            <p className="text-[12px] font-bold text-amber-200">먼저 알아 두세요</p>
+            <p className="text-[12px] font-bold text-amber-200">
+              먼저 알아 두세요
+            </p>
             <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-300">
-              이 앱이 가진 문항은 {QUESTIONS.length}개입니다. 100문항을 뽑으므로 두 회를
-              연달아 보면 예순 문항쯤은 같은 문항이 다시 나옵니다(200번 재어 본
-              중앙값). 점수를 실력으로 읽지 마시고, 과목별로 어디가 무너지는지를
-              보는 용도로 쓰세요.
+              이 앱이 가진 문항은 {QUESTIONS.length}개입니다. 100문항을 뽑으므로
+              두 회를 연달아 보면 예순 문항쯤은 같은 문항이 다시 나옵니다(200번
+              재어 본 중앙값). 점수를 실력으로 읽지 마시고, 과목별로 어디가
+              무너지는지를 보는 용도로 쓰세요.
             </p>
             <p className="mt-2 text-[12px] leading-relaxed text-zinc-400">
-              문항은 공개된 출제 범위에 맞춰 새로 쓴 것입니다. 한국산업인력공단은
-              정보처리기사 기출문제를 공개하지 않습니다. 시험 전에 큐넷에서 지금
-              적용되는 출제기준을 한 번 확인하세요.
+              문항은 공개된 출제 범위에 맞춰 새로 쓴 것입니다.
+              한국산업인력공단은 정보처리기사 기출문제를 공개하지 않습니다. 시험
+              전에 큐넷에서 지금 적용되는 출제기준을 한 번 확인하세요.
             </p>
           </div>
         </div>

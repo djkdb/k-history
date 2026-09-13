@@ -32,7 +32,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     sourceId: "d-uml-basic",
     question:
       "UML 관계 중 한 클래스가 다른 클래스를 상속받는 관계를 나타내는 것은?",
-    options: ["연관(Association)", "일반화(Generalization)", "의존(Dependency)", "집합(Aggregation)"],
+    options: [
+      "연관(Association)",
+      "일반화(Generalization)",
+      "의존(Dependency)",
+      "집합(Aggregation)",
+    ],
     answerIndex: 1,
     explanation:
       "일반화는 상위·하위 클래스 사이의 상속 관계다. 속이 빈 삼각형 화살표가 상위 클래스를 가리킨다.",
@@ -49,7 +54,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     subject: "design",
     sourceId: "d-uml-basic",
     question: "다음 중 UML 의 동적(행위) 다이어그램에 해당하는 것은?",
-    options: ["클래스 다이어그램", "배치 다이어그램", "순차 다이어그램", "컴포넌트 다이어그램"],
+    options: [
+      "클래스 다이어그램",
+      "배치 다이어그램",
+      "순차 다이어그램",
+      "컴포넌트 다이어그램",
+    ],
     answerIndex: 2,
     explanation:
       "순차 다이어그램은 객체 사이에 오가는 메시지를 시간 순으로 그리는 행위 다이어그램이다. 나머지 셋은 구조 다이어그램이다.",
@@ -84,7 +94,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     subject: "design",
     sourceId: "d-coupling-cohesion",
     question: "다음 응집도 중 가장 강한(좋은) 것은?",
-    options: ["기능적 응집도", "논리적 응집도", "시간적 응집도", "우연적 응집도"],
+    options: [
+      "기능적 응집도",
+      "논리적 응집도",
+      "시간적 응집도",
+      "우연적 응집도",
+    ],
     answerIndex: 0,
     explanation:
       "응집도는 기능적 > 순차적 > 교환적 > 절차적 > 시간적 > 논리적 > 우연적 순으로 강하다. 기능적 응집도가 가장 좋다.",
@@ -118,7 +133,7 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     subject: "design",
     sourceId: "d-solid",
     question:
-      "\"상위 모듈은 하위 모듈에 의존해서는 안 되며, 둘 다 추상화에 의존해야 한다\" 는 원칙은?",
+      '"상위 모듈은 하위 모듈에 의존해서는 안 되며, 둘 다 추상화에 의존해야 한다" 는 원칙은?',
     options: [
       "단일 책임 원칙(SRP)",
       "개방-폐쇄 원칙(OCP)",
@@ -142,7 +157,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     sourceId: "d-architecture",
     question:
       "데이터를 단계마다 걸러 다음 단계로 넘기며 처리하는 아키텍처 패턴은?",
-    options: ["계층화 패턴", "파이프-필터 패턴", "클라이언트-서버 패턴", "브로커 패턴"],
+    options: [
+      "계층화 패턴",
+      "파이프-필터 패턴",
+      "클라이언트-서버 패턴",
+      "브로커 패턴",
+    ],
     answerIndex: 1,
     explanation:
       "파이프-필터 패턴이다. 각 필터가 자기 일만 하고 결과를 파이프로 흘려보내므로 필터를 갈아 끼우기 쉽다.",
@@ -176,7 +196,8 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     id: "qd-req-verify",
     subject: "design",
     sourceId: "d-requirement",
-    question: "요구사항 확인 기법 중 \"동료 검토(Peer Review)\"에 대한 설명으로 옳은 것은?",
+    question:
+      '요구사항 확인 기법 중 "동료 검토(Peer Review)"에 대한 설명으로 옳은 것은?',
     options: [
       "요구사항 명세서를 작성한 사람이 직접 설명하고 이해관계자가 듣는 방식",
       "여러 전문가가 검토 회의를 열어 결함을 찾는 공식적인 방식",
@@ -242,7 +263,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     sourceId: "v-sort",
     question:
       "8, 3, 4, 9, 7 을 버블 정렬로 오름차순 정렬할 때 1회전 후의 결과는?",
-    options: ["3, 4, 8, 7, 9", "3, 8, 4, 9, 7", "3, 4, 7, 8, 9", "8, 3, 4, 7, 9"],
+    options: [
+      "3, 4, 8, 7, 9",
+      "3, 8, 4, 9, 7",
+      "3, 4, 7, 8, 9",
+      "8, 3, 4, 7, 9",
+    ],
     answerIndex: 0,
     explanation:
       "버블 정렬 1회전은 이웃끼리 견주어 큰 것을 뒤로 민다. (8,3)→(3,8), (8,4)→(4,8), (8,9) 그대로, (9,7)→(7,9) 이므로 3, 4, 8, 7, 9 다.",
@@ -259,11 +285,21 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     subject: "develop",
     sourceId: "v-datastructure",
     question: "해싱에서 충돌(Collision)을 해결하는 방법이 아닌 것은?",
-    options: ["체이닝(Chaining)", "개방 주소법(Open Addressing)", "선형 조사법", "이진 탐색법"],
+    options: [
+      "체이닝(Chaining)",
+      "개방 주소법(Open Addressing)",
+      "선형 조사법",
+      "이진 탐색법",
+    ],
     answerIndex: 3,
     explanation:
       "충돌 해결은 체이닝과 개방 주소법(선형 조사·이차 조사·이중 해싱)으로 나뉜다. 이진 탐색은 정렬된 자료를 찾는 방법이지 충돌 해결법이 아니다.",
-    optionNotes: [null, null, "선형 조사법은 개방 주소법의 한 가지다.", "정답."],
+    optionNotes: [
+      null,
+      null,
+      "선형 조사법은 개방 주소법의 한 가지다.",
+      "정답.",
+    ],
     importance: "high",
   },
   {
@@ -272,7 +308,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     sourceId: "v-integration",
     question:
       "하향식 통합 테스트에서 아직 만들지 않은 하위 모듈을 대신하는 가짜 모듈은?",
-    options: ["드라이버(Driver)", "스텁(Stub)", "목(Mock) 서버", "테스트 하네스"],
+    options: [
+      "드라이버(Driver)",
+      "스텁(Stub)",
+      "목(Mock) 서버",
+      "테스트 하네스",
+    ],
     answerIndex: 1,
     explanation:
       "하향식은 위에서 아래로 붙이므로 없는 하위 모듈 자리에 스텁을 둔다. 반대로 상향식에서는 상위 모듈 대신 드라이버를 둔다.",
@@ -306,7 +347,7 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     id: "qv-scm-terms",
     subject: "develop",
     sourceId: "v-scm",
-    question: "형상 관리에서 \"체크아웃(Check-out)\"에 해당하는 것은?",
+    question: '형상 관리에서 "체크아웃(Check-out)"에 해당하는 것은?',
     options: [
       "저장소의 파일을 자기 작업 공간으로 받아 오는 것",
       "고친 파일을 저장소에 되돌려 놓는 것",
@@ -329,7 +370,7 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     subject: "develop",
     sourceId: "v-quality",
     question:
-      "소프트웨어 품질 특성 중 \"정해진 조건에서 일정 기간 동안 고장 없이 동작하는 정도\"는?",
+      '소프트웨어 품질 특성 중 "정해진 조건에서 일정 기간 동안 고장 없이 동작하는 정도"는?',
     options: ["기능성", "신뢰성", "사용성", "효율성"],
     answerIndex: 1,
     explanation:
@@ -346,7 +387,8 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     id: "qv-package-drm",
     subject: "develop",
     sourceId: "v-package",
-    question: "디지털 저작권 관리(DRM)의 구성 요소에 대한 설명으로 옳지 않은 것은?",
+    question:
+      "디지털 저작권 관리(DRM)의 구성 요소에 대한 설명으로 옳지 않은 것은?",
     options: [
       "패키저(Packager)는 콘텐츠를 메타 데이터와 함께 배포 가능한 형태로 묶는다.",
       "클리어링 하우스(Clearing House)는 사용 권한과 결제를 관리한다.",
@@ -356,7 +398,12 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 3,
     explanation:
       "시큐리티 컨테이너는 콘텐츠를 암호화해 담아 두는 안전한 상자다. 복제를 돕는 것이 아니라 막는 쪽이다.",
-    optionNotes: [null, null, null, "정답. DRM 은 무단 복제를 막는 것이 목적이다."],
+    optionNotes: [
+      null,
+      null,
+      null,
+      "정답. DRM 은 무단 복제를 막는 것이 목적이다.",
+    ],
     importance: "normal",
   },
   {
@@ -403,7 +450,7 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     id: "qv-test-level-v",
     subject: "develop",
     sourceId: "v-test-level",
-    question: "V-모델에서 \"요구사항 분석\"과 짝을 이루는 테스트 단계는?",
+    question: 'V-모델에서 "요구사항 분석"과 짝을 이루는 테스트 단계는?',
     options: ["단위 테스트", "통합 테스트", "시스템 테스트", "인수 테스트"],
     answerIndex: 3,
     explanation:

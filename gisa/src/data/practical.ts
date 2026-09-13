@@ -157,7 +157,8 @@ const BASE_PRACTICAL: PracticalQuestion[] = [
       "COCOMO 모형의 세 가지 개발 유형 중 5만 라인 이하의 소규모 프로젝트에 해당하는 것은 ( ) 이다. 괄호에 들어갈 말을 쓰시오.",
     answers: ["조직형", "Organic", "조직형(Organic)"],
     points: 5,
-    explanation: "조직형 5만 줄 이하, 반분리형 30만 줄 이하, 내장형 30만 줄 초과다.",
+    explanation:
+      "조직형 5만 줄 이하, 반분리형 30만 줄 이하, 내장형 30만 줄 초과다.",
     importance: "must",
   },
   {
@@ -223,7 +224,7 @@ const BASE_PRACTICAL: PracticalQuestion[] = [
     lang: "java",
     question: "다음 Java 프로그램의 실행 결과를 쓰시오.",
     passage:
-      'class Parent {\n    int x = 10;\n    int get() { return x; }\n}\nclass Child extends Parent {\n    int x = 20;\n    int get() { return x; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Parent p = new Child();\n        System.out.print(p.x);\n        System.out.print(p.get());\n    }\n}',
+      "class Parent {\n    int x = 10;\n    int get() { return x; }\n}\nclass Child extends Parent {\n    int x = 20;\n    int get() { return x; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Parent p = new Child();\n        System.out.print(p.x);\n        System.out.print(p.get());\n    }\n}",
     answers: ["1020"],
     points: 5,
     explanation:
@@ -251,8 +252,7 @@ const BASE_PRACTICAL: PracticalQuestion[] = [
     kind: "code",
     lang: "python",
     question: "다음 Python 프로그램의 실행 결과를 쓰시오.",
-    passage:
-      "a = [3, 1, 4, 1, 5]\nb = set(a)\nprint(len(a), len(b))",
+    passage: "a = [3, 1, 4, 1, 5]\nb = set(a)\nprint(len(a), len(b))",
     answers: ["5 4"],
     points: 5,
     explanation:
@@ -320,10 +320,7 @@ const BASE_PRACTICAL: PracticalQuestion[] = [
     lang: "sql",
     question:
       "사용자 KIM 에게 EMP 테이블에 대한 SELECT 권한을 부여하는 SQL 문을 쓰시오.",
-    answers: [
-      "GRANT SELECT ON EMP TO KIM",
-      "GRANT SELECT ON EMP TO KIM;",
-    ],
+    answers: ["GRANT SELECT ON EMP TO KIM", "GRANT SELECT ON EMP TO KIM;"],
     points: 5,
     explanation: "권한 부여는 GRANT, 회수는 REVOKE 다. 둘 다 DCL 이다.",
     importance: "must",
@@ -354,9 +351,8 @@ export const PRACTICAL_QUESTIONS: PracticalQuestion[] = [
   ...PRACTICAL_MORE,
 ];
 
-export const PRACTICAL_MAP: Record<string, PracticalQuestion> = Object.fromEntries(
-  PRACTICAL_QUESTIONS.map((q) => [q.id, q]),
-);
+export const PRACTICAL_MAP: Record<string, PracticalQuestion> =
+  Object.fromEntries(PRACTICAL_QUESTIONS.map((q) => [q.id, q]));
 
 export function practicalOf(subject?: SubjectId): PracticalQuestion[] {
   return subject

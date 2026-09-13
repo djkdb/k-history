@@ -11,7 +11,8 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     id: "v-datastructure",
     subject: "develop",
     title: "자료 구조",
-    summary: "선형은 줄 세우고, 비선형은 가지를 친다. 스택은 후입선출, 큐는 선입선출.",
+    summary:
+      "선형은 줄 세우고, 비선형은 가지를 친다. 스택은 후입선출, 큐는 선입선출.",
     body: [
       "선형 구조: 배열, 연결 리스트, 스택, 큐, 데크.",
       "비선형 구조: 트리, 그래프.",
@@ -52,7 +53,8 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     id: "v-sort",
     subject: "develop",
     title: "정렬 알고리즘",
-    summary: "버블·선택·삽입은 O(n²), 병합·힙은 O(n log n), 퀵은 평균 O(n log n) 최악 O(n²).",
+    summary:
+      "버블·선택·삽입은 O(n²), 병합·힙은 O(n log n), 퀵은 평균 O(n log n) 최악 O(n²).",
     body: [
       "버블 정렬은 옆 자리와 비교해 바꾸며 큰 것을 뒤로 보낸다. 한 회전마다 가장 큰 것이 끝에 박힌다.",
       "선택 정렬은 남은 것 중 가장 작은 것을 골라 앞에 놓는다. 삽입 정렬은 이미 정렬된 앞쪽에 끼워 넣는다.",
@@ -65,7 +67,10 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     keys: [
       { term: "O(n²)", mean: "버블 · 선택 · 삽입" },
       { term: "O(n log n)", mean: "병합 · 힙 · 퀵(평균)" },
-      { term: "퀵 최악", mean: "O(n²) — 이미 정렬된 자료에 첫 원소를 피벗으로 잡을 때" },
+      {
+        term: "퀵 최악",
+        mean: "O(n²) — 이미 정렬된 자료에 첫 원소를 피벗으로 잡을 때",
+      },
     ],
     tracks: ["written", "practical"],
   },
@@ -73,7 +78,8 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     id: "v-search",
     subject: "develop",
     title: "탐색과 해싱",
-    summary: "이진 탐색은 정렬되어 있어야 한다. 해싱은 충돌을 어떻게 다루느냐가 핵심.",
+    summary:
+      "이진 탐색은 정렬되어 있어야 한다. 해싱은 충돌을 어떻게 다루느냐가 핵심.",
     body: [
       "순차 탐색은 O(n), 이진 탐색은 O(log n)이지만 자료가 정렬되어 있어야 한다.",
       "해싱 함수: 제산법(나머지), 중간 제곱법, 폴딩법, 기수 변환법, 숫자 분석법.",
@@ -120,7 +126,10 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     importance: "must",
     keys: [
       { term: "화이트박스", mean: "기초 경로 · 조건 · 루프 · 데이터 흐름" },
-      { term: "블랙박스", mean: "동치 분할 · 경계값 · 원인-결과 · 오류 예측 · 비교" },
+      {
+        term: "블랙박스",
+        mean: "동치 분할 · 경계값 · 원인-결과 · 오류 예측 · 비교",
+      },
     ],
     tracks: ["written", "practical"],
   },
@@ -128,7 +137,8 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     id: "v-integration",
     subject: "develop",
     title: "통합 테스트 — 하향식과 상향식",
-    summary: "하향식은 스텁, 상향식은 드라이버. 이 짝을 바꿔 내는 문제가 매회 나온다.",
+    summary:
+      "하향식은 스텁, 상향식은 드라이버. 이 짝을 바꿔 내는 문제가 매회 나온다.",
     body: [
       "하향식 통합은 위에서 아래로 붙여 간다. 아직 안 만든 하위 모듈 자리에 **스텁(Stub)**을 끼운다.",
       "상향식 통합은 아래에서 위로 붙여 간다. 아직 안 만든 상위 모듈 대신 **드라이버(Driver)**가 하위를 불러 준다.",
@@ -197,7 +207,10 @@ export const DEVELOP_CONCEPTS: Concept[] = [
     importance: "high",
     keys: [
       { term: "CMMI", mean: "초기 → 관리 → 정의 → 정량적 관리 → 최적화" },
-      { term: "SPICE", mean: "0 불완전 · 1 수행 · 2 관리 · 3 확립 · 4 예측 · 5 최적화" },
+      {
+        term: "SPICE",
+        mean: "0 불완전 · 1 수행 · 2 관리 · 3 확립 · 4 예측 · 5 최적화",
+      },
     ],
     tracks: ["written"],
   },

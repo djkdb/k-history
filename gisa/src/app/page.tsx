@@ -47,7 +47,9 @@ export default function Home() {
   const due = useMemo(() => dueCards(cards).length, [cards]);
   const retention = useMemo(() => retentionRate(cards), [cards]);
   const trackConcepts = useMemo(() => conceptsFor(track), [track]);
-  const studiedHere = trackConcepts.filter((c) => studiedIds.includes(c.id)).length;
+  const studiedHere = trackConcepts.filter((c) =>
+    studiedIds.includes(c.id),
+  ).length;
   const nextConcept = trackConcepts.find((c) => !studiedIds.includes(c.id));
 
   const left = settings?.examDate ? daysUntil(settings.examDate) : null;
@@ -80,7 +82,8 @@ export default function Home() {
             <span className="text-[13px] text-zinc-300">
               {left > 0 ? (
                 <>
-                  시험까지 <b className="tabular-nums text-indigo-200">{left}일</b>
+                  시험까지{" "}
+                  <b className="tabular-nums text-indigo-200">{left}일</b>
                 </>
               ) : left === 0 ? (
                 "오늘이 시험입니다"
@@ -90,7 +93,8 @@ export default function Home() {
             </span>
             {left > 0 && trackConcepts.length > studiedHere && (
               <span className="ml-auto shrink-0 text-[11px] text-zinc-500">
-                하루 {Math.ceil((trackConcepts.length - studiedHere) / left)}개씩
+                하루 개념{" "}
+                {Math.ceil((trackConcepts.length - studiedHere) / left)}개씩
               </span>
             )}
           </div>
@@ -106,8 +110,14 @@ export default function Home() {
         />
         <StatCard
           label="기억 보존율"
-          value={`${Math.round(retention * 100)}%`}
-          sub={`복습 카드 ${cards.length}장`}
+          /* 카드가 한 장도 없을 때의 0% 는 뜻이 없다. 아직 잰 것이 없다는 뜻인데
+             화면에는 "다 잊었다" 로 읽힌다. 그럴 때는 재지 않았다고 적는다. */
+          value={cards.length === 0 ? "—" : `${Math.round(retention * 100)}%`}
+          sub={
+            cards.length === 0
+              ? "아직 잰 것이 없습니다"
+              : `복습 카드 ${cards.length}장`
+          }
           icon={<Sparkles size={15} />}
         />
       </div>
@@ -150,7 +160,10 @@ export default function Home() {
 
       <SectionTitle
         action={
-          <Link href="/learn" className="text-[12px] font-semibold text-indigo-300">
+          <Link
+            href="/learn"
+            className="text-[12px] font-semibold text-indigo-300"
+          >
             전체 보기
           </Link>
         }
@@ -197,7 +210,8 @@ export default function Home() {
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-bold">필기 모의고사</p>
                 <p className="mt-0.5 text-[12px] text-zinc-500">
-                  {WRITTEN.totalQuestions}문항 {WRITTEN.minutes}분 · 과목별 과락까지 가립니다
+                  {WRITTEN.totalQuestions}문항 {WRITTEN.minutes}분 · 과목별
+                  과락까지 가립니다
                 </p>
               </div>
               <ArrowRight size={16} className="shrink-0 text-zinc-500" />

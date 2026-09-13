@@ -11,7 +11,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "개념 스키마는 조직 전체의 논리 구조로 데이터베이스에 하나만 있다. 외부 스키마는 사용자별로 여러 개다.",
-    optionNotes: ["사용자·응용 프로그램 관점이며 여러 개다.", null, "실제 저장 방식이다.", "내부 스키마의 다른 이름이다."],
+    optionNotes: [
+      "사용자·응용 프로그램 관점이며 여러 개다.",
+      null,
+      "실제 저장 방식이다.",
+      "내부 스키마의 다른 이름이다.",
+    ],
     importance: "must",
   },
   {
@@ -23,7 +28,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 2,
     explanation:
       "슈퍼키는 유일성만 있으면 된다. 후보키는 유일성과 최소성을 모두 갖추고, 그중 고른 것이 기본키, 나머지가 대체키다.",
-    optionNotes: ["후보키 중에 고른 것이다.", "유일성과 최소성을 모두 갖춘다.", null, "기본키가 아닌 후보키다."],
+    optionNotes: [
+      "후보키 중에 고른 것이다.",
+      "유일성과 최소성을 모두 갖춘다.",
+      null,
+      "기본키가 아닌 후보키다.",
+    ],
     importance: "must",
   },
   {
@@ -31,11 +41,21 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     subject: "database",
     sourceId: "b-integrity",
     question: "'기본키는 NULL 값을 가질 수 없다'는 무결성 제약은?",
-    options: ["개체 무결성", "참조 무결성", "도메인 무결성", "사용자 정의 무결성"],
+    options: [
+      "개체 무결성",
+      "참조 무결성",
+      "도메인 무결성",
+      "사용자 정의 무결성",
+    ],
     answerIndex: 0,
     explanation:
       "개체 무결성이다. 참조 무결성은 외래키가 참조 대상에 있는 값이거나 NULL 이어야 한다는 것이다.",
-    optionNotes: [null, "외래키에 관한 제약이다.", "속성 값이 도메인에 속해야 한다는 제약이다.", "업무 규칙으로 정하는 제약이다."],
+    optionNotes: [
+      null,
+      "외래키에 관한 제약이다.",
+      "속성 값이 도메인에 속해야 한다는 제약이다.",
+      "업무 규칙으로 정하는 제약이다.",
+    ],
     importance: "must",
   },
   {
@@ -47,7 +67,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "1NF 는 원자값, 2NF 는 부분 함수 종속 제거, 3NF 는 이행 함수 종속 제거, BCNF 는 모든 결정자가 후보키다.",
-    optionNotes: ["원자값으로 만드는 단계다.", null, "이행 종속을 제거한다.", "결정자가 모두 후보키여야 한다."],
+    optionNotes: [
+      "원자값으로 만드는 단계다.",
+      null,
+      "이행 종속을 제거한다.",
+      "결정자가 모두 후보키여야 한다.",
+    ],
     importance: "must",
   },
   {
@@ -58,7 +83,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     options: ["제2정규형", "제3정규형", "BCNF", "제4정규형"],
     answerIndex: 1,
     explanation: "이행적 함수 종속이며 제3정규형에서 제거한다.",
-    optionNotes: ["부분 함수 종속을 제거한다.", null, "결정자 조건이다.", "다치 종속을 다룬다."],
+    optionNotes: [
+      "부분 함수 종속을 제거한다.",
+      null,
+      "결정자 조건이다.",
+      "다치 종속을 다룬다.",
+    ],
     importance: "must",
   },
   {
@@ -70,7 +100,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     options: ["삽입 이상", "삭제 이상", "갱신 이상", "종속 이상"],
     answerIndex: 1,
     explanation: "삭제 이상이다. 정규화로 없앨 수 있다.",
-    optionNotes: ["원하지 않는 값까지 넣어야 하는 것이다.", null, "일부만 고쳐 값이 어긋나는 것이다.", "그런 이상 현상은 없다."],
+    optionNotes: [
+      "원하지 않는 값까지 넣어야 하는 것이다.",
+      null,
+      "일부만 고쳐 값이 어긋나는 것이다.",
+      "그런 이상 현상은 없다.",
+    ],
     importance: "must",
   },
   {
@@ -97,7 +132,8 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     question: "다음 중 DCL(데이터 제어어)에 해당하는 것은?",
     options: ["CREATE", "SELECT", "GRANT", "ALTER"],
     answerIndex: 2,
-    explanation: "GRANT·REVOKE 가 DCL 이다. CREATE·ALTER 는 DDL, SELECT 는 DML 이다.",
+    explanation:
+      "GRANT·REVOKE 가 DCL 이다. CREATE·ALTER 는 DDL, SELECT 는 DML 이다.",
     optionNotes: ["DDL 이다.", "DML 이다.", null, "DDL 이다."],
     importance: "must",
   },
@@ -111,7 +147,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "WHERE 는 묶기 전 행을 거르고 HAVING 은 묶은 뒤 그룹을 거른다. 집계 함수는 HAVING 에만 쓸 수 있다.",
-    optionNotes: ["묶기 전에 행을 거른다.", null, "정렬한다.", "중복을 없앤다."],
+    optionNotes: [
+      "묶기 전에 행을 거른다.",
+      null,
+      "정렬한다.",
+      "중복을 없앤다.",
+    ],
     importance: "must",
   },
   {
@@ -124,7 +165,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "LEFT OUTER JOIN 이다. INNER JOIN 은 양쪽에 다 있는 행만 남긴다.",
-    optionNotes: ["양쪽에 다 있는 행만 남긴다.", null, "모든 조합을 만든다.", "같은 테이블을 자기 자신과 잇는다."],
+    optionNotes: [
+      "양쪽에 다 있는 행만 남긴다.",
+      null,
+      "모든 조합을 만든다.",
+      "같은 테이블을 자기 자신과 잇는다.",
+    ],
     importance: "must",
   },
   {
@@ -133,7 +179,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     sourceId: "b-transaction",
     question:
       "트랜잭션의 연산이 전부 반영되거나 전혀 반영되지 않아야 한다는 성질은?",
-    options: ["원자성(Atomicity)", "일관성(Consistency)", "고립성(Isolation)", "지속성(Durability)"],
+    options: [
+      "원자성(Atomicity)",
+      "일관성(Consistency)",
+      "고립성(Isolation)",
+      "지속성(Durability)",
+    ],
     answerIndex: 0,
     explanation: "원자성이다. 전부 되든가 전부 안 되든가 둘 중 하나여야 한다.",
     optionNotes: [
@@ -158,7 +209,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "2PL 은 확장 단계와 축소 단계로 나누어 직렬 가능성을 보장하지만, 교착 상태는 막지 못한다.",
-    optionNotes: ["교착 상태는 막지 못한다.", null, "직렬 가능성은 보장한다.", "확장·축소 두 단계로 나뉜다."],
+    optionNotes: [
+      "교착 상태는 막지 못한다.",
+      null,
+      "직렬 가능성은 보장한다.",
+      "확장·축소 두 단계로 나뉜다.",
+    ],
     importance: "high",
   },
   {
@@ -192,7 +248,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "인덱스는 검색을 빠르게 하지만 데이터가 바뀔 때마다 인덱스도 고쳐야 해서 갱신은 느려지고 저장 공간도 더 든다.",
-    optionNotes: ["갱신은 느려진다.", null, "별도의 공간을 쓴다.", "많으면 갱신 비용이 커진다."],
+    optionNotes: [
+      "갱신은 느려진다.",
+      null,
+      "별도의 공간을 쓴다.",
+      "많으면 갱신 비용이 커진다.",
+    ],
     importance: "high",
   },
   {
@@ -209,7 +270,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 0,
     explanation:
       "Consistency · Availability · Partition tolerance 다. 셋을 동시에 만족할 수 없다는 것이 CAP 이론이다.",
-    optionNotes: [null, "ACID 와 섞였다.", "정확성·성능은 CAP 요소가 아니다.", "확장성이 아니라 분할 내성이다."],
+    optionNotes: [
+      null,
+      "ACID 와 섞였다.",
+      "정확성·성능은 CAP 요소가 아니다.",
+      "확장성이 아니라 분할 내성이다.",
+    ],
     importance: "high",
   },
   {
@@ -221,7 +287,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "Roll-up 은 상세에서 요약으로 올라가고, Drill-down 은 반대로 내려간다.",
-    optionNotes: ["상세 수준으로 내려간다.", null, "한 차원을 고정해 자른다.", "축을 바꿔 본다."],
+    optionNotes: [
+      "상세 수준으로 내려간다.",
+      null,
+      "한 차원을 고정해 자른다.",
+      "축을 바꿔 본다.",
+    ],
     importance: "normal",
   },
   {
@@ -238,7 +309,12 @@ export const DATABASE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "정규화하면 테이블이 쪼개져 조인이 늘고 조회가 느려질 수 있다. 반정규화는 성능을 위해 일부러 중복을 허용한다.",
-    optionNotes: ["이상 현상을 없애는 것은 정규화다.", null, "중복이 늘어 공간은 더 쓴다.", "무결성은 오히려 관리가 어려워진다."],
+    optionNotes: [
+      "이상 현상을 없애는 것은 정규화다.",
+      null,
+      "중복이 늘어 공간은 더 쓴다.",
+      "무결성은 오히려 관리가 어려워진다.",
+    ],
     importance: "high",
   },
 ];

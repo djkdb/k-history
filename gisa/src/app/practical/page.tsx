@@ -51,10 +51,10 @@ export default function Page() {
   }, [subject, kind]);
 
   function start() {
-    const picked = shuffleSeeded(pool, Math.floor(Math.random() * 1_000_000) + 1).slice(
-      0,
-      Math.min(count, pool.length),
-    );
+    const picked = shuffleSeeded(
+      pool,
+      Math.floor(Math.random() * 1_000_000) + 1,
+    ).slice(0, Math.min(count, pool.length));
     if (picked.length === 0) return;
     setItems(picked);
     setAt(0);
@@ -86,10 +86,13 @@ export default function Page() {
     const clearedInPool = pool.filter((q) => cleared.includes(q.id)).length;
     return (
       <main className="py-6">
-        <h1 className="text-xl font-bold tracking-tight">실기 — 적어서 푸는 연습</h1>
+        <h1 className="text-xl font-bold tracking-tight">
+          실기 — 적어서 푸는 연습
+        </h1>
         <p className="mt-1 text-[13px] leading-relaxed text-zinc-400">
           실기는 필답형입니다. 고를 선지가 없으니 눈으로 아는 것과 손으로 적는
-          것의 차이가 그대로 드러납니다. 표기가 흔들려도 뜻이 같으면 맞게 봅니다.
+          것의 차이가 그대로 드러납니다. 표기가 흔들려도 뜻이 같으면 맞게
+          봅니다.
         </p>
 
         <SectionTitle>과목</SectionTitle>
@@ -98,7 +101,11 @@ export default function Page() {
             전체
           </Chip>
           {SUBJECTS.map((s) => (
-            <Chip key={s.id} active={subject === s.id} onClick={() => setSubject(s.id)}>
+            <Chip
+              key={s.id}
+              active={subject === s.id}
+              onClick={() => setSubject(s.id)}
+            >
               {s.symbol} {s.short}
             </Chip>
           ))}
@@ -110,7 +117,11 @@ export default function Page() {
             전체
           </Chip>
           {KINDS.map((k) => (
-            <Chip key={k.id} active={kind === k.id} onClick={() => setKind(k.id)}>
+            <Chip
+              key={k.id}
+              active={kind === k.id}
+              onClick={() => setKind(k.id)}
+            >
               {k.label}
             </Chip>
           ))}
@@ -141,7 +152,12 @@ export default function Page() {
           </p>
         </Card>
 
-        <Button size="lg" className="mt-5 w-full" onClick={start} disabled={pool.length === 0}>
+        <Button
+          size="lg"
+          className="mt-5 w-full"
+          onClick={start}
+          disabled={pool.length === 0}
+        >
           <PenLine size={16} />
           {pool.length === 0
             ? "고를 문항이 없습니다"
@@ -170,7 +186,11 @@ export default function Page() {
           desc={`${items.length}문항 중 ${correct}개를 맞혔습니다. 틀린 문항은 복습 목록에 들어갔습니다.`}
         />
         <div className="flex flex-col gap-2">
-          <Button size="lg" className="w-full" onClick={() => setPhase("setup")}>
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={() => setPhase("setup")}
+          >
             <RotateCcw size={16} />
             다시 고르기
           </Button>

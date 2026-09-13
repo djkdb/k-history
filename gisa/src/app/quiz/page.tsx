@@ -180,7 +180,11 @@ export default function Page() {
           }
         />
         <div className="flex flex-col gap-2">
-          <Button size="lg" className="w-full" onClick={() => setPhase("setup")}>
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={() => setPhase("setup")}
+          >
             <RotateCcw size={16} />
             다시 고르기
           </Button>

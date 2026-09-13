@@ -3,7 +3,13 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, Search } from "lucide-react";
-import { Card, Chip, ImportanceBadge, ProgressBar, SectionTitle } from "@/components/ui";
+import {
+  Card,
+  Chip,
+  ImportanceBadge,
+  ProgressBar,
+  SectionTitle,
+} from "@/components/ui";
 import { CONCEPTS } from "@/data/concepts";
 import { SUBJECTS, type SubjectId } from "@/data/exam";
 import { useApp, useTrack } from "@/lib/store";
@@ -43,6 +49,8 @@ export default function LearnPage() {
         <div className="flex items-center gap-2">
           <Search size={16} className="shrink-0 text-zinc-500" />
           <input
+            type="search"
+            aria-label="개념 찾기"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="개념 이름이나 내용으로 찾기"
@@ -61,7 +69,11 @@ export default function LearnPage() {
           ).length;
           if (!n) return null;
           return (
-            <Chip key={s.id} active={subject === s.id} onClick={() => setSubject(s.id)}>
+            <Chip
+              key={s.id}
+              active={subject === s.id}
+              onClick={() => setSubject(s.id)}
+            >
               {s.symbol} {s.short} {n}
             </Chip>
           );
@@ -88,10 +100,20 @@ export default function LearnPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <p className={cn("text-[14px] font-bold", on && "text-zinc-400")}>
+                      <p
+                        className={cn(
+                          "text-[14px] font-bold",
+                          on && "text-zinc-400",
+                        )}
+                      >
                         {c.title}
                       </p>
-                      {on && <Check size={13} className="shrink-0 text-emerald-400" />}
+                      {on && (
+                        <Check
+                          size={13}
+                          className="shrink-0 text-emerald-400"
+                        />
+                      )}
                     </div>
                     <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">
                       {c.summary}

@@ -37,7 +37,12 @@ export default function RootLayout({
           없으면 탭마다 404 가 찍히며 아이콘 자리도 빈다.
         */}
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+        <link
+          rel="icon"
+          href="/icon-192.png"
+          type="image/png"
+          sizes="192x192"
+        />
         {[400, 500, 600, 700].map((w) => (
           <link
             key={w}
@@ -56,7 +61,9 @@ export default function RootLayout({
         />
       </head>
       <body className="app-bg min-h-dvh">
-        <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28">{children}</div>
+        <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28">
+          {children}
+        </div>
         <BottomNav />
         <SWRegister />
       </body>

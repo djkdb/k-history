@@ -3,13 +3,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, Clock, X } from "lucide-react";
-import { Button, Card, ProgressBar, SectionTitle, SubjectBadge } from "@/components/ui";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Clock,
+  X,
+} from "lucide-react";
+import {
+  Button,
+  Card,
+  ProgressBar,
+  RichText,
+  SectionTitle,
+  SubjectBadge,
+} from "@/components/ui";
 import { PRACTICAL, judgePractical } from "@/data/exam";
 import { makePracticalMock } from "@/lib/quiz";
 import { gradeByKind } from "@/lib/grade";
 import { useApp } from "@/lib/store";
-import { clearPractical, readPractical, writePractical } from "@/lib/mock-progress";
+import {
+  clearPractical,
+  readPractical,
+  writePractical,
+} from "@/lib/mock-progress";
 import { cn, formatClock } from "@/lib/utils";
 
 const KIND_LABEL = {
@@ -74,7 +92,10 @@ export function PracticalSession() {
       questions.map((q, i) => gradeByKind(q.kind, inputs[i] ?? "", q.answers)),
     [questions, inputs],
   );
-  const max = useMemo(() => questions.reduce((n, q) => n + q.points, 0), [questions]);
+  const max = useMemo(
+    () => questions.reduce((n, q) => n + q.points, 0),
+    [questions],
+  );
   const earned = useMemo(
     () =>
       questions.reduce(
@@ -105,7 +126,16 @@ export function PracticalSession() {
       },
       [...new Set(wrong)],
     );
-  }, [earned, max, questions, recordMockAttempt, results, startedAt, submitted, verdict]);
+  }, [
+    earned,
+    max,
+    questions,
+    recordMockAttempt,
+    results,
+    startedAt,
+    submitted,
+    verdict,
+  ]);
 
   const writtenCount = Object.values(inputs).filter((v) => v.trim()).length;
 
@@ -122,7 +152,10 @@ export function PracticalSession() {
           <p className="text-[12px] text-zinc-400">얻은 점수</p>
           <p className="mt-1 text-4xl font-bold tabular-nums">
             {earned}
-            <span className="text-lg font-semibold text-zinc-500"> / {max}점</span>
+            <span className="text-lg font-semibold text-zinc-500">
+              {" "}
+              / {max}점
+            </span>
           </p>
           <p
             className={cn(
@@ -171,7 +204,9 @@ export function PracticalSession() {
                 </p>
 
                 <div className="mt-2.5">
-                  <p className="text-[11px] font-bold text-zinc-500">내가 적은 답</p>
+                  <p className="text-[11px] font-bold text-zinc-500">
+                    내가 적은 답
+                  </p>
                   <p
                     className={cn(
                       "mt-1 whitespace-pre-wrap text-[13px] leading-relaxed",
@@ -184,23 +219,28 @@ export function PracticalSession() {
 
                 {!ok && (
                   <div className="mt-2.5">
-                    <p className="text-[11px] font-bold text-emerald-300">모범 답안</p>
+                    <p className="text-[11px] font-bold text-emerald-300">
+                      모범 답안
+                    </p>
                     <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-100">
                       {q.answers[0]}
                     </p>
                     {q.answers.length > 1 && (
                       <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
-                        이렇게 적어도 맞습니다 — {q.answers.slice(1).join(" / ")}
+                        이렇게 적어도 맞습니다 —{" "}
+                        {q.answers.slice(1).join(" / ")}
                       </p>
                     )}
                     {results[i].note && (
-                      <p className="mt-1.5 text-[12px] text-amber-200">{results[i].note}</p>
+                      <p className="mt-1.5 text-[12px] text-amber-200">
+                        {results[i].note}
+                      </p>
                     )}
                   </div>
                 )}
 
                 <p className="mt-2.5 text-[12px] leading-relaxed text-zinc-400">
-                  {q.explanation}
+                  <RichText>{q.explanation}</RichText>
                 </p>
               </Card>
             );
@@ -273,7 +313,9 @@ export function PracticalSession() {
           </span>
         </div>
 
-        <h2 className="mt-3 text-[15px] font-bold leading-relaxed">{q.question}</h2>
+        <h2 className="mt-3 text-[15px] font-bold leading-relaxed">
+          {q.question}
+        </h2>
 
         {q.passage && (
           <pre className="sql-block sql-surface mt-3 overflow-x-auto rounded-xl border border-white/10 px-3.5 py-3 text-[12.5px] leading-[1.75] text-zinc-200">
@@ -324,7 +366,10 @@ export function PracticalSession() {
       </div>
 
       {sheet && (
-        <div className="fixed inset-0 z-[60] flex items-end bg-black/60" onClick={() => setSheet(false)}>
+        <div
+          className="fixed inset-0 z-[60] flex items-end bg-black/60"
+          onClick={() => setSheet(false)}
+        >
           <div
             className="max-h-[80dvh] w-full overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[var(--bg)] p-4 pb-28"
             onClick={(e) => e.stopPropagation()}
@@ -360,7 +405,9 @@ export function PracticalSession() {
                   <span
                     className={cn(
                       "shrink-0 text-[11px] font-bold",
-                      (inputs[i] ?? "").trim() ? "text-indigo-300" : "text-zinc-600",
+                      (inputs[i] ?? "").trim()
+                        ? "text-indigo-300"
+                        : "text-zinc-600",
                     )}
                   >
                     {(inputs[i] ?? "").trim() ? "적음" : "빈칸"}
@@ -368,7 +415,11 @@ export function PracticalSession() {
                 </button>
               ))}
             </div>
-            <Button size="lg" className="mt-5 w-full" onClick={() => setConfirming(true)}>
+            <Button
+              size="lg"
+              className="mt-5 w-full"
+              onClick={() => setConfirming(true)}
+            >
               <Check size={16} />
               제출하기
             </Button>
@@ -389,7 +440,11 @@ export function PracticalSession() {
                 : "모든 문항에 답을 적었습니다."}
             </p>
             <div className="mt-4 flex gap-2">
-              <Button variant="outline" className="flex-1" onClick={() => setConfirming(false)}>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setConfirming(false)}
+              >
                 더 볼게요
               </Button>
               <Button className="flex-1" onClick={submit}>

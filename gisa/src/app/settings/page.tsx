@@ -149,7 +149,11 @@ export default function Page() {
 
       <SectionTitle>기록 지우기</SectionTitle>
       {!confirming ? (
-        <Button variant="danger" className="w-full" onClick={() => setConfirming(true)}>
+        <Button
+          variant="danger"
+          className="w-full"
+          onClick={() => setConfirming(true)}
+        >
           <Trash2 size={15} />
           모든 기록 지우기
         </Button>
@@ -160,7 +164,11 @@ export default function Page() {
             없습니다.
           </p>
           <div className="mt-3 flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={() => setConfirming(false)}>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setConfirming(false)}
+            >
               그만두기
             </Button>
             <Button variant="danger" className="flex-1" onClick={wipe}>

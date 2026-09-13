@@ -42,7 +42,12 @@ export interface AppState {
   resetAll: () => void;
 }
 
-const initialStats: Stats = { xp: 0, streak: 0, lastStudyDate: null, studyMinutes: 0 };
+const initialStats: Stats = {
+  xp: 0,
+  streak: 0,
+  lastStudyDate: null,
+  studyMinutes: 0,
+};
 
 /**
  * 저장된 기록을 현재 초기값 위에 깊게 덮어쓴다.
@@ -54,7 +59,8 @@ function mergeSaved<T>(base: T, saved: unknown): T {
   if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
     return saved === undefined ? base : (saved as T);
   }
-  if (!base || typeof base !== "object" || Array.isArray(base)) return saved as T;
+  if (!base || typeof base !== "object" || Array.isArray(base))
+    return saved as T;
   const out: Record<string, unknown> = { ...(base as Record<string, unknown>) };
   for (const [k, v] of Object.entries(saved as Record<string, unknown>)) {
     if (v === undefined) continue;
@@ -73,7 +79,11 @@ function bumpStreak(stats: Stats): Stats {
   return { ...stats, streak, lastStudyDate: today };
 }
 
-function applyReview(cards: ReviewCard[], id: string, correct: boolean): ReviewCard[] {
+function applyReview(
+  cards: ReviewCard[],
+  id: string,
+  correct: boolean,
+): ReviewCard[] {
   const i = cards.findIndex((c) => c.sourceId === id);
   if (i < 0) return correct ? cards : [...cards, createCard(id)];
   return cards.map((c, k) => (k === i ? reviewCard(c, correct) : c));
@@ -100,9 +110,13 @@ export const useApp = create<AppState>()(
 
       setSettings: (settings) => set({ settings }),
       setTrack: (track) =>
-        set((s) => ({ settings: { ...(s.settings ?? { examDate: null }), track } })),
+        set((s) => ({
+          settings: { ...(s.settings ?? { examDate: null }), track },
+        })),
       setExamDate: (examDate) =>
-        set((s) => ({ settings: { ...(s.settings ?? { track: "written" }), examDate } })),
+        set((s) => ({
+          settings: { ...(s.settings ?? { track: "written" }), examDate },
+        })),
 
       markStudied: (id) =>
         set((s) => {
@@ -156,7 +170,8 @@ export const useApp = create<AppState>()(
         set((s) => {
           // 채점 뒤 되돌아가 다시 제출하면 같은 응시를 두 번 세면 안 된다
           const prev = s.mockAttempts.findIndex(
-            (a) => a.track === attempt.track && a.startedAt === attempt.startedAt,
+            (a) =>
+              a.track === attempt.track && a.startedAt === attempt.startedAt,
           );
           const again = prev >= 0;
           const mockAttempts = again
@@ -169,7 +184,9 @@ export const useApp = create<AppState>()(
             reviewCards = applyReview(reviewCards, id, false);
             wrongIds = bumpWrong(wrongIds, id, false);
           }
-          const minutes = Math.round((attempt.finishedAt - attempt.startedAt) / 60000);
+          const minutes = Math.round(
+            (attempt.finishedAt - attempt.startedAt) / 60000,
+          );
           const stats = again
             ? s.stats
             : bumpStreak({
@@ -181,7 +198,9 @@ export const useApp = create<AppState>()(
         }),
 
       addStudyMinutes: (min) =>
-        set((s) => ({ stats: { ...s.stats, studyMinutes: s.stats.studyMinutes + min } })),
+        set((s) => ({
+          stats: { ...s.stats, studyMinutes: s.stats.studyMinutes + min },
+        })),
 
       resetAll: () =>
         set({
@@ -215,7 +234,8 @@ export const useApp = create<AppState>()(
       }),
       merge: (saved, current) => mergeSaved(current, saved),
       onRehydrateStorage: () => (_state, error) => {
-        if (error) console.warn("[gisa] 저장된 기록을 불러오지 못했습니다", error);
+        if (error)
+          console.warn("[gisa] 저장된 기록을 불러오지 못했습니다", error);
         useApp.setState({ hydrated: true });
       },
     },

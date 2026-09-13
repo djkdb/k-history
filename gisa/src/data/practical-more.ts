@@ -54,7 +54,12 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     kind: "term",
     question:
       "입력 자료를 유효한 값과 무효한 값의 구간으로 나눈 뒤 각 구간에서 대푯값을 하나씩 골라 시험하는 블랙박스 테스트 기법을 쓰시오.",
-    answers: ["동등 분할", "동치 분할", "Equivalence Partitioning", "동등 분할 검사"],
+    answers: [
+      "동등 분할",
+      "동치 분할",
+      "Equivalence Partitioning",
+      "동등 분할 검사",
+    ],
     points: 5,
     explanation:
       "동등 분할이다. 구간의 경계값만 따로 골라 보는 것은 경계값 분석이며, 둘을 함께 쓴다.",
@@ -95,7 +100,12 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     kind: "term",
     question:
       "TCP 연결 요청(SYN)만 잔뜩 보내 놓고 응답하지 않아 서버의 연결 대기열을 채워 버리는 공격을 쓰시오.",
-    answers: ["SYN 플러딩", "SYN Flooding", "TCP SYN Flooding", "SYN 플러딩 공격"],
+    answers: [
+      "SYN 플러딩",
+      "SYN Flooding",
+      "TCP SYN Flooding",
+      "SYN 플러딩 공격",
+    ],
     points: 5,
     explanation:
       "SYN 플러딩이다. 3-way 핸드셰이크의 두 번째 단계에서 멈춰 세워 대기열을 고갈시킨다.",
@@ -111,7 +121,7 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     answers: ["SQL 삽입", "SQL Injection", "SQL 인젝션", "SQL 삽입 공격"],
     points: 5,
     explanation:
-      "SQL 삽입이다. 입력값 검증과 매개변수화된 질의(Prepared Statement)로 막는다. 시큐어 코딩의 \"입력 데이터 검증 및 표현\" 항목이다.",
+      'SQL 삽입이다. 입력값 검증과 매개변수화된 질의(Prepared Statement)로 막는다. 시큐어 코딩의 "입력 데이터 검증 및 표현" 항목이다.',
     importance: "must",
   },
   {
@@ -134,7 +144,12 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     kind: "term",
     question:
       "네트워크 장비의 제어 기능과 전달 기능을 분리해, 중앙에서 소프트웨어로 네트워크 흐름을 제어하는 기술을 쓰시오.",
-    answers: ["SDN", "Software Defined Network", "소프트웨어 정의 네트워크", "SDN(Software Defined Network)"],
+    answers: [
+      "SDN",
+      "Software Defined Network",
+      "소프트웨어 정의 네트워크",
+      "SDN(Software Defined Network)",
+    ],
     points: 5,
     explanation:
       "SDN 이다. 제어부를 장비에서 떼어 내 중앙 컨트롤러가 소프트웨어로 경로를 정한다.",
@@ -175,10 +190,14 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     kind: "term",
     question:
       "UML 관계 중 한 클래스가 다른 클래스를 상속받는 관계를 무엇이라 하는가?",
-    answers: ["일반화", "Generalization", "일반화 관계", "일반화(Generalization)"],
+    answers: [
+      "일반화",
+      "Generalization",
+      "일반화 관계",
+      "일반화(Generalization)",
+    ],
     points: 5,
-    explanation:
-      "일반화다. 속이 빈 삼각형 화살표가 상위 클래스를 가리킨다.",
+    explanation: "일반화다. 속이 빈 삼각형 화살표가 상위 클래스를 가리킨다.",
     importance: "high",
   },
 
@@ -188,9 +207,13 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     subject: "database",
     sourceId: "b-normalization",
     kind: "term",
-    question:
-      "릴레이션의 모든 결정자가 후보키일 때 만족하는 정규형을 쓰시오.",
-    answers: ["BCNF", "보이스-코드 정규형", "Boyce-Codd Normal Form", "보이스코드 정규형"],
+    question: "릴레이션의 모든 결정자가 후보키일 때 만족하는 정규형을 쓰시오.",
+    answers: [
+      "BCNF",
+      "보이스-코드 정규형",
+      "Boyce-Codd Normal Form",
+      "보이스코드 정규형",
+    ],
     points: 5,
     explanation:
       "BCNF 다. 제3정규형이면서 결정자이지만 후보키가 아닌 속성까지 없앤 것이다.",
@@ -274,7 +297,7 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     lang: "c",
     question: "다음 C 프로그램의 출력 결과를 쓰시오.",
     passage:
-      "#include <stdio.h>\nint main() {\n    int n = 1234, sum = 0;\n    while (n > 0) {\n        sum += n % 10;\n        n /= 10;\n    }\n    printf(\"%d\", sum);\n    return 0;\n}",
+      '#include <stdio.h>\nint main() {\n    int n = 1234, sum = 0;\n    while (n > 0) {\n        sum += n % 10;\n        n /= 10;\n    }\n    printf("%d", sum);\n    return 0;\n}',
     answers: ["10"],
     points: 5,
     explanation:
@@ -317,9 +340,9 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     question: "교착 상태가 일어나기 위한 네 가지 조건을 모두 쓰시오.",
     answers: [
       "상호 배제·점유와 대기·비선점·환형 대기",
-      "상호배제·점유와대기·비선점·환형대기",
+      // 환형 대기는 원형 대기로도 쓴다 — 같은 Circular Wait 다
+      "상호 배제·점유와 대기·비선점·원형 대기",
       "Mutual Exclusion·Hold and Wait·No Preemption·Circular Wait",
-      "상호 배제, 점유와 대기, 비선점, 환형 대기",
     ],
     points: 5,
     explanation:

@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { ChevronRight } from "lucide-react";
 import { SUBJECT_MAP, subjectInk } from "@/data/exam";
 import type { SubjectId } from "@/lib/types";
@@ -127,8 +133,14 @@ export function ImportanceBadge({
   compact?: boolean;
 }) {
   const look = {
-    must: { label: "반드시", cls: "border-rose-400/30 bg-rose-500/10 text-rose-200" },
-    high: { label: "자주", cls: "border-amber-400/30 bg-amber-500/10 text-amber-200" },
+    must: {
+      label: "반드시",
+      cls: "border-rose-400/30 bg-rose-500/10 text-rose-200",
+    },
+    high: {
+      label: "자주",
+      cls: "border-amber-400/30 bg-amber-500/10 text-amber-200",
+    },
     normal: { label: "보통", cls: "border-white/10 bg-white/5 text-zinc-400" },
   }[level];
   return (
@@ -157,7 +169,10 @@ export function ProgressBar({
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
     <div
-      className={cn("h-1.5 w-full overflow-hidden rounded-full bg-white/10", className)}
+      className={cn(
+        "h-1.5 w-full overflow-hidden rounded-full bg-white/10",
+        className,
+      )}
     >
       <div
         className="h-full rounded-full transition-all duration-700 ease-out"
@@ -297,7 +312,10 @@ export function ScrollRow({
   }, [measure, children]);
 
   const nudge = () =>
-    ref.current?.scrollBy({ left: ref.current.clientWidth * 0.7, behavior: "smooth" });
+    ref.current?.scrollBy({
+      left: ref.current.clientWidth * 0.7,
+      behavior: "smooth",
+    });
 
   return (
     <div className={cn("relative", className)}>
@@ -394,7 +412,10 @@ export function CompareTable({
             {rows.map((r, i) => (
               <tr key={i}>
                 {r.map((cell, j) => (
-                  <td key={j} className={j === 0 ? "font-bold" : "text-zinc-400"}>
+                  <td
+                    key={j}
+                    className={j === 0 ? "font-bold" : "text-zinc-400"}
+                  >
                     {cell}
                   </td>
                 ))}
@@ -408,7 +429,13 @@ export function CompareTable({
 }
 
 /** 보여 주기만 하는 쿼리 — 줄바꿈을 적어 둔 그대로 지킨다 */
-export function SqlBlock({ children, className }: { children: string; className?: string }) {
+export function SqlBlock({
+  children,
+  className,
+}: {
+  children: string;
+  className?: string;
+}) {
   return (
     <pre
       className={cn(
@@ -419,4 +446,50 @@ export function SqlBlock({ children, className }: { children: string; className?
       {children.trim()}
     </pre>
   );
+}
+
+/**
+ * 글 안의 코드와 굵은 글씨.
+ *
+ * 개념 본문과 해설에 `int *p` 같은 코드 조각과 **강조**를 적어 두었는데,
+ * 그대로 내보내니 화면에 별표와 백틱이 날것으로 보였다. 프로그래밍 시험
+ * 앱에서 코드가 코드로 보이지 않는 것은 그냥 오타처럼 읽힌다.
+ *
+ * 마크다운 전부를 들이지 않고 이 둘만 읽는다 — 본문에 쓰는 것이 이 둘뿐이다.
+ */
+export function RichText({
+  children,
+  className,
+}: {
+  children: string;
+  className?: string;
+}) {
+  const out: ReactNode[] = [];
+  // 백틱과 ** 를 한 번에 훑는다. 백틱 안의 별표는 코드로 남아야 하므로
+  // 코드를 먼저 잡는 순서로 둔다.
+  const re = /`([^`]+)`|\*\*([^*]+)\*\*/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(children)) !== null) {
+    if (m.index > last) out.push(children.slice(last, m.index));
+    if (m[1] !== undefined) {
+      out.push(
+        <code
+          key={m.index}
+          className="rounded bg-white/10 px-1 py-0.5 font-mono text-[0.92em] text-indigo-100"
+        >
+          {m[1]}
+        </code>,
+      );
+    } else {
+      out.push(
+        <strong key={m.index} className="font-bold text-zinc-100">
+          {m[2]}
+        </strong>,
+      );
+    }
+    last = m.index + m[0].length;
+  }
+  if (last < children.length) out.push(children.slice(last));
+  return <span className={className}>{out}</span>;
 }

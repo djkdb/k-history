@@ -37,7 +37,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "병합 정렬은 어떤 입력에도 O(n log n)이다. 다만 합칠 공간이 따로 필요하다. 최악이 O(n²)인 것은 퀵 정렬이다.",
-    optionNotes: ["추가 공간이 필요하다.", null, "퀵 정렬 설명이다.", "비교 기반 정렬이다."],
+    optionNotes: [
+      "추가 공간이 필요하다.",
+      null,
+      "퀵 정렬 설명이다.",
+      "비교 기반 정렬이다.",
+    ],
     importance: "high",
   },
   {
@@ -48,8 +53,14 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
       "코드를 수정한 뒤 그 변경이 다른 부분을 망가뜨리지 않았는지 확인하는 테스트는?",
     options: ["회귀 테스트", "스모크 테스트", "부하 테스트", "인수 테스트"],
     answerIndex: 0,
-    explanation: "회귀(Regression) 테스트다. 고친 뒤 기존 기능이 그대로인지 다시 돌려 본다.",
-    optionNotes: [null, "빌드가 돌아가는지 최소한만 확인한다.", "많은 부하를 걸어 본다.", "사용자 관점의 최종 확인이다."],
+    explanation:
+      "회귀(Regression) 테스트다. 고친 뒤 기존 기능이 그대로인지 다시 돌려 본다.",
+    optionNotes: [
+      null,
+      "빌드가 돌아가는지 최소한만 확인한다.",
+      "많은 부하를 걸어 본다.",
+      "사용자 관점의 최종 확인이다.",
+    ],
     importance: "high",
   },
   {
@@ -61,7 +72,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     options: ["4", "5", "6", "10"],
     answerIndex: 2,
     explanation: "분기 개수 + 1 이므로 5 + 1 = 6 이다.",
-    optionNotes: ["1을 빼면 안 된다.", "1을 더해야 한다.", null, "2배가 아니다."],
+    optionNotes: [
+      "1을 빼면 안 된다.",
+      "1을 더해야 한다.",
+      null,
+      "2배가 아니다.",
+    ],
     importance: "must",
   },
 
@@ -71,10 +87,20 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     subject: "database",
     sourceId: "b-schema",
     question: "릴레이션에서 튜플(Tuple)의 개수를 뜻하는 용어는?",
-    options: ["차수(Degree)", "카디널리티(Cardinality)", "도메인(Domain)", "속성(Attribute)"],
+    options: [
+      "차수(Degree)",
+      "카디널리티(Cardinality)",
+      "도메인(Domain)",
+      "속성(Attribute)",
+    ],
     answerIndex: 1,
     explanation: "카디널리티는 행(튜플)의 수, 차수는 열(속성)의 수다.",
-    optionNotes: ["속성의 개수다.", null, "속성이 가질 수 있는 값의 범위다.", "릴레이션의 열이다."],
+    optionNotes: [
+      "속성의 개수다.",
+      null,
+      "속성이 가질 수 있는 값의 범위다.",
+      "릴레이션의 열이다.",
+    ],
     importance: "must",
   },
   {
@@ -87,7 +113,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 0,
     explanation:
       "CASCADE 는 함께 삭제한다. RESTRICT/NO ACTION 은 참조가 있으면 삭제를 막는다.",
-    optionNotes: [null, "외래키를 NULL 로 바꾼다.", "삭제를 막는다.", "기본값으로 바꾼다."],
+    optionNotes: [
+      null,
+      "외래키를 NULL 로 바꾼다.",
+      "삭제를 막는다.",
+      "기본값으로 바꾼다.",
+    ],
     importance: "high",
   },
   {
@@ -120,7 +151,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "적는 순서와 실행 순서가 다르다. FROM 으로 가져와 WHERE 로 거르고 GROUP BY 로 묶은 뒤 HAVING 으로 거르고, SELECT 로 고른 다음 ORDER BY 로 정렬한다.",
-    optionNotes: ["적는 순서다.", null, "SELECT 는 뒤쪽이다.", "FROM 이 먼저다."],
+    optionNotes: [
+      "적는 순서다.",
+      null,
+      "SELECT 는 뒤쪽이다.",
+      "FROM 이 먼저다.",
+    ],
     importance: "must",
   },
   {
@@ -131,8 +167,14 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
       "특정 테이블에 INSERT·UPDATE·DELETE 가 일어날 때 자동으로 수행되는 것은?",
     options: ["뷰(View)", "인덱스(Index)", "트리거(Trigger)", "커서(Cursor)"],
     answerIndex: 2,
-    explanation: "트리거다. 데이터 변경을 계기로 미리 정의한 동작이 자동 실행된다.",
-    optionNotes: ["가상 테이블이다.", "검색을 빠르게 한다.", null, "결과 집합을 한 행씩 처리하는 수단이다."],
+    explanation:
+      "트리거다. 데이터 변경을 계기로 미리 정의한 동작이 자동 실행된다.",
+    optionNotes: [
+      "가상 테이블이다.",
+      "검색을 빠르게 한다.",
+      null,
+      "결과 집합을 한 행씩 처리하는 수단이다.",
+    ],
     importance: "high",
   },
 
@@ -141,12 +183,17 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     id: "ql-c-string",
     subject: "language",
     sourceId: "l-c-pointer",
-    question: "C 에서 char s[] = \"ABC\"; 일 때 sizeof(s)의 값은?",
+    question: 'C 에서 char s[] = "ABC"; 일 때 sizeof(s)의 값은?',
     options: ["3", "4", "5", "8"],
     answerIndex: 1,
     explanation:
       "문자열 끝에 널 문자 '\\0' 이 붙으므로 A, B, C, \\0 으로 4바이트다. strlen(s)는 3이다.",
-    optionNotes: ["strlen 의 값이다.", null, "널 문자를 두 개로 셌다.", "포인터 크기와 혼동했다."],
+    optionNotes: [
+      "strlen 의 값이다.",
+      null,
+      "널 문자를 두 개로 셌다.",
+      "포인터 크기와 혼동했다.",
+    ],
     importance: "must",
   },
   {
@@ -157,8 +204,14 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     passage: "s = 0\nfor i in range(1, 5):\n    s += i\nprint(s)",
     options: ["10", "15", "6", "4"],
     answerIndex: 0,
-    explanation: "range(1, 5)는 1, 2, 3, 4 다. 5는 포함하지 않으므로 합은 10 이다.",
-    optionNotes: [null, "5까지 더한 값이다.", "3까지 더한 값이다.", "개수를 센 값이다."],
+    explanation:
+      "range(1, 5)는 1, 2, 3, 4 다. 5는 포함하지 않으므로 합은 10 이다.",
+    optionNotes: [
+      null,
+      "5까지 더한 값이다.",
+      "3까지 더한 값이다.",
+      "개수를 센 값이다.",
+    ],
     importance: "must",
   },
   {
@@ -175,7 +228,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "Java 는 클래스 다중 상속을 허용하지 않지만 인터페이스는 여러 개 구현할 수 있다. 추상 클래스는 인스턴스를 만들 수 없다.",
-    optionNotes: ["클래스는 단일 상속이다.", null, "만들 수 없다.", "상수만 선언된다."],
+    optionNotes: [
+      "클래스는 단일 상속이다.",
+      null,
+      "만들 수 없다.",
+      "상수만 선언된다.",
+    ],
     importance: "high",
   },
   {
@@ -208,11 +266,21 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     subject: "system",
     sourceId: "s-methodology",
     question: "구조적 방법론에서 논리 흐름을 표현하는 도구는?",
-    options: ["나씨-슈나이더만 차트", "유스케이스 다이어그램", "클래스 다이어그램", "ERD"],
+    options: [
+      "나씨-슈나이더만 차트",
+      "유스케이스 다이어그램",
+      "클래스 다이어그램",
+      "ERD",
+    ],
     answerIndex: 0,
     explanation:
       "나씨-슈나이더만(N-S) 차트는 화살표 없이 상자로 논리 흐름을 나타낸다. 구조적 방법론의 산출물이다.",
-    optionNotes: [null, "객체지향의 요구 표현이다.", "객체지향 구조 표현이다.", "데이터 모델링 도구다."],
+    optionNotes: [
+      null,
+      "객체지향의 요구 표현이다.",
+      "객체지향 구조 표현이다.",
+      "데이터 모델링 도구다.",
+    ],
     importance: "normal",
   },
   {
@@ -224,7 +292,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     options: ["30 인월", "60 인월", "150 인월", "600 인월"],
     answerIndex: 1,
     explanation: "30,000 ÷ 500 = 60 인월이다.",
-    optionNotes: ["1000으로 나눈 값이다.", null, "곱셈을 잘못했다.", "단위를 잘못 잡았다."],
+    optionNotes: [
+      "1000으로 나눈 값이다.",
+      null,
+      "곱셈을 잘못했다.",
+      "단위를 잘못 잡았다.",
+    ],
     importance: "high",
   },
   {
@@ -237,7 +310,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "SSL/TLS 는 전송 계층에서 동작한다. IPSec 은 네트워크 계층, S-HTTP 는 응용 계층이다.",
-    optionNotes: ["네트워크 계층이다.", null, "응용 계층이다.", "원격 접속용 응용 계층 프로토콜이다."],
+    optionNotes: [
+      "네트워크 계층이다.",
+      null,
+      "응용 계층이다.",
+      "원격 접속용 응용 계층 프로토콜이다.",
+    ],
     importance: "must",
   },
   {
@@ -250,7 +328,12 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     answerIndex: 1,
     explanation:
       "쿠버네티스가 컨테이너 오케스트레이션을 맡는다. Docker 는 컨테이너를 만들고 실행하는 도구다.",
-    optionNotes: ["컨테이너를 만들고 실행한다.", null, "CI 도구다.", "구성 관리 도구다."],
+    optionNotes: [
+      "컨테이너를 만들고 실행한다.",
+      null,
+      "CI 도구다.",
+      "구성 관리 도구다.",
+    ],
     importance: "high",
   },
   {
@@ -259,11 +342,20 @@ export const MORE_QUESTIONS: WrittenQuestion[] = [
     sourceId: "s-secure-coding",
     question:
       "여러 프로세스가 공유 자원에 동시에 접근하는 순서에 따라 결과가 달라지는 취약점은?",
-    options: ["경쟁 조건(Race Condition)", "버퍼 오버플로", "포맷 스트링", "널 포인터 역참조"],
+    options: [
+      "경쟁 조건(Race Condition)",
+      "버퍼 오버플로",
+      "포맷 스트링",
+      "널 포인터 역참조",
+    ],
     answerIndex: 0,
-    explanation:
-      "경쟁 조건이다. 시큐어 코딩의 '시간 및 상태' 분류에 속한다.",
-    optionNotes: [null, "할당된 범위를 넘겨 쓰는 것이다.", "형식 문자열을 조작하는 것이다.", "널을 참조하는 것이다."],
+    explanation: "경쟁 조건이다. 시큐어 코딩의 '시간 및 상태' 분류에 속한다.",
+    optionNotes: [
+      null,
+      "할당된 범위를 넘겨 쓰는 것이다.",
+      "형식 문자열을 조작하는 것이다.",
+      "널을 참조하는 것이다.",
+    ],
     importance: "high",
   },
 ];

@@ -109,7 +109,15 @@ export function MockSession() {
       },
       [...new Set(wrong)],
     );
-  }, [answers, bySubject, questions, recordMockAttempt, startedAt, submitted, verdict]);
+  }, [
+    answers,
+    bySubject,
+    questions,
+    recordMockAttempt,
+    startedAt,
+    submitted,
+    verdict,
+  ]);
 
   const answeredCount = Object.keys(answers).length;
 
@@ -128,7 +136,9 @@ export function MockSession() {
           )}
         >
           <p className="text-[12px] text-zinc-400">평균</p>
-          <p className="mt-1 text-4xl font-bold tabular-nums">{verdict.score}점</p>
+          <p className="mt-1 text-4xl font-bold tabular-nums">
+            {verdict.score}점
+          </p>
           <p
             className={cn(
               "mt-1.5 text-[13px] font-bold",
@@ -151,7 +161,10 @@ export function MockSession() {
             return (
               <Card key={b.subject}>
                 <div className="flex items-center gap-2">
-                  <span className="text-[13px] font-bold" style={{ color: subjectInk(s.id) }}>
+                  <span
+                    className="text-[13px] font-bold"
+                    style={{ color: subjectInk(s.id) }}
+                  >
                     {s.symbol} {s.name}
                   </span>
                   <span
@@ -247,13 +260,18 @@ export function MockSession() {
 
       <div className="mt-4">
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-[12px] font-semibold" style={{ color: subjectInk(q.subject) }}>
+          <span
+            className="text-[12px] font-semibold"
+            style={{ color: subjectInk(q.subject) }}
+          >
             {SUBJECT_MAP[q.subject].name}
           </span>
           <button
             type="button"
             onClick={() =>
-              setFlagged((f) => (f.includes(at) ? f.filter((x) => x !== at) : [...f, at]))
+              setFlagged((f) =>
+                f.includes(at) ? f.filter((x) => x !== at) : [...f, at],
+              )
             }
             className={cn(
               "-m-2 flex items-center gap-1 p-2 text-[12px]",
@@ -300,7 +318,10 @@ export function MockSession() {
       </div>
 
       {sheet && (
-        <div className="fixed inset-0 z-[60] flex items-end bg-black/60" onClick={() => setSheet(false)}>
+        <div
+          className="fixed inset-0 z-[60] flex items-end bg-black/60"
+          onClick={() => setSheet(false)}
+        >
           <div
             className="max-h-[80dvh] w-full overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[var(--bg)] p-4 pb-28"
             onClick={(e) => e.stopPropagation()}
@@ -328,10 +349,14 @@ export function MockSession() {
               if (idxs.length === 0) return null;
               return (
                 <div key={s.id} className="mt-4">
-                  <p className="text-[12px] font-semibold" style={{ color: subjectInk(s.id) }}>
+                  <p
+                    className="text-[12px] font-semibold"
+                    style={{ color: subjectInk(s.id) }}
+                  >
                     {s.symbol} {s.short}{" "}
                     <span className="text-zinc-500">
-                      {idxs.filter((i) => answers[i] !== undefined).length}/{idxs.length}
+                      {idxs.filter((i) => answers[i] !== undefined).length}/
+                      {idxs.length}
                     </span>
                   </p>
                   <div className="mt-2 grid grid-cols-10 gap-1">
@@ -359,7 +384,11 @@ export function MockSession() {
               );
             })}
 
-            <Button size="lg" className="mt-5 w-full" onClick={() => setConfirming(true)}>
+            <Button
+              size="lg"
+              className="mt-5 w-full"
+              onClick={() => setConfirming(true)}
+            >
               <Check size={16} />
               제출하기
             </Button>

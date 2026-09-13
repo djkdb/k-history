@@ -74,11 +74,12 @@ export const LANGUAGE_CONCEPTS: Concept[] = [
     id: "l-python",
     subject: "language",
     title: "Python — 자료형과 슬라이싱",
-    summary: "리스트는 바뀌고 튜플은 안 바뀐다. 슬라이싱은 끝을 포함하지 않는다.",
+    summary:
+      "리스트는 바뀌고 튜플은 안 바뀐다. 슬라이싱은 끝을 포함하지 않는다.",
     body: [
       "리스트 `[]` 는 변경 가능, 튜플 `()` 은 변경 불가, 딕셔너리 `{}` 는 키-값, 집합 `set()` 은 중복 없음.",
       "슬라이싱 `a[1:4]` 는 1,2,3 번 자리다. 끝 번호는 포함하지 않는다. `a[::-1]` 은 뒤집기다.",
-      "문자열도 슬라이싱이 된다. `\"ABCDE\"[1:3]` 은 \"BC\".",
+      '문자열도 슬라이싱이 된다. `"ABCDE"[1:3]` 은 "BC".',
       "`range(1, 5)` 는 1,2,3,4 다. 5는 포함하지 않는다.",
     ],
     examPoint:
@@ -98,8 +99,7 @@ export const LANGUAGE_CONCEPTS: Concept[] = [
       "HRN 우선순위 = (대기 시간 + 서비스 시간) ÷ 서비스 시간. 값이 클수록 먼저다.",
       "SJF 는 평균 대기 시간이 가장 짧지만, 긴 작업이 계속 밀리는 기아(Starvation)가 생긴다. 에이징으로 완화한다.",
     ],
-    examPoint:
-      "'다음 중 선점 스케줄링이 아닌 것은?'과 HRN 계산이 단골이다.",
+    examPoint: "'다음 중 선점 스케줄링이 아닌 것은?'과 HRN 계산이 단골이다.",
     importance: "must",
     keys: [
       { term: "비선점", mean: "FCFS · SJF · HRN · 우선순위" },
