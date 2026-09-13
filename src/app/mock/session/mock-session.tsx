@@ -26,7 +26,12 @@ import {
 } from "lucide-react";
 import type { MockExamQuestion } from "@/lib/types";
 import { useApp } from "@/lib/store";
-import { getMockExam, isCorrect, isPageMode, totalPoints } from "@/data/mock-exams";
+import {
+  getMockExam,
+  isCorrect,
+  isPageMode,
+  totalPoints,
+} from "@/data/mock-exams";
 import { getEvent } from "@/data/events";
 import { cn, hnkGrade } from "@/lib/utils";
 import {
@@ -220,14 +225,19 @@ const ZoomableImage = forwardRef<
     /** 단이 바뀔 때마다 알려 준다 (바깥 버튼의 켜짐 상태용) */
     onSideChange?: (side: "left" | "right" | null) => void;
   }
->(function ZoomableImage({ src, alt, resetKey, twoColumn = false, onSideChange }, ref) {
+>(function ZoomableImage(
+  { src, alt, resetKey, twoColumn = false, onSideChange },
+  ref,
+) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [hint, setHint] = useState(false);
 
   // 제스처 도중 값은 렌더와 무관하게 바뀌므로 ref에 둔다
-  const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(
+    null,
+  );
   const pinch = useRef<{ dist: number; scale: number } | null>(null);
   const lastTap = useRef(0);
 
@@ -304,7 +314,11 @@ const ZoomableImage = forwardRef<
   // 처음 한 번만 조작법을 알려 준다 (화면에 그림이 여럿이면 하나만)
   const hintTicket = useRef({});
   useEffect(() => {
-    if (localStorage.getItem(ZOOM_HINT_KEY)) return;
+    try {
+      if (localStorage.getItem(ZOOM_HINT_KEY)) return;
+    } catch {
+      // 사생활 보호 모드 — 봤는지 기억하지 못할 뿐, 화면은 멀쩡해야 한다
+    }
     const me = hintTicket.current;
     if (hintOwner === null) hintOwner = me;
     if (hintOwner !== me) return;
@@ -314,7 +328,11 @@ const ZoomableImage = forwardRef<
     };
   }, []);
   const closeHint = useCallback(() => {
-    localStorage.setItem(ZOOM_HINT_KEY, "1");
+    try {
+      localStorage.setItem(ZOOM_HINT_KEY, "1");
+    } catch {
+      // 기억하지 못해도 지금은 닫힌다
+    }
     setHint(false);
   }, []);
 
@@ -413,7 +431,9 @@ const ZoomableImage = forwardRef<
         onDoubleClick={() => zoomTo(scale > 1 ? 1 : 2.5)}
         className={cn(
           "overflow-hidden rounded-xl bg-white",
-          scale > 1 ? "cursor-grab touch-none active:cursor-grabbing" : "touch-pan-y",
+          scale > 1
+            ? "cursor-grab touch-none active:cursor-grabbing"
+            : "touch-pan-y",
         )}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -426,7 +446,10 @@ const ZoomableImage = forwardRef<
           style={{
             transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
             transformOrigin: "center center",
-            transition: drag.current || pinch.current ? "none" : "transform 0.15s ease-out",
+            transition:
+              drag.current || pinch.current
+                ? "none"
+                : "transform 0.15s ease-out",
           }}
         />
       </div>
@@ -488,7 +511,9 @@ const ZoomableImage = forwardRef<
             <li>· 두 손가락으로 벌리기 — 자유롭게 확대·축소</li>
             <li>· 화면을 두 번 두드리기 — 크게 ↔ 원래대로</li>
             <li>· 크게 본 상태에서 손가락으로 끌기 — 자리 옮기기</li>
-            {twoColumn && <li>· 아래 &lsquo;왼쪽 단 · 오른쪽 단&rsquo; 버튼으로 단 이동</li>}
+            {twoColumn && (
+              <li>· 아래 &lsquo;왼쪽 단 · 오른쪽 단&rsquo; 버튼으로 단 이동</li>
+            )}
           </ul>
           <p className="mt-2.5 text-[12px] font-bold text-indigo-300">
             눌러서 닫기
@@ -524,7 +549,9 @@ function SplitHandle({
     if (!dragging || !el) return;
     const r = el.getBoundingClientRect();
     const max = Math.max(MIN_RIGHT, r.width - MIN_LEFT);
-    onWidth(Math.min(Math.max(Math.round(r.right - e.clientX), MIN_RIGHT), max));
+    onWidth(
+      Math.min(Math.max(Math.round(r.right - e.clientX), MIN_RIGHT), max),
+    );
   };
 
   const end = () => {
@@ -763,7 +790,9 @@ export function MockSession() {
     if (!a) return;
     setAnswers(a.answers);
     startedAt.current = a.startedAt;
-    setReviewMins(Math.max(0, Math.round((a.finishedAt - a.startedAt) / 60000)));
+    setReviewMins(
+      Math.max(0, Math.round((a.finishedAt - a.startedAt) / 60000)),
+    );
     saved.current = true; // 다시 저장하지 않는다
     setReviewing(true);
     setStarted(true);
@@ -830,18 +859,36 @@ export function MockSession() {
     } catch {
       // 저장 공간이 꽉 찼더라도 시험은 계속 볼 수 있어야 한다
     }
-  }, [exam, started, submitted, reviewing, paperReview, answers, flagged, page, idx]);
+  }, [
+    exam,
+    started,
+    submitted,
+    reviewing,
+    paperReview,
+    answers,
+    flagged,
+    page,
+    idx,
+  ]);
 
   // 지난번에 맞춰 둔 너비를 되살린다
   useEffect(() => {
-    const v = Number(localStorage.getItem(SPLIT_KEY));
-    if (v >= MIN_RIGHT) setSplitW(v);
+    try {
+      const v = Number(localStorage.getItem(SPLIT_KEY));
+      if (v >= MIN_RIGHT) setSplitW(v);
+    } catch {
+      // 못 읽으면 기본 너비로 둔다
+    }
   }, []);
 
   const changeWidth = useCallback((w: number | null) => {
     setSplitW(w);
-    if (w === null) localStorage.removeItem(SPLIT_KEY);
-    else localStorage.setItem(SPLIT_KEY, String(w));
+    try {
+      if (w === null) localStorage.removeItem(SPLIT_KEY);
+      else localStorage.setItem(SPLIT_KEY, String(w));
+    } catch {
+      // 이번 시험 동안에는 적용된다. 다음에 열면 기본 너비일 뿐이다.
+    }
   }, []);
 
   /*
@@ -857,7 +904,10 @@ export function MockSession() {
     const t = setInterval(() => {
       // 남은 시간은 빼기가 아니라 마감 시각에서 계산한다.
       // 1초씩 빼면 화면이 잠들었을 때 시계가 같이 멈춰 시간이 늘어난다.
-      const left = Math.max(0, Math.round((endsAt.current - Date.now()) / 1000));
+      const left = Math.max(
+        0,
+        Math.round((endsAt.current - Date.now()) / 1000),
+      );
       setRemain(left);
       if (left <= 0) {
         clearInterval(t);
@@ -925,8 +975,12 @@ export function MockSession() {
         <Card>
           <ul className="flex flex-col gap-1.5 text-xs leading-relaxed text-zinc-400">
             <li>· 시작하면 제한 시간이 흐르고, 0이 되면 자동 제출됩니다.</li>
-            <li>· 헷갈리는 문항은 깃발로 표시해 두고 나중에 돌아올 수 있어요.</li>
-            <li>· 채점 후 틀린 문항의 개념이 오답노트와 복습 큐에 들어갑니다.</li>
+            <li>
+              · 헷갈리는 문항은 깃발로 표시해 두고 나중에 돌아올 수 있어요.
+            </li>
+            <li>
+              · 채점 후 틀린 문항의 개념이 오답노트와 복습 큐에 들어갑니다.
+            </li>
           </ul>
         </Card>
 
@@ -934,7 +988,10 @@ export function MockSession() {
         {allCorrectNumbers.length > 0 && (
           <Card className="mt-2 border-2 border-amber-400/50 bg-amber-500/15">
             <div className="flex items-start gap-3">
-              <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-300" />
+              <AlertTriangle
+                size={20}
+                className="mt-0.5 shrink-0 text-amber-300"
+              />
               <div>
                 <p className="text-[15px] font-black text-amber-200">
                   {allCorrectNumbers.join("·")}번은 정답 없음 — 전원 정답 처리
@@ -1040,7 +1097,9 @@ export function MockSession() {
   if (submitted) {
     const pct = total ? Math.round((score / total) * 100) : 0;
     const grade = hnkGrade(pct, exam.level);
-    const wrong = exam.questions.filter((x) => !isCorrect(x, answers[x.number]));
+    const wrong = exam.questions.filter(
+      (x) => !isCorrect(x, answers[x.number]),
+    );
     // 지난 기록을 볼 때는 그때 걸린 시간을 그대로 쓴다
     const mins = reviewing
       ? reviewMins
@@ -1094,8 +1153,8 @@ export function MockSession() {
             color={pct >= 60 ? "#10b981" : "#ef4444"}
           />
           <p className="mt-2 text-xs text-zinc-500">
-            {exam.questions.length}문항 중 {exam.questions.length - wrong.length}
-            개 정답
+            {exam.questions.length}문항 중{" "}
+            {exam.questions.length - wrong.length}개 정답
           </p>
         </motion.div>
 
@@ -1150,7 +1209,8 @@ export function MockSession() {
           <>
             <SectionTitle>해설</SectionTitle>
             <p className="mb-2 -mt-1 text-[11px] leading-relaxed text-zinc-600">
-              공식 정답표를 기준으로 자료의 단서와 정답 근거만 짧게 정리했습니다.
+              공식 정답표를 기준으로 자료의 단서와 정답 근거만 짧게
+              정리했습니다.
             </p>
             <div className="flex flex-col gap-2">
               {explained.map((q) => {
@@ -1178,7 +1238,9 @@ export function MockSession() {
                             {" · "}
                             <span className="text-red-400">
                               내 답{" "}
-                              {mine === undefined ? "미표기" : CIRCLED[mine - 1]}
+                              {mine === undefined
+                                ? "미표기"
+                                : CIRCLED[mine - 1]}
                             </span>
                           </>
                         )}
@@ -1208,8 +1270,8 @@ export function MockSession() {
             <SectionTitle>복습할 개념</SectionTitle>
             {wrongEvents.length > 0 && (
               <p className="mb-2 -mt-1 text-[11px] leading-relaxed text-zinc-600">
-                틀린 문항의 자료·발문에서 자동으로 찾아낸 개념입니다. 모든 문항이
-                연결되지는 않으며, 드물게 어긋날 수 있습니다.
+                틀린 문항의 자료·발문에서 자동으로 찾아낸 개념입니다. 모든
+                문항이 연결되지는 않으며, 드물게 어긋날 수 있습니다.
               </p>
             )}
             <div className="flex flex-col gap-2">
@@ -1335,251 +1397,255 @@ export function MockSession() {
 
       {/* 쪽 모드: 시험지를 넘겨 보며 OMR에 답한다 */}
       {pageMode ? (
-        <div ref={splitRef}
+        <div
+          ref={splitRef}
           style={
             splitW
               ? { gridTemplateColumns: `minmax(0,1fr) 20px ${splitW}px` }
               : undefined
           }
-          className="min-[740px]:grid min-[740px]:grid-cols-[minmax(0,1fr)_20px_220px] min-[900px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[740px]:items-start">
-          <PageViewer
-            pages={exam.pageImages!}
-            page={page}
-            onPage={setPage}
-          />
+          className="min-[740px]:grid min-[740px]:grid-cols-[minmax(0,1fr)_20px_220px] min-[900px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[740px]:items-start"
+        >
+          <PageViewer pages={exam.pageImages!} page={page} onPage={setPage} />
           <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
           <div className="min-[740px]:sticky min-[740px]:top-20">
-          {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
-          <div className="mb-2 mt-5 flex items-baseline justify-between min-[740px]:mt-0">
-            <h2 className="text-base font-bold tracking-tight">
-              {page + 1}쪽 답안
-            </h2>
-            <span className="text-[11px] text-zinc-500">
-              {pageQuestions.filter((x) => answers[x.number]).length}/
-              {pageQuestions.length} 응답
-            </span>
-          </div>
-          <div className="flex flex-col gap-1.5 pb-4">
-            {pageQuestions.map((x) => (
-              <div key={x.number} className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={cn(
-                      "w-8 shrink-0 text-right text-sm font-bold tabular-nums",
-                      x.answer === 0
-                        ? "text-amber-300"
-                        : answers[x.number]
-                          ? "text-indigo-300"
-                          : "text-zinc-500",
-                    )}
-                  >
-                    {x.number}
-                  </span>
-                  {CHOICES.map((c) => {
-                    const on = answers[x.number] === c;
-                    return (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => pick(x.number, c)}
-                        className={cn(
-                          "h-10 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95",
-                          on
-                            ? "border-indigo-400 bg-indigo-500 text-white"
-                            : x.answer === 0
-                              ? "border-amber-400/30 bg-amber-500/10 text-amber-200/70"
-                              : "border-white/10 bg-white/[0.03] text-zinc-500",
-                        )}
-                      >
-                        {c}
-                      </button>
-                    );
-                  })}
+            {/* 지금 보고 있는 쪽의 문항만 띄운다 — 50개를 한꺼번에 두면 찾기 어렵다 */}
+            <div className="mb-2 mt-5 flex items-baseline justify-between min-[740px]:mt-0">
+              <h2 className="text-base font-bold tracking-tight">
+                {page + 1}쪽 답안
+              </h2>
+              <span className="text-[11px] text-zinc-500">
+                {pageQuestions.filter((x) => answers[x.number]).length}/
+                {pageQuestions.length} 응답
+              </span>
+            </div>
+            <div className="flex flex-col gap-1.5 pb-4">
+              {pageQuestions.map((x) => (
+                <div key={x.number} className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={cn(
+                        "w-8 shrink-0 text-right text-sm font-bold tabular-nums",
+                        x.answer === 0
+                          ? "text-amber-300"
+                          : answers[x.number]
+                            ? "text-indigo-300"
+                            : "text-zinc-500",
+                      )}
+                    >
+                      {x.number}
+                    </span>
+                    {CHOICES.map((c) => {
+                      const on = answers[x.number] === c;
+                      return (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => pick(x.number, c)}
+                          className={cn(
+                            "h-10 flex-1 rounded-lg border text-sm font-bold transition-all active:scale-95",
+                            on
+                              ? "border-indigo-400 bg-indigo-500 text-white"
+                              : x.answer === 0
+                                ? "border-amber-400/30 bg-amber-500/10 text-amber-200/70"
+                                : "border-white/10 bg-white/[0.03] text-zinc-500",
+                          )}
+                        >
+                          {c}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {/* 정답 없는 문항은 답안 줄 바로 아래에서 알려 준다 */}
+                  <AllCorrectNotice q={x} compact />
+                  {/* 다시 보는 중이면 이 문항의 정답과 해설을 바로 붙여 준다 */}
+                  {paperReview && (
+                    <AnswerReveal q={x} mine={answers[x.number]} />
+                  )}
                 </div>
-                {/* 정답 없는 문항은 답안 줄 바로 아래에서 알려 준다 */}
-                <AllCorrectNotice q={x} compact />
-                {/* 다시 보는 중이면 이 문항의 정답과 해설을 바로 붙여 준다 */}
-                {paperReview && <AnswerReveal q={x} mine={answers[x.number]} />}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* 쪽 이동 */}
-          <div className="flex gap-2 pb-4">
-            <Button
-              variant="ghost"
-              size="lg"
-              disabled={page === 0}
-              onClick={() => {
-                setPage(page - 1);
-                window.scrollTo({ top: 0 });
-              }}
-            >
-              <ChevronLeft size={18} />
-            </Button>
-            <Button
-              size="lg"
-              className="flex-1"
-              disabled={page >= exam.pageImages!.length - 1}
-              onClick={() => {
-                setPage(page + 1);
-                window.scrollTo({ top: 0 });
-              }}
-            >
-              다음 쪽 <ChevronRight size={18} />
-            </Button>
-          </div>
+            {/* 쪽 이동 */}
+            <div className="flex gap-2 pb-4">
+              <Button
+                variant="ghost"
+                size="lg"
+                disabled={page === 0}
+                onClick={() => {
+                  setPage(page - 1);
+                  window.scrollTo({ top: 0 });
+                }}
+              >
+                <ChevronLeft size={18} />
+              </Button>
+              <Button
+                size="lg"
+                className="flex-1"
+                disabled={page >= exam.pageImages!.length - 1}
+                onClick={() => {
+                  setPage(page + 1);
+                  window.scrollTo({ top: 0 });
+                }}
+              >
+                다음 쪽 <ChevronRight size={18} />
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
-        <div ref={splitRef}
+        <div
+          ref={splitRef}
           style={
             splitW
               ? { gridTemplateColumns: `minmax(0,1fr) 20px ${splitW}px` }
               : undefined
           }
-          className="min-[740px]:grid min-[740px]:grid-cols-[minmax(0,1fr)_20px_220px] min-[900px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[740px]:items-start">
-      {/* 문항 */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={q.number}
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -30 }}
-          transition={{ duration: 0.18 }}
+          className="min-[740px]:grid min-[740px]:grid-cols-[minmax(0,1fr)_20px_220px] min-[900px]:grid-cols-[minmax(0,1fr)_20px_260px] min-[1024px]:grid-cols-[minmax(0,1fr)_20px_300px] xl:grid-cols-[minmax(0,1fr)_20px_360px] min-[740px]:items-start"
         >
-          <div className="mb-2 flex items-center gap-2">
-            <Badge className="border-indigo-400/30 bg-indigo-500/10 text-indigo-300">
-              {q.number}번
-            </Badge>
-            <Badge>{q.points}점</Badge>
-            <span className="flex-1" />
-            <button
-              type="button"
-              aria-label="나중에 다시 볼 문항으로 표시"
-              onClick={() =>
-                setFlagged((f) => {
-                  const n = new Set(f);
-                  if (n.has(q.number)) n.delete(q.number);
-                  else n.add(q.number);
-                  return n;
-                })
-              }
-              className={cn(
-                "rounded-lg px-2 py-1 transition-colors",
-                flagged.has(q.number)
-                  ? "bg-amber-500/20 text-amber-300"
-                  : "text-zinc-600 hover:text-zinc-300",
-              )}
+          {/* 문항 */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={q.number}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.18 }}
             >
-              <Flag size={14} />
-            </button>
-          </div>
+              <div className="mb-2 flex items-center gap-2">
+                <Badge className="border-indigo-400/30 bg-indigo-500/10 text-indigo-300">
+                  {q.number}번
+                </Badge>
+                <Badge>{q.points}점</Badge>
+                <span className="flex-1" />
+                <button
+                  type="button"
+                  aria-label="나중에 다시 볼 문항으로 표시"
+                  onClick={() =>
+                    setFlagged((f) => {
+                      const n = new Set(f);
+                      if (n.has(q.number)) n.delete(q.number);
+                      else n.add(q.number);
+                      return n;
+                    })
+                  }
+                  className={cn(
+                    "rounded-lg px-2 py-1 transition-colors",
+                    flagged.has(q.number)
+                      ? "bg-amber-500/20 text-amber-300"
+                      : "text-zinc-600 hover:text-zinc-300",
+                  )}
+                >
+                  <Flag size={14} />
+                </button>
+              </div>
 
-          <AllCorrectNotice q={q} />
-          <QuestionBody q={q} />
-        </motion.div>
-      </AnimatePresence>
+              <AllCorrectNotice q={q} />
+              <QuestionBody q={q} />
+            </motion.div>
+          </AnimatePresence>
 
-      <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
+          <SplitHandle containerRef={splitRef} onWidth={changeWidth} />
 
-      {/* 오른쪽 열: 답안 · 이동 — 데스크톱에서는 스크롤을 따라온다 */}
-      <div className="min-[740px]:sticky min-[740px]:top-20">
-      {/*
+          {/* 오른쪽 열: 답안 · 이동 — 데스크톱에서는 스크롤을 따라온다 */}
+          <div className="min-[740px]:sticky min-[740px]:top-20">
+            {/*
         OMR 답안.
         좁은 화면에서는 번호만 한 줄로 놓는다 — 선택지 글은 시험지 이미지에 이미 있고,
         화면을 차지하면 정작 문제가 밀린다.
         넓은 화면에서는 오른쪽 열에 선택지 글까지 펼쳐 눌러서 고르게 한다.
       */}
-      <div className="mt-4 flex gap-2 min-[740px]:mt-0 min-[740px]:flex-col min-[740px]:gap-1.5">
-        {CHOICES.map((c) => {
-          const picked = answers[q.number] === c;
-          const label = q.options?.[c - 1];
-          return (
-            <button
-              key={c}
-              type="button"
-              onClick={() => pick(q.number, c)}
-              className={cn(
-                "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
-                "min-[740px]:h-auto min-[740px]:flex-none min-[740px]:justify-start min-[740px]:gap-2.5 min-[740px]:px-3 min-[740px]:py-2.5 min-[740px]:text-left",
-                picked
-                  ? "border-indigo-400 bg-indigo-500 text-white"
-                  : "border-white/12 bg-white/5 text-zinc-400 min-[740px]:hover:border-white/25 min-[740px]:hover:bg-white/8",
-              )}
-            >
-              <span
-                className={cn(
-                  "shrink-0 min-[740px]:flex min-[740px]:h-6 min-[740px]:w-6 min-[740px]:items-center min-[740px]:justify-center min-[740px]:rounded-md min-[740px]:text-[11px]",
-                  picked ? "min-[740px]:bg-white/20" : "min-[740px]:bg-white/8",
-                )}
+            <div className="mt-4 flex gap-2 min-[740px]:mt-0 min-[740px]:flex-col min-[740px]:gap-1.5">
+              {CHOICES.map((c) => {
+                const picked = answers[q.number] === c;
+                const label = q.options?.[c - 1];
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => pick(q.number, c)}
+                    className={cn(
+                      "flex h-12 flex-1 items-center justify-center rounded-xl border text-base font-bold transition-all active:scale-95",
+                      "min-[740px]:h-auto min-[740px]:flex-none min-[740px]:justify-start min-[740px]:gap-2.5 min-[740px]:px-3 min-[740px]:py-2.5 min-[740px]:text-left",
+                      picked
+                        ? "border-indigo-400 bg-indigo-500 text-white"
+                        : "border-white/12 bg-white/5 text-zinc-400 min-[740px]:hover:border-white/25 min-[740px]:hover:bg-white/8",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "shrink-0 min-[740px]:flex min-[740px]:h-6 min-[740px]:w-6 min-[740px]:items-center min-[740px]:justify-center min-[740px]:rounded-md min-[740px]:text-[11px]",
+                        picked
+                          ? "min-[740px]:bg-white/20"
+                          : "min-[740px]:bg-white/8",
+                      )}
+                    >
+                      {c}
+                    </span>
+                    {label && (
+                      <span
+                        className={cn(
+                          "hidden flex-1 text-[13px] font-medium leading-snug min-[740px]:block",
+                          picked ? "text-white" : "text-zinc-300",
+                        )}
+                      >
+                        {label}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {paperReview && <AnswerReveal q={q} mine={answers[q.number]} />}
+
+            {/* 이동 */}
+            <div className="mt-4 flex gap-2">
+              <Button
+                variant="ghost"
+                size="lg"
+                disabled={idx === 0}
+                onClick={() => setIdx((i) => i - 1)}
               >
-                {c}
-              </span>
-              {label && (
-                <span
-                  className={cn(
-                    "hidden flex-1 text-[13px] font-medium leading-snug min-[740px]:block",
-                    picked ? "text-white" : "text-zinc-300",
-                  )}
-                >
-                  {label}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+                <ChevronLeft size={18} />
+              </Button>
+              <Button
+                size="lg"
+                className="flex-1"
+                disabled={idx >= exam.questions.length - 1}
+                onClick={() => setIdx((i) => i + 1)}
+              >
+                다음 <ChevronRight size={18} />
+              </Button>
+            </div>
 
-      {paperReview && <AnswerReveal q={q} mine={answers[q.number]} />}
-
-      {/* 이동 */}
-      <div className="mt-4 flex gap-2">
-        <Button
-          variant="ghost"
-          size="lg"
-          disabled={idx === 0}
-          onClick={() => setIdx((i) => i - 1)}
-        >
-          <ChevronLeft size={18} />
-        </Button>
-        <Button
-          size="lg"
-          className="flex-1"
-          disabled={idx >= exam.questions.length - 1}
-          onClick={() => setIdx((i) => i + 1)}
-        >
-          다음 <ChevronRight size={18} />
-        </Button>
-      </div>
-
-      {/* 문항 이동 그리드 */}
-      <SectionTitle>문항 이동</SectionTitle>
-      <div className="grid grid-cols-8 gap-1.5 pb-4">
-        {exam.questions.map((x, i) => {
-          const done = answers[x.number] !== undefined;
-          return (
-            <button
-              key={x.number}
-              type="button"
-              onClick={() => setIdx(i)}
-              className={cn(
-                "relative aspect-square rounded-md text-[10px] font-bold transition-colors",
-                i === idx && "ring-1 ring-white",
-                done
-                  ? "bg-indigo-500/30 text-indigo-200"
-                  : "bg-white/5 text-zinc-600",
-              )}
-            >
-              {x.number}
-              {flagged.has(x.number) && (
-                <span className="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-amber-400" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-      </div>
+            {/* 문항 이동 그리드 */}
+            <SectionTitle>문항 이동</SectionTitle>
+            <div className="grid grid-cols-8 gap-1.5 pb-4">
+              {exam.questions.map((x, i) => {
+                const done = answers[x.number] !== undefined;
+                return (
+                  <button
+                    key={x.number}
+                    type="button"
+                    onClick={() => setIdx(i)}
+                    className={cn(
+                      "relative aspect-square rounded-md text-[10px] font-bold transition-colors",
+                      i === idx && "ring-1 ring-white",
+                      done
+                        ? "bg-indigo-500/30 text-indigo-200"
+                        : "bg-white/5 text-zinc-600",
+                    )}
+                  >
+                    {x.number}
+                    {flagged.has(x.number) && (
+                      <span className="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-amber-400" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
 

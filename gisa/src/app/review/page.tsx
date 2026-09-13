@@ -204,6 +204,7 @@ export default function Page() {
               onChange={setValue}
               result={result}
               onGrade={setResult}
+              showPoints={false}
             />
           </div>
           {result && (

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Eye, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BookOpen, Check, Eye, X } from "lucide-react";
 import { Button, RichText, SubjectBadge } from "@/components/ui";
+import { CONCEPT_MAP } from "@/data/concepts";
 import { gradeByKind, type GradeResult } from "@/lib/grade";
 import type { PracticalQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -36,6 +38,8 @@ export function PracticalQuestionCard({
   result,
   onGrade,
   showSubject = true,
+  showPoints = true,
+  linkConcept = true,
 }: {
   q: PracticalQuestion;
   index?: number;
@@ -45,8 +49,13 @@ export function PracticalQuestionCard({
   result: GradeResult | null;
   onGrade: (r: GradeResult) => void;
   showSubject?: boolean;
+  /** 배점을 보여 줄 것인가 — 복습에는 점수가 없으므로 끈다 */
+  showPoints?: boolean;
+  /** 채점 뒤 이 문항이 나온 개념으로 가는 길을 둘 것인가 */
+  linkConcept?: boolean;
 }) {
   const [peeked, setPeeked] = useState(false);
+  const concept = CONCEPT_MAP[q.sourceId];
   const ref = useRef<HTMLTextAreaElement>(null);
   const multiline = q.kind === "code" || q.kind === "sql";
 
@@ -69,9 +78,11 @@ export function PracticalQuestionCard({
         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-zinc-400">
           {KIND_LABEL[q.kind]}
         </span>
-        <span className="ml-auto text-[12px] font-bold tabular-nums text-indigo-200">
-          {q.points}점
-        </span>
+        {showPoints && (
+          <span className="ml-auto text-[12px] font-bold tabular-nums text-indigo-200">
+            {q.points}점
+          </span>
+        )}
       </div>
 
       <h2 className="mt-3 text-[15px] font-bold leading-relaxed">
@@ -161,10 +172,16 @@ export function PracticalQuestionCard({
               )}
             >
               {result.judgement === "correct"
-                ? `맞았습니다 · ${q.points}점`
+                ? showPoints
+                  ? `맞았습니다 · ${q.points}점`
+                  : "맞았습니다"
                 : result.judgement === "empty"
-                  ? "빈칸입니다 · 0점"
-                  : "틀렸습니다 · 0점"}
+                  ? showPoints
+                    ? "빈칸입니다 · 0점"
+                    : "빈칸입니다"
+                  : showPoints
+                    ? "틀렸습니다 · 0점"
+                    : "틀렸습니다"}
             </span>
           </div>
 
@@ -191,6 +208,18 @@ export function PracticalQuestionCard({
           <p className="mt-2.5 text-[13px] leading-relaxed text-zinc-300">
             <RichText>{q.explanation}</RichText>
           </p>
+
+          {/* 틀렸으면 어디로 가서 봐야 하는지까지 이어 준다 */}
+          {linkConcept && concept && (
+            <Link
+              href={`/concept/${concept.id}`}
+              className="-mx-1 mt-3 flex items-center gap-1.5 rounded-lg px-1 py-1.5 text-[12px] font-semibold text-indigo-300 hover:text-indigo-200"
+            >
+              <BookOpen size={13} className="shrink-0" />
+              <span className="min-w-0 flex-1 truncate">{concept.title}</span>
+              <ArrowRight size={13} className="shrink-0" />
+            </Link>
+          )}
         </div>
       )}
     </div>

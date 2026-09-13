@@ -153,14 +153,24 @@ export function InstallPrompt() {
 
   useEffect(() => {
     if (!g.platform) return;
-    if (localStorage.getItem(PROMPT_KEY)) return;
+    // 사생활 보호 모드에서는 저장에 손대는 것만으로 터진다.
+    // 한 번 봤는지 몰라서 다시 띄우는 편이, 화면이 멈추는 것보다 낫다.
+    try {
+      if (localStorage.getItem(PROMPT_KEY)) return;
+    } catch {
+      // 기억하지 못할 뿐이다
+    }
     // 화면이 자리를 잡은 뒤에 띄운다. 진입하자마자 덮으면 놀란다.
     const t = setTimeout(() => setOpen(true), 900);
     return () => clearTimeout(t);
   }, [g.platform]);
 
   const close = () => {
-    localStorage.setItem(PROMPT_KEY, "1");
+    try {
+      localStorage.setItem(PROMPT_KEY, "1");
+    } catch {
+      // 저장하지 못해도 이번에는 닫힌다
+    }
     setOpen(false);
   };
 
@@ -195,8 +205,8 @@ export function InstallPrompt() {
               📱 홈 화면에 추가하고 앱처럼 쓰세요
             </p>
             <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
-              매일 열어야 기억이 남습니다. 홈 화면에 두면 두 번 누르는 거리가
-              한 번으로 줄어요.
+              매일 열어야 기억이 남습니다. 홈 화면에 두면 두 번 누르는 거리가 한
+              번으로 줄어요.
             </p>
 
             <GuideBody {...g} />
@@ -235,9 +245,10 @@ function GuideBody({
             그래서 "지금 나가라"는 말의 이유를 여기서 밝힌다.
           */}
           <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-300">
-            여기서 공부한 기록은 <b className="text-amber-100">이 화면 안에만</b> 남아요.
-            나중에 {browser}로 열면 외운 것도 복습 카드도 보이지 않고, 되돌릴
-            방법이 없습니다.
+            여기서 공부한 기록은{" "}
+            <b className="text-amber-100">이 화면 안에만</b> 남아요. 나중에{" "}
+            {browser}로 열면 외운 것도 복습 카드도 보이지 않고, 되돌릴 방법이
+            없습니다.
           </p>
           <StepList steps={escapeSteps} start={1} />
           <button

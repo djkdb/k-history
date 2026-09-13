@@ -36,9 +36,32 @@ export function applyTheme(pref: Theme) {
     ?.setAttribute("content", actual === "light" ? "#f4f4f5" : "#09090b");
 }
 
+/**
+ * 저장을 읽고 쓸 때는 늘 감싼다.
+ *
+ * 사파리 사생활 보호 모드나 "사이트 데이터 차단" 을 켠 브라우저에서는
+ * localStorage 에 손대는 것만으로 SecurityError 가 난다. 테마는 잃어도
+ * 그만인 값인데, 그것 하나 때문에 화면이 오류로 멈추면 안 된다.
+ */
+function readStored(): string | null {
+  try {
+    return localStorage.getItem(THEME_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStored(v: Theme): void {
+  try {
+    localStorage.setItem(THEME_KEY, v);
+  } catch {
+    // 저장하지 못해도 이번 판에는 적용된다. 다음에 열면 기본값으로 돌아갈 뿐이다.
+  }
+}
+
 export function readTheme(): Theme {
   if (typeof window === "undefined") return "dark";
-  const v = localStorage.getItem(THEME_KEY);
+  const v = readStored();
   return v === "light" || v === "system" ? v : "dark";
 }
 
@@ -66,7 +89,7 @@ export function ThemePicker() {
 
   const choose = (t: Theme) => {
     setPref(t);
-    localStorage.setItem(THEME_KEY, t);
+    writeStored(t);
     applyTheme(t);
   };
 
@@ -112,7 +135,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   const flip = () => {
     const next = actual === "dark" ? "light" : "dark";
     setActual(next);
-    localStorage.setItem(THEME_KEY, next);
+    writeStored(next);
     applyTheme(next);
   };
 
