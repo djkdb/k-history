@@ -1,7 +1,10 @@
 // 시크릿 창처럼 저장이 막힌 곳에서도 앱이 살아 있는가.
 // IndexedDB 와 localStorage 를 둘 다 막고 열어 본다.
 const { chromium } = require("/home/user/k-history/node_modules/playwright");
-const BASE = "http://127.0.0.1:4530";
+// ⚠️ 포트를 박아 두면 그 포트에 아무도 없을 때 "확인 못 함" 이 아니라
+//    그냥 터진다. 받아서 쓴다.
+const BASE = process.argv[2];
+if (!BASE) { console.error("쓰기: node scratchpad/gisa-private.js <주소>"); process.exit(1); }
 let bad = 0;
 const ok = (s) => console.log("  ✓ " + s);
 const no = (s) => { bad++; console.log("  ✗ " + s); };
