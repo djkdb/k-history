@@ -61,6 +61,8 @@ function QuizScreen() {
   const [at, setAt] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [marks, setMarks] = useState<boolean[]>([]);
+  /** 문항마다 몇 번을 골랐는가 — 결과 화면에서 틀린 것을 다시 보여 주려면 필요하다 */
+  const [picks, setPicks] = useState<number[]>([]);
 
   const pool = useMemo(() => {
     let p = QUESTIONS;
@@ -86,6 +88,7 @@ function QuizScreen() {
     setAt(0);
     setPicked(null);
     setMarks([]);
+    setPicks([]);
     setPhase("run");
   }
 
@@ -95,6 +98,7 @@ function QuizScreen() {
     const correct = i === q.answerIndex;
     setPicked(i);
     setMarks((m) => [...m, correct]);
+    setPicks((v) => [...v, i]);
     recordAnswer(q.id, q.sourceId, correct);
   }
 
@@ -192,6 +196,7 @@ function QuizScreen() {
   if (phase === "done") {
     const correct = marks.filter(Boolean).length;
     const pct = Math.round((correct / items.length) * 100);
+    const wrong = items.map((q, i) => ({ q, i })).filter((_, i) => !marks[i]);
     return (
       <main className="py-6">
         <EmptyState
@@ -218,6 +223,32 @@ function QuizScreen() {
             </Button>
           </Link>
         </div>
+
+        {/*
+          틀린 것을 여기서 다시 보여 준다.
+          풀면서 해설을 읽기는 하지만, 끝나고 나서 "내가 뭘 틀렸더라" 를
+          되짚을 길이 "다시 고르기" 밖에 없었다. 모의고사 채점 화면에는
+          있는 것이라 온도차가 났다.
+        */}
+        {wrong.length > 0 && (
+          <>
+            <SectionTitle>틀린 문항 {wrong.length}개</SectionTitle>
+            <div className="flex flex-col gap-3">
+              {wrong.map(({ q, i }) => (
+                <Card key={q.id}>
+                  <WrittenQuestionCard
+                    q={q}
+                    index={i}
+                    total={items.length}
+                    picked={picks[i] ?? null}
+                    onPick={() => {}}
+                    revealed
+                  />
+                </Card>
+              ))}
+            </div>
+          </>
+        )}
       </main>
     );
   }
