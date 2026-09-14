@@ -3,13 +3,21 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, CalendarDays, Check, Headphones, Info, Volume2 } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Check,
+  Headphones,
+  Info,
+  Volume2,
+} from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { BANDS, type Band } from "@/lib/types";
 import { BAND_LABEL } from "@/data/parts";
 import { useApp } from "@/lib/store";
 import { loadVoices, supported } from "@/lib/tts";
 import { cn } from "@/lib/utils";
+import { InstallHint } from "@/components/install-hint";
 
 const BAND_NOTE: Record<Band, string> = {
   600: "기초 문법과 필수 어휘부터. 영어를 오래 놓았다면 여기서 시작합니다.",
@@ -35,7 +43,12 @@ export default function Onboarding() {
   }, []);
 
   const start = () => {
-    setSettings({ band, examDate: examDate || null, speechRate: 1, showScript: false });
+    setSettings({
+      band,
+      examDate: examDate || null,
+      speechRate: 1,
+      showScript: false,
+    });
     router.replace("/");
   };
 
@@ -49,32 +62,44 @@ export default function Onboarding() {
         <p className="text-sm font-bold text-indigo-300">TOEIC</p>
         <h1 className="mt-1 text-3xl font-bold">토익 마스터</h1>
         <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-          듣기 100문항·읽기 100문항, 2시간에 990점. 이 앱은 그 구성을 그대로 따라
-          어휘·문법·파트별 훈련·모의고사를 한자리에 뒀습니다.
+          듣기 100문항·읽기 100문항, 2시간에 990점. 이 앱은 그 구성을 그대로
+          따라 어휘·문법·파트별 훈련·모의고사를 한자리에 뒀습니다.
         </p>
       </motion.div>
+
+      {/*
+        인스타·카카오톡 링크로 들어온 사람은 모두 "처음 온 사람" 이라 이 화면부터
+        본다. 그런데 안내는 홈 화면에만 달려 있었다 — 정작 말해야 할 순간에
+        아무 말도 못 한 셈이다. 공부를 시작하기 전에 여기서 먼저 말한다.
+      */}
+      <InstallHint slot="top" />
 
       <Card className="mt-6">
         <div className="flex items-start gap-2.5">
           <Info size={16} className="mt-0.5 shrink-0 text-zinc-400" />
           <div className="text-[13px] leading-relaxed text-zinc-400">
-            <p className="font-bold text-zinc-200">문항은 AI 가 새로 쓴 것입니다</p>
+            <p className="font-bold text-zinc-200">
+              문항은 AI 가 새로 쓴 것입니다
+            </p>
             <p className="mt-1">
-              ETS 는 기출문제를 공개하지 않습니다. 시중 교재의 문제를 옮겨 오는 것은
-              저작권 침해라 쓸 수 없습니다. 그래서 여기 있는 문항은 공개된 시험
-              구성(파트별 문항 수·유형·배점)만을 근거로{" "}
-              <b className="text-zinc-300">AI 가 새로 쓴 것</b>입니다. 실제 시험지를
-              옮긴 것이 아닙니다.
+              ETS 는 기출문제를 공개하지 않습니다. 시중 교재의 문제를 옮겨 오는
+              것은 저작권 침해라 쓸 수 없습니다. 그래서 여기 있는 문항은 공개된
+              시험 구성(파트별 문항 수·유형·배점)만을 근거로{" "}
+              <b className="text-zinc-300">AI 가 새로 쓴 것</b>입니다. 실제
+              시험지를 옮긴 것이 아닙니다.
             </p>
             <p className="mt-1.5 text-[12px] text-zinc-500">
-              쓰고 나서 정답이 하나뿐인지, 선택지가 겹치지 않는지, 뜻과 예문이 맞는지
-              하나씩 확인했습니다. 그래도 사람이 만든 교재만큼 다듬어지지는 않았습니다.
+              쓰고 나서 정답이 하나뿐인지, 선택지가 겹치지 않는지, 뜻과 예문이
+              맞는지 하나씩 확인했습니다. 그래도 사람이 만든 교재만큼
+              다듬어지지는 않았습니다.
             </p>
           </div>
         </div>
       </Card>
 
-      <h2 className="mt-8 text-sm font-bold text-zinc-300">목표 점수대를 고르세요</h2>
+      <h2 className="mt-8 text-sm font-bold text-zinc-300">
+        목표 점수대를 고르세요
+      </h2>
       <p className="mt-1 text-[12px] text-zinc-500">
         나중에 설정에서 바꿀 수 있고, 바꿔도 지금까지의 기록은 그대로입니다.
       </p>
@@ -106,15 +131,21 @@ export default function Onboarding() {
           {voiceCount === 0 ? (
             <Volume2 size={16} className="mt-0.5 shrink-0 text-amber-300" />
           ) : (
-            <Headphones size={16} className="mt-0.5 shrink-0 text-emerald-300" />
+            <Headphones
+              size={16}
+              className="mt-0.5 shrink-0 text-emerald-300"
+            />
           )}
           <div className="text-[13px] leading-relaxed text-zinc-400">
-            <p className="font-bold text-zinc-200">듣기는 기기의 음성으로 들려줍니다</p>
+            <p className="font-bold text-zinc-200">
+              듣기는 기기의 음성으로 들려줍니다
+            </p>
             {voiceCount === null && <p className="mt-1">음성을 확인하는 중…</p>}
             {voiceCount === 0 && (
               <p className="mt-1 text-amber-200">
-                이 기기에서는 영어 음성을 찾지 못했습니다. 듣기 문항은 스크립트를
-                읽는 방식으로 풀 수 있고, 나머지 기능은 모두 그대로 됩니다.
+                이 기기에서는 영어 음성을 찾지 못했습니다. 듣기 문항은
+                스크립트를 읽는 방식으로 풀 수 있고, 나머지 기능은 모두 그대로
+                됩니다.
               </p>
             )}
             {voiceCount !== null && voiceCount > 0 && (
@@ -140,7 +171,9 @@ export default function Onboarding() {
         <div className="flex items-start gap-2.5">
           <CalendarDays size={16} className="mt-0.5 shrink-0 text-indigo-300" />
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-bold text-zinc-200">시험일이 정해져 있나요?</p>
+            <p className="text-[13px] font-bold text-zinc-200">
+              시험일이 정해져 있나요?
+            </p>
             <input
               type="date"
               value={examDate}
@@ -163,6 +196,13 @@ export default function Onboarding() {
       <p className="mt-3 text-center text-[11px] text-zinc-600">
         학습 기록은 이 기기 안에만 저장됩니다. 서버로 보내지 않습니다.
       </p>
+
+      {/*
+        홈 화면에 얹는 법. 시작 단추 아래에 둔다 — 급한 말이 아니라서
+        고르는 일을 밀어내면 안 되지만, 홈 화면까지 가야만 볼 수 있으면
+        인스타 링크로 한 번 들어왔다 나가는 사람은 영영 못 본다.
+      */}
+      <InstallHint />
     </main>
   );
 }

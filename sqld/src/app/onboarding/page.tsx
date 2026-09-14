@@ -17,6 +17,7 @@ import { EXAM, SUBJECTS, cutoff } from "@/data/exam";
 import { CONCEPTS } from "@/data/concepts";
 import { SQL_TASKS } from "@/data/sql-tasks";
 import { Button, Card } from "@/components/ui";
+import { InstallHint } from "@/components/install-hint";
 
 /**
  * 첫 화면 안내.
@@ -81,6 +82,13 @@ export default function OnboardingPage() {
         </p>
       </motion.div>
 
+      {/*
+        인스타·카카오톡 링크로 들어온 사람은 모두 "처음 온 사람" 이라 이 화면부터
+        본다. 그런데 안내는 홈 화면에만 달려 있었다 — 정작 말해야 할 순간에
+        아무 말도 못 한 셈이다. 공부를 시작하기 전에 여기서 먼저 말한다.
+      */}
+      <InstallHint slot="top" />
+
       {/* 시험 구성 */}
       <section className="mt-8">
         <h2 className="mb-3 text-sm font-bold">시험은 이렇게 생겼습니다</h2>
@@ -109,8 +117,8 @@ export default function OnboardingPage() {
           <p className="text-[13px] font-bold text-rose-200">과락이 있습니다</p>
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-300">
             총 {EXAM.questions}문항을 {EXAM.minutes}분에 풀고, 문항당{" "}
-            {EXAM.perQuestion}점으로 {EXAM.passScore}점 이상이면 합격입니다. 다만
-            과목별로 40%에 못 미치면 총점과 무관하게 불합격입니다 — 1과목{" "}
+            {EXAM.perQuestion}점으로 {EXAM.passScore}점 이상이면 합격입니다.
+            다만 과목별로 40%에 못 미치면 총점과 무관하게 불합격입니다 — 1과목{" "}
             {cutoff("modeling")}문항, 2과목 {cutoff("sql")}문항이 그 선입니다.
           </p>
         </div>
@@ -128,8 +136,8 @@ export default function OnboardingPage() {
             className="w-full bg-transparent py-2.5 text-base outline-none"
           />
           <p className="mt-2 text-[11px] text-zinc-500">
-            비워 두어도 됩니다. 넣어 두면 남은 날에 맞춰 무엇을 먼저 볼지
-            알려 드립니다.
+            비워 두어도 됩니다. 넣어 두면 남은 날에 맞춰 무엇을 먼저 볼지 알려
+            드립니다.
           </p>
         </Card>
       </section>
@@ -169,11 +177,11 @@ export default function OnboardingPage() {
                 문제는 어디서 왔나요
               </p>
               <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-300">
-                한국데이터산업진흥원은 SQLD 기출문제를 공개하지 않고, 시중 교재의
-                문제를 옮겨 오는 것은 저작권 침해입니다. 그래서 이 앱의 문제는 공개된
-                출제 범위와 표준 SQL 명세만을 근거로 AI 가 새로 쓴 것입니다
-                ({CONCEPTS.length}개 개념에서 만들어집니다). 실제 시험지를 옮겨 온
-                것이 아니라서 회차나 문항 번호를 적지 않습니다.
+                한국데이터산업진흥원은 SQLD 기출문제를 공개하지 않고, 시중
+                교재의 문제를 옮겨 오는 것은 저작권 침해입니다. 그래서 이 앱의
+                문제는 공개된 출제 범위와 표준 SQL 명세만을 근거로 AI 가 새로 쓴
+                것입니다 ({CONCEPTS.length}개 개념에서 만들어집니다). 실제
+                시험지를 옮겨 온 것이 아니라서 회차나 문항 번호를 적지 않습니다.
               </p>
             </div>
           </div>
@@ -185,11 +193,13 @@ export default function OnboardingPage() {
           <div className="flex items-start gap-2">
             <Smartphone size={15} className="mt-0.5 shrink-0 text-zinc-400" />
             <div>
-              <p className="text-[13px] font-bold">기록은 이 기기에만 남습니다</p>
+              <p className="text-[13px] font-bold">
+                기록은 이 기기에만 남습니다
+              </p>
               <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-400">
-                로그인이 없고 서버로 아무것도 보내지 않습니다. 그만큼 안전하지만,
-                브라우저에서 사이트 데이터를 지우면 진도도 함께 사라집니다.
-                기기를 바꾸면 처음부터 시작합니다.
+                로그인이 없고 서버로 아무것도 보내지 않습니다. 그만큼
+                안전하지만, 브라우저에서 사이트 데이터를 지우면 진도도 함께
+                사라집니다. 기기를 바꾸면 처음부터 시작합니다.
               </p>
             </div>
           </div>
@@ -204,6 +214,13 @@ export default function OnboardingPage() {
         싶은 일이 그것인데 말이다. 설명은 그대로 두고 단추만 따라다니게
         한다. 아래 차림표는 이 화면에서 숨겨져 있어 겹칠 것이 없다.
       */}
+      {/*
+        홈 화면에 얹는 법. 시작 단추 아래에 둔다 — 급한 말이 아니라서
+        고르는 일을 밀어내면 안 되지만, 홈 화면까지 가야만 볼 수 있으면
+        인스타 링크로 한 번 들어왔다 나가는 사람은 영영 못 본다.
+      */}
+      <InstallHint />
+
       <div className="h-24" aria-hidden />
       <div className="onboard-cta fixed inset-x-0 bottom-0 z-40 px-4 pb-safe">
         <div className="mx-auto max-w-2xl pb-3 pt-3">

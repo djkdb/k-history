@@ -28,6 +28,7 @@ import { dueCards, retentionRate } from "@/lib/srs";
 import { analyze } from "@/lib/weakness";
 import { useApp, useTrack } from "@/lib/store";
 import { daysUntil } from "@/lib/utils";
+import { InstallHint } from "@/components/install-hint";
 
 export default function Home() {
   const router = useRouter();
@@ -90,6 +91,9 @@ export default function Home() {
           <Settings size={19} />
         </Link>
       </header>
+
+      {/* 앱 안의 브라우저로 들어왔다면 여기서 가장 먼저 말한다 */}
+      <InstallHint slot="top" />
 
       {left !== null && (
         <Card className="mt-4">
@@ -269,6 +273,9 @@ export default function Home() {
           );
         })}
       </div>
+
+      {/* 홈 화면에 얹는 법 — 급한 말이 아니라 첫 화면을 밀어내지 않는 자리에 둔다 */}
+      <InstallHint />
 
       <SectionTitle>실전처럼</SectionTitle>
       <div className="flex flex-col gap-2">

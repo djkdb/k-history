@@ -18,6 +18,7 @@ import type { ExamKind, Grade } from "@/lib/types";
 import { SUBJECTS, subjectsFor } from "@/data/subjects";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { InstallHint } from "@/components/install-hint";
 
 /**
  * 첫 화면 안내.
@@ -86,6 +87,13 @@ export default function OnboardingPage() {
         </p>
       </motion.div>
 
+      {/*
+        인스타·카카오톡 링크로 들어온 사람은 모두 "처음 온 사람" 이라 이 화면부터
+        본다. 그런데 안내는 홈 화면에만 달려 있었다 — 정작 말해야 할 순간에
+        아무 말도 못 한 셈이다. 공부를 시작하기 전에 여기서 먼저 말한다.
+      */}
+      <InstallHint slot="top" />
+
       {/* 급수 */}
       <section className="mt-8">
         <h2 className="mb-3 text-sm font-bold">어느 급수를 준비하세요?</h2>
@@ -110,7 +118,8 @@ export default function OnboardingPage() {
                   {active && <Check size={16} className="text-indigo-300" />}
                 </div>
                 <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
-                  {subjects.length}과목 · {subjects.map((s) => s.short).join(" / ")}
+                  {subjects.length}과목 ·{" "}
+                  {subjects.map((s) => s.short).join(" / ")}
                 </p>
               </button>
             );
@@ -126,20 +135,18 @@ export default function OnboardingPage() {
       <section className="mt-7">
         <h2 className="mb-3 text-sm font-bold">지금은 무엇을 준비하세요?</h2>
         <div className="grid grid-cols-2 gap-2">
-          {(
-            [
-              {
-                key: "written" as ExamKind,
-                title: "필기",
-                desc: "객관식 60분 · 과목당 20문항",
-              },
-              {
-                key: "practical" as ExamKind,
-                title: "실기",
-                desc: "엑셀·액세스 실습 · 함수와 단축키",
-              },
-            ]
-          ).map((it) => {
+          {[
+            {
+              key: "written" as ExamKind,
+              title: "필기",
+              desc: "객관식 60분 · 과목당 20문항",
+            },
+            {
+              key: "practical" as ExamKind,
+              title: "실기",
+              desc: "엑셀·액세스 실습 · 함수와 단축키",
+            },
+          ].map((it) => {
             const active = kind === it.key;
             return (
               <button
@@ -178,8 +185,8 @@ export default function OnboardingPage() {
             className="w-full bg-transparent py-2.5 text-base outline-none"
           />
           <p className="mt-2 text-[11px] text-zinc-500">
-            비워 두어도 됩니다. 넣어 두면 남은 날에 맞춰 무엇을 먼저 볼지
-            알려 드립니다.
+            비워 두어도 됩니다. 넣어 두면 남은 날에 맞춰 무엇을 먼저 볼지 알려
+            드립니다.
           </p>
         </Card>
       </section>
@@ -271,11 +278,13 @@ export default function OnboardingPage() {
           <div className="flex items-start gap-2">
             <Smartphone size={15} className="mt-0.5 shrink-0 text-zinc-400" />
             <div>
-              <p className="text-[13px] font-bold">기록은 이 기기에만 남습니다</p>
+              <p className="text-[13px] font-bold">
+                기록은 이 기기에만 남습니다
+              </p>
               <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-400">
-                로그인이 없고 서버로 아무것도 보내지 않습니다. 그만큼 안전하지만,
-                브라우저에서 사이트 데이터를 지우면 진도도 함께 사라집니다.
-                기기를 바꾸면 처음부터 시작합니다.
+                로그인이 없고 서버로 아무것도 보내지 않습니다. 그만큼
+                안전하지만, 브라우저에서 사이트 데이터를 지우면 진도도 함께
+                사라집니다. 기기를 바꾸면 처음부터 시작합니다.
               </p>
             </div>
           </div>
@@ -289,6 +298,13 @@ export default function OnboardingPage() {
       <p className="mt-2 text-center text-[11px] text-zinc-600">
         고른 것은 모두 나중에 설정에서 바꿀 수 있습니다
       </p>
+
+      {/*
+        홈 화면에 얹는 법. 시작 단추 아래에 둔다 — 급한 말이 아니라서
+        고르는 일을 밀어내면 안 되지만, 홈 화면까지 가야만 볼 수 있으면
+        인스타 링크로 한 번 들어왔다 나가는 사람은 영영 못 본다.
+      */}
+      <InstallHint />
     </div>
   );
 }

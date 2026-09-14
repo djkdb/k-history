@@ -14,6 +14,7 @@ import { PRACTICAL, SUBJECTS, WRITTEN, cutoff } from "@/data/exam";
 import { useApp } from "@/lib/store";
 import type { Track } from "@/lib/types";
 import { daysUntil } from "@/lib/utils";
+import { InstallHint } from "@/components/install-hint";
 
 export default function Page() {
   const router = useRouter();
@@ -41,6 +42,13 @@ export default function Page() {
           />
         ))}
       </div>
+
+      {/*
+        인스타·카카오톡 링크로 들어온 사람은 모두 "처음 온 사람" 이라 이 화면부터
+        본다. 공부를 시작하기 전에 여기서 먼저 말해야 한다 — 그 안에서 푼 기록은
+        나중에 사파리로 열면 하나도 없다.
+      */}
+      <InstallHint slot="top" />
 
       {step === 0 && (
         <div className="mt-8">
@@ -204,6 +212,14 @@ export default function Page() {
           </Button>
         </div>
       )}
+
+      {/*
+        홈 화면에 얹는 법.
+        ⚠️ 처음에는 마지막 단계 안에 두었는데, 인스타 링크로 들어온 사람은
+           첫 단계에서 그냥 나가 버린다 — 세 단계를 다 넘겨야만 보이는 안내는
+           정작 볼 사람이 못 본다. 단계 밖으로 빼서 늘 아래에 둔다.
+      */}
+      <InstallHint />
     </main>
   );
 }
