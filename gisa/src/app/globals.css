@@ -316,7 +316,13 @@ body {
    그대로 뒤집으면 11px 잔글씨가 배경과 붙어 버려, 한 칸씩 더 진하게 둔다.
    (WCAG AA 4.5:1 — 카드 배경 #f4f4f5 위에서 잰 값) */
 [data-theme="light"] .text-zinc-500 { color: #5b5b64; }
-[data-theme="light"] .text-zinc-600 { color: #67676f; }
+/*
+ * 가장 흐린 단계. 12px 짜리 "이 장은 건너뛰기" 를 재니 지정 5.10:1 인데
+ * 칠해진 것은 4.46:1 이었다(덮임 0.93). 한 칸 내려 실제로도 5.0:1 을 넘긴다.
+ * 그러면 한 단계 위(zinc-500, 6.11:1)와 거의 붙지만, 규격이 바닥을 정해 둔
+ * 이상 밝은 화면에서 더 흐려질 자리는 없다. 층을 지키려다 안 읽히면 그만이다.
+ */
+[data-theme="light"] .text-zinc-600 { color: #5e5e66; }
 
 /*
  * 어두운 테마의 흐린 회색 — 대비를 맞춘 값.
@@ -380,6 +386,12 @@ body {
 [data-theme="light"] .text-amber-100 { color: #78350f; }
 [data-theme="light"] .text-amber-200 { color: #92400e; }
 [data-theme="light"] .text-amber-300 { color: #92400e; }
+/*
+ * "바꿔 내는 짝" 의 오른쪽(sky-200)만 밝은 테마 대비책이 빠져 있었다.
+ * 흰 바탕에 얹히면 1.31:1 — 글자가 있는 줄도 모를 만큼 묻힌다.
+ * 왼쪽(amber-200)과 짝이 맞게 같은 깊이의 파랑으로 내린다.
+ */
+[data-theme="light"] .text-sky-200 { color: #075985; }
 [data-theme="light"] .text-sky-300 { color: #0369a1; }
 [data-theme="light"] .text-cyan-300 { color: #0891b2; }
 

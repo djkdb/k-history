@@ -208,6 +208,13 @@ export default function Page() {
   const q = items[at];
   return (
     <main className="py-6">
+      {/*
+        적는 동안에는 화면 이름을 눈에 보이게 두지 않는다 — 진행 막대와 문항이
+        먼저다. 그러면 화면을 읽어 주는 기기에는 여기가 어디인지 말해 줄 것이
+        남지 않는다.
+        눈에는 안 보이되 소리로는 들리는 제목을 둔다.
+      */}
+      <h1 className="sr-only">실기 연습</h1>
       <div className="flex items-center gap-3">
         <ProgressBar
           className="flex-1"

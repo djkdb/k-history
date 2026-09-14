@@ -38,7 +38,21 @@ const APPS = [
   ["정보처리기사", "gisa/out", "gisa"],
 ];
 
-/** out/ 안의 화면 주소를 모은다. 같은 틀을 쓰는 상세 화면은 셋만 본다. */
+/*
+ * 같은 틀을 쓰는 상세 화면은 몇 개만 본다.
+ *
+ * ⚠️ 셋으로 못 잡는 것이 있다. 정보처리기사의 개념 63개 중 "바꿔 내는 짝" 이
+ *    들어 있는 것은 일부뿐인데, 그 칸의 오른쪽 글씨만 밝은 테마 대비책이
+ *    빠져 1.31:1 이었다 — 흰 바탕에 거의 묻히는 글씨다. 표본 셋에 그 개념이
+ *    들지 않아 "이상 없음" 으로 넘어갔다.
+ *    배포 전처럼 전부 봐야 할 때는 CAP=999 로 돌린다.
+ *
+ *   CAP=999 ONLY=gisa node scratchpad/all-contrast.js
+ */
+const CAP = Number(process.env.CAP || 3);
+const ONLY = process.env.ONLY || "";
+
+/** out/ 안의 화면 주소를 모은다. */
 function routesOf(root) {
   const R = path.resolve(root);
   const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
@@ -54,7 +68,7 @@ function routesOf(root) {
       const k = seg[0];
       const n = (byDir.get(k) ?? 0) + 1;
       byDir.set(k, n);
-      if (n <= 3) flat.push(r);   // 같은 틀이면 셋이면 충분하다
+      if (n <= CAP) flat.push(r);   // 같은 틀이면 몇 개만 봐도 된다 — 보통은
     } else flat.push(r);
   }
   return flat;
@@ -64,6 +78,7 @@ function routesOf(root) {
   const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
   let port = 5100, total = 0, bad = 0, emojiSkipped = 0;
   for (const [name, root, prefix] of APPS) {
+    if (ONLY && prefix !== ONLY) { port++; continue; }
     if (!fs.existsSync(root)) { console.log(`${name}: out 없음`); continue; }
     const srv = await serve(root, port);
     const routes = routesOf(root);

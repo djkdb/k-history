@@ -162,6 +162,13 @@ export function MockSession() {
           </Link>
         </div>
 
+        {/*
+          결과 화면에는 큰 제목 대신 점수가 맨 위에 온다 — 시험을 막 끝낸
+          사람이 가장 먼저 보고 싶은 것이 그것이다. 소리로 듣는 사람에게만
+          여기가 어디인지 알린다.
+        */}
+        <h1 className="sr-only">필기 모의고사 결과</h1>
+
         <Card
           className={cn(
             "mt-4",

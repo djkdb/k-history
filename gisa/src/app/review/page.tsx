@@ -181,6 +181,11 @@ export default function Page() {
 
   return (
     <main className="py-6">
+      {/*
+        복습 카드 화면에는 제목이 없다 — 지금 떠올려야 할 개념 하나에
+        집중시키려는 것이다. 소리로 듣는 사람에게만 어디인지 알린다.
+      */}
+      <h1 className="sr-only">복습</h1>
       <div className="flex items-center gap-3">
         <ProgressBar
           className="flex-1"
@@ -258,9 +263,14 @@ export default function Page() {
                 <p className="text-[12px] leading-relaxed text-zinc-400">
                   <RichText>{concept!.examPoint}</RichText>
                 </p>
+                {/*
+                  누를 수 있는 것은 24×24 보다 커야 손가락이 닿는다(WCAG 2.5.8).
+                  글자 크기만 따라가면 높이가 18px 이라 빗나간다 — 보이는 것은
+                  그대로 두고 여백만 넓혀 누를 자리를 만든다.
+                */}
                 <Link
                   href={`/concept/${concept!.id}`}
-                  className="text-[12px] font-semibold text-indigo-300"
+                  className="-mx-1 -my-1.5 inline-block px-1 py-1.5 text-[12px] font-semibold text-indigo-300"
                 >
                   개념 전체 보기 →
                 </Link>

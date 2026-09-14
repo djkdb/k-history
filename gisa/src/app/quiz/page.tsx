@@ -202,6 +202,7 @@ function QuizScreen() {
         <EmptyState
           icon={pct >= 60 ? "🎯" : "🔁"}
           title={`${items.length}문항 중 ${correct}개 정답`}
+          heading
           desc={
             pct >= 60
               ? "합격선(60점) 위입니다. 다른 과목도 같은 방식으로 채워 보세요."
@@ -257,6 +258,13 @@ function QuizScreen() {
   const revealed = picked !== null;
   return (
     <main className="py-6">
+      {/*
+        문제를 푸는 동안에는 화면 이름을 눈에 보이게 두지 않는다 — 진행 막대와
+        문항이 먼저다. 그러면 화면을 읽어 주는 기기에는 여기가 어디인지 말해
+        줄 것이 남지 않는다.
+        눈에는 안 보이되 소리로는 들리는 제목을 둔다.
+      */}
+      <h1 className="sr-only">문제 풀기</h1>
       <div className="flex items-center gap-3">
         <ProgressBar
           className="flex-1"
