@@ -99,6 +99,15 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
            *    알약 위의 검은 글씨(17:1)를 1.06:1 로 적었다. 그 자리에 정말 이
            *    요소가 있는지 물어보고 잰다.
            */
+
+          /*
+           * 비활성화된 조작 요소는 건너뛴다.
+           *
+           * WCAG 1.4.3 은 쓸 수 없는 상태의 요소를 대비 기준에서 명시적으로
+           * 뺀다. 이 앱들도 흐리게(opacity 40%) 그려 "지금은 누를 수 없다" 를
+           * 알리는데, 그것을 미달로 세면 흐리게 하는 뜻 자체가 없어진다.
+           */
+          if (el.closest("[disabled],[aria-disabled='true']")) continue;
           const px = Math.round(r2.left + Math.min(r2.width / 2, 40));
           const py = Math.round(r2.top + r2.height / 2);
           const hit = document.elementFromPoint(px, py);
@@ -109,6 +118,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
             t: t.slice(0, 26),
             x: px,
             y: py,
+            box: { x: Math.round(r2.left), y: Math.round(r2.top), w: Math.round(r2.width), h: Math.round(r2.height) },
             rgb: toRGB(cs.color),
             size: parseFloat(cs.fontSize),
             weight: parseInt(cs.fontWeight) || 400,
@@ -119,10 +129,39 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
       if (!items.length) continue;
 
       // 글씨를 투명하게 만들고 찍어 "글씨 뒤의 색" 을 얻는다
+      const shotOn = PNG.sync.read(await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } }));
       await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
       await p.waitForTimeout(120);
       const shot = await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } });
       const img = PNG.sync.read(shot);
+
+        /*
+         * 실제로 칠해진 글씨 색을 찾는다.
+         *
+         * ⚠️ getComputedStyle(el).color 는 filter 를 적용하기 *전* 값이다.
+         *    한국사의 .era-ink 는 filter: brightness(0.33) 으로 시대색을 어둡게
+         *    깔아 주는데, 계산값만 읽으면 그 보정을 못 본다 — 멀쩡한 곳을
+         *    미달로 적게 된다. 글씨가 보이는 그림과 감춘 그림을 견주어,
+         *    바탕에서 가장 멀리 떨어진 픽셀(글자 속)을 글씨 색으로 잡는다.
+         */
+        const inkAt = (on, off, box, bg) => {
+          let best = null, far = -1;
+          const x0 = Math.max(0, box.x), x1 = Math.min(on.width - 1, box.x + box.w);
+          const y0 = Math.max(0, box.y), y1 = Math.min(on.height - 1, box.y + box.h);
+          for (let y = y0; y <= y1; y++) {
+            for (let x = x0; x <= x1; x++) {
+              const i = (on.width * y + x) << 2;
+              const j = (off.width * y + x) << 2;
+              // 감춘 그림과 다른 자리 = 글자가 칠해진 자리
+              const moved = Math.abs(on.data[i] - off.data[j]) + Math.abs(on.data[i+1] - off.data[j+1]) + Math.abs(on.data[i+2] - off.data[j+2]);
+              if (moved < 12) continue;
+              const px = [on.data[i], on.data[i+1], on.data[i+2]];
+              const d = Math.abs(px[0]-bg[0]) + Math.abs(px[1]-bg[1]) + Math.abs(px[2]-bg[2]);
+              if (d > far) { far = d; best = px; }
+            }
+          }
+          return best;
+        };
       const pick = (x, y) => {
         x = Math.max(0, Math.min(img.width - 1, x));
         y = Math.max(0, Math.min(img.height - 1, y));
@@ -133,9 +172,10 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
       for (const it of items) {
         if (!it.rgb || it.rgb.length < 3) continue;
         const bg = pick(it.x, it.y);
-        // 글씨에 투명도가 있으면 바탕 위에 겹쳐 실제로 보이는 색을 구한다
+        // 실제로 칠해진 글씨 색을 먼저 찾는다 (filter·투명도가 모두 반영된 값)
+        const inked = it.box ? inkAt(shotOn, img, it.box, bg) : null;
         const a = it.rgb[3] === undefined ? 1 : it.rgb[3];
-        const fg = [0, 1, 2].map((i) => it.rgb[i] * a + bg[i] * (1 - a));
+        const fg = inked ?? [0, 1, 2].map((i) => it.rgb[i] * a + bg[i] * (1 - a));
         const rr = ratio(fg, bg);
         checked++;
         const big = it.size >= 24 || (it.size >= 18.66 && it.weight >= 700);
