@@ -64,10 +64,11 @@ export default function Page() {
     setPhase("run");
   }
 
-  function onGrade(r: GradeResult) {
+  function onGrade(r: GradeResult, peeked: boolean) {
     const q = items[at];
     setResult(r);
-    const correct = r.judgement === "correct";
+    // 답을 보고 적은 것은 맞은 것으로 세지 않는다 — 화면에 그렇게 적어 두었다
+    const correct = r.judgement === "correct" && !peeked;
     setMarks((m) => [...m, correct]);
     recordPractical(q.id, q.sourceId, correct);
   }

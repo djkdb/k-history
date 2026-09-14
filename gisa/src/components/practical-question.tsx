@@ -47,7 +47,8 @@ export function PracticalQuestionCard({
   value: string;
   onChange: (v: string) => void;
   result: GradeResult | null;
-  onGrade: (r: GradeResult) => void;
+  /** 채점 결과와 함께, 답을 미리 보고 적었는지를 알려 준다 */
+  onGrade: (r: GradeResult, peeked: boolean) => void;
   showSubject?: boolean;
   /** 배점을 보여 줄 것인가 — 복습에는 점수가 없으므로 끈다 */
   showPoints?: boolean;
@@ -123,7 +124,9 @@ export function PracticalQuestionCard({
         <div className="mt-3 flex gap-2">
           <Button
             className="flex-1"
-            onClick={() => onGrade(gradeByKind(q.kind, value, q.answers))}
+            onClick={() =>
+              onGrade(gradeByKind(q.kind, value, q.answers), peeked)
+            }
           >
             <Check size={16} />
             채점
@@ -152,13 +155,18 @@ export function PracticalQuestionCard({
         <div
           className={cn(
             "mt-4 rounded-2xl border p-3.5",
-            result.judgement === "correct"
+            result.judgement === "correct" && !peeked
               ? "border-emerald-400/30 bg-emerald-500/10"
               : "border-rose-400/30 bg-rose-500/10",
           )}
         >
+          {/*
+            답을 보고 적었으면 맞은 것으로 세지 않는다.
+            화면이 "모르겠어요" 아래에 그렇게 적어 두고서 점수를 주고 있었다 —
+            앱이 한 말과 한 일이 달랐다. 손이 기억하는지를 보는 것이 실기다.
+          */}
           <div className="flex items-center gap-1.5">
-            {result.judgement === "correct" ? (
+            {result.judgement === "correct" && !peeked ? (
               <Check size={14} className="text-emerald-300" />
             ) : (
               <X size={14} className="text-rose-300" />
@@ -166,15 +174,19 @@ export function PracticalQuestionCard({
             <span
               className={cn(
                 "text-[12px] font-bold",
-                result.judgement === "correct"
+                result.judgement === "correct" && !peeked
                   ? "text-emerald-200"
                   : "text-rose-200",
               )}
             >
               {result.judgement === "correct"
-                ? showPoints
-                  ? `맞았습니다 · ${q.points}점`
-                  : "맞았습니다"
+                ? peeked
+                  ? showPoints
+                    ? "답을 보고 적었습니다 · 0점"
+                    : "답을 보고 적었습니다"
+                  : showPoints
+                    ? `맞았습니다 · ${q.points}점`
+                    : "맞았습니다"
                 : result.judgement === "empty"
                   ? showPoints
                     ? "빈칸입니다 · 0점"
@@ -184,6 +196,12 @@ export function PracticalQuestionCard({
                     : "틀렸습니다"}
             </span>
           </div>
+          {result.judgement === "correct" && peeked && (
+            <p className="mt-2 text-[12px] leading-relaxed text-amber-200">
+              글자는 맞습니다. 다만 보고 적은 것이므로 점수로 세지 않고, 이
+              문항은 복습 목록에 남겨 둡니다.
+            </p>
+          )}
 
           {result.note && (
             <p className="mt-2 text-[12px] leading-relaxed text-amber-200">

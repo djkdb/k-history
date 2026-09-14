@@ -46,6 +46,8 @@ export default function Page() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [result, setResult] = useState<GradeResult | null>(null);
+  /** 복습에서도 답을 보고 적었으면 기억한 것으로 세지 않는다 */
+  const [peekedHere, setPeekedHere] = useState(false);
   const [marks, setMarks] = useState<boolean[]>([]);
 
   const retention = useMemo(() => retentionRate(cards), [cards]);
@@ -74,6 +76,7 @@ export default function Page() {
     setOpen(false);
     setValue("");
     setResult(null);
+    setPeekedHere(false);
   }
 
   if (queue === null) {
@@ -203,7 +206,10 @@ export default function Page() {
               value={value}
               onChange={setValue}
               result={result}
-              onGrade={setResult}
+              onGrade={(r, peeked) => {
+                setResult(r);
+                setPeekedHere(peeked);
+              }}
               showPoints={false}
             />
           </div>
@@ -211,7 +217,9 @@ export default function Page() {
             <Button
               size="lg"
               className="mt-5 w-full"
-              onClick={() => answer(result.judgement === "correct")}
+              onClick={() =>
+                answer(result.judgement === "correct" && !peekedHere)
+              }
             >
               다음
               <ArrowRight size={16} />
