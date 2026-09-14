@@ -335,6 +335,9 @@ body {
 
 [data-theme="light"] .text-indigo-200 { color: #3730a3; }
 [data-theme="light"] .text-indigo-300 { color: #4f46e5; }
+/* 불투명도가 붙으면 다른 클래스다 — 위의 보정이 걸리지 않는다 */
+[data-theme="light"] .text-indigo-200\/70 { color: #3730a3; }
+[data-theme="light"] .text-indigo-300\/70 { color: #4f46e5; }
 [data-theme="light"] .text-emerald-100 { color: #065f46; }
 [data-theme="light"] .text-emerald-200 { color: #047857; }
 [data-theme="light"] .text-emerald-300,

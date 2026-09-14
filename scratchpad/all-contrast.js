@@ -23,20 +23,51 @@ function lum([r,g,b]) { const f=(v)=>{const c=v/255;return c<=0.03928?c/12.92:Ma
   return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); }
 const ratio=(a,c)=>{const[x,y]=[lum(a),lum(c)].sort((p,q)=>q-p);return (x+0.05)/(y+0.05);};
 
+/*
+ * 화면 목록은 손으로 적지 않는다.
+ *
+ * ⚠️ 처음에는 앱마다 여섯 곳쯤 손으로 적어 두었는데, 토익에는 /learn 이 아예
+ *    없어서 404 를 훑고 있었다. 있지도 않은 화면을 재면서 "다 봤다" 고 말한
+ *    셈이다. out/ 에 실제로 나간 화면을 세어 전부 돈다.
+ */
 const APPS = [
-  ["한국사", "out", "khlm", ["/", "/learn", "/quiz", "/review", "/mock", "/search", "/wrong"]],
-  ["컴활", "comhwal/out", "comhwal", ["/", "/learn", "/quiz", "/review", "/mock", "/settings"]],
-  ["SQLD", "sqld/out", "sqld", ["/", "/learn", "/quiz", "/review", "/mock", "/settings"]],
-  ["토익", "toeic/out", "toeic", ["/", "/learn", "/quiz", "/review", "/mock", "/settings"]],
+  ["한국사", "out", "khlm"],
+  ["컴활", "comhwal/out", "comhwal"],
+  ["SQLD", "sqld/out", "sqld"],
+  ["토익", "toeic/out", "toeic"],
+  ["정보처리기사", "gisa/out", "gisa"],
 ];
+
+/** out/ 안의 화면 주소를 모은다. 같은 틀을 쓰는 상세 화면은 셋만 본다. */
+function routesOf(root) {
+  const R = path.resolve(root);
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+  const all = walk(R).filter((f) => f.endsWith(".html") && !f.includes("/_next/"))
+    .map((f) => "/" + path.relative(R, f).replace(/\.html$/, "").replace(/\/?index$/, ""))
+    .map((r) => (r === "" ? "/" : r));
+  const byDir = new Map();
+  const flat = [];
+  for (const r of all) {
+    const seg = r.split("/").filter(Boolean);
+    if (seg.length >= 2) {
+      const k = seg[0];
+      const n = (byDir.get(k) ?? 0) + 1;
+      byDir.set(k, n);
+      if (n <= 3) flat.push(r);   // 같은 틀이면 셋이면 충분하다
+    } else flat.push(r);
+  }
+  return flat;
+}
 
 (async () => {
   const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
   let port = 5100, total = 0, bad = 0;
-  for (const [name, root, prefix, routes] of APPS) {
+  for (const [name, root, prefix] of APPS) {
     if (!fs.existsSync(root)) { console.log(`${name}: out 없음`); continue; }
     const srv = await serve(root, port);
-    console.log(`\n━━━ ${name} ━━━`);
+    const routes = routesOf(root);
+    console.log(`\n━━━ ${name} — 화면 ${routes.length}개 ━━━`);
     for (const theme of ["dark", "light"]) {
       const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
       await ctx.addInitScript(([t, pre]) => { try { localStorage.setItem(pre + ":theme", t); } catch {} }, [theme, prefix]);
@@ -111,7 +142,7 @@ const APPS = [
     srv.close(); port++;
   }
   await b.close();
-  console.log(`\n네 앱 글씨 ${total}곳을 픽셀로 쟀다`);
+  console.log(`\n다섯 앱 글씨 ${total}곳을 픽셀로 쟀다`);
   console.log(bad ? `대비 미달 ${bad}건` : "✓ 대비 이상 없음");
   process.exit(bad ? 1 : 0);
 })();

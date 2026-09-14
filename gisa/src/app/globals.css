@@ -347,6 +347,9 @@ body {
 [data-theme="light"] .text-indigo-100 { color: #312e81; }
 [data-theme="light"] .text-indigo-200 { color: #3730a3; }
 [data-theme="light"] .text-indigo-300 { color: #4f46e5; }
+/* 불투명도가 붙으면 다른 클래스다 — 위의 보정이 걸리지 않는다 */
+[data-theme="light"] .text-indigo-200\/70 { color: #3730a3; }
+[data-theme="light"] .text-indigo-300\/70 { color: #4f46e5; }
 [data-theme="light"] .text-emerald-100 { color: #065f46; }
 [data-theme="light"] .text-emerald-200 { color: #047857; }
 /* 초록 글자는 대개 초록빛이 도는 판 위에 얹힌다 — 흰 바탕 기준으로 고르면
