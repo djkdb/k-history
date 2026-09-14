@@ -13,7 +13,7 @@ const path = require("path");
 const { PNG } = (() => { try { return require("pngjs"); } catch { return {}; } })();
 const OUT = path.resolve("gisa/out");
 const BASE = process.argv[2] || "http://127.0.0.1:4975";
-let bad = 0, checked = 0;
+let bad = 0, checked = 0, emojiSkipped = 0;
 const no = (s) => { bad++; console.log("  ✗ " + s); };
 
 function lum([r, g, b]) {
@@ -62,7 +62,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
       if (!loaded) { no(`${r} 를 세 번 시도해도 불러오지 못했다`); continue; }
 
       // 재야 할 글씨들의 자리와 색
-      const items = await p.evaluate(() => {
+      const got = await p.evaluate(() => {
         /*
          * 색 문자열은 직접 뜯지 않는다.
          *
@@ -83,6 +83,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
           const d = c2.getImageData(0, 0, 1, 1).data;
           return [d[0], d[1], d[2], d[3] / 255];
         };
+        let skippedEmoji = 0;
         const out = [];
         for (const el of document.querySelectorAll("p, span, li, h1, h2, h3, button, a, td, th")) {
           const t = (el.innerText || "").trim();
@@ -108,6 +109,8 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
            * 알리는데, 그것을 미달로 세면 흐리게 하는 뜻 자체가 없어진다.
            */
           if (el.closest("[disabled],[aria-disabled='true']")) continue;
+          // 이모지가 섞이면 글씨 색을 픽셀에서 가려낼 수 없다 — 따로 센다
+          if (/\p{Extended_Pictographic}/u.test(t)) { skippedEmoji++; continue; }
           const px = Math.round(r2.left + Math.min(r2.width / 2, 40));
           const py = Math.round(r2.top + r2.height / 2);
           const hit = document.elementFromPoint(px, py);
@@ -124,8 +127,10 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
             weight: parseInt(cs.fontWeight) || 400,
           });
         }
-        return out;
+        return { out, skippedEmoji };
       });
+      const items = got.out;
+      emojiSkipped += got.skippedEmoji;
       if (!items.length) continue;
 
       // 글씨를 투명하게 만들고 찍어 "글씨 뒤의 색" 을 얻는다
@@ -146,37 +151,31 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
          */
         const inkAt = (on, off, box, bg) => {
           /*
-           * 글자 속 색을 고를 때 "바탕에서 가장 먼 픽셀" 을 잡으면 안 된다.
+           * 글자 속 색 = 바탕에서 가장 멀리 떨어진 픽셀.
            *
-           * ⚠️ 제목에 이모지가 섞이면(🧩 데이터 모델링) 이모지의 진한 색이
-           *    가장 멀어서 그것을 글씨 색으로 잡는다. 이모지는 그림이지 글씨가
-           *    아니고, WCAG 대비 기준도 글씨를 두고 하는 말이다.
-           *    글자는 이모지보다 훨씬 많은 픽셀을 차지하므로, 가장 흔한 색을
-           *    고르면 자연히 글자 속 색이 잡힌다.
+           * 작은 글씨는 대부분의 픽셀이 바탕과 섞인 가장자리다. "가장 흔한 색"
+           * 으로 고르면 그 혼색이 잡혀 실제보다 대비가 낮게 나온다 —
+           * 한 번 그렇게 바꿨다가 10건이 599건으로 불어났다.
+           * 가장 진한 한 점이 글자 속이다.
+           *
+           * 다만 이 방법은 이모지가 섞인 글에서는 이모지의 진한 색을 잡는다.
+           * 이모지는 그림이지 글씨가 아니므로, 그런 요소는 재지 않고 따로 센다.
            */
-          const tally = new Map();
+          let best = null, far = -1;
           const x0 = Math.max(0, box.x), x1 = Math.min(on.width - 1, box.x + box.w);
           const y0 = Math.max(0, box.y), y1 = Math.min(on.height - 1, box.y + box.h);
           for (let y = y0; y <= y1; y++) {
             for (let x = x0; x <= x1; x++) {
               const i = (on.width * y + x) << 2;
               const j = (off.width * y + x) << 2;
-              // 감춘 그림과 다른 자리 = 글자가 칠해진 자리
               const moved = Math.abs(on.data[i] - off.data[j]) + Math.abs(on.data[i+1] - off.data[j+1]) + Math.abs(on.data[i+2] - off.data[j+2]);
               if (moved < 12) continue;
               const px = [on.data[i], on.data[i+1], on.data[i+2]];
-              // 가장자리는 바탕과 섞인 색이다 — 충분히 진한 것만 센다
               const d = Math.abs(px[0]-bg[0]) + Math.abs(px[1]-bg[1]) + Math.abs(px[2]-bg[2]);
-              if (d < 40) continue;
-              const k = (px[0] >> 2) + "," + (px[1] >> 2) + "," + (px[2] >> 2);
-              const cur = tally.get(k);
-              if (cur) cur.n++;
-              else tally.set(k, { n: 1, px });
+              if (d > far) { far = d; best = px; }
             }
           }
-          let best = null, most = 0;
-          for (const v of tally.values()) if (v.n > most) { most = v.n; best = v.px; }
-          return most >= 4 ? best : null;
+          return best;
         };
       const pick = (x, y) => {
         x = Math.max(0, Math.min(img.width - 1, x));
@@ -206,7 +205,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
     await ctx.close();
   }
   await b.close();
-  console.log(`\n글씨 ${checked}곳을 실제 픽셀로 쟀다`);
+  console.log(`\n글씨 ${checked}곳을 실제 픽셀로 쟀다 (이모지가 섞여 재지 못한 곳 ${emojiSkipped})`);
   console.log(bad ? `문제 ${bad}건` : "✓ 대비 이상 없음");
   process.exit(bad ? 1 : 0);
 })();
