@@ -260,6 +260,36 @@ const fail = (s: string) => problems.push(s);
   }
 }
 
+// ── 개념 목록이 과목 순으로 줄 서 있는가 ───────────────
+{
+  /*
+   * 개념을 새 파일에 써서 배열 끝에 덧붙이면 목록이
+   * 설계→개발→DB→언어→구축관리→설계(다시) 로 흐른다. 훑는 사람에게는 과목이
+   * 두 번 도는 것처럼 보이고, 홈의 "이어서 볼 개념" 도 이 순서를 따르므로
+   * 새로 넣은 개념은 앞의 것을 다 봐야 나온다. 실제로 그렇게 된 적이 있다.
+   */
+  const order: Record<string, number> = {};
+  SUBJECTS.forEach((s, i) => (order[s.id] = i));
+  let seen = -1;
+  for (const c of CONCEPTS) {
+    const o = order[c.subject];
+    if (o < seen) {
+      fail(
+        `개념 목록이 과목 순이 아니다 — ${SUBJECT_MAP[c.subject].short}(${c.id})가 뒤늦게 끼어든다`,
+      );
+      break;
+    }
+    seen = Math.max(seen, o);
+  }
+
+  // 요약이 비어 있거나 본문이 없는 개념은 화면에서 빈 카드가 된다
+  for (const c of CONCEPTS) {
+    if (!c.summary.trim()) fail(`개념 ${c.id} 에 요약이 없다`);
+    if (!c.body.length) fail(`개념 ${c.id} 에 본문이 없다`);
+    if (!c.examPoint.trim()) fail(`개념 ${c.id} 에 "시험에는 이렇게" 가 없다`);
+  }
+}
+
 // ── 출제기준을 얼마나 덮고 있는가 ─────────────────────
 {
   /*
