@@ -327,7 +327,20 @@ body {
  *   zinc-600 → 4.62~5.30:1
  * 둘 사이의 층은 그대로 남는다.
  */
-[data-theme="dark"] .text-zinc-500 { color: #93939d; }
+/*
+ * 아주 작은 글씨는 "지정한 색"과 "실제로 칠해진 색"이 다르다.
+ *
+ * 길잡이 막대의 10px 라벨을 픽셀로 재 보니, 가장 진한 점조차 지정 색의
+ * 86% 밖에 오지 않았다. 획이 한 픽셀보다 얇아 안티에일리어싱이 바탕과
+ * 섞어 버리기 때문이다. #93939d 는 지정으로 4.83:1 인데 실제는 4.30:1 이었다.
+ *
+ * 처음엔 색만 밝게 밀었다. #9b9ba5 는 지정 5.13:1 — 그런데 실제로 재니
+ * 4.23:1 이었다. 덮임 비율이 그대로라 색을 밀어도 따라오지 않는다.
+ * 굵기를 600 으로 올리자 덮임이 1.000 이 되어 지정 값과 실제 값이 같아졌다.
+ * 원인은 색이 아니라 획의 두께였다. 색은 한 칸 여유로 남겨 두고(#9b9ba5),
+ * 작은 글씨는 아래 규칙에서 굵기로 푼다.
+ */
+[data-theme="dark"] .text-zinc-500 { color: #9b9ba5; }
 [data-theme="dark"] .text-zinc-600 { color: #83838d; }
 [data-theme="dark"] .hover\:text-zinc-300:hover { color: #d4d4d8; }
 [data-theme="light"] .hover\:text-zinc-200:hover,
@@ -405,3 +418,11 @@ body {
 [data-theme="light"] .text-violet-100 { color: #4c1d95; }
 [data-theme="light"] .text-violet-200 { color: #5b21b6; }
 [data-theme="light"] .text-sky-200 { color: #075985; }
+
+/*
+ * 10px 글씨는 굵기 600 아래면 획이 바탕에 녹아, 지정한 대비가 화면까지
+ * 오지 못한다. 이미 굵게 쓴 곳은 건드리지 않고 나머지만 한 단계 올린다.
+ */
+.text-\[10px\]:not(.font-semibold):not(.font-bold):not(.font-black) {
+  font-weight: 600;
+}

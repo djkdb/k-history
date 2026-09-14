@@ -83,6 +83,22 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
           const d = c2.getImageData(0, 0, 1, 1).data;
           return [d[0], d[1], d[2], d[3] / 255];
         };
+          /** 요소 안 글자 노드들이 실제로 그려진 줄 상자 */
+          const lineBoxes = (el) => {
+            const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+            const rs = [];
+            for (let n = w.nextNode(); n; n = w.nextNode()) {
+              if (!n.textContent.trim()) continue;
+              const rg = document.createRange();
+              rg.selectNodeContents(n);
+              for (const r of rg.getClientRects()) {
+                if (r.width < 1 || r.height < 1) continue;
+                rs.push({ x: Math.round(r.left), y: Math.round(r.top),
+                          w: Math.round(r.width), h: Math.round(r.height) });
+              }
+            }
+            return rs;
+          };
         let skippedEmoji = 0;
         const out = [];
         for (const el of document.querySelectorAll("p, span, li, h1, h2, h3, button, a, td, th")) {
@@ -117,11 +133,21 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
           if (!hit || (hit !== el && !el.contains(hit) && !hit.contains(el))) continue;
 
           const cs = getComputedStyle(el);
+          /*
+           * 잴 자리는 요소의 네모가 아니라 "글자가 놓인 줄" 이다.
+           *
+           * ⚠️ 요소 네모를 그대로 훑으면 안쪽 여백과 둥근 모서리 바깥까지
+           *    딸려 든다. 그 자리에는 이 요소의 글씨가 아니라 뒤에 깔린 다른
+           *    글이 비친다. 실제로 흰 글씨의 남색 단추(7.24:1)를, 둥근 모서리
+           *    밖으로 보이던 주황 글자 한 점 때문에 3.76:1 로 적었다.
+           */
+          const rects = lineBoxes(el);
+          if (!rects.length) continue;
           out.push({
             t: t.slice(0, 26),
             x: px,
             y: py,
-            box: { x: Math.round(r2.left), y: Math.round(r2.top), w: Math.round(r2.width), h: Math.round(r2.height) },
+            rects,
             rgb: toRGB(cs.color),
             size: parseFloat(cs.fontSize),
             weight: parseInt(cs.fontWeight) || 400,
@@ -149,7 +175,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
          *    미달로 적게 된다. 글씨가 보이는 그림과 감춘 그림을 견주어,
          *    바탕에서 가장 멀리 떨어진 픽셀(글자 속)을 글씨 색으로 잡는다.
          */
-        const inkAt = (on, off, box, bg) => {
+        const inkAt = (on, off, boxes, bg) => {
           /*
            * 글자 속 색 = 바탕에서 가장 멀리 떨어진 픽셀.
            *
@@ -162,6 +188,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
            * 이모지는 그림이지 글씨가 아니므로, 그런 요소는 재지 않고 따로 센다.
            */
           let best = null, far = -1;
+          for (const box of boxes) {
           const x0 = Math.max(0, box.x), x1 = Math.min(on.width - 1, box.x + box.w);
           const y0 = Math.max(0, box.y), y1 = Math.min(on.height - 1, box.y + box.h);
           for (let y = y0; y <= y1; y++) {
@@ -174,6 +201,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
               const d = Math.abs(px[0]-bg[0]) + Math.abs(px[1]-bg[1]) + Math.abs(px[2]-bg[2]);
               if (d > far) { far = d; best = px; }
             }
+          }
           }
           return best;
         };
@@ -188,7 +216,7 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
         if (!it.rgb || it.rgb.length < 3) continue;
         const bg = pick(it.x, it.y);
         // 실제로 칠해진 글씨 색을 먼저 찾는다 (filter·투명도가 모두 반영된 값)
-        const inked = it.box ? inkAt(shotOn, img, it.box, bg) : null;
+        const inked = it.rects && it.rects.length ? inkAt(shotOn, img, it.rects, bg) : null;
         const a = it.rgb[3] === undefined ? 1 : it.rgb[3];
         const fg = inked ?? [0, 1, 2].map((i) => it.rgb[i] * a + bg[i] * (1 - a));
         const rr = ratio(fg, bg);

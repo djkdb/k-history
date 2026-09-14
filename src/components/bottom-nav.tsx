@@ -54,7 +54,7 @@ export function BottomNav() {
                   <span className="absolute -top-2 h-0.5 w-6 rounded-full bg-indigo-400" />
                 )}
                 <Icon size={19} strokeWidth={active ? 2.4 : 1.8} />
-                <span className="text-[10px] font-medium">{label}</span>
+                <span className="text-[11px] font-semibold">{label}</span>
               </Link>
             );
           })}
