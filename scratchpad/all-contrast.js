@@ -128,7 +128,6 @@ function routesOf(root) {
         if (!items.length) continue;
         // 글씨가 보이는 그림을 먼저 찍어 둔다 — 실제로 칠해진 글씨 색을 여기서 찾는다
         const shotOn = PNG.sync.read(await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } }));
-        const shotOn = PNG.sync.read(await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } }));
       await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
         await p.waitForTimeout(120);
         const img = PNG.sync.read(await p.screenshot({ clip: { x:0, y:0, width:390, height:844 } }));
@@ -143,7 +142,16 @@ function routesOf(root) {
          *    바탕에서 가장 멀리 떨어진 픽셀(글자 속)을 글씨 색으로 잡는다.
          */
         const inkAt = (on, off, box, bg) => {
-          let best = null, far = -1;
+          /*
+           * 글자 속 색을 고를 때 "바탕에서 가장 먼 픽셀" 을 잡으면 안 된다.
+           *
+           * ⚠️ 제목에 이모지가 섞이면(🧩 데이터 모델링) 이모지의 진한 색이
+           *    가장 멀어서 그것을 글씨 색으로 잡는다. 이모지는 그림이지 글씨가
+           *    아니고, WCAG 대비 기준도 글씨를 두고 하는 말이다.
+           *    글자는 이모지보다 훨씬 많은 픽셀을 차지하므로, 가장 흔한 색을
+           *    고르면 자연히 글자 속 색이 잡힌다.
+           */
+          const tally = new Map();
           const x0 = Math.max(0, box.x), x1 = Math.min(on.width - 1, box.x + box.w);
           const y0 = Math.max(0, box.y), y1 = Math.min(on.height - 1, box.y + box.h);
           for (let y = y0; y <= y1; y++) {
@@ -154,11 +162,18 @@ function routesOf(root) {
               const moved = Math.abs(on.data[i] - off.data[j]) + Math.abs(on.data[i+1] - off.data[j+1]) + Math.abs(on.data[i+2] - off.data[j+2]);
               if (moved < 12) continue;
               const px = [on.data[i], on.data[i+1], on.data[i+2]];
+              // 가장자리는 바탕과 섞인 색이다 — 충분히 진한 것만 센다
               const d = Math.abs(px[0]-bg[0]) + Math.abs(px[1]-bg[1]) + Math.abs(px[2]-bg[2]);
-              if (d > far) { far = d; best = px; }
+              if (d < 40) continue;
+              const k = (px[0] >> 2) + "," + (px[1] >> 2) + "," + (px[2] >> 2);
+              const cur = tally.get(k);
+              if (cur) cur.n++;
+              else tally.set(k, { n: 1, px });
             }
           }
-          return best;
+          let best = null, most = 0;
+          for (const v of tally.values()) if (v.n > most) { most = v.n; best = v.px; }
+          return most >= 4 ? best : null;
         };
       const pick = (x,y)=>{x=Math.max(0,Math.min(img.width-1,x));y=Math.max(0,Math.min(img.height-1,y));
           const i=(img.width*y+x)<<2;return [img.data[i],img.data[i+1],img.data[i+2]];};
