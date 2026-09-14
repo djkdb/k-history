@@ -61,7 +61,8 @@ function MemorySection({
     <div>
       <div className="mb-2 mt-6 flex items-center gap-2">
         <span style={{ color: accent ?? "#a5b4fc" }}>{icon}</span>
-        <h3 className="text-sm font-bold">{title}</h3>
+        {/* 화면 제목(h1) 바로 아래 오는 큰 토막이다 — h3 로 두면 단계가 하나 빈다 */}
+        <h2 className="text-sm font-bold">{title}</h2>
       </div>
       <Card>
         <Prose size="sm" className="text-zinc-300">
@@ -257,7 +258,7 @@ export function EventDetail() {
         <>
           <div className="mb-2 mt-6 flex items-center gap-2">
             <BarChart3 size={16} className="text-cyan-300" />
-            <h3 className="text-sm font-bold">한눈에 보기</h3>
+            <h2 className="text-sm font-bold">한눈에 보기</h2>
           </div>
           <div className="flex flex-col gap-2.5">
             {graphics.map((spec, i) => (
@@ -281,7 +282,7 @@ export function EventDetail() {
 
       <div className="mb-2 mt-6 flex items-center gap-2">
         <Brain size={16} className="text-emerald-300" />
-        <h3 className="text-sm font-bold">암기법</h3>
+        <h2 className="text-sm font-bold">암기법</h2>
       </div>
       <Card className="border-emerald-400/30 bg-emerald-500/10">
         <p className="text-sm font-semibold leading-relaxed text-emerald-100">
@@ -310,7 +311,7 @@ export function EventDetail() {
         <>
           <div className="mb-2 mt-6 flex items-center gap-2">
             <AlertTriangle size={16} className="text-red-400" />
-            <h3 className="text-sm font-bold">실수 방지 — 헷갈리면 여기서 틀린다</h3>
+            <h2 className="text-sm font-bold">실수 방지 — 헷갈리면 여기서 틀린다</h2>
           </div>
           <div className="flex flex-col gap-2">
             {event.traps.map((t) => (

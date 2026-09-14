@@ -55,6 +55,7 @@ export default function SettingsPage() {
         <input
           type="date"
           value={settings?.examDate ?? ""}
+          aria-label="시험일"
           onChange={(e) =>
             setSettings({
               band,

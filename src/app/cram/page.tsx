@@ -217,6 +217,7 @@ export default function CramPage() {
           <button
             type="button"
             onClick={() => setDeck(null)}
+            aria-label="벼락치기 닫기"
             className="text-zinc-600 transition-colors hover:text-zinc-300"
           >
             <X size={18} />

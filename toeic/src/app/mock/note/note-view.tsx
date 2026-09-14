@@ -62,6 +62,7 @@ export function MockNote() {
         <EmptyState
           icon="📄"
           title="그 응시 기록을 찾지 못했습니다"
+          heading
           desc="기록을 지웠거나, 다른 기기에서 본 시험일 수 있습니다."
           action={
             <Link href="/mock">

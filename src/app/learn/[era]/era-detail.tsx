@@ -134,7 +134,8 @@ export function EraDetail() {
                     )}
                   </div>
                   <div className="mt-1.5 flex items-center justify-between gap-2">
-                    <h3 className="font-bold">{e.title}</h3>
+                    {/* 시대 제목(h1) 바로 아래 나열되는 사건들 — 단계는 h2 다 */}
+                    <h2 className="font-bold">{e.title}</h2>
                     <ImportanceBadge importance={e.importance} />
                   </div>
                   <p className="mt-1 line-clamp-1 text-xs text-zinc-500">

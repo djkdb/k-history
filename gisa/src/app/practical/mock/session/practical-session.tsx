@@ -296,6 +296,13 @@ export function PracticalSession() {
 
   return (
     <main className="py-4">
+      {/*
+        시험 중에는 화면 이름을 눈에 보이게 두지 않는다 — 좁은 화면에서는
+        시계와 문항이 먼저다. 그런데 그러면 화면을 읽어 주는 기기에 이곳이
+        어디인지 말해 줄 것이 하나도 남지 않는다. 눈에는 안 보이되 소리로는
+        들리는 제목을 둔다.
+      */}
+      <h1 className="sr-only">정보처리기사 실기 모의고사</h1>
       <div className="sticky top-0 z-20 -mx-4 bg-[var(--bg)]/90 px-4 py-2 backdrop-blur">
         <div className="flex items-center gap-2.5">
           <span
@@ -367,6 +374,7 @@ export function PracticalSession() {
           autoCapitalize="off"
           autoCorrect="off"
           placeholder="여기에 적으세요"
+          aria-label="답안"
           className={cn(
             "mt-4 w-full resize-y rounded-2xl border border-white/10 bg-white/5 px-3.5 py-3 text-[14px] leading-relaxed text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-indigo-400/60",
             multiline && "font-mono text-[13px]",

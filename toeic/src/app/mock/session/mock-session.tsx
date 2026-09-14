@@ -204,7 +204,7 @@ export function MockSession() {
   if (exam.items.length === 0) {
     return (
       <main className="py-20 text-center">
-        <p className="text-sm text-zinc-400">이 시험에 낼 문항이 없습니다.</p>
+        <h1 className="text-sm text-zinc-400">이 시험에 낼 문항이 없습니다.</h1>
         <Link href="/mock">
           <Button variant="ghost" className="mt-4">
             돌아가기
@@ -235,6 +235,13 @@ export function MockSession() {
 
   return (
     <main className="py-4">
+      {/*
+        시험 중에는 화면 이름을 눈에 보이게 두지 않는다 — 좁은 화면에서는
+        시계와 문항이 먼저다. 그런데 그러면 화면을 읽어 주는 기기에 이곳이
+        어디인지 말해 줄 것이 하나도 남지 않는다. 눈에는 안 보이되 소리로는
+        들리는 제목을 둔다.
+      */}
+      <h1 className="sr-only">토익 모의고사</h1>
       <div className="exam-bar sticky top-0 z-40 -mx-4 flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
           <Clock size={15} className={urgent ? "text-rose-400" : "text-zinc-400"} />

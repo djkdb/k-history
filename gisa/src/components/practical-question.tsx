@@ -107,6 +107,7 @@ export function PracticalQuestionCard({
           autoCapitalize="off"
           autoCorrect="off"
           placeholder={multiline ? "여기에 적으세요" : "답"}
+          aria-label="답안"
           className={cn(
             "w-full resize-y rounded-2xl border bg-white/5 px-3.5 py-3 text-[14px] leading-relaxed text-zinc-100 outline-none placeholder:text-zinc-600",
             multiline && "font-mono text-[13px]",

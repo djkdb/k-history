@@ -326,18 +326,25 @@ export function ScrollRow({
 export function EmptyState({
   icon,
   title,
+  heading,
   desc,
   action,
 }: {
   icon?: ReactNode;
   title: string;
+  /** 화면 전체가 이 안내뿐일 때 켠다 — 그 화면의 제목이 되어야 하므로 h1 로 그린다 */
+  heading?: boolean;
   desc?: string;
   action?: ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
       {icon && <div className="text-4xl opacity-60">{icon}</div>}
-      <p className="font-semibold text-zinc-300">{title}</p>
+      {heading ? (
+        <h1 className="font-semibold text-zinc-300">{title}</h1>
+      ) : (
+        <p className="font-semibold text-zinc-300">{title}</p>
+      )}
       {desc && <p className="max-w-xs text-sm text-zinc-500">{desc}</p>}
       {action && <div className="mt-3">{action}</div>}
     </div>

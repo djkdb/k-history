@@ -226,6 +226,13 @@ export function MockSession() {
 
   return (
     <div className="pt-4">
+      {/*
+        시험 중에는 화면 이름을 눈에 보이게 두지 않는다 — 좁은 화면에서는
+        시계와 문항이 먼저다. 그런데 그러면 화면을 읽어 주는 기기에 이곳이
+        어디인지 말해 줄 것이 하나도 남지 않는다. 눈에는 안 보이되 소리로는
+        들리는 제목을 둔다.
+      */}
+      <h1 className="sr-only">SQLD 모의고사</h1>
       {/* 위쪽 고정 막대 */}
       <div className="exam-bar sticky-top-safe sticky z-40 rounded-2xl px-4 py-3">
         <div className="flex items-center justify-between">

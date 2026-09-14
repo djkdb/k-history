@@ -123,6 +123,7 @@ export default function OnboardingPage() {
           <input
             type="date"
             value={examDate}
+            aria-label="시험일"
             onChange={(e) => setExamDate(e.target.value)}
             className="w-full bg-transparent py-2.5 text-base outline-none"
           />

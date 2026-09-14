@@ -922,6 +922,7 @@ export function MockSession() {
       <EmptyState
         icon="📄"
         title="모의고사를 찾을 수 없어요"
+        heading
         desc="아직 등록되지 않은 회차입니다"
         action={
           <Link href="/mock">

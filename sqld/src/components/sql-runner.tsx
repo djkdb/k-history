@@ -101,6 +101,7 @@ export function SqlRunner({
           autoCorrect="off"
           rows={compact ? 4 : 6}
           placeholder="SELECT * FROM emp;"
+          aria-label="SQL 입력"
           className="mono w-full resize-y bg-transparent px-3.5 py-3 text-[13.5px] leading-[1.7] text-zinc-100 outline-none placeholder:text-zinc-600"
         />
       </div>

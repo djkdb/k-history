@@ -45,6 +45,12 @@ export function BottomNav() {
             <Link
               key={t.href}
               href={t.href}
+              /*
+               * 지금 어느 칸에 있는지를 색으로만 알렸다.
+               * 화면을 읽어 주는 기기는 색을 읽지 못해, 여섯 칸이 똑같은
+               * 링크로만 들린다. aria-current 로 "지금 이 쪽" 이라고 말한다.
+               */
+              aria-current={on ? "page" : undefined}
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors",
                 on ? "text-indigo-300" : "text-zinc-500",

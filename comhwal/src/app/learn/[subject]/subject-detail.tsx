@@ -56,6 +56,7 @@ export function SubjectDetail() {
         <EmptyState
           icon={info.symbol}
           title={`${info.name}은 1급 과목입니다`}
+          heading
           desc="설정에서 준비 급수를 1급으로 바꾸면 열립니다."
           action={
             <Link href="/settings">

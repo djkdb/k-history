@@ -72,12 +72,14 @@ export default function SearchPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="왕·사건·연도·인물·문화재 검색"
+          aria-label="왕·사건·연도·인물·문화재 검색"
           className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-zinc-600"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery("")}
+            aria-label="검색어 지우기"
             className="shrink-0 text-zinc-500 hover:text-zinc-300"
           >
             <X size={16} />

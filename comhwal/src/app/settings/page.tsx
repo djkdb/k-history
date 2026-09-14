@@ -116,6 +116,7 @@ export default function SettingsPage() {
         <input
           type="date"
           value={date}
+          aria-label="시험일"
           onChange={(e) => {
             setDate(e.target.value);
             update({ examDate: e.target.value || null });

@@ -23,7 +23,7 @@ export function InfographicFrame({
             className="h-1.5 w-1.5 rounded-full"
             style={{ background: color }}
           />
-          <h4 className="text-xs font-bold text-zinc-300">{title}</h4>
+          <h3 className="text-xs font-bold text-zinc-300">{title}</h3>
         </div>
         <button
           type="button"

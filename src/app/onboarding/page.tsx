@@ -272,6 +272,7 @@ export default function OnboardingPage() {
               <input
                 type="date"
                 min={addDays(1)}
+                aria-label="시험일 직접 고르기"
                 className="absolute h-0 w-0 opacity-0"
                 onChange={(e) => {
                   if (!e.target.value) return;
