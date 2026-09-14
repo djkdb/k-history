@@ -92,6 +92,7 @@ export default function Page() {
           <CalendarDays size={16} className="text-indigo-300" />
           <input
             type="date"
+            aria-label="시험일"
             value={examDate}
             onChange={(e) => setExamDate(e.target.value || null)}
             className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[14px] text-zinc-100 outline-none focus:border-indigo-400/60"

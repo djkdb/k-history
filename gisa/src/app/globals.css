@@ -341,6 +341,10 @@ body {
 [data-theme="light"] .hover\:text-zinc-200:hover,
 [data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }
 
+/* indigo-100 은 옅은 인디고 판(bg-indigo-500/10) 위의 제목에 쓴다.
+   밝은 화면에서는 판도 옅어져 같은 계열 글자가 배경에 묻힌다 —
+   실제로 "보던 시험이 있습니다" 가 1.23:1 로 거의 보이지 않았다. */
+[data-theme="light"] .text-indigo-100 { color: #312e81; }
 [data-theme="light"] .text-indigo-200 { color: #3730a3; }
 [data-theme="light"] .text-indigo-300 { color: #4f46e5; }
 [data-theme="light"] .text-emerald-100 { color: #065f46; }

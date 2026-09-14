@@ -10,7 +10,7 @@ import {
   SectionTitle,
 } from "@/components/ui";
 import { CONCEPTS, CONCEPT_MAP } from "@/data/concepts";
-import { SUBJECT_MAP } from "@/data/exam";
+import { SUBJECT_MAP, subjectInk } from "@/data/exam";
 import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -47,7 +47,10 @@ export function ConceptDetail({ id }: { id: string }) {
           <span>{subject.symbol}</span>
           <span
             className="text-[12px] font-bold"
-            style={{ color: subject.color }}
+            /* 과목의 원래 색은 막대·점을 칠하는 값이다. 글자에 그대로 쓰면
+               밝은 화면에서 옅은 노랑이 흰 바탕에 얹혀 1.46:1 이 된다.
+               글자에는 테마마다 따로 둔 subjectInk 를 쓴다. */
+            style={{ color: subjectInk(subject.id) }}
           >
             {subject.name}
           </span>
