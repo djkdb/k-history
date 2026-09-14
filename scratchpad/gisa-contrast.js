@@ -91,11 +91,24 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
           const r2 = el.getBoundingClientRect();
           if (r2.width < 4 || r2.height < 4) continue;
           if (r2.bottom < 0 || r2.top > innerHeight || r2.right < 0 || r2.left > innerWidth) continue;
+          /*
+           * 잴 자리가 다른 것에 가려져 있지 않은가.
+           *
+           * ⚠️ 아래에 늘 떠 있는 길잡이 막대가 화면 밑동을 덮는다. 그 아래 깔린
+           *    단추의 한가운데를 재면 길잡이의 색을 재는 꼴이 된다. 실제로 흰
+           *    알약 위의 검은 글씨(17:1)를 1.06:1 로 적었다. 그 자리에 정말 이
+           *    요소가 있는지 물어보고 잰다.
+           */
+          const px = Math.round(r2.left + Math.min(r2.width / 2, 40));
+          const py = Math.round(r2.top + r2.height / 2);
+          const hit = document.elementFromPoint(px, py);
+          if (!hit || (hit !== el && !el.contains(hit) && !hit.contains(el))) continue;
+
           const cs = getComputedStyle(el);
           out.push({
             t: t.slice(0, 26),
-            x: Math.round(r2.left + Math.min(r2.width / 2, 40)),
-            y: Math.round(r2.top + r2.height / 2),
+            x: px,
+            y: py,
             rgb: toRGB(cs.color),
             size: parseFloat(cs.fontSize),
             weight: parseInt(cs.fontWeight) || 400,

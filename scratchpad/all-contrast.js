@@ -1,0 +1,117 @@
+// 다섯 앱 모두 — 글씨 대비를 실제 픽셀로 잰다.
+// theme.tsx 를 다섯 곳 다 고쳤으니 나머지 네 앱도 한 번 봐야 한다.
+const { chromium } = require("playwright");
+const { PNG } = require("pngjs");
+const http = require("http"), fs = require("fs"), path = require("path");
+const MIME = { ".html":"text/html",".js":"text/javascript",".css":"text/css",".json":"application/json",
+  ".svg":"image/svg+xml",".png":"image/png",".woff2":"font/woff2",".ico":"image/x-icon",
+  ".txt":"text/plain",".mp3":"audio/mpeg",".wasm":"application/wasm",".webp":"image/webp" };
+function serve(root, port) {
+  root = path.resolve(root);
+  const s = http.createServer((q, r) => {
+    const u = decodeURIComponent(q.url.split("?")[0]);
+    for (const f of [root+u+".html", root+u, root+path.join(u,"index.html"), root+"/404.html"]) {
+      try { if (fs.statSync(f).isFile()) {
+        r.writeHead(200, {"content-type": MIME[path.extname(f)]||"application/octet-stream"});
+        return r.end(fs.readFileSync(f)); } } catch {}
+    }
+    r.writeHead(404); r.end("x");
+  });
+  return new Promise((res) => s.listen(port, () => res(s)));
+}
+function lum([r,g,b]) { const f=(v)=>{const c=v/255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);};
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); }
+const ratio=(a,c)=>{const[x,y]=[lum(a),lum(c)].sort((p,q)=>q-p);return (x+0.05)/(y+0.05);};
+
+const APPS = [
+  ["한국사", "out", "khlm", ["/", "/learn", "/quiz", "/review", "/mock", "/search", "/wrong"]],
+  ["컴활", "comhwal/out", "comhwal", ["/", "/learn", "/quiz", "/review", "/mock", "/settings"]],
+  ["SQLD", "sqld/out", "sqld", ["/", "/learn", "/quiz", "/review", "/mock", "/settings"]],
+  ["토익", "toeic/out", "toeic", ["/", "/learn", "/quiz", "/review", "/mock", "/settings"]],
+];
+
+(async () => {
+  const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+  let port = 5100, total = 0, bad = 0;
+  for (const [name, root, prefix, routes] of APPS) {
+    if (!fs.existsSync(root)) { console.log(`${name}: out 없음`); continue; }
+    const srv = await serve(root, port);
+    console.log(`\n━━━ ${name} ━━━`);
+    for (const theme of ["dark", "light"]) {
+      const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
+      await ctx.addInitScript(([t, pre]) => { try { localStorage.setItem(pre + ":theme", t); } catch {} }, [theme, prefix]);
+      const p = await ctx.newPage();
+      const seen = new Set();
+      let hits = 0;
+      for (const r of routes) {
+        let okLoad = false;
+        for (let k = 0; k < 3 && !okLoad; k++) {
+          await p.goto(`http://127.0.0.1:${port}${r}`, { waitUntil: "networkidle" }).catch(() => {});
+          await p.waitForTimeout(400);
+          okLoad = await p.evaluate(() => !!document.title);
+        }
+        if (!okLoad) continue;
+        const items = await p.evaluate(() => {
+          const cv = document.createElement("canvas"); cv.width = cv.height = 1;
+          const c2 = cv.getContext("2d", { willReadFrequently: true });
+          const toRGB = (c) => { c2.clearRect(0,0,1,1); c2.fillStyle="#000"; c2.fillStyle=c; c2.fillRect(0,0,1,1);
+            const d=c2.getImageData(0,0,1,1).data; return [d[0],d[1],d[2],d[3]/255]; };
+          const out = [];
+          for (const el of document.querySelectorAll("p, span, li, h1, h2, h3, button, a, td, th")) {
+            const t = (el.innerText||"").trim();
+            if (!t || t.length < 2) continue;
+            if (el.querySelector("p, span, div, button, a")) continue;
+            const r2 = el.getBoundingClientRect();
+            if (r2.width < 4 || r2.height < 4) continue;
+            if (r2.bottom < 0 || r2.top > innerHeight) continue;
+          /*
+           * 잴 자리가 다른 것에 가려져 있지 않은가.
+           *
+           * ⚠️ 아래에 늘 떠 있는 길잡이 막대가 화면 밑동을 덮는다. 그 아래 깔린
+           *    단추의 한가운데를 재면 길잡이의 색을 재는 꼴이 된다. 실제로 흰
+           *    알약 위의 검은 글씨(17:1)를 1.06:1 로 적었다. 그 자리에 정말 이
+           *    요소가 있는지 물어보고 잰다.
+           */
+          const px = Math.round(r2.left + Math.min(r2.width / 2, 40));
+          const py = Math.round(r2.top + r2.height / 2);
+          const hit = document.elementFromPoint(px, py);
+          if (!hit || (hit !== el && !el.contains(hit) && !hit.contains(el))) continue;
+
+            const cs = getComputedStyle(el);
+            out.push({ t: t.slice(0,24), x: px, y: py, rgb: toRGB(cs.color),
+              size: parseFloat(cs.fontSize), weight: parseInt(cs.fontWeight)||400 });
+          }
+          return out;
+        });
+        if (!items.length) continue;
+        await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
+        await p.waitForTimeout(120);
+        const img = PNG.sync.read(await p.screenshot({ clip: { x:0, y:0, width:390, height:844 } }));
+        const pick = (x,y)=>{x=Math.max(0,Math.min(img.width-1,x));y=Math.max(0,Math.min(img.height-1,y));
+          const i=(img.width*y+x)<<2;return [img.data[i],img.data[i+1],img.data[i+2]];};
+        for (const it of items) {
+          if (!it.rgb || it.rgb.length < 3) continue;
+          const bg = pick(it.x, it.y);
+          const a = it.rgb[3] === undefined ? 1 : it.rgb[3];
+          const fg = [0,1,2].map((i) => it.rgb[i]*a + bg[i]*(1-a));
+          const rr = ratio(fg, bg); total++; hits++;
+          const big = it.size >= 24 || (it.size >= 18.66 && it.weight >= 700);
+          const need = big ? 3 : 4.5;
+          if (rr >= need) continue;
+          const key = it.t + it.rgb.join();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          bad++;
+          console.log(`  ✗ [${theme === "dark" ? "어둡" : "밝음"}] 대비 ${rr.toFixed(2)}:1 (${need}) — "${it.t}" ${Math.round(it.size)}px ${r}`);
+        }
+      }
+      console.log(`  ${theme === "dark" ? "어두운" : "밝은"} 화면 글씨 ${hits}곳`);
+      await ctx.close();
+    }
+    srv.close(); port++;
+  }
+  await b.close();
+  console.log(`\n네 앱 글씨 ${total}곳을 픽셀로 쟀다`);
+  console.log(bad ? `대비 미달 ${bad}건` : "✓ 대비 이상 없음");
+  process.exit(bad ? 1 : 0);
+})();
