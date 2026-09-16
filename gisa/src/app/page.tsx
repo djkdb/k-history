@@ -148,6 +148,17 @@ export default function Home() {
         />
       </div>
 
+      {/* 쌓인 기록은 볼 수 있어야 쌓는 보람이 있다 */}
+      <div className="mt-2 flex justify-end">
+        <Link
+          href="/stats"
+          className="-my-1 inline-flex items-center gap-1 py-1 text-[12px] text-zinc-400 hover:text-zinc-200"
+        >
+          공부 기록 보기
+          <ArrowRight size={13} />
+        </Link>
+      </div>
+
       {showWorst && (
         <Card
           className={

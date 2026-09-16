@@ -182,7 +182,15 @@ export function SubjectDetail({ subject }: { subject: string }) {
             const on = studied.includes(c.id);
             return (
               <Link key={c.id} href={`/concept/${c.id}`}>
-                <Card className={cn(on && "opacity-70")}>
+                {/*
+                  본 개념을 흐리게 덮지 않는다.
+
+                  ⚠️ 카드째 opacity-70 을 걸면 안에 든 글씨가 전부 같이 옅어져,
+                     밝은 화면에서 "반드시" 배지가 6.88:1 에서 3.97:1 로 떨어졌다.
+                     본 것과 안 본 것은 오른쪽 체크 표시가 이미 말해 준다 —
+                     읽히지 않게 만들면서까지 두 번 말할 일이 아니다.
+                */}
+                <Card>
                   <div className="flex items-center gap-2">
                     <ImportanceBadge level={c.importance} />
                     <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold">

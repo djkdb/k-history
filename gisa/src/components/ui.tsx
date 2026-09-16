@@ -146,7 +146,9 @@ export function ImportanceBadge({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
+        /* 11px 한글은 획이 가늘어 지정한 색의 6할밖에 안 칠해진다 — 밝은
+           화면에서 "반드시" 가 3.97:1 로 떨어졌다. 색이 아니라 획을 굵힌다. */
+        "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold",
         look.cls,
       )}
     >

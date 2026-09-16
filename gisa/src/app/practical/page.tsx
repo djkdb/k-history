@@ -38,6 +38,7 @@ export default function Page() {
   const cleared = useApp((s) => s.clearedPracticalIds);
   const wrongIds = useApp((s) => s.wrongIds);
   const recordPractical = useApp((s) => s.recordPractical);
+  const recordQuiz = useApp((s) => s.recordQuiz);
 
   const [items, setItems] = useState<typeof PRACTICAL_QUESTIONS>([]);
   const [at, setAt] = useState(0);
@@ -87,6 +88,17 @@ export default function Page() {
 
   function next() {
     if (at + 1 >= items.length) {
+      /*
+       * 실기도 한 벌을 끝내면 기록에 남긴다.
+       * 필기만 남기고 있어서 공부 기록 화면에 실기가 통째로 빠져 있었다.
+       */
+      recordQuiz({
+        quizId: `p-${Date.now()}`,
+        takenAt: Date.now(),
+        total: items.length,
+        correct: marks.filter(Boolean).length,
+        track: "practical",
+      });
       setPhase("done");
       return;
     }

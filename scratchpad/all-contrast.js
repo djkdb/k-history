@@ -51,6 +51,18 @@ const APPS = [
  */
 const CAP = Number(process.env.CAP || 3);
 const ONLY = process.env.ONLY || "";
+/*
+ * 기록이 있어야만 나오는 글씨도 재야 한다.
+ *
+ * ⚠️ 빈 상태만 훑으면 "아직 기록이 없습니다" 만 재고 끝난다. 공부 기록 화면의
+ *    막대 밑 설명글처럼, 자료가 쌓인 사람에게만 보이는 글씨가 통째로 빠진다.
+ *    SEEDFILE 에 localStorage 에 심을 것을 적어 두면 그 상태로 잰다.
+ *
+ *   SEEDFILE=scratchpad/seed-gisa.json CAP=999 ONLY=gisa node scratchpad/all-contrast.js
+ */
+const SEED = process.env.SEEDFILE
+  ? JSON.parse(fs.readFileSync(process.env.SEEDFILE, "utf8"))
+  : null;
 
 /** out/ 안의 화면 주소를 모은다. */
 function routesOf(root) {
@@ -85,7 +97,13 @@ function routesOf(root) {
     console.log(`\n━━━ ${name} — 화면 ${routes.length}개 ━━━`);
     for (const theme of ["dark", "light"]) {
       const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
-      await ctx.addInitScript(([t, pre]) => { try { localStorage.setItem(pre + ":theme", t); } catch {} }, [theme, prefix]);
+      await ctx.addInitScript(([t, pre, seed]) => {
+        try {
+          localStorage.setItem(pre + ":theme", t);
+          if (seed) for (const [k, v] of Object.entries(seed))
+            localStorage.setItem(k, typeof v === "string" ? v : JSON.stringify(v));
+        } catch {}
+      }, [theme, prefix, SEED]);
       const p = await ctx.newPage();
       const seen = new Set();
       let hits = 0;
