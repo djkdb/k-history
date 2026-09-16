@@ -49,7 +49,8 @@ function QuizScreen() {
       : null,
   );
   const [count, setCount] = useState(10);
-  const [wrongOnly, setWrongOnly] = useState(false);
+  // "자주 틀리는 곳" 에서 «틀린 것만 풀기» 로 넘어온다
+  const [wrongOnly, setWrongOnly] = useState(() => params.get("wrong") === "1");
   const [seed, setSeed] = useState(1);
 
   const wrongIds = useApp((s) => s.wrongIds);

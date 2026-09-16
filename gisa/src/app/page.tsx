@@ -50,6 +50,12 @@ export default function Home() {
   const due = useMemo(() => dueCards(cards).length, [cards]);
   const mockAttempts = useApp((s) => s.mockAttempts);
   const wrongIds = useApp((s) => s.wrongIds);
+  const reviewCards = useApp((s) => s.reviewCards);
+  // 되틀린 적이 있거나 아직 못 맞힌 개념
+  const wrongCount = new Set([
+    ...wrongIds,
+    ...reviewCards.filter((c) => c.lapses > 0).map((c) => c.sourceId),
+  ]).size;
   /*
    * 기록이 쌓여도 읽어 주는 곳이 없으면 사용자는 늘 1과목부터 다시 시작한다.
    * 과락 난 과목이 있으면 그것부터, 없으면 가장 흔들리는 과목부터 짚어 준다.
@@ -350,6 +356,31 @@ export default function Home() {
           </Card>
         </Link>
       </div>
+
+      {/*
+        자주 틀리는 곳.
+
+        복습은 "오늘 볼 차례" 만 꺼내 준다. 몇 번을 되풀이해 틀렸는지는
+        어디에도 드러나지 않아, 남은 시간을 어디에 쓸지 고를 수 없었다.
+      */}
+      {wrongCount > 0 && (
+        <Link href="/wrong">
+          <Card className="mt-4 border-rose-400/25 bg-rose-500/[0.07]">
+            <div className="flex items-center gap-2.5">
+              <span className="text-lg">🎯</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold text-rose-200">
+                  자주 틀리는 곳 {wrongCount}개
+                </p>
+                <p className="mt-0.5 text-[12px] text-zinc-400">
+                  되풀이해 틀린 순서로 줄을 세워 두었습니다
+                </p>
+              </div>
+              <ArrowRight size={16} className="shrink-0 text-rose-300" />
+            </div>
+          </Card>
+        </Link>
+      )}
 
       <SectionTitle>지금까지</SectionTitle>
       <Card>

@@ -11,6 +11,7 @@ import {
   Play,
 } from "lucide-react";
 import { Button, Card, SectionTitle } from "@/components/ui";
+import { ScoreTrend } from "@/components/score-trend";
 import {
   SUBJECTS,
   SUBJECT_MAP,
@@ -116,6 +117,16 @@ export default function Page() {
           </div>
         </div>
       </Card>
+
+      {/*
+        오르고 있는지를 먼저 보여 준다.
+        목록의 숫자를 눈으로 견주어서는 알 수 없는 것이다.
+      */}
+      {attempts.length >= 2 && (
+        <div className="mt-5">
+          <ScoreTrend attempts={attempts} />
+        </div>
+      )}
 
       {attempts.length > 0 && (
         <>

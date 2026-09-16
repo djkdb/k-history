@@ -33,8 +33,10 @@ export default function Page() {
   const [subject, setSubject] = useState<SubjectId | null>(null);
   const [kind, setKind] = useState<PracticalKind | null>(null);
   const [count, setCount] = useState(5);
+  const [wrongOnly, setWrongOnly] = useState(false);
 
   const cleared = useApp((s) => s.clearedPracticalIds);
+  const wrongIds = useApp((s) => s.wrongIds);
   const recordPractical = useApp((s) => s.recordPractical);
 
   const [items, setItems] = useState<typeof PRACTICAL_QUESTIONS>([]);
@@ -47,8 +49,18 @@ export default function Page() {
     let p = PRACTICAL_QUESTIONS;
     if (subject) p = p.filter((q) => q.subject === subject);
     if (kind) p = p.filter((q) => q.kind === kind);
+    /*
+     * 틀린 곳만 다시 적기.
+     *
+     * 실기는 손으로 적어야 느는데, 그중에서도 틀린 것을 다시 적는 것이
+     * 가장 값이 크다. 필기에는 진작 있던 거르개가 실기에는 없었다.
+     */
+    if (wrongOnly) {
+      const set = new Set(wrongIds);
+      p = p.filter((q) => set.has(q.sourceId));
+    }
     return p;
-  }, [subject, kind]);
+  }, [subject, kind, wrongOnly, wrongIds]);
 
   function start() {
     const picked = shuffleSeeded(
@@ -127,6 +139,25 @@ export default function Page() {
             </Chip>
           ))}
         </div>
+
+        {wrongIds.length > 0 && (
+          <>
+            <SectionTitle>어디서 고를까</SectionTitle>
+            <div className="flex flex-wrap gap-2">
+              <Chip active={!wrongOnly} onClick={() => setWrongOnly(false)}>
+                전체 {PRACTICAL_QUESTIONS.length}
+              </Chip>
+              <Chip active={wrongOnly} onClick={() => setWrongOnly(true)}>
+                틀린 것만{" "}
+                {
+                  PRACTICAL_QUESTIONS.filter((q) =>
+                    wrongIds.includes(q.sourceId),
+                  ).length
+                }
+              </Chip>
+            </div>
+          </>
+        )}
 
         <SectionTitle>문항 수</SectionTitle>
         <div className="flex flex-wrap gap-2">
