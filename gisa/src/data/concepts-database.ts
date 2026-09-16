@@ -217,6 +217,7 @@ export const DATABASE_CONCEPTS: Concept[] = [
       "NoSQL 유형: Key-Value, Document, Column-family, Graph.",
       "CAP 이론: 일관성(Consistency)·가용성(Availability)·분할 내성(Partition tolerance) 중 셋을 동시에 만족할 수 없다.",
       "데이터 웨어하우스는 분석을 위해 주제별로 모아 둔 것이고, 데이터 마트는 그중 일부다.",
+      "데이터 마이닝은 모아 둔 자료 속에 숨은 규칙과 패턴을 찾아내는 일이다. 웨어하우스가 창고라면 마이닝은 그 안에서 캐내는 일이다.",
       "OLAP 연산: Roll-up(요약), Drill-down(상세), Slicing, Dicing, Pivoting.",
     ],
     examPoint: "CAP 세 글자와 OLAP 연산 이름이 단골이다.",

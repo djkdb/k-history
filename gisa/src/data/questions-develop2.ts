@@ -259,28 +259,23 @@ export const DEVELOP2_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "must",
   },
-  {
-    id: "qv2-test-alpha-beta",
-    subject: "develop",
-    sourceId: "v-test-level",
-    question: "알파 테스트와 베타 테스트의 차이로 옳은 것은?",
-    options: [
-      "알파는 개발자 통제 아래에서, 베타는 실제 사용자 환경에서 한다.",
-      "알파는 실제 사용자 환경에서, 베타는 개발자 통제 아래에서 한다.",
-      "둘 다 개발자가 직접 수행한다.",
-      "알파는 단위 테스트, 베타는 통합 테스트를 이른다.",
-    ],
-    answerIndex: 0,
-    explanation:
-      "둘 다 인수 테스트다. 알파는 개발 조직 안에서 사용자가, 베타는 바깥 실제 환경에서 사용자가 한다.",
-    optionNotes: [
-      null,
-      "뒤바뀌었다.",
-      "사용자가 수행한다.",
-      "단위·통합과는 다른 단계다.",
-    ],
-    importance: "must",
-  },
+      {
+      id: "qv2-test-alpha-beta",
+      subject: "develop",
+      sourceId: "v-test-level",
+      question: "소프트웨어 테스트 원리 중 '결함은 대부분 소수의 모듈에 몰려 있다'는 것은?",
+      options: ["완벽한 테스팅은 불가능하다", "결함 집중", "살충제 역설", "오류-부재의 궤변"],
+      answerIndex: 1,
+      explanation:
+        "결함 집중(Defect Clustering)이며 파레토 법칙으로도 부른다. 그래서 결함이 많이 난 곳을 더 파고든다. 살충제 역설은 같은 테스트만 되풀이하면 더는 결함이 나오지 않는 것이다.",
+      optionNotes: [
+        "모든 입력을 다 넣어 볼 수는 없다는 원리다.",
+        null,
+        "같은 테스트를 되풀이하면 새 결함을 못 찾게 되는 원리다.",
+        "결함을 다 고쳐도 사용자가 원한 것이 아니면 소용없다는 원리다.",
+      ],
+      importance: "must",
+    },
   {
     id: "qv2-test-error-terms",
     subject: "develop",

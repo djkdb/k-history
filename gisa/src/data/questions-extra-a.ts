@@ -89,45 +89,40 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "must",
   },
-  {
-    id: "qd-cohesion-rank",
-    subject: "design",
-    sourceId: "d-coupling-cohesion",
-    question: "다음 응집도 중 가장 강한(좋은) 것은?",
-    options: [
-      "기능적 응집도",
-      "논리적 응집도",
-      "시간적 응집도",
-      "우연적 응집도",
-    ],
-    answerIndex: 0,
-    explanation:
-      "응집도는 기능적 > 순차적 > 교환적 > 절차적 > 시간적 > 논리적 > 우연적 순으로 강하다. 기능적 응집도가 가장 좋다.",
-    optionNotes: [
-      null,
-      "논리적 응집도는 비슷해 보이는 일을 묶은 것으로 약한 축이다.",
-      "시간적 응집도는 같은 시점에 실행된다는 이유로 묶은 것이다.",
-      "우연적 응집도가 가장 나쁘다.",
-    ],
-    importance: "must",
-  },
-  {
-    id: "qd-coupling-rank",
-    subject: "design",
-    sourceId: "d-coupling-cohesion",
-    question: "결합도가 가장 낮은(좋은) 것은?",
-    options: ["내용 결합도", "공통 결합도", "제어 결합도", "자료 결합도"],
-    answerIndex: 3,
-    explanation:
-      "결합도는 자료 < 스탬프 < 제어 < 외부 < 공통 < 내용 순으로 강해진다. 낮을수록 좋으므로 자료 결합도가 가장 낫다.",
-    optionNotes: [
-      "내용 결합도가 가장 나쁘다. 남의 내부를 직접 건드린다.",
-      "공통 결합도는 전역 변수를 함께 쓰는 것이다.",
-      "제어 결합도는 무엇을 할지 알려 주는 제어 신호를 넘긴다.",
-      null,
-    ],
-    importance: "must",
-  },
+      {
+      id: "qd-cohesion-rank",
+      subject: "design",
+      sourceId: "d-coupling-cohesion",
+      question: "초기화 모듈처럼 같은 시점에 실행된다는 이유만으로 여러 기능을 모아 둔 응집도는?",
+      options: ["기능적 응집도", "시간적 응집도", "순차적 응집도", "통신적 응집도"],
+      answerIndex: 1,
+      explanation:
+        "시간적(Temporal) 응집도다. '프로그램을 켤 때 한꺼번에 한다'는 시점만 같을 뿐 하는 일은 제각각이라 낮은 축이다. 순차적은 앞의 출력이 뒤의 입력이 되는 것, 통신적은 같은 자료를 함께 쓰는 것이다.",
+      optionNotes: [
+        "하나의 기능을 위해 모든 요소가 모인 가장 높은 응집도다.",
+        null,
+        "앞 요소의 출력이 뒤 요소의 입력이 되는 높은 응집도다.",
+        "같은 입력 자료를 쓰거나 같은 출력을 내는 요소들을 모은 것이다.",
+      ],
+      importance: "must",
+    },
+      {
+      id: "qd-coupling-rank",
+      subject: "design",
+      sourceId: "d-coupling-cohesion",
+      question: "두 모듈이 같은 전역 변수를 함께 참조할 때의 결합도는?",
+      options: ["자료 결합도", "스탬프 결합도", "공통 결합도", "내용 결합도"],
+      answerIndex: 2,
+      explanation:
+        "공통(Common) 결합도다. 전역 변수를 함께 쓰면 한쪽이 값을 바꿀 때 다른 쪽이 흔들리고, 누가 바꿨는지 추적하기도 어렵다. 남의 내부를 직접 건드리는 것은 내용 결합도다.",
+      optionNotes: [
+        "필요한 자료만 매개변수로 넘기는 가장 낮은 결합도다.",
+        "자료 구조를 통째로 넘겨 일부만 쓰는 것이다.",
+        null,
+        "다른 모듈의 내부를 직접 참조하거나 고치는 가장 나쁜 결합도다.",
+      ],
+      importance: "must",
+    },
   {
     id: "qd-solid-dip",
     subject: "design",
@@ -302,29 +297,23 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "high",
   },
-  {
-    id: "qv-test-integration",
-    subject: "develop",
-    sourceId: "v-integration",
-    question:
-      "하향식 통합 테스트에서 아직 만들지 않은 하위 모듈을 대신하는 가짜 모듈은?",
-    options: [
-      "드라이버(Driver)",
-      "스텁(Stub)",
-      "목(Mock) 서버",
-      "테스트 하네스",
-    ],
-    answerIndex: 1,
-    explanation:
-      "하향식은 위에서 아래로 붙이므로 없는 하위 모듈 자리에 스텁을 둔다. 반대로 상향식에서는 상위 모듈 대신 드라이버를 둔다.",
-    optionNotes: [
-      "드라이버는 상향식에서 상위 모듈을 대신한다.",
-      null,
-      "목 서버는 외부 서비스를 흉내 내는 것으로, 이 문항이 묻는 것이 아니다.",
-      "테스트 하네스는 테스트를 돌리는 환경 전체를 이른다.",
-    ],
-    importance: "must",
-  },
+      {
+      id: "qv-test-integration",
+      subject: "develop",
+      sourceId: "v-integration",
+      question: "하향식과 상향식을 함께 써서 위아래 양쪽에서 좁혀 오는 통합 테스트 방식은?",
+      options: ["빅뱅 통합", "샌드위치 통합", "회귀 통합", "점증적 통합"],
+      answerIndex: 1,
+      explanation:
+        "샌드위치(혼합식) 통합이다. 위쪽은 하향식으로 스텁을 쓰고 아래쪽은 상향식으로 드라이버를 써서 가운데에서 만난다. 한꺼번에 붙이는 것은 빅뱅이다.",
+      optionNotes: [
+        "다 만든 뒤 한꺼번에 붙이는 방식이다.",
+        null,
+        "회귀는 통합 방식이 아니라 고친 뒤 다시 돌려 보는 테스트다.",
+        "점증적 통합은 하향식·상향식을 아우르는 말이지 둘을 섞는 방식의 이름이 아니다.",
+      ],
+      importance: "must",
+    },
   {
     id: "qv-complexity-calc",
     subject: "develop",
@@ -383,29 +372,23 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "high",
   },
-  {
-    id: "qv-package-drm",
-    subject: "develop",
-    sourceId: "v-package",
-    question:
-      "디지털 저작권 관리(DRM)의 구성 요소에 대한 설명으로 옳지 않은 것은?",
-    options: [
-      "패키저(Packager)는 콘텐츠를 메타 데이터와 함께 배포 가능한 형태로 묶는다.",
-      "클리어링 하우스(Clearing House)는 사용 권한과 결제를 관리한다.",
-      "DRM 컨트롤러는 배포된 콘텐츠의 이용 권한을 통제한다.",
-      "시큐리티 컨테이너는 사용자가 콘텐츠를 자유롭게 복제하도록 돕는다.",
-    ],
-    answerIndex: 3,
-    explanation:
-      "시큐리티 컨테이너는 콘텐츠를 암호화해 담아 두는 안전한 상자다. 복제를 돕는 것이 아니라 막는 쪽이다.",
-    optionNotes: [
-      null,
-      null,
-      null,
-      "정답. DRM 은 무단 복제를 막는 것이 목적이다.",
-    ],
-    importance: "normal",
-  },
+      {
+      id: "qv-package-drm",
+      subject: "develop",
+      sourceId: "v-package",
+      question: "릴리스 노트의 헤더(Header)에 들어가는 항목으로 보기 어려운 것은?",
+      options: ["문서 이름과 제품 이름", "릴리스 버전과 날짜", "문서 담당자와 연락처", "사용자별 기능 사용 통계"],
+      answerIndex: 3,
+      explanation:
+        "헤더에는 문서 이름·제품 이름·버전·날짜·담당자처럼 '이 문서가 무엇인지'를 밝히는 정보가 들어간다. 사용 통계는 릴리스 노트가 담는 내용이 아니다.",
+      optionNotes: [
+        null,
+        null,
+        null,
+        null,
+      ],
+      importance: "normal",
+    },
   {
     id: "qv-inspection",
     subject: "develop",
@@ -424,28 +407,23 @@ export const EXTRA_A_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "high",
   },
-  {
-    id: "qv-clean-refactor",
-    subject: "develop",
-    sourceId: "v-clean",
-    question: "리팩토링에 대한 설명으로 옳은 것은?",
-    options: [
-      "겉으로 드러나는 동작은 그대로 두고 내부 구조를 고쳐 읽기 쉽게 만드는 것",
-      "새 기능을 넣으면서 동시에 구조도 바꾸는 것",
-      "성능을 올리기 위해 알고리즘을 통째로 바꾸는 것",
-      "버그를 고쳐 동작을 바로잡는 것",
-    ],
-    answerIndex: 0,
-    explanation:
-      "리팩토링은 동작을 바꾸지 않는다는 것이 핵심이다. 동작이 바뀌면 그것은 기능 변경이거나 버그 수정이다.",
-    optionNotes: [
-      null,
-      "기능 추가와 구조 변경은 섞지 않는 것이 원칙이다.",
-      "성능 개선은 최적화이지 리팩토링이 아니다.",
-      "버그 수정은 동작을 바꾸므로 리팩토링이 아니다.",
-    ],
-    importance: "high",
-  },
+      {
+      id: "qv-clean-refactor",
+      subject: "develop",
+      sourceId: "v-clean",
+      question: "리팩터링이 필요하다는 신호로 보는 '나쁜 냄새(Bad Smell)'에 해당하지 않는 것은?",
+      options: ["중복된 코드", "지나치게 긴 메서드", "너무 많은 매개변수", "충분히 갖춰진 단위 테스트"],
+      answerIndex: 3,
+      explanation:
+        "단위 테스트가 갖춰져 있는 것은 오히려 리팩터링을 안전하게 해 주는 조건이다. 나쁜 냄새는 중복 코드·긴 메서드·큰 클래스·긴 매개변수 목록처럼 구조가 무너지고 있다는 징후를 이른다.",
+      optionNotes: [
+        "같은 코드가 여러 곳에 있으면 한 곳만 고쳐 어긋난다.",
+        "한 메서드가 길면 하는 일이 여럿이라는 뜻이다.",
+        "매개변수가 많으면 부르는 쪽이 너무 많은 것을 알아야 한다.",
+        null,
+      ],
+      importance: "high",
+    },
   {
     id: "qv-test-level-v",
     subject: "develop",

@@ -137,24 +137,23 @@ export const GAP_QUESTIONS: WrittenQuestion[] = [
   },
 
   // ── 절차형 SQL ──────────────────────────────────────
-  {
-    id: "qg-proc-trigger",
-    subject: "database",
-    sourceId: "b-procedural",
-    question:
-      "테이블에 INSERT·UPDATE·DELETE 가 일어날 때 사용자가 부르지 않아도 저절로 실행되는 절차형 SQL 은?",
-    options: ["프로시저", "사용자 정의 함수", "트리거", "커서"],
-    answerIndex: 2,
-    explanation:
-      "트리거다. 프로시저는 CALL 로 불러야 하고, 함수는 반드시 값을 하나 돌려준다.",
-    optionNotes: [
-      "프로시저는 CALL 로 부른다.",
-      "함수는 SELECT 안에서 부른다.",
-      null,
-      "커서는 여러 행을 한 줄씩 훑기 위한 것이다.",
-    ],
-    importance: "must",
-  },
+      {
+      id: "qg-proc-trigger",
+      subject: "database",
+      sourceId: "b-procedural",
+      question: "사용자 정의 함수가 프로시저와 다른 점으로 옳은 것은?",
+      options: ["CALL 문으로 호출한다", "반드시 값을 하나 반환한다", "이벤트가 일어나면 저절로 실행된다", "예외 처리부를 둘 수 없다"],
+      answerIndex: 1,
+      explanation:
+        "함수는 반드시 값을 하나 돌려주며 그래서 SELECT 문 안에서 쓸 수 있다. CALL 로 부르는 것은 프로시저, 저절로 도는 것은 트리거다.",
+      optionNotes: [
+        "CALL 로 부르는 것은 프로시저다.",
+        null,
+        "저절로 실행되는 것은 트리거다.",
+        "함수에도 EXCEPTION 부를 둘 수 있다.",
+      ],
+      importance: "must",
+    },
   {
     id: "qg-proc-function",
     subject: "database",
@@ -433,20 +432,21 @@ export const GAP_QUESTIONS: WrittenQuestion[] = [
     optionNotes: [null, null, null, "정답. 실행 파일을 만들지 않는다."],
     importance: "high",
   },
-  {
-    id: "qg-lang-paradigm",
-    subject: "language",
-    sourceId: "l-language-type",
-    question: "프로그래밍 언어의 분류와 예가 바르게 짝지어지지 않은 것은?",
-    options: [
-      "절차적 언어 — C, FORTRAN",
-      "객체지향 언어 — Java, C++",
-      "함수형 언어 — LISP, Haskell",
-      "논리형 언어 — COBOL, Pascal",
-    ],
-    answerIndex: 3,
-    explanation: "논리형 언어는 PROLOG 다. COBOL 과 Pascal 은 절차적 언어다.",
-    optionNotes: [null, null, null, "정답. 논리형은 PROLOG 다."],
-    importance: "high",
-  },
+      {
+      id: "qg-lang-paradigm",
+      subject: "language",
+      sourceId: "l-language-type",
+      question: "컴파일 과정의 단계를 순서대로 나열한 것은?",
+      options: ["어휘 분석 → 구문 분석 → 의미 분석 → 최적화 → 목적 코드 생성", "구문 분석 → 어휘 분석 → 의미 분석 → 목적 코드 생성 → 최적화", "의미 분석 → 어휘 분석 → 구문 분석 → 최적화 → 목적 코드 생성", "어휘 분석 → 의미 분석 → 구문 분석 → 목적 코드 생성 → 최적화"],
+      answerIndex: 0,
+      explanation:
+        "원시 코드를 토큰으로 자르고(어휘 분석), 문법에 맞는지 보고(구문 분석), 뜻이 통하는지 보고(의미 분석), 중간 코드를 만들어 다듬은 뒤(최적화) 목적 코드를 낸다.",
+      optionNotes: [
+        null,
+        "토큰으로 자르는 어휘 분석이 먼저다.",
+        "의미 분석은 구문 분석 뒤다.",
+        "구문 분석이 의미 분석보다 앞이다.",
+      ],
+      importance: "high",
+    },
 ];

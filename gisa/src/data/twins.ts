@@ -15,33 +15,20 @@ import { PRACTICAL_QUESTIONS } from "./practical";
  * 우연히 같을 뿐인 것(LRU 5회 ↔ FIFO 5회)은 서로 다른 문항이므로 넣지 않는다.
  */
 export const TWIN_GROUPS: string[][] = [
-  // 필기
-  ["qd-coupling-low", "qd-coupling-rank"],            // 결합도가 가장 낮은 것
-  ["qd-cohesion-high", "qd-cohesion-rank"],           // 응집도가 가장 높은 것
-  ["qb-sql-outer", "qb-join-outer"],                  // LEFT OUTER JOIN
-  ["qb-anomaly", "qb-anomaly-kind"],                  // 삭제 이상
-  ["qb-bcnf", "qb-norm-bcnf"],                        // BCNF 조건
-  ["qb-schema-conceptual", "qb-schema-three"],        // 개념 스키마
-  ["qb-trigger", "qg-proc-trigger"],                  // 트리거
-  ["qv-integration-stub", "qv-test-integration"],     // 하향식 = 스텁
-  ["qv-refactoring", "qv-clean-refactor"],            // 리팩터링의 정의
-  ["qv-test-alpha", "qv2-test-alpha-beta"],           // 알파 = 통제된 환경
-  ["qv-drm", "qv-package-drm"],                       // DRM 구성 요소
-  ["ql-net-layer", "ql-osi-layer"],                   // 라우터 = 네트워크 계층
-  ["ql-os-fit", "ql-os-alloc"],                       // 최적 적합
-  ["ql-lang-paradigm", "qg-lang-paradigm"],           // 논리형 = PROLOG
-  ["ql-java-override", "ql-java-dynamic"],            // 같은 코드·같은 답
-  ["qs-sdn", "qs-new-sdn"],                           // SDN
-  ["qs-cocomo", "qs-cocomo-mode"],                    // COCOMO 조직형
-  ["qs-fp", "qs-fp-estimate"],                        // 기능 점수
-  ["qs-raid5", "qs-raid-level"],                      // RAID 5 / RAID 1
-  ["qs-secure-coding", "qs-secure-coding-input"],     // 입력 데이터 검증 및 표현
-  ["qb-cap", "qb-nosql-cap"],                         // CAP 세 가지
-  ["qs-esb", "qs-method-cbd"],                        // CBD
-  // 실기
-  ["pq-blank-cocomo", "pq-cocomo-organic"],           // COCOMO 조직형
-  ["pq-stub", "pq-driver"].slice(0, 0),               // (서로 다른 것을 묻는다 — 묶지 않는다)
-].filter((g) => g.length > 1);
+  /*
+   * 지금은 비어 있다.
+   *
+   * 처음 이 표를 만들었을 때는 스물세 묶음이 들어 있었다 — 같은 사실을 조금
+   * 다르게 적은 문항들이다. 한 벌에 하나만 내는 것으로 덮어 두었다가,
+   * 짝의 한쪽을 다른 사실을 묻도록 다시 썼다. 결합도는 "가장 낮은 것" 과
+   * "전역 변수를 함께 쓰면?" 으로, COCOMO 는 "조직형" 과 "Putnam 모형" 으로
+   * 갈라졌다. 덮는 대신 채운 셈이라 문제 은행이 스물셋만큼 넓어졌다.
+   *
+   * 표를 지우지 않고 비워 두는 이유는, 나중에 문항을 더하다 같은 것을 두 번
+   * 묻게 될 때가 오기 때문이다. 감사가 그것을 잡아 여기에 적으라고 말한다.
+   * 다시 쓸 수 있으면 다시 쓰고, 그러기 어려우면 여기에 묶어 둔다.
+   */
+];
 
 /** 문항 id → 그 문항이 속한 묶음 번호 */
 export const TWIN_OF: Record<string, number> = {};

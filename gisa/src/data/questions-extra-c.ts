@@ -2,41 +2,40 @@ import type { WrittenQuestion } from "@/lib/types";
 
 /** 보충 문항 — 5과목 정보시스템 구축 관리 */
 export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
-  {
-    id: "qs-cocomo-mode",
-    subject: "system",
-    sourceId: "s-estimation",
-    question:
-      "COCOMO 모형에서 5만 라인 이하의 비교적 단순한 소프트웨어에 적용하는 유형은?",
-    options: [
-      "조직형(Organic)",
-      "반분리형(Semi-detached)",
-      "내장형(Embedded)",
-      "확장형(Extended)",
-    ],
-    answerIndex: 0,
-    explanation:
-      "조직형은 5만 라인 이하의 간단한 업무용 소프트웨어, 반분리형은 30만 라인 이하, 내장형은 30만 라인을 넘는 복잡한 시스템에 쓴다.",
-    optionNotes: [
-      null,
-      "반분리형은 30만 라인 이하다.",
-      "내장형은 30만 라인을 넘는 것이다.",
-      "COCOMO 에 확장형이라는 유형은 없다.",
-    ],
-    importance: "must",
-  },
-  {
-    id: "qs-fp-estimate",
-    subject: "system",
-    sourceId: "s-estimation",
-    question: "기능 점수(FP) 모형에서 비용 산정에 쓰는 요소가 아닌 것은?",
-    options: ["외부 입력", "외부 출력", "내부 논리 파일", "코드 라인 수"],
-    answerIndex: 3,
-    explanation:
-      "기능 점수는 사용자가 보는 기능의 수로 센다 — 외부 입력·출력·조회, 내부 논리 파일, 외부 인터페이스 파일 다섯 가지다. 코드 라인 수로 세는 것은 LOC 기법이다.",
-    optionNotes: [null, null, null, "정답. 라인 수로 세는 것은 LOC 기법이다."],
-    importance: "must",
-  },
+      {
+      id: "qs-cocomo-mode",
+      subject: "system",
+      sourceId: "s-estimation",
+      question: "Rayleigh-Norden 곡선을 이용해 개발 기간에 따른 노력의 분포를 예측하는 비용 산정 모형은?",
+      options: ["COCOMO", "Putnam", "기능 점수(FP)", "델파이"],
+      answerIndex: 1,
+      explanation:
+        "Putnam 모형이다. 이것을 도구로 만든 것이 SLIM 이다. COCOMO 는 규모(LOC)에 계수를 곱해 계산하고, 기능 점수는 사용자가 보는 기능의 수로 센다.",
+      optionNotes: [
+        "LOC 를 바탕으로 유형별 계수를 곱해 계산하는 모형이다.",
+        null,
+        "외부 입력·출력 같은 기능의 수로 규모를 세는 모형이다.",
+        "전문가의 의견을 익명으로 모아 합의에 이르는 기법이다.",
+      ],
+      importance: "must",
+    },
+      {
+      id: "qs-fp-estimate",
+      subject: "system",
+      sourceId: "s-estimation",
+      question: "LOC 기법에서 낙관치 a, 기대치 m, 비관치 b 일 때 예측치를 구하는 식은?",
+      options: ["(a + 4m + b) ÷ 6", "(a + m + b) ÷ 3", "(a + b) ÷ 2", "(a + 2m + b) ÷ 4"],
+      answerIndex: 0,
+      explanation:
+        "(낙관치 + 4 × 기대치 + 비관치) ÷ 6 이다. 가장 그럴듯한 값에 네 배의 무게를 실어, 양 끝의 극단에 휘둘리지 않게 한다.",
+      optionNotes: [
+        null,
+        "셋을 고르게 나누면 기대치의 무게가 사라진다.",
+        "기대치를 빼놓고는 예측치라 할 수 없다.",
+        "무게를 2 로 두는 식은 쓰지 않는다.",
+      ],
+      importance: "must",
+    },
   {
     id: "qs-loc-calc",
     subject: "system",
@@ -91,92 +90,74 @@ export const EXTRA_C_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "must",
   },
-  {
-    id: "qs-raid-level",
-    subject: "system",
-    sourceId: "s-raid-backup",
-    question: "RAID 1 에 대한 설명으로 옳은 것은?",
-    options: [
-      "데이터를 여러 디스크에 나눠 써 속도를 높이지만 중복은 없다.",
-      "같은 데이터를 두 디스크에 똑같이 써 둔다.",
-      "패리티를 여러 디스크에 나눠 저장한다.",
-      "패리티를 전용 디스크 하나에 모아 저장한다.",
-    ],
-    answerIndex: 1,
-    explanation:
-      "RAID 1 은 미러링이다. RAID 0 은 스트라이핑, RAID 5 는 분산 패리티, RAID 3·4 는 전용 패리티 디스크를 쓴다.",
-    optionNotes: [
-      "이것은 RAID 0 이다.",
-      null,
-      "이것은 RAID 5 다.",
-      "이것은 RAID 3·4 다.",
-    ],
-    importance: "high",
-  },
-  {
-    id: "qs-secure-coding-input",
-    subject: "system",
-    sourceId: "s-secure-coding",
-    question:
-      '시큐어 코딩에서 "입력 데이터 검증 및 표현" 항목에 해당하는 취약점은?',
-    options: [
-      "SQL 삽입",
-      "하드코딩된 비밀번호",
-      "적절하지 않은 예외 처리",
-      "메모리 누수",
-    ],
-    answerIndex: 0,
-    explanation:
-      'SQL 삽입·XSS·경로 조작은 모두 입력값을 그대로 믿어서 생기는 문제로 "입력 데이터 검증 및 표현" 항목이다.',
-    optionNotes: [
-      null,
-      '하드코딩된 비밀번호는 "보안 기능" 항목이다.',
-      '예외 처리는 "에러 처리" 항목이다.',
-      '메모리 누수는 "코드 오류" 항목이다.',
-    ],
-    importance: "must",
-  },
-  {
-    id: "qs-method-cbd",
-    subject: "system",
-    sourceId: "s-methodology",
-    question:
-      "이미 만들어 둔 부품(컴포넌트)을 조립해 시스템을 만드는 개발 방법론은?",
-    options: [
-      "구조적 방법론",
-      "정보공학 방법론",
-      "객체지향 방법론",
-      "컴포넌트 기반 방법론",
-    ],
-    answerIndex: 3,
-    explanation:
-      "CBD(Component Based Development)다. 재사용으로 개발 기간을 줄이고 품질을 안정시키는 것이 목적이다.",
-    optionNotes: [
-      "구조적 방법론은 기능을 나눠 내려간다.",
-      "정보공학은 자료를 중심에 둔다.",
-      "객체지향은 객체 단위로 나눈다.",
-      null,
-    ],
-    importance: "high",
-  },
-  {
-    id: "qs-new-sdn",
-    subject: "system",
-    sourceId: "s-network-new",
-    question:
-      "네트워크 장비의 제어 기능과 전달 기능을 분리해, 소프트웨어로 네트워크를 제어하는 기술은?",
-    options: ["SDN", "NFC", "VPN", "SSO"],
-    answerIndex: 0,
-    explanation:
-      "SDN(Software Defined Network)이다. 제어부를 따로 떼어 중앙에서 소프트웨어로 흐름을 정한다.",
-    optionNotes: [
-      null,
-      "NFC 는 10cm 안에서 쓰는 근거리 무선 통신이다.",
-      "VPN 은 공중망 위에 사설망처럼 안전한 통로를 만든다.",
-      "SSO 는 한 번 로그인으로 여러 시스템을 쓰는 것이다.",
-    ],
-    importance: "high",
-  },
+      {
+      id: "qs-raid-level",
+      subject: "system",
+      sourceId: "s-raid-backup",
+      question: "패리티를 두 벌 두어 디스크 두 대가 동시에 고장 나도 복구할 수 있는 RAID 단계는?",
+      options: ["RAID 0", "RAID 1", "RAID 5", "RAID 6"],
+      answerIndex: 3,
+      explanation:
+        "RAID 6 이다. 패리티를 두 벌 두는 만큼 쓸 수 있는 용량이 줄고 쓰기가 느려지는 대신 두 대까지 견딘다. RAID 5 는 한 대까지만 견딘다.",
+      optionNotes: [
+        "나눠 쓰기만 하고 중복이 없어 한 대만 고장 나도 전부 잃는다.",
+        "같은 데이터를 두 디스크에 그대로 복사해 둔다.",
+        "패리티를 한 벌만 분산해 두어 한 대까지 견딘다.",
+        null,
+      ],
+      importance: "high",
+    },
+      {
+      id: "qs-secure-coding-input",
+      subject: "system",
+      sourceId: "s-secure-coding",
+      question: "정보 보안이 지켜야 할 세 가지 목표에 해당하지 않는 것은?",
+      options: ["기밀성(Confidentiality)", "무결성(Integrity)", "가용성(Availability)", "효율성(Efficiency)"],
+      answerIndex: 3,
+      explanation:
+        "기밀성·무결성·가용성이며 앞글자를 따 CIA 라 부른다. 효율성은 성능에 관한 것이지 보안 목표가 아니다.",
+      optionNotes: [
+        "허락받은 사람만 볼 수 있어야 한다.",
+        "허락 없이 바뀌지 않아야 한다.",
+        "필요할 때 쓸 수 있어야 한다.",
+        null,
+      ],
+      importance: "must",
+    },
+      {
+      id: "qs-method-cbd",
+      subject: "system",
+      sourceId: "s-methodology",
+      question: "기업 전체를 대상으로 자료와 업무 절차를 중심에 두고 계획부터 구축까지 진행하는 개발 방법론은?",
+      options: ["구조적 방법론", "정보공학 방법론", "객체지향 방법론", "컴포넌트 기반 방법론"],
+      answerIndex: 1,
+      explanation:
+        "정보공학 방법론이다. 자료를 중심에 두고 전사 계획 → 업무 영역 분석 → 업무 시스템 설계 → 구축으로 내려간다. 기능을 나눠 내려가는 것은 구조적 방법론이다.",
+      optionNotes: [
+        "기능을 위에서 아래로 나누어 가는 방법론이다.",
+        null,
+        "객체를 단위로 나누어 보는 방법론이다.",
+        "이미 만든 부품을 조립하는 방법론이다.",
+      ],
+      importance: "high",
+    },
+      {
+      id: "qs-new-sdn",
+      subject: "system",
+      sourceId: "s-network-new",
+      question: "블루투스 기기들이 그 자리에서 서로 연결해 만드는 소규모 무선 네트워크는?",
+      options: ["피코넷", "메시 네트워크", "VPN", "SDN"],
+      answerIndex: 0,
+      explanation:
+        "피코넷(Piconet)이다. 주인 기기 하나에 종속 기기 여럿이 붙어 즉석에서 만들어지고, 피코넷 여럿이 이어지면 스캐터넷이 된다.",
+      optionNotes: [
+        null,
+        "노드끼리 그물처럼 이어 한쪽이 죽어도 우회하는 망이다.",
+        "공중망 위에 암호화된 통로를 내어 사설망처럼 쓰는 것이다.",
+        "제어부와 전송부를 나눠 소프트웨어로 망을 제어하는 기술이다.",
+      ],
+      importance: "high",
+    },
   {
     id: "qs-new-blockchain",
     subject: "system",

@@ -86,11 +86,11 @@ export const PRACTICAL_MORE: PracticalQuestion[] = [
     sourceId: "s-estimation",
     kind: "term",
     question:
-      "COCOMO 모형에서 5만 라인 이하의 비교적 단순한 소프트웨어에 적용하는 유형을 쓰시오.",
-    answers: ["조직형", "Organic", "조직형(Organic)", "단순형"],
+      "총 35,000 라인이고 개발자 1인당 월 생산성이 500 라인일 때 필요한 노력을 인월(M/M) 단위로 구하시오.",
+    answers: ["70", "70 인월", "70인월", "70 M/M", "70M/M"],
     points: 5,
     explanation:
-      "조직형(Organic)이다. 30만 라인 이하는 반분리형, 30만 라인을 넘으면 내장형이다.",
+      "노력(인월) = 총 라인 수 ÷ 1인당 월 생산성 = 35,000 ÷ 500 = 70 인월이다. 여기에 인원을 나누면 개발 기간이 나온다.",
     importance: "must",
   },
   {

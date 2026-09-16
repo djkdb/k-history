@@ -3,46 +3,40 @@ import type { WrittenQuestion } from "@/lib/types";
 /** 보충 문항 — 3과목 데이터베이스 · 4과목 프로그래밍 언어 */
 export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
   // ── 3과목 · 데이터베이스 구축 ───────────────────────
-  {
-    id: "qb-norm-bcnf",
-    subject: "database",
-    sourceId: "b-normalization",
-    question: "BCNF(보이스-코드 정규형)의 조건으로 옳은 것은?",
-    options: [
-      "모든 속성이 원자값을 가져야 한다.",
-      "부분 함수 종속이 없어야 한다.",
-      "모든 결정자가 후보키여야 한다.",
-      "조인 종속이 없어야 한다.",
-    ],
-    answerIndex: 2,
-    explanation:
-      "BCNF 는 결정자이면서 후보키가 아닌 것을 허용하지 않는다. 제3정규형보다 한 걸음 더 엄격하다.",
-    optionNotes: [
-      "원자값은 제1정규형의 조건이다.",
-      "부분 종속 제거는 제2정규형이다.",
-      null,
-      "조인 종속 제거는 제5정규형이다.",
-    ],
-    importance: "must",
-  },
-  {
-    id: "qb-anomaly-kind",
-    subject: "database",
-    sourceId: "b-anomaly",
-    question:
-      "릴레이션에서 한 튜플을 지웠을 때 의도하지 않은 다른 정보까지 함께 사라지는 현상은?",
-    options: ["삽입 이상", "삭제 이상", "갱신 이상", "종속 이상"],
-    answerIndex: 1,
-    explanation:
-      "삭제 이상이다. 이상 현상은 삽입·삭제·갱신 세 가지이며, 정규화로 없앤다.",
-    optionNotes: [
-      "삽입 이상은 넣고 싶지 않은 값까지 넣어야 하는 것이다.",
-      null,
-      "갱신 이상은 한쪽만 고쳐 값이 어긋나는 것이다.",
-      "종속 이상이라는 말은 쓰지 않는다.",
-    ],
-    importance: "must",
-  },
+      {
+      id: "qb-norm-bcnf",
+      subject: "database",
+      sourceId: "b-normalization",
+      question: "다치 종속(Multi-valued Dependency)을 제거하면 도달하는 정규형은?",
+      options: ["제2정규형", "제3정규형", "BCNF", "제4정규형"],
+      answerIndex: 3,
+      explanation:
+        "제4정규형이다. 원자값(1NF) → 부분 종속(2NF) → 이행 종속(3NF) → 결정자(BCNF) → 다치 종속(4NF) → 조인 종속(5NF) 순으로 걷어 낸다.",
+      optionNotes: [
+        "부분 함수 종속을 제거한 단계다.",
+        "이행 함수 종속을 제거한 단계다.",
+        "모든 결정자가 후보키여야 하는 단계다.",
+        null,
+      ],
+      importance: "must",
+    },
+      {
+      id: "qb-anomaly-kind",
+      subject: "database",
+      sourceId: "b-anomaly",
+      question: "같은 값이 여러 줄에 흩어져 있어 일부만 고치는 바람에 데이터가 서로 어긋나는 현상은?",
+      options: ["삽입 이상", "삭제 이상", "갱신 이상", "참조 이상"],
+      answerIndex: 2,
+      explanation:
+        "갱신 이상이다. 중복된 값을 한곳만 고치면 나머지와 어긋난다. 정규화로 중복을 없애면 사라진다.",
+      optionNotes: [
+        "넣고 싶지 않은 값까지 함께 넣어야 하는 것이다.",
+        "한 줄을 지웠더니 남겨야 할 정보까지 사라지는 것이다.",
+        null,
+        "참조 이상이라는 말은 쓰지 않는다.",
+      ],
+      importance: "must",
+    },
   {
     id: "qb-key-kinds",
     subject: "database",
@@ -82,24 +76,23 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     ],
     importance: "must",
   },
-  {
-    id: "qb-join-outer",
-    subject: "database",
-    sourceId: "b-sql-join",
-    question:
-      "왼쪽 테이블의 행은 모두 남기고, 오른쪽에 짝이 없으면 NULL 로 채우는 조인은?",
-    options: ["INNER JOIN", "LEFT OUTER JOIN", "CROSS JOIN", "SELF JOIN"],
-    answerIndex: 1,
-    explanation:
-      "LEFT OUTER JOIN 이다. INNER JOIN 은 양쪽에 짝이 있는 행만 남긴다.",
-    optionNotes: [
-      "INNER JOIN 은 짝이 없는 행을 버린다.",
-      null,
-      "CROSS JOIN 은 모든 조합을 만든다.",
-      "SELF JOIN 은 같은 테이블을 자기 자신과 잇는다.",
-    ],
-    importance: "must",
-  },
+      {
+      id: "qb-join-outer",
+      subject: "database",
+      sourceId: "b-sql-join",
+      question: "다중 행(Multi-row) 서브쿼리에 사용할 수 없는 연산자는?",
+      options: ["IN", "ANY", "ALL", "="],
+      answerIndex: 3,
+      explanation:
+        "다중 행 서브쿼리는 결과가 여러 줄이므로 = 로 견줄 수 없다. IN·ANY·ALL·EXISTS 를 쓴다. = 는 결과가 한 줄인 단일 행 서브쿼리에만 쓴다.",
+      optionNotes: [
+        "여러 값 가운데 하나와 같으면 참이다.",
+        "여러 값 가운데 어느 하나와만 견주어도 참이면 참이다.",
+        "여러 값 모두와 견주어 참이어야 참이다.",
+        null,
+      ],
+      importance: "must",
+    },
   {
     id: "qb-index-btree",
     subject: "database",
@@ -117,41 +110,40 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     optionNotes: [null, null, "정답. 반대로 말한 보기다.", null],
     importance: "high",
   },
-  {
-    id: "qb-schema-three",
-    subject: "database",
-    sourceId: "b-schema",
-    question:
-      "3단계 스키마 중 데이터베이스 전체의 논리적 구조를 정의하는 것은?",
-    options: ["외부 스키마", "개념 스키마", "내부 스키마", "물리 스키마"],
-    answerIndex: 1,
-    explanation:
-      "개념 스키마는 조직 전체의 논리적 구조다. 외부 스키마는 사용자·응용마다의 관점, 내부 스키마는 실제 저장 구조다.",
-    optionNotes: [
-      "외부 스키마는 사용자 관점이다.",
-      null,
-      "내부 스키마는 물리적 저장 구조다.",
-      "3단계 스키마에서 부르는 이름은 내부 스키마다.",
-    ],
-    importance: "must",
-  },
-  {
-    id: "qb-nosql-cap",
-    subject: "database",
-    sourceId: "b-nosql",
-    question: "CAP 이론에서 말하는 세 가지에 해당하지 않는 것은?",
-    options: [
-      "일관성(Consistency)",
-      "가용성(Availability)",
-      "분할 내성(Partition tolerance)",
-      "원자성(Atomicity)",
-    ],
-    answerIndex: 3,
-    explanation:
-      "CAP 은 일관성·가용성·분할 내성이며 셋을 동시에 만족할 수 없다는 이론이다. 원자성은 트랜잭션 성질(ACID)의 하나다.",
-    optionNotes: [null, null, null, "정답. 원자성은 ACID 쪽이다."],
-    importance: "high",
-  },
+      {
+      id: "qb-schema-three",
+      subject: "database",
+      sourceId: "b-schema",
+      question: "3단계 스키마 중 데이터가 실제로 저장되는 물리적 구조를 정의하는 것은?",
+      options: ["외부 스키마", "개념 스키마", "내부 스키마", "서브 스키마"],
+      answerIndex: 2,
+      explanation:
+        "내부 스키마다. 인덱스와 저장 레코드의 형식처럼 실제로 디스크에 어떻게 놓이는가를 다룬다. 개념 스키마는 조직 전체의 논리 구조다.",
+      optionNotes: [
+        "사용자나 응용 프로그램이 보는 관점이며 여러 개일 수 있다.",
+        "조직 전체의 논리적 구조로 하나만 있다.",
+        null,
+        "외부 스키마를 달리 부르는 이름이다.",
+      ],
+      importance: "must",
+    },
+      {
+      id: "qb-nosql-cap",
+      subject: "database",
+      sourceId: "b-nosql",
+      question: "대량의 데이터 속에 숨어 있는 규칙이나 패턴을 찾아내는 일을 무엇이라 하는가?",
+      options: ["데이터 웨어하우스", "데이터 마트", "데이터 마이닝", "데이터 정제"],
+      answerIndex: 2,
+      explanation:
+        "데이터 마이닝이다. 웨어하우스는 분석하려고 주제별로 모아 둔 저장소, 마트는 그중 일부를 떼어 낸 것, 정제는 잘못된 값을 바로잡는 일이다.",
+      optionNotes: [
+        "분석을 위해 주제별로 모아 둔 저장소다.",
+        "웨어하우스에서 부서나 주제별로 떼어 낸 작은 것이다.",
+        null,
+        "결측값·중복·형식 오류를 바로잡는 일이다.",
+      ],
+      importance: "high",
+    },
   {
     id: "ql-c-array-pointer",
     subject: "language",
@@ -196,16 +188,16 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     sourceId: "l-java-oop",
     question: "다음 Java 프로그램의 출력 결과는?",
     passage:
-      'class A {\n    void print() { System.out.print("A"); }\n}\nclass B extends A {\n    void print() { System.out.print("B"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        A obj = new B();\n        obj.print();\n    }\n}',
-    options: ["A", "B", "AB", "컴파일 오류"],
-    answerIndex: 1,
+      'public class Main {\n    public static void main(String[] args) {\n        int a = 7, b = 2;\n        System.out.print(a / b + " " + a % b + " " + (double) a / b);\n    }\n}',
+    options: ["3 1 3.5", "3.5 1 3.5", "3 1 3", "4 1 3.5"],
+    answerIndex: 0,
     explanation:
-      "참조 변수의 자료형은 A 지만 실제 객체는 B 다. 오버라이딩된 메서드는 실제 객체를 따라가므로 B 가 찍힌다(동적 바인딩).",
+      "정수끼리 나누면 소수점이 버려져 7 / 2 는 3 이다. % 는 나머지라 1 이고, 한쪽을 double 로 바꾸면 실수 나눗셈이 되어 3.5 가 된다. 같은 기호라도 피연산자의 자료형이 결과를 바꾼다.",
     optionNotes: [
-      "오버라이딩은 실제 객체를 따라간다.",
       null,
-      "한 번만 부른다.",
-      "상위 타입으로 하위 객체를 받는 것은 정상이다.",
+      "a / b 는 둘 다 정수라 3 이다.",
+      "(double) 을 붙이면 실수 나눗셈이 되어 3.5 다.",
+      "정수 나눗셈은 반올림하지 않고 버린다.",
     ],
     importance: "must",
   },
@@ -286,41 +278,40 @@ export const EXTRA_B_QUESTIONS: WrittenQuestion[] = [
     optionNotes: [null, null, null, "정답. 긴 작업이 굶을 수 있다."],
     importance: "must",
   },
-  {
-    id: "ql-os-alloc",
-    subject: "language",
-    sourceId: "l-os-memory",
-    question:
-      "빈 공간이 앞에서부터 20KB, 16KB, 8KB 일 때 10KB 작업을 최적 적합(Best Fit)으로 배치하면 어느 곳에 들어가는가?",
-    options: ["20KB", "16KB", "8KB", "배치할 수 없다"],
-    answerIndex: 1,
-    explanation:
-      "최적 적합은 들어갈 수 있는 곳 중 남는 공간이 가장 적은 곳을 고른다. 8KB 에는 들어가지 못하므로 16KB 자리다.",
-    optionNotes: [
-      "20KB 는 최초 적합이 고르는 자리다.",
-      null,
-      "10KB 가 들어가지 못한다.",
-      "들어갈 자리가 있다.",
-    ],
-    importance: "high",
-  },
-  {
-    id: "ql-osi-layer",
-    subject: "language",
-    sourceId: "l-network-osi",
-    question: "OSI 7계층 중 경로 설정(라우팅)과 논리 주소를 다루는 계층은?",
-    options: ["데이터 링크 계층", "네트워크 계층", "전송 계층", "세션 계층"],
-    answerIndex: 1,
-    explanation:
-      "네트워크 계층이 IP 주소로 경로를 정한다. 데이터 링크 계층은 인접 장비 사이의 전달과 MAC 주소를 다룬다.",
-    optionNotes: [
-      "데이터 링크는 물리 주소(MAC)를 쓴다.",
-      null,
-      "전송 계층은 종단 사이의 신뢰성과 포트를 다룬다.",
-      "세션 계층은 연결을 열고 닫는 것을 관리한다.",
-    ],
-    importance: "must",
-  },
+      {
+      id: "ql-os-alloc",
+      subject: "language",
+      sourceId: "l-os-memory",
+      question: "빈 공간이 앞에서부터 20KB, 16KB, 8KB 일 때 10KB 작업을 최초 적합(First Fit)으로 배치하면 어느 곳에 들어가는가?",
+      options: ["20KB", "16KB", "8KB", "배치할 수 없다"],
+      answerIndex: 0,
+      explanation:
+        "최초 적합은 앞에서부터 훑다가 처음 들어갈 수 있는 곳에 넣는다. 20KB 가 첫 번째로 맞으므로 거기에 들어간다. 남는 공간이 가장 적은 16KB 를 고르는 것이 최적 적합이다.",
+      optionNotes: [
+        null,
+        "남는 공간이 가장 적은 곳을 고르는 최적 적합의 답이다.",
+        "8KB 에는 10KB 가 들어가지 못한다.",
+        "들어갈 자리가 있다.",
+      ],
+      importance: "high",
+    },
+      {
+      id: "ql-osi-layer",
+      subject: "language",
+      sourceId: "l-network-osi",
+      question: "OSI 7계층 중 데이터의 암호화·압축과 형식 변환을 맡는 계층은?",
+      options: ["세션 계층", "표현 계층", "응용 계층", "전송 계층"],
+      answerIndex: 1,
+      explanation:
+        "표현(Presentation) 계층이다. 보내는 쪽과 받는 쪽의 자료 표현 방식이 달라도 알아볼 수 있게 맞춰 준다. 세션 계층은 연결을 열고 닫으며 동기점을 관리한다.",
+      optionNotes: [
+        "연결을 열고 닫고 동기점을 관리하는 5계층이다.",
+        null,
+        "HTTP·FTP·SMTP 처럼 사용자에게 서비스를 주는 7계층이다.",
+        "종단 사이의 신뢰성과 포트를 다루는 4계층이다.",
+      ],
+      importance: "must",
+    },
   {
     id: "ql-ip-class",
     subject: "language",
