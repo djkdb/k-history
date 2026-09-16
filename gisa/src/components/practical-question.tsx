@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Check, Eye, X } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Eye, Minus, X } from "lucide-react";
 import { Button, MissBadge, RichText, SubjectBadge } from "@/components/ui";
 import { CONCEPT_MAP } from "@/data/concepts";
 import { gradeByKind, type GradeResult } from "@/lib/grade";
@@ -15,6 +15,7 @@ const KIND_LABEL: Record<PracticalQuestion["kind"], string> = {
   code: "출력 쓰기",
   sql: "SQL 쓰기",
   blank: "빈칸 채우기",
+  essay: "설명 쓰기",
 };
 
 const KIND_HINT: Record<PracticalQuestion["kind"], string> = {
@@ -22,6 +23,7 @@ const KIND_HINT: Record<PracticalQuestion["kind"], string> = {
   code: "줄바꿈과 대소문자까지 그대로 봅니다.",
   sql: "대소문자·줄바꿈·끝의 세미콜론은 보지 않습니다.",
   blank: "빈칸에 들어갈 말만 적으세요.",
+  essay: "한두 문장으로 설명하세요. 채점은 스스로 합니다.",
 };
 
 /**
@@ -60,11 +62,15 @@ export function PracticalQuestionCard({
   const concept = CONCEPT_MAP[q.sourceId];
   const misses = useApp((s) => s.questionMisses[q.id] ?? 0);
   const ref = useRef<HTMLTextAreaElement>(null);
-  const multiline = q.kind === "code" || q.kind === "sql";
+  const multiline = q.kind === "code" || q.kind === "sql" || q.kind === "essay";
+  /** 약술형은 기계가 매기지 않는다 — 기준을 펴 보이고 본인이 매긴다 */
+  const self = q.kind === "essay";
 
   // 문항이 바뀌면 엿본 표시도 같이 지운다. 남겨 두면 다음 문항이
   // 답부터 펼쳐진 채로 뜬다.
   useEffect(() => setPeeked(false), [q.id]);
+  const [rubricOpen, setRubricOpen] = useState(false);
+  useEffect(() => setRubricOpen(false), [q.id]);
 
   const graded = result !== null;
 
@@ -124,7 +130,7 @@ export function PracticalQuestionCard({
         <p className="mt-1.5 text-[11px] text-zinc-500">{KIND_HINT[q.kind]}</p>
       </div>
 
-      {!graded && (
+      {!graded && !self && (
         <div className="mt-3 flex gap-2">
           <Button
             className="flex-1"
@@ -139,6 +145,87 @@ export function PracticalQuestionCard({
             <Eye size={16} />
             모르겠어요
           </Button>
+        </div>
+      )}
+
+      {/*
+        약술형 — 스스로 매기기.
+
+        글자를 맞춰 보는 채점기로는 "IDS 는 탐지해 알리고 IPS 는 그 자리에서
+        차단한다" 와 "막는 쪽이 IPS, 알리는 쪽이 IDS" 를 가를 수 없다. 둘 다
+        맞는 답인데 한쪽을 틀렸다고 하면 배우는 사람이 제 답을 의심하게 된다.
+
+        그래서 먼저 적게 하고, 적은 뒤에야 기준을 편다. 기준을 먼저 보여
+        주면 보고 베낀 것을 제 실력으로 착각한다.
+      */}
+      {!graded && self && !rubricOpen && (
+        <Button
+          className="mt-3 w-full"
+          onClick={() => setRubricOpen(true)}
+          disabled={value.trim().length === 0}
+        >
+          <Eye size={16} />
+          {value.trim().length === 0 ? "적고 나서 기준을 폅니다" : "채점 기준 펴기"}
+        </Button>
+      )}
+
+      {!graded && self && rubricOpen && (
+        <div className="mt-3 rounded-2xl border border-indigo-400/25 bg-indigo-500/[0.08] p-3.5">
+          <p className="text-[12px] font-bold text-indigo-200">모범 답안</p>
+          <p className="mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-100">
+            {q.answers[0]}
+          </p>
+
+          {q.rubric && q.rubric.length > 0 && (
+            <>
+              <p className="mt-3 text-[12px] font-bold text-indigo-200">
+                이 가운데 몇 가지를 담았습니까
+              </p>
+              <ul className="mt-1.5 flex flex-col gap-1">
+                {q.rubric.map((r) => (
+                  <li
+                    key={r}
+                    className="flex gap-2 text-[12.5px] leading-relaxed text-zinc-200"
+                  >
+                    <span aria-hidden className="text-indigo-300">
+                      ·
+                    </span>
+                    <span className="min-w-0 flex-1">{r}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          <p className="mt-3 text-[11.5px] leading-relaxed text-zinc-400">
+            문장이 같을 필요는 없습니다. 담아야 할 것을 담았는지만 보세요.
+          </p>
+
+          <div className="mt-3 flex gap-2">
+            <Button
+              size="sm"
+              className="flex-1"
+              onClick={() => onGrade({ judgement: "correct" }, false)}
+            >
+              다 담았다
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              onClick={() => onGrade({ judgement: "half" }, false)}
+            >
+              반쯤
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              onClick={() => onGrade({ judgement: "wrong" }, false)}
+            >
+              못 담았다
+            </Button>
+          </div>
         </div>
       )}
 
@@ -161,7 +248,9 @@ export function PracticalQuestionCard({
             "mt-4 rounded-2xl border p-3.5",
             result.judgement === "correct" && !peeked
               ? "border-emerald-400/30 bg-emerald-500/10"
-              : "border-rose-400/30 bg-rose-500/10",
+              : result.judgement === "half"
+                ? "border-amber-400/30 bg-amber-500/10"
+                : "border-rose-400/30 bg-rose-500/10",
           )}
         >
           {/*
@@ -172,6 +261,8 @@ export function PracticalQuestionCard({
           <div className="flex items-center gap-1.5">
             {result.judgement === "correct" && !peeked ? (
               <Check size={14} className="text-emerald-300" />
+            ) : result.judgement === "half" ? (
+              <Minus size={14} className="text-amber-300" />
             ) : (
               <X size={14} className="text-rose-300" />
             )}
@@ -180,10 +271,16 @@ export function PracticalQuestionCard({
                 "text-[12px] font-bold",
                 result.judgement === "correct" && !peeked
                   ? "text-emerald-200"
-                  : "text-rose-200",
+                  : result.judgement === "half"
+                    ? "text-amber-200"
+                    : "text-rose-200",
               )}
             >
-              {result.judgement === "correct"
+              {result.judgement === "half"
+                ? showPoints
+                  ? "반쯤 담았습니다 · 0점"
+                  : "반쯤 담았습니다"
+                : result.judgement === "correct"
                 ? peeked
                   ? showPoints
                     ? "답을 보고 적었습니다 · 0점"

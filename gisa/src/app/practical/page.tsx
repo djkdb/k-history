@@ -26,6 +26,7 @@ const KINDS: { id: PracticalKind; label: string }[] = [
   { id: "blank", label: "빈칸" },
   { id: "code", label: "출력" },
   { id: "sql", label: "SQL" },
+  { id: "essay", label: "설명" },
 ];
 
 export default function Page() {

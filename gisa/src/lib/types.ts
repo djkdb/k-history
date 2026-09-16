@@ -50,7 +50,16 @@ export type PracticalKind =
   /** SQL 을 적는다 */
   | "sql"
   /** 빈칸을 채운다 */
-  | "blank";
+  | "blank"
+  /**
+   * 문장으로 설명한다 — 기계가 채점할 수 없어 스스로 매긴다.
+   *
+   * 글자를 맞춰 보는 채점기로는 "IDS 는 탐지하고 알리며, IPS 는 탐지한
+   * 자리에서 차단한다" 와 "IPS 는 막고 IDS 는 알리기만 한다" 를 가를 수
+   * 없다. 둘 다 맞는 답인데 한쪽을 틀렸다고 하면 배우는 사람이 자기 답을
+   * 의심하게 된다. 채점 기준을 펴 보이고 본인이 매기게 한다.
+   */
+  | "essay";
 
 /** 실기 문항 — 고르는 것이 아니라 적는다 */
 export interface PracticalQuestion {
@@ -70,6 +79,11 @@ export interface PracticalQuestion {
    * 가 모두 맞는 답이다. 그래서 하나가 아니라 여러 개를 둔다.
    */
   answers: string[];
+  /**
+   * 약술형 채점 기준 — 이 가운데 몇 가지가 들어갔는지 스스로 짚는다.
+   * 문장을 통째로 맞히는 시험이 아니라, 담아야 할 것을 담았는지의 시험이다.
+   */
+  rubric?: string[];
   /** 이 문항의 배점 */
   points: number;
   explanation: string;

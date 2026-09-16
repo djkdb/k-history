@@ -23,6 +23,7 @@ import {
 import { PRACTICAL, judgePractical } from "@/data/exam";
 import { makePracticalMock } from "@/lib/quiz";
 import { gradeByKind } from "@/lib/grade";
+import type { PracticalKind } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import {
   clearPractical,
@@ -31,12 +32,15 @@ import {
 } from "@/lib/mock-progress";
 import { cn, formatExamClock } from "@/lib/utils";
 
-const KIND_LABEL = {
+const KIND_LABEL: Record<PracticalKind, string> = {
   term: "용어 쓰기",
   code: "출력 쓰기",
   sql: "SQL 쓰기",
   blank: "빈칸 채우기",
-} as const;
+  /* 모의고사에는 나오지 않지만(스스로 매기는 문항은 시간 재는 시험에
+     넣을 수 없다) 자리를 비워 두면 종류가 늘 때마다 여기가 깨진다 */
+  essay: "설명 쓰기",
+};
 
 export function PracticalSession() {
   const params = useSearchParams();

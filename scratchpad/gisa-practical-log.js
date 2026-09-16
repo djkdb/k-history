@@ -46,11 +46,22 @@ const no = (s) => { bad++; console.log("  ✗ " + s); };
     const box = p.locator("textarea, input[type=text]").first();
     if (await box.count()) {
       await box.fill("모름");
-      const grade = p.locator("button", { hasText: /^(채점|채점하기|확인)$/ }).first();
-      if (await grade.count()) await grade.click();
-      else {
-        const any = p.locator("main button").filter({ hasText: /채점/ }).first();
-        if (await any.count()) await any.click();
+      /*
+       * 설명 쓰기(약술형)는 기계가 매기지 않는다. 채점 단추 대신 기준을
+       * 펴고 스스로 고르는 길이라, 그 길도 걸어야 한 벌이 끝난다.
+       */
+      const 펴기 = p.locator("button", { hasText: /채점 기준 펴기/ }).first();
+      if (await 펴기.count()) {
+        await 펴기.click();
+        await p.waitForTimeout(300);
+        await p.locator("button", { hasText: /^못 담았다$/ }).first().click();
+      } else {
+        const grade = p.locator("button", { hasText: /^(채점|채점하기|확인)$/ }).first();
+        if (await grade.count()) await grade.click();
+        else {
+          const any = p.locator("main button").filter({ hasText: /채점/ }).first();
+          if (await any.count()) await any.click();
+        }
       }
       await p.waitForTimeout(350);
     }

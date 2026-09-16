@@ -146,6 +146,14 @@ export function makePracticalMock(
    * 과목마다 target/5 만큼을 먼저 채우고, 딱 떨어지지 않아 남은 몫만
    * 전체에서 메운다.
    */
+  /*
+   * 약술형은 모의고사에 넣지 않는다.
+   *
+   * 스스로 매기는 문항을 시간 재는 시험에 섞으면 점수가 사람의 후함에
+   * 따라 달라져, 합격선을 넘었는지 알 수 없게 된다. 모의고사는 기계가
+   * 똑같이 매길 수 있는 것만 낸다. 약술형은 연습에서 따로 본다.
+   */
+  const AUTO = PRACTICAL_QUESTIONS.filter((q) => q.kind !== "essay");
   const per = Math.floor(target / SUBJECTS.length);
   const picked: PracticalQuestion[] = [];
   const taken = new Set<string>();
@@ -155,7 +163,7 @@ export function makePracticalMock(
     // 실기에도 같은 것을 묻는 짝이 있다 — 한 벌에 하나만 낸다
     const pool = dropTwins(
       shuffle(
-        PRACTICAL_QUESTIONS.filter((q) => q.subject === s.id),
+        AUTO.filter((q) => q.subject === s.id),
         seed + i * 977,
       ),
     );
@@ -172,7 +180,7 @@ export function makePracticalMock(
   }
 
   if (sum < target) {
-    for (const q of shuffle(PRACTICAL_QUESTIONS, seed + 13)) {
+    for (const q of shuffle(AUTO, seed + 13)) {
       if (taken.has(q.id)) continue;
       if (sum + q.points > target) continue;
       picked.push(q);

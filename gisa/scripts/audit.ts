@@ -102,6 +102,22 @@ const fail = (s: string) => problems.push(s);
     if (!q.answers.length) fail(`실기 ${q.id}: 정답이 없다`);
     if (q.points <= 0) fail(`실기 ${q.id}: 배점이 ${q.points}`);
     if (!q.explanation.trim()) fail(`실기 ${q.id}: 해설이 비었다`);
+    /*
+     * 약술형은 기계가 매기지 않는다.
+     *
+     * 채점기를 통과하는지 물어 봐야 뜻이 없다 — 통과하지 못하는 것이 정상
+     * 이다. 대신 스스로 매기는 데 필요한 것이 갖춰졌는지를 본다. 채점 기준이
+     * 없으면 사람이 무엇을 견주어 매겨야 할지 알 수 없어, 그냥 다 맞았다고
+     * 누르게 된다.
+     */
+    if (q.kind === "essay") {
+      if (!q.rubric?.length) fail(`실기 ${q.id}: 약술형인데 채점 기준이 없다`);
+      if ((q.rubric?.length ?? 0) < 2)
+        fail(`실기 ${q.id}: 채점 기준이 ${q.rubric?.length}개뿐이다 (둘 이상)`);
+      if (q.answers[0].length < 40)
+        fail(`실기 ${q.id}: 약술형 모범 답안이 너무 짧다 (${q.answers[0].length}자)`);
+      continue;
+    }
     // ★ 적어 둔 정답이 채점기를 통과하는가
     for (const a of q.answers) {
       const r = gradeByKind(q.kind, a, q.answers);
@@ -239,6 +255,15 @@ const fail = (s: string) => problems.push(s);
       }
       if (new Set(p.map((q) => q.id)).size !== p.length) {
         fail("실기 한 벌 안에 같은 문항이 두 번 들어간다");
+        break;
+      }
+      /*
+       * 스스로 매기는 문항이 섞이면 점수가 사람의 후함에 따라 달라져
+       * 합격선을 넘었는지 알 수 없게 된다. 한 벌에 하나도 없어야 한다.
+       */
+      const 약술 = p.filter((q) => q.kind === "essay");
+      if (약술.length) {
+        fail(`모의고사에 약술형이 ${약술.length}문항 섞였다 (${약술[0].id})`);
         break;
       }
     }

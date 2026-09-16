@@ -1,3 +1,5 @@
+import type { PracticalKind } from "@/lib/types";
+
 /**
  * 실기 필답형 채점.
  *
@@ -75,7 +77,14 @@ function partsLike(raw: string, want: number): string[] {
   return bySpace.length === want ? bySpace : byMark;
 }
 
-export type Judgement = "correct" | "wrong" | "empty";
+/**
+ * "half" 는 약술형에만 쓴다 — 스스로 매길 때의 "반쯤 맞음".
+ *
+ * 문장으로 설명하는 답은 맞고 틀림으로만 가를 수 없다. 핵심 하나는 담고
+ * 하나는 빠뜨린 답을 틀렸다고 하면 배우는 사람이 자기 답을 의심하고,
+ * 맞았다고 하면 빠뜨린 것을 영영 모른다. 가운데 칸을 둔다.
+ */
+export type Judgement = "correct" | "half" | "wrong" | "empty";
 
 export interface GradeResult {
   judgement: Judgement;
@@ -186,10 +195,15 @@ export function gradeSql(input: string, answers: string[]): GradeResult {
 
 /** 문항 유형에 맞는 채점기를 고른다 */
 export function gradeByKind(
-  kind: "term" | "code" | "sql" | "blank",
+  kind: PracticalKind,
   input: string,
   answers: string[],
 ): GradeResult {
+  /*
+   * 약술형은 기계가 매기지 않는다. 글자를 맞춰 보는 방식으로는 같은 뜻의
+   * 다른 문장을 틀렸다고 하게 된다. 채점 기준을 펴 보이고 본인이 매긴다.
+   */
+  if (kind === "essay") return { judgement: "empty" };
   if (kind === "code") return gradeOutput(input, answers);
   if (kind === "sql") return gradeSql(input, answers);
   return grade(input, answers);
