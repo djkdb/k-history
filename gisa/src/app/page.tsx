@@ -277,8 +277,49 @@ export default function Home() {
       {/* 홈 화면에 얹는 법 — 급한 말이 아니라 첫 화면을 밀어내지 않는 자리에 둔다 */}
       <InstallHint />
 
+      {/*
+        시험 직전 모드.
+
+        시험이 코앞이면 개념을 처음부터 읽을 시간이 없다. 그때는 "무엇을
+        볼지" 고르는 것조차 시간을 잡아먹으므로, 값이 큰 것부터 펼쳐 둔
+        화면 하나로 보낸다. 남은 날이 이레 안으로 들어오면 맨 위로 올린다.
+      */}
+      {left !== null && left >= 0 && left <= 7 && (
+        <Link href="/cram">
+          <Card className="mt-4 border-rose-400/30 bg-rose-500/10">
+            <div className="flex items-center gap-2.5">
+              <span className="text-lg">🔥</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold text-rose-200">
+                  시험 직전 모드
+                </p>
+                <p className="mt-0.5 text-[12px] text-zinc-400">
+                  {left === 0 ? "오늘이 시험입니다" : `${left}일 남았습니다`} ·
+                  값이 큰 것부터 펼쳐 두었습니다
+                </p>
+              </div>
+              <ArrowRight size={16} className="shrink-0 text-rose-300" />
+            </div>
+          </Card>
+        </Link>
+      )}
+
       <SectionTitle>실전처럼</SectionTitle>
       <div className="flex flex-col gap-2">
+        <Link href="/cram">
+          <Card>
+            <div className="flex items-center gap-2.5">
+              <span className="text-lg">🔥</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold">시험 직전 모드</p>
+                <p className="mt-0.5 text-[12px] text-zinc-500">
+                  30분·1시간·3시간 — 남은 시간만큼만 읽고 덮으세요
+                </p>
+              </div>
+              <ArrowRight size={16} className="shrink-0 text-zinc-500" />
+            </div>
+          </Card>
+        </Link>
         <Link href="/mock">
           <Card>
             <div className="flex items-center gap-2.5">

@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Clock, FileText, Play } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Clock,
+  FileText,
+  NotebookPen,
+  Play,
+} from "lucide-react";
 import { Button, Card, SectionTitle } from "@/components/ui";
 import {
   SUBJECTS,
@@ -156,6 +163,14 @@ export default function Page() {
                       );
                     })}
                   </div>
+                  {/* 그때 무엇을 틀렸는지로 바로 갈 수 있게 한다 */}
+                  <Link
+                    href={`/mock/note?at=${a.startedAt}`}
+                    className="-mx-1 -mb-1 mt-2.5 inline-flex items-center gap-1 px-1 pb-1 text-[12px] font-semibold text-indigo-300"
+                  >
+                    <NotebookPen size={13} />
+                    오답 노트
+                  </Link>
                 </Card>
               ))}
           </div>

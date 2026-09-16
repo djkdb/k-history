@@ -11,6 +11,7 @@ import {
   Clock,
   Flag,
   Home,
+  NotebookPen,
   X,
 } from "lucide-react";
 import { Button, Card, ProgressBar, SectionTitle } from "@/components/ui";
@@ -109,6 +110,11 @@ export function MockSession() {
         score: verdict.score,
         passed: verdict.passed,
         bySubject,
+        // 나중에 오답 노트에서 이 시험지를 그대로 다시 펴기 위한 것들
+        seed,
+        qids: questions.map((q) => q.id),
+        picks: answers,
+        wrongSourceIds: [...new Set(wrong)],
       },
       [...new Set(wrong)],
     );
@@ -117,6 +123,7 @@ export function MockSession() {
     bySubject,
     questions,
     recordMockAttempt,
+    seed,
     startedAt,
     submitted,
     verdict,
@@ -330,14 +337,24 @@ export function MockSession() {
         )}
 
         <div className="mt-6 flex flex-col gap-2">
-          <Link href="/mock">
+          {/*
+            점수만 보고 나오면 다음에 같은 문제를 또 틀린다. 결과 화면을
+            떠나기 전에 "무엇을, 왜" 로 갈 수 있는 길을 맨 위에 둔다.
+          */}
+          <Link href={`/mock/note?at=${startedAt}`}>
             <Button size="lg" className="w-full">
-              모의고사 목록으로
+              <NotebookPen size={16} />
+              오답 노트 보기
             </Button>
           </Link>
           <Link href="/review">
             <Button size="lg" variant="outline" className="w-full">
               틀린 개념 복습하기
+            </Button>
+          </Link>
+          <Link href="/mock">
+            <Button size="lg" variant="ghost" className="w-full">
+              모의고사 목록으로
             </Button>
           </Link>
         </div>
