@@ -247,7 +247,13 @@ function routesOf(root) {
       if (!items.length) continue;
         // 글씨가 보이는 그림을 먼저 찍어 둔다 — 실제로 칠해진 글씨 색을 여기서 찾는다
         const shotOn = PNG.sync.read(await p.screenshot());
-      await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
+      await p.addStyleTag({ content: /*
+         * ⚠️ 취소선도 같이 감춰야 한다. color 만 투명하게 하면
+         *    text-decoration-color 는 그대로 남아, 글자 한가운데를 가로지르는
+         *    그 선의 색을 "바탕" 으로 집게 된다. 토익의 틀린 예문(취소선)이
+         *    6.4:1 인데 4.07:1 로 찍힌 까닭이 이것이었다.
+         */
+        "*{color:transparent !important;text-decoration-color:transparent !important;text-shadow:none !important}" });
         await p.waitForTimeout(120);
         const img = PNG.sync.read(await p.screenshot());
         /*

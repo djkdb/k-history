@@ -68,7 +68,7 @@ async function 재기(p, 이름, theme) {
   const got = await p.evaluate(COLLECT);
   if (!got.out.length) return [0, 0];
   const on = PNG.sync.read(await p.screenshot());
-  await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
+  await p.addStyleTag({ content: "*{color:transparent !important;text-decoration-color:transparent !important;text-shadow:none !important}" });
   await p.waitForTimeout(120);
   const off = PNG.sync.read(await p.screenshot());
   /* 넣은 style 만 걷어낸다 — 새로고침하면 눌러서 만든 화면이 사라진다 */
