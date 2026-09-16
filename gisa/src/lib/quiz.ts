@@ -3,6 +3,7 @@ import type { SubjectId } from "@/data/exam";
 import { SUBJECTS } from "@/data/exam";
 import { QUESTIONS } from "@/data/questions";
 import { PRACTICAL_QUESTIONS } from "@/data/practical";
+import { dropTwins } from "@/data/twins";
 
 /** 씨앗으로 도는 난수 — 같은 씨앗이면 늘 같은 시험지가 나온다 */
 function rng(seed: number) {
@@ -76,7 +77,11 @@ export function makeQuiz(opts: QuizOptions): WrittenQuestion[] {
     const set = new Set(opts.onlySourceIds);
     pool = pool.filter((q) => set.has(q.sourceId));
   }
-  return shuffle(pool, opts.seed)
+  /*
+   * 같은 것을 묻는 짝은 한 벌에 하나만 낸다.
+   * 섞은 뒤에 걸러야 어느 쪽이 남을지도 씨앗을 따른다.
+   */
+  return dropTwins(shuffle(pool, opts.seed))
     .slice(0, opts.count)
     .map((q) => shuffleOptions(q, opts.seed));
 }
@@ -90,9 +95,18 @@ export function makeQuiz(opts: QuizOptions): WrittenQuestion[] {
  */
 export function makeWrittenMock(seed = Date.now()): WrittenQuestion[] {
   return SUBJECTS.flatMap((s, i) =>
-    shuffle(
-      QUESTIONS.filter((q) => q.subject === s.id),
-      seed + i * 1000,
+    /*
+     * 같은 것을 묻는 짝은 한 벌에 하나만 낸다.
+     *
+     * ⚠️ 이것을 빠뜨렸을 때 500 회를 만들어 세어 보니, 시험지 넷 중 셋(75%)에
+     *    같은 것을 두 번 묻는 짝이 들어 있었다. 100 문항 중 두 문항이 같은
+     *    말을 하면, 푸는 사람은 모르는 것을 하나 덜 만나는 셈이다.
+     */
+    dropTwins(
+      shuffle(
+        QUESTIONS.filter((q) => q.subject === s.id),
+        seed + i * 1000,
+      ),
     )
       .slice(0, s.count)
       .map((q) => shuffleOptions(q, seed)),
@@ -127,9 +141,12 @@ export function makePracticalMock(
   let sum = 0;
 
   for (const [i, s] of SUBJECTS.entries()) {
-    const pool = shuffle(
-      PRACTICAL_QUESTIONS.filter((q) => q.subject === s.id),
-      seed + i * 977,
+    // 실기에도 같은 것을 묻는 짝이 있다 — 한 벌에 하나만 낸다
+    const pool = dropTwins(
+      shuffle(
+        PRACTICAL_QUESTIONS.filter((q) => q.subject === s.id),
+        seed + i * 977,
+      ),
     );
     let mine = 0;
     for (const q of pool) {

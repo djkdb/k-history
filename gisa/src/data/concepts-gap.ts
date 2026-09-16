@@ -96,7 +96,7 @@ export const GAP_CONCEPTS: Concept[] = [
       "사용자 정의 함수(User Defined Function)는 프로시저와 비슷하지만 반드시 값을 하나 돌려주며, SELECT 문 안에서 쓸 수 있다.",
       "트리거(Trigger)는 INSERT·UPDATE·DELETE 가 일어날 때 저절로 도는 것이다. 직접 부르지 않는다는 점이 프로시저와 가장 다르다.",
       "절차형 SQL 의 구성: DECLARE(선언부) → BEGIN/END(실행부) → EXCEPTION(예외부).",
-      "커서(Cursor)는 여러 행을 한 줄씩 훑기 위한 것이다. OPEN → FETCH → CLOSE 순으로 쓴다.",
+      "커서(Cursor)는 여러 행을 한 줄씩 훑기 위한 것이다. DECLARE(선언) → OPEN(열기) → FETCH(한 줄씩 가져오기) → CLOSE(닫기) 순으로 쓴다. 선언이 첫 단계다 — 시험은 OPEN 부터 시작하는 보기를 섞어 낸다.",
     ],
     examPoint:
       '프로시저·함수·트리거를 바꿔 내는 문제가 가장 흔하다. "직접 호출하지 않는다"는 트리거, "반드시 값을 반환한다"는 함수다.',
@@ -105,7 +105,7 @@ export const GAP_CONCEPTS: Concept[] = [
       { term: "프로시저", mean: "CALL 로 부른다. 반환값이 없어도 된다" },
       { term: "함수", mean: "반드시 값을 하나 돌려준다" },
       { term: "트리거", mean: "이벤트가 나면 저절로 돈다" },
-      { term: "커서", mean: "OPEN → FETCH → CLOSE" },
+      { term: "커서", mean: "DECLARE → OPEN → FETCH → CLOSE" },
     ],
     traps: [
       {

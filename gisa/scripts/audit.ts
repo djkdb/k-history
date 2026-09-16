@@ -19,6 +19,7 @@ import { gradeByKind } from "@/lib/grade";
 import { readFileSync } from "node:fs";
 import { flatSyllabus } from "@/data/syllabus";
 import { makeWrittenMock, makePracticalMock, shuffleOptions } from "@/lib/quiz";
+import { TWIN_GROUPS, TWIN_OF, unknownTwinIds } from "@/data/twins";
 
 const problems: string[] = [];
 const warn: string[] = [];
@@ -419,6 +420,79 @@ const fail = (s: string) => problems.push(s);
     fail(
       "설정 화면이 문항 수를 손으로 적고 있다 — 자료에서 세어 쓰게 해야 한다",
     );
+}
+
+// ── 같은 것을 두 번 묻고 있지 않은가 ─────────────────────
+{
+  /*
+   * 감사는 오랫동안 "문제문이 똑같은가" 만 봤다. 그런데 물음을 조금 바꿔
+   * 적으면 그대로 통과한다 — "결합도가 가장 낮은 것은?" 과 "결합도가 가장
+   * 낮은(좋은) 것은?" 은 다른 글이지만 같은 문항이다. 실제로 그렇게 새어
+   * 든 짝이 스물세 묶음이었고, 한 회 시험지의 75%에 그중 하나가 들어 있었다.
+   *
+   * 그래서 두 가지를 본다.
+   *   ① 새로 들어온 짝이 있는가 (정답이 같고 묻는 바가 겹치는데 묶이지 않은 것)
+   *   ② 실제로 나가는 시험지에 짝이 함께 실리는가
+   */
+  for (const id of unknownTwinIds())
+    fail(`쌍둥이 묶음에 적힌 ${id} 가 문항 목록에 없다`);
+
+  const norm = (t: string) =>
+    t.replace(/\([^)]*\)/g, "").replace(/[^가-힣a-zA-Z0-9]/g, "").toLowerCase();
+  const STOP = new Set(["다음", "중", "것은", "옳은", "옳지", "않은", "설명으로", "해당하는",
+    "무엇이라", "하는가", "가장", "바르게", "나열한", "순서대로", "짝지은", "대한", "위한",
+    "이란", "무엇인가", "고르시오", "때"]);
+  const terms = (t: string) =>
+    new Set(t.replace(/[^가-힣a-zA-Z0-9\s]/g, " ").split(/\s+/)
+      .map((w) => w.replace(/(은|는|이|가|을|를|의|에|으로|로|와|과|에서|까지|부터)$/, ""))
+      .filter((w) => w.length >= 2 && !STOP.has(w)));
+  const overlap = (a: Set<string>, b: Set<string>) => {
+    let hit = 0;
+    for (const x of a) if (b.has(x)) hit++;
+    return hit / (a.size + b.size - hit);
+  };
+
+  let found = 0;
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    for (let j = i + 1; j < QUESTIONS.length; j++) {
+      const A = QUESTIONS[i], B = QUESTIONS[j];
+      if (norm(A.options[A.answerIndex]) !== norm(B.options[B.answerIndex])) continue;
+      /*
+       * ⚠️ 코드 문항은 물음이 "다음 C 프로그램의 출력 결과는?" 으로 모두 같고
+       *    지문(코드)이 다르다. 답 숫자까지 우연히 같으면 쌍둥이로 잘못 센다.
+       *    지문이 있으면 지문까지 견준다.
+       */
+      const pa = norm(A.passage ?? ""), pb = norm(B.passage ?? "");
+      if ((pa || pb) && pa !== pb) continue;
+      /*
+       * ⚠️ 계산 문항은 답이 우연히 같을 수 있다. "프레임 3개, 참조열 1,2,3,1,4,2
+       *    를 LRU 로" 와 "2,3,2,1,5,2 를 FIFO 로" 는 둘 다 5회지만 서로 다른
+       *    알고리즘을 묻는 별개 문항이다. 처음에는 이것을 쌍둥이로 적었다.
+       *    묻는 말에 박힌 숫자가 다르면 계산이 다른 것이므로 같은 문항이 아니다.
+       */
+      const digits = (t: string) => (t.match(/\d+/g) ?? []).join(",");
+      if (digits(A.question) !== digits(B.question)) continue;
+      const sim = Math.max(
+        overlap(terms(A.question), terms(B.question)),
+        overlap(terms(A.explanation), terms(B.explanation)),
+      );
+      if (sim < 0.45) continue;                       // 어지간히 겹칠 때만
+      if (TWIN_OF[A.id] !== undefined && TWIN_OF[A.id] === TWIN_OF[B.id]) continue;
+      found++;
+      fail(`같은 것을 묻는 짝이 묶이지 않았다: ${A.id} ↔ ${B.id} (정답 "${A.options[A.answerIndex]}")`);
+    }
+  }
+  if (!found) console.log(`  쌍둥이 ${TWIN_GROUPS.length}묶음 — 새로 샌 것 없음`);
+
+  // 실제로 나가는 시험지에 짝이 함께 실리는가
+  let together = 0;
+  for (let seed = 1; seed <= 200; seed++) {
+    const ids = new Set(makeWrittenMock(seed).map((q) => q.id));
+    for (const g of TWIN_GROUPS)
+      if (g.filter((id) => ids.has(id)).length > 1) together++;
+  }
+  if (together) fail(`시험지 200회에 같은 것을 두 번 묻는 짝이 ${together}번 실렸다`);
+  else console.log("  시험지 200회 — 같은 것을 두 번 묻지 않는다");
 }
 
 // ── 요약 ────────────────────────────────────────────────
