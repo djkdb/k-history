@@ -30,3 +30,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 scripts/__pycache__/
+
+# 검사기를 돌리는 동안 계속 쓰이는 기록 — 저장소에 둘 것이 아니다
+scratchpad/out-*.txt
