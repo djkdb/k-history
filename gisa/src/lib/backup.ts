@@ -23,6 +23,7 @@ export type BackupData = Pick<
   | "settings"
   | "stats"
   | "studiedIds"
+  | "questionMisses"
   | "clearedQuestionIds"
   | "clearedPracticalIds"
   | "reviewCards"
@@ -44,6 +45,7 @@ function snapshot(): BackupData {
     settings: s.settings,
     stats: s.stats,
     studiedIds: s.studiedIds,
+    questionMisses: s.questionMisses,
     clearedQuestionIds: s.clearedQuestionIds,
     clearedPracticalIds: s.clearedPracticalIds,
     reviewCards: s.reviewCards,
@@ -153,6 +155,7 @@ export function restoreBackup(file: BackupFile): void {
     settings: d.settings ?? s.settings,
     stats: d.stats ?? s.stats,
     studiedIds: d.studiedIds ?? s.studiedIds,
+    questionMisses: d.questionMisses ?? s.questionMisses,
     clearedQuestionIds: d.clearedQuestionIds ?? s.clearedQuestionIds,
     clearedPracticalIds: d.clearedPracticalIds ?? s.clearedPracticalIds,
     reviewCards: d.reviewCards ?? s.reviewCards,
@@ -193,6 +196,7 @@ function restoreInto(d: BackupData): void {
     settings: d.settings ?? s.settings,
     stats: d.stats ?? s.stats,
     studiedIds: d.studiedIds ?? s.studiedIds,
+    questionMisses: d.questionMisses ?? s.questionMisses,
     clearedQuestionIds: d.clearedQuestionIds ?? s.clearedQuestionIds,
     clearedPracticalIds: d.clearedPracticalIds ?? s.clearedPracticalIds,
     reviewCards: d.reviewCards ?? s.reviewCards,
@@ -233,6 +237,17 @@ export function mergeBackup(file: BackupFile): void {
         ),
       },
       studiedIds: [...new Set([...s.studiedIds, ...(d.studiedIds ?? [])])],
+      /* 같은 문항을 폰에서 둘, 태블릿에서 셋 틀렸다면 더 많은 쪽을 남긴다.
+         더하면 한쪽에서 옮겨 온 기록을 두 번 세게 된다. */
+      questionMisses: Object.fromEntries(
+        [
+          ...Object.keys(s.questionMisses),
+          ...Object.keys(d.questionMisses ?? {}),
+        ].map((k) => [
+          k,
+          Math.max(s.questionMisses[k] ?? 0, d.questionMisses?.[k] ?? 0),
+        ]),
+      ),
       clearedQuestionIds: [
         ...new Set([...s.clearedQuestionIds, ...(d.clearedQuestionIds ?? [])]),
       ],

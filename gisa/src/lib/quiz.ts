@@ -67,6 +67,8 @@ export interface QuizOptions {
   seed: number;
   /** 이 개념들만 — 오답 노트에서 쓴다 */
   onlySourceIds?: string[];
+  /** 이 문항들만 — 여러 번 틀린 문항을 다시 풀 때 */
+  onlyIds?: string[];
 }
 
 /** 연습용 필기 문제 뽑기 */
@@ -76,6 +78,15 @@ export function makeQuiz(opts: QuizOptions): WrittenQuestion[] {
   if (opts.onlySourceIds?.length) {
     const set = new Set(opts.onlySourceIds);
     pool = pool.filter((q) => set.has(q.sourceId));
+  }
+  /*
+   * 문항 자체를 찍어서 고를 때 쓴다. 개념 단위(onlySourceIds)로는 "이 개념에서
+   * 한 번 틀렸다" 까지만 좁혀지는데, 여러 번 틀린 그 문항만 다시 보고 싶을
+   * 때가 있다.
+   */
+  if (opts.onlyIds?.length) {
+    const set = new Set(opts.onlyIds);
+    pool = pool.filter((q) => set.has(q.id));
   }
   /*
    * 같은 것을 묻는 짝은 한 벌에 하나만 낸다.

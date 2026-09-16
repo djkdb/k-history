@@ -99,9 +99,8 @@ export function MockSession() {
   useEffect(() => {
     if (!submitted || recorded.current) return;
     recorded.current = true;
-    const wrong = questions
-      .filter((q, i) => answers[i] !== q.answerIndex)
-      .map((q) => q.sourceId);
+    const missed = questions.filter((q, i) => answers[i] !== q.answerIndex);
+    const wrong = missed.map((q) => q.sourceId);
     recordMockAttempt(
       {
         track: "written",
@@ -117,6 +116,7 @@ export function MockSession() {
         wrongSourceIds: [...new Set(wrong)],
       },
       [...new Set(wrong)],
+      missed.map((q) => q.id),
     );
   }, [
     answers,

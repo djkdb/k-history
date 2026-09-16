@@ -30,6 +30,27 @@ export default function WrongPage() {
   const hydrated = useApp((s) => s.hydrated);
   const cards = useApp((s) => s.reviewCards);
   const wrongIds = useApp((s) => s.wrongIds);
+  const questionMisses = useApp((s) => s.questionMisses);
+
+  /**
+   * 문항 하나하나.
+   *
+   * 개념 줄 세우기만으로는 "데이터베이스가 약하다" 까지밖에 안 나온다.
+   * 정작 시험장에서 손이 멎는 것은 그 개념의 어느 한 문항이다. 두 번
+   * 이상 틀린 문항을 그대로 꺼내 둔다.
+   */
+  const hard = useMemo(() => {
+    const byId = new Map<string, { text: string; track: "written" | "practical"; sourceId: string }>();
+    for (const q of QUESTIONS)
+      byId.set(q.id, { text: q.question, track: "written", sourceId: q.sourceId });
+    for (const q of PRACTICAL_QUESTIONS)
+      byId.set(q.id, { text: q.question, track: "practical", sourceId: q.sourceId });
+    return Object.entries(questionMisses)
+      .filter(([id, n]) => n >= 2 && byId.has(id))
+      .map(([id, n]) => ({ id, misses: n, ...byId.get(id)! }))
+      .sort((a, b) => b.misses - a.misses)
+      .slice(0, 20);
+  }, [questionMisses]);
 
   const rows = useMemo(() => {
     const byId = new Map(cards.map((c) => [c.sourceId, c]));
@@ -97,6 +118,40 @@ export default function WrongPage() {
               </Button>
             </Link>
           </div>
+
+          {hard.length > 0 && (
+            <>
+              <SectionTitle>두 번 이상 틀린 문항 {hard.length}개</SectionTitle>
+              <div className="flex flex-col gap-2">
+                {hard.map((h) => (
+                  <Link key={h.id} href={`/concept/${h.sourceId}`}>
+                    <Card className="border-rose-500/25 bg-rose-500/[0.05]">
+                      <div className="flex items-start gap-2">
+                        <p className="min-w-0 flex-1 text-[12.5px] leading-relaxed text-zinc-200">
+                          {h.text}
+                        </p>
+                        <span className="flex shrink-0 items-center gap-1 rounded-full bg-rose-500/20 px-2 py-0.5 text-[11px] font-bold text-rose-200">
+                          <RotateCw size={11} />
+                          {h.misses}번
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] text-zinc-500">
+                        {h.track === "written" ? "필기" : "실기"} ·{" "}
+                        {CONCEPT_MAP[h.sourceId]?.title ?? ""}
+                      </p>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-2.5">
+                <Link href="/quiz?hard=1">
+                  <Button size="sm" variant="outline" className="w-full">
+                    <Brain size={14} />두 번 이상 틀린 문항만 다시 풀기
+                  </Button>
+                </Link>
+              </div>
+            </>
+          )}
 
           <SectionTitle>개념 {rows.length}개</SectionTitle>
           <div className="flex flex-col gap-2">

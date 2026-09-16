@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Check, Eye, X } from "lucide-react";
-import { Button, RichText, SubjectBadge } from "@/components/ui";
+import { Button, MissBadge, RichText, SubjectBadge } from "@/components/ui";
 import { CONCEPT_MAP } from "@/data/concepts";
 import { gradeByKind, type GradeResult } from "@/lib/grade";
 import type { PracticalQuestion } from "@/lib/types";
+import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 const KIND_LABEL: Record<PracticalQuestion["kind"], string> = {
@@ -57,6 +58,7 @@ export function PracticalQuestionCard({
 }) {
   const [peeked, setPeeked] = useState(false);
   const concept = CONCEPT_MAP[q.sourceId];
+  const misses = useApp((s) => s.questionMisses[q.id] ?? 0);
   const ref = useRef<HTMLTextAreaElement>(null);
   const multiline = q.kind === "code" || q.kind === "sql";
 
@@ -79,6 +81,7 @@ export function PracticalQuestionCard({
         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-zinc-400">
           {KIND_LABEL[q.kind]}
         </span>
+        <MissBadge misses={misses} />
         {showPoints && (
           <span className="ml-auto text-[12px] font-bold tabular-nums text-indigo-200">
             {q.points}점

@@ -54,6 +54,21 @@ function QuizScreen() {
   const [seed, setSeed] = useState(1);
 
   const wrongIds = useApp((s) => s.wrongIds);
+  const questionMisses = useApp((s) => s.questionMisses);
+  /**
+   * 두 번 이상 틀린 문항.
+   *
+   * 한 번 틀린 것은 실수일 수 있지만, 두 번 틀린 문항은 아직 모르는 것이다.
+   * 개념 단위로 거르는 "틀린 것만" 과 달리 그 문항을 그대로 다시 낸다.
+   */
+  const hardIds = useMemo(
+    () =>
+      Object.entries(questionMisses)
+        .filter(([, n]) => n >= 2)
+        .map(([id]) => id),
+    [questionMisses],
+  );
+  const [hardOnly, setHardOnly] = useState(() => params.get("hard") === "1");
   const clearedIds = useApp((s) => s.clearedQuestionIds);
   const recordAnswer = useApp((s) => s.recordAnswer);
   const recordQuiz = useApp((s) => s.recordQuiz);
@@ -72,8 +87,12 @@ function QuizScreen() {
       const set = new Set(wrongIds);
       p = p.filter((q) => set.has(q.sourceId));
     }
+    if (hardOnly) {
+      const set = new Set(hardIds);
+      p = p.filter((q) => set.has(q.id));
+    }
     return p;
-  }, [subject, wrongOnly, wrongIds]);
+  }, [subject, wrongOnly, wrongIds, hardOnly, hardIds]);
 
   function start() {
     const s = Math.floor(Math.random() * 1_000_000) + 1;
@@ -82,6 +101,7 @@ function QuizScreen() {
       count: Math.min(count, pool.length),
       seed: s,
       onlySourceIds: wrongOnly ? wrongIds : undefined,
+      onlyIds: hardOnly ? hardIds : undefined,
     });
     if (picked.length === 0) return;
     setSeed(s);
@@ -155,6 +175,12 @@ function QuizScreen() {
           <Chip active={wrongOnly} onClick={() => setWrongOnly((w) => !w)}>
             틀린 것만 {wrongIds.length > 0 && `(${wrongIds.length})`}
           </Chip>
+          {/* 두 번 이상 틀린 문항이 쌓이기 전에는 보여 줘도 누를 것이 없다 */}
+          {hardIds.length > 0 && (
+            <Chip active={hardOnly} onClick={() => setHardOnly((h) => !h)}>
+              두 번 이상 틀린 문항 ({hardIds.length})
+            </Chip>
+          )}
         </div>
 
         <Card className="mt-5">

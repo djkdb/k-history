@@ -157,6 +157,22 @@ export function ImportanceBadge({
   );
 }
 
+/**
+ * 나에게 어려운 문항.
+ *
+ * 문항에 난이도를 매겨 붙이지 않는다. 같은 문항이라도 누구에게는 한 번에
+ * 풀리고 누구에게는 세 번째도 틀린다. 지어낸 등급 대신 실제로 내가 틀린
+ * 횟수를 센다 — 두 번부터 말해 준다. 한 번은 실수일 수 있다.
+ */
+export function MissBadge({ misses }: { misses: number }) {
+  if (misses < 2) return null;
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-rose-400/30 bg-rose-500/10 px-2 py-0.5 text-[11px] font-semibold text-rose-200">
+      여태 {misses}번 틀림
+    </span>
+  );
+}
+
 export function ProgressBar({
   value,
   max,

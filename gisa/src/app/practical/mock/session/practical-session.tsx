@@ -111,9 +111,10 @@ export function PracticalSession() {
   useEffect(() => {
     if (!submitted || recorded.current) return;
     recorded.current = true;
-    const wrong = questions
-      .filter((q, i) => results[i].judgement !== "correct")
-      .map((q) => q.sourceId);
+    const missed = questions.filter(
+      (q, i) => results[i].judgement !== "correct",
+    );
+    const wrong = missed.map((q) => q.sourceId);
     recordMockAttempt(
       {
         track: "practical",
@@ -126,6 +127,7 @@ export function PracticalSession() {
         max,
       },
       [...new Set(wrong)],
+      missed.map((q) => q.id),
     );
   }, [
     earned,

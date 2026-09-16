@@ -24,6 +24,14 @@ export interface AppState {
   clearedQuestionIds: string[];
   /** 맞힌 적 있는 실기 문항 */
   clearedPracticalIds: string[];
+  /**
+   * 문항마다 여태 몇 번 틀렸는가.
+   *
+   * 난이도는 문항에 붙어 있는 표가 아니라 사람마다 다르다. 누구에게 쉬운
+   * 문항이 누구에게는 세 번째도 틀리는 문항이다. 지어낸 등급을 붙이는 대신
+   * 실제로 틀린 횟수를 세어 "나에게 어려운 문항" 을 가려낸다.
+   */
+  questionMisses: Record<string, number>;
   reviewCards: ReviewCard[];
   quizHistory: QuizResult[];
   wrongIds: string[];
@@ -37,7 +45,11 @@ export interface AppState {
   recordPractical: (id: string, sourceId: string, correct: boolean) => void;
   reviewItem: (sourceId: string, correct: boolean) => void;
   recordQuiz: (r: QuizResult) => void;
-  recordMockAttempt: (a: MockAttempt, wrongSourceIds: string[]) => void;
+  recordMockAttempt: (
+    a: MockAttempt,
+    wrongSourceIds: string[],
+    wrongQuestionIds?: string[],
+  ) => void;
   addStudyMinutes: (min: number) => void;
   resetAll: () => void;
 }
@@ -94,6 +106,22 @@ function bumpWrong(wrong: string[], id: string, correct: boolean): string[] {
   return wrong.includes(id) ? wrong : [...wrong, id];
 }
 
+/**
+ * 문항별로 틀린 횟수를 센다.
+ *
+ * 맞혔다고 0 으로 되돌리지 않는다. 세 번 틀리고 한 번 맞힌 문항은 여전히
+ * 나에게 어려운 문항이고, 시험장에서 또 틀릴 자리다. 지운 셈으로 치면
+ * 그 자리가 안 보이게 된다.
+ */
+function bumpMiss(
+  misses: Record<string, number>,
+  id: string,
+  correct: boolean,
+): Record<string, number> {
+  if (correct) return misses;
+  return { ...misses, [id]: (misses[id] ?? 0) + 1 };
+}
+
 export const useApp = create<AppState>()(
   persist(
     (set) => ({
@@ -101,6 +129,7 @@ export const useApp = create<AppState>()(
       settings: null,
       stats: initialStats,
       studiedIds: [],
+      questionMisses: {},
       clearedQuestionIds: [],
       clearedPracticalIds: [],
       reviewCards: [],
@@ -132,6 +161,7 @@ export const useApp = create<AppState>()(
 
       recordAnswer: (id, sourceId, correct) =>
         set((s) => ({
+          questionMisses: bumpMiss(s.questionMisses, id, correct),
           clearedQuestionIds:
             correct && !s.clearedQuestionIds.includes(id)
               ? [...s.clearedQuestionIds, id]
@@ -143,6 +173,7 @@ export const useApp = create<AppState>()(
 
       recordPractical: (id, sourceId, correct) =>
         set((s) => ({
+          questionMisses: bumpMiss(s.questionMisses, id, correct),
           clearedPracticalIds:
             correct && !s.clearedPracticalIds.includes(id)
               ? [...s.clearedPracticalIds, id]
@@ -166,7 +197,7 @@ export const useApp = create<AppState>()(
           stats: bumpStreak({ ...s.stats, xp: s.stats.xp + r.correct * 2 }),
         })),
 
-      recordMockAttempt: (attempt, wrongSourceIds) =>
+      recordMockAttempt: (attempt, wrongSourceIds, wrongQuestionIds = []) =>
         set((s) => {
           // 채점 뒤 되돌아가 다시 제출하면 같은 응시를 두 번 세면 안 된다
           const prev = s.mockAttempts.findIndex(
@@ -180,6 +211,14 @@ export const useApp = create<AppState>()(
 
           let reviewCards = s.reviewCards;
           let wrongIds = s.wrongIds;
+          /*
+           * 같은 응시를 다시 제출해도 틀린 횟수는 한 번만 센다. 채점 화면에서
+           * 뒤로 갔다 다시 내면 틀린 횟수가 두 배가 되어 버린다.
+           */
+          let questionMisses = s.questionMisses;
+          if (!again)
+            for (const qid of wrongQuestionIds)
+              questionMisses = bumpMiss(questionMisses, qid, false);
           for (const id of wrongSourceIds) {
             reviewCards = applyReview(reviewCards, id, false);
             wrongIds = bumpWrong(wrongIds, id, false);
@@ -194,7 +233,7 @@ export const useApp = create<AppState>()(
                 xp: s.stats.xp + attempt.score,
                 studyMinutes: s.stats.studyMinutes + minutes,
               });
-          return { mockAttempts, reviewCards, wrongIds, stats };
+          return { mockAttempts, reviewCards, wrongIds, questionMisses, stats };
         }),
 
       addStudyMinutes: (min) =>
@@ -207,6 +246,7 @@ export const useApp = create<AppState>()(
           settings: null,
           stats: initialStats,
           studiedIds: [],
+          questionMisses: {},
           clearedQuestionIds: [],
           clearedPracticalIds: [],
           reviewCards: [],
@@ -225,6 +265,7 @@ export const useApp = create<AppState>()(
         settings: s.settings,
         stats: s.stats,
         studiedIds: s.studiedIds,
+        questionMisses: s.questionMisses,
         clearedQuestionIds: s.clearedQuestionIds,
         clearedPracticalIds: s.clearedPracticalIds,
         reviewCards: s.reviewCards,

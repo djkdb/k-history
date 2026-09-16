@@ -20,6 +20,9 @@ const SAVED = {
     settings: { track: "written", examDate: "2026-11-13" },
     stats: { xp: 777, streak: 5, lastStudyDate: "2026-09-16", studyMinutes: 320 },
     studiedIds: ["d-sdlc", "d-oop", "b-normalization"],
+    /* 문항별로 틀린 횟수 — 새로 생긴 칸이다. 백업에 안 담기면 폰을 바꿀 때
+       "나에게 어려운 문항" 이 통째로 사라진다. */
+    questionMisses: { "qd-sdlc-spiral": 3, "qd-xp-values": 2 },
     clearedQuestionIds: ["qd-sdlc-spiral", "qd-xp-values"],
     clearedPracticalIds: ["pq-encapsulation"],
     reviewCards: [
@@ -71,7 +74,10 @@ const SAVED = {
   else no("형식 표시가 이상하다: " + raw.format);
   if (raw.data?.studiedIds?.length === 3 && raw.data?.stats?.xp === 777)
     ok("파일 안에 기록이 온전히 들어 있다");
-  else no("파일 안의 기록이 모자라다");
+  else no("파일 안의 기록이 모자란다");
+  if (raw.data?.questionMisses?.["qd-sdlc-spiral"] === 3)
+    ok("문항별로 틀린 횟수도 담겼다");
+  else no("틀린 횟수가 백업에서 빠졌다: " + JSON.stringify(raw.data?.questionMisses));
 
   // ② 기록을 통째로 지운다 — 새 브라우저로 연다
   const ctx2 = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
@@ -97,6 +103,15 @@ const SAVED = {
   else no("합친 뒤 아무 말이 없다");
   if (/본 개념 3개/.test(after)) ok("기록이 되살아났다 (개념 3개)");
   else no("되살아나지 않았다: " + after.slice(0, 140));
+  /* 화면에 안 드러나는 칸은 저장소를 직접 들여다봐야 한다 */
+  const 되산 = await q.evaluate(() => {
+    try {
+      return JSON.parse(localStorage.getItem("gisa:mirror:gisa-state") || "{}")
+        ?.state?.questionMisses ?? null;
+    } catch { return null; }
+  });
+  if (되산 && 되산["qd-sdlc-spiral"] === 3) ok("문항별 틀린 횟수도 되살아났다");
+  else no("틀린 횟수가 되살아나지 않았다: " + JSON.stringify(되산));
 
   // ④ 다른 화면에서도 진짜로 살아 있는가
   await q.goto(BASE + "/", { waitUntil: "networkidle" });

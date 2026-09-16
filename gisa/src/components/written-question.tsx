@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { ArrowRight, BookOpen, Check, X } from "lucide-react";
-import { RichText, SubjectBadge } from "@/components/ui";
+import { MissBadge, RichText, SubjectBadge } from "@/components/ui";
 import { CONCEPT_MAP } from "@/data/concepts";
 import type { WrittenQuestion } from "@/lib/types";
+import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 /**
@@ -35,6 +36,8 @@ export function WrittenQuestionCard({
   linkConcept?: boolean;
 }) {
   const concept = CONCEPT_MAP[q.sourceId];
+  /* 난이도는 문항이 아니라 나에게 달려 있다 — 내가 틀린 횟수를 쓴다 */
+  const misses = useApp((s) => s.questionMisses[q.id] ?? 0);
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -45,6 +48,7 @@ export function WrittenQuestionCard({
           </span>
         )}
         {showSubject && <SubjectBadge subject={q.subject} />}
+        <MissBadge misses={misses} />
       </div>
 
       <h2 className="mt-3 text-[16px] font-bold leading-relaxed">
