@@ -52,8 +52,13 @@ export function Button({
       "bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-500 hover:to-indigo-600",
     ghost: "bg-white/5 text-zinc-200 hover:bg-white/10",
     outline: "border border-white/15 text-zinc-200 hover:bg-white/5",
+    /*
+     * ⚠️ red-500 → red-600 이던 것을 한 칸 어둡게 내렸다. 흰 글씨가 그라데이션
+     *    왼쪽 위(밝은 쪽)에서 4.14:1 밖에 안 나왔다 — 기준은 4.5 다. 하필
+     *    "모든 기록 지우기" 처럼 되돌릴 수 없는 단추가 그랬다.
+     */
     danger:
-      "bg-gradient-to-br from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25",
+      "bg-gradient-to-br from-red-600 to-red-700 text-white shadow-lg shadow-red-500/25",
   };
   const sizes = {
     sm: "px-3 py-1.5 text-sm rounded-lg",
