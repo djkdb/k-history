@@ -4,6 +4,7 @@ import { PRACTICAL_MORE } from "@/data/practical-more";
 import { PRACTICAL2_QUESTIONS } from "@/data/practical2";
 import { PRACTICAL_CODE } from "@/data/practical-code";
 import { PRACTICAL_GAP } from "@/data/practical-gap";
+import { PRACTICAL_FILL } from "@/data/practical-fill";
 
 /**
  * 실기 — 필답형.
@@ -355,6 +356,7 @@ export const PRACTICAL_QUESTIONS: PracticalQuestion[] = [
   ...PRACTICAL2_QUESTIONS,
   ...PRACTICAL_CODE,
   ...PRACTICAL_GAP,
+  ...PRACTICAL_FILL,
 ];
 
 export const PRACTICAL_MAP: Record<string, PracticalQuestion> =
