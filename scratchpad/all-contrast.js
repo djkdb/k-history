@@ -30,19 +30,29 @@ function serve(root, port) {
  * 몇 초를 기다릴지 미리 정할 일이 아니다. 투명도가 더 안 바뀔 때까지 본다.
  * 일부러 흐리게 둔 곳(opacity-50 같은)은 값이 처음부터 고정이라 바로 멈춘다.
  */
-async function settle(p, 최대 = 2400) {
+async function settle(p, 최대 = 3000) {
   const 읽기 = () =>
     p.evaluate(() =>
       [...document.querySelectorAll("*")]
         .map((e) => getComputedStyle(e).opacity)
         .join(","),
     );
+  /*
+   * ⚠️ 바로 견주기 시작하면 안 된다. 화면에 들어온 것을 보고 시작하는
+   *    애니메이션(in-view)은 내려간 직후에는 아직 시작도 안 했다. 그 순간
+   *    두 번 읽으면 똑같으니 "멈췄다" 고 보고 찍어 버린다 — 한국사 사건
+   *    화면이 1.26:1 로 나온 까닭이 이것이었다. 시작할 틈을 먼저 준다.
+   */
+  await p.waitForTimeout(450);
   let 앞 = await 읽기();
+  let 같은횟수 = 0;
   for (let 잰 = 0; 잰 < 최대; 잰 += 120) {
     await p.waitForTimeout(120);
     const 뒤 = await 읽기();
-    if (뒤 === 앞) return;
+    /* 한 번 같다고 끝내지 않는다 — 두 번 잇따라 같아야 멈춘 것이다 */
+    같은횟수 = 뒤 === 앞 ? 같은횟수 + 1 : 0;
     앞 = 뒤;
+    if (같은횟수 >= 2) return;
   }
 }
 

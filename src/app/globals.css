@@ -110,6 +110,23 @@ body {
   box-shadow: var(--glass-shadow);
 }
 
+/*
+  바닥 길잡이 막대.
+
+  ⚠️ 여태 glass-strong(흰색 6%)을 그대로 쓰고 있었다. 뒤가 비치는 것이
+     장점이지만, 길잡이는 늘 떠 있어서 뒤에 무엇이 오는지 고를 수가 없다.
+     실제로 사건 화면의 남색 그림판이 뒤에 오자 "학습·퀴즈·기출·복습·검색"
+     다섯 글자가 2.46:1 까지 떨어졌다. 다른 네 앱은 이미 불투명한 nav-bg 를
+     쓰고 있었고, 한국사만 남아 있었다. 시험 막대(exam-bar)를 불투명하게
+     바꾼 것과 같은 까닭이다 — 늘 읽혀야 하는 것은 뒤를 비추지 않는다.
+*/
+.nav-bar {
+  background: var(--nav-bg);
+  border: 1px solid var(--glass-line-strong);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: var(--nav-shadow);
+}
+
 .glass-strong {
   background: var(--glass-bg-strong);
   border: 1px solid var(--glass-line-strong);
@@ -380,10 +397,14 @@ body {
 }
 :root,
 [data-theme="dark"] {
+  --nav-bg: rgba(18, 18, 21, 0.92);
+  --nav-shadow: 0 -2px 24px rgba(0, 0, 0, 0.5);
   --exam-bar-bg: rgba(16, 16, 19, 0.94);
   --exam-bar-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 [data-theme="light"] {
+  --nav-bg: rgba(255, 255, 255, 0.94);
+  --nav-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
   --exam-bar-bg: rgba(255, 255, 255, 0.96);
   --exam-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
