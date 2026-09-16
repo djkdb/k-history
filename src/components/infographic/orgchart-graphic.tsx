@@ -127,7 +127,8 @@ export function OrgChartGraphic({
                       key={c}
                       data-child
                       style={{ opacity: 1 }}
-                      className="rounded-md bg-white/5 px-1 py-0.5 text-center text-[9px] leading-tight text-zinc-400"
+                      /* 9px 는 획이 너무 가늘어 zinc-400 으로는 4.44:1 이었다 */
+                      className="rounded-md bg-white/5 px-1 py-0.5 text-center text-[9px] font-semibold leading-tight text-zinc-300"
                     >
                       {c}
                     </li>

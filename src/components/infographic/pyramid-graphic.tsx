@@ -57,8 +57,9 @@ export function PyramidGraphic({
               >
                 {/* 옅은 시대색 판 위 — text-white 면 밝은 테마에서 묻힌다 */}
                 <p className="text-xs font-bold text-zinc-100">{level.label}</p>
+                {/* 옅은 시대색 판 위 10px — zinc-400 으로는 4.39:1 이었다 */}
                 {level.desc && (
-                  <p className="mt-0.5 text-[10px] leading-tight text-zinc-400">
+                  <p className="mt-0.5 text-[10px] leading-tight text-zinc-300">
                     {level.desc}
                   </p>
                 )}
