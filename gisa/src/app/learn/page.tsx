@@ -12,6 +12,7 @@ import {
   SectionTitle,
 } from "@/components/ui";
 import { CONCEPTS } from "@/data/concepts";
+import { searchConcepts, searchQuestions } from "@/lib/search";
 import { SUBJECTS, subjectInk, type SubjectId } from "@/data/exam";
 import { useApp, useTrack } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,16 @@ function LearnScreen() {
 
   const done = list.filter((c) => studied.includes(c.id)).length;
 
+  /*
+   * 찾는 중에는 훑어보기 칸을 걷어낸다.
+   *
+   * 찾은 결과 밑에 과목 칸과 전체 목록이 그대로 붙어 있으면, 무엇이 결과이고
+   * 무엇이 원래 있던 목록인지 구별되지 않는다. 찾는 동안에는 결과만 둔다.
+   */
+  const needle = q.trim();
+  const hits = useMemo(() => searchConcepts(needle, track), [needle, track]);
+  const qHits = useMemo(() => searchQuestions(needle, track), [needle, track]);
+
   return (
     <main className="py-6">
       <h1 className="text-2xl font-bold tracking-tight">학습</h1>
@@ -91,12 +102,21 @@ function LearnScreen() {
             aria-label="개념 찾기"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="개념 이름이나 내용으로 찾기"
+            placeholder="개념·본문·문항까지 찾기"
             className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-zinc-600"
           />
         </div>
       </Card>
 
+      {needle ? (
+        <SearchResults
+          needle={needle}
+          hits={hits}
+          qHits={qHits}
+          studied={studied}
+        />
+      ) : (
+      <>
       {/*
         과목 하나를 깊이 보는 길.
 
@@ -219,6 +239,115 @@ function LearnScreen() {
           );
         })}
       </div>
+      </>
+      )}
     </main>
+  );
+}
+
+/** 찾은 것 */
+function SearchResults({
+  needle,
+  hits,
+  qHits,
+  studied,
+}: {
+  needle: string;
+  hits: ReturnType<typeof searchConcepts>;
+  qHits: ReturnType<typeof searchQuestions>;
+  studied: string[];
+}) {
+  if (hits.length === 0 && qHits.length === 0) {
+    return (
+      <Card className="mt-4">
+        <p className="text-[13px] font-semibold">
+          “{needle}” 이(가) 든 곳이 없습니다
+        </p>
+        <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-400">
+          개념 본문과 문항까지 다 뒤졌습니다. 줄여서 다시 쳐 보세요 — 이를테면
+          “벨레이디의 모순” 대신 “벨레이디”, “3-way handshake” 대신
+          “handshake”.
+        </p>
+      </Card>
+    );
+  }
+  return (
+    <>
+      <SectionTitle>
+        개념 {hits.length}개
+        {qHits.length > 0 ? ` · 문항 ${qHits.length}개` : ""}
+      </SectionTitle>
+      <div className="flex flex-col gap-2">
+        {hits.map((h) => (
+          <Link key={h.concept.id} href={`/concept/${h.concept.id}`}>
+            <Card className="transition-transform active:scale-[0.99]">
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 text-[15px]">
+                  {SUBJECTS.find((s) => s.id === h.concept.subject)?.symbol}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <p className="min-w-0 flex-1 text-[14px] font-bold">
+                      {h.concept.title}
+                    </p>
+                    {studied.includes(h.concept.id) && (
+                      <Check size={13} className="shrink-0 text-emerald-400" />
+                    )}
+                    {/* 왜 이것이 나왔는지 — 걸린 자리를 밝힌다 */}
+                    <span className="shrink-0 rounded-full bg-white/[0.07] px-1.5 py-0.5 text-[10px] font-semibold text-zinc-300">
+                      {h.where}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[12px] leading-relaxed text-zinc-300">
+                    <Mark text={h.snippet} needle={needle} />
+                  </p>
+                </div>
+                <ImportanceBadge level={h.concept.importance} compact />
+              </div>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      {qHits.length > 0 && (
+        <>
+          <SectionTitle>이 말이 나오는 문항</SectionTitle>
+          <div className="flex flex-col gap-2">
+            {qHits.slice(0, 20).map((h) => (
+              <Link key={h.id} href={`/concept/${h.sourceId}`}>
+                <Card className="transition-transform active:scale-[0.99]">
+                  <p className="text-[12.5px] leading-relaxed text-zinc-200">
+                    <Mark text={h.text} needle={needle} />
+                  </p>
+                  <p className="mt-1.5 text-[11px] text-zinc-500">
+                    {h.conceptTitle}에서 나온 문항
+                  </p>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          {qHits.length > 20 && (
+            <p className="mt-2 text-[11.5px] text-zinc-500">
+              문항 {qHits.length - 20}개가 더 있습니다. 더 좁혀 쳐 보세요.
+            </p>
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+/** 찾은 말에 밑줄 — 어디가 걸렸는지 눈으로 바로 잡게 */
+function Mark({ text, needle }: { text: string; needle: string }) {
+  const at = text.toLowerCase().indexOf(needle.toLowerCase());
+  if (at < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, at)}
+      <b className="rounded bg-indigo-400/20 px-0.5 font-bold text-indigo-100">
+        {text.slice(at, at + needle.length)}
+      </b>
+      {text.slice(at + needle.length)}
+    </>
   );
 }
