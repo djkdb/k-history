@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { BottomNav } from "@/components/bottom-nav";
+import { MotionGuard } from "@/components/motion-guard";
 import { SWRegister } from "@/components/sw-register";
 
 export const metadata: Metadata = {
@@ -56,7 +57,9 @@ export default function RootLayout({
         />
       </head>
       <body className="app-bg min-h-dvh">
-        <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28">{children}</div>
+        <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28">
+          <MotionGuard>{children}</MotionGuard>
+        </div>
         <BottomNav />
         <SWRegister />
       </body>

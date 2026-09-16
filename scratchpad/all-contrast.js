@@ -96,7 +96,16 @@ function routesOf(root) {
     const routes = routesOf(root);
     console.log(`\n━━━ ${name} — 화면 ${routes.length}개 ━━━`);
     for (const theme of ["dark", "light"]) {
-      const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
+      /*
+       * 움직임을 꺼 달라고 하고 잰다.
+       *
+       * ⚠️ 이 앱들의 카드는 Framer Motion 이 opacity 0 → 1 로 띄우며 들어온다.
+       *    내려간 직후에 사진을 찍으면 아직 반쯤 투명한 글씨를 찍게 되어,
+       *    멀쩡한 한국사 /flow 가 980곳 미달로 나왔다. reducedMotion 을 켜면
+       *    Framer 가 애니메이션을 건너뛴다 — 앱 쪽에도 MotionConfig 를 달아
+       *    이 설정을 실제로 따르게 고쳤다.
+       */
+      const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1, reducedMotion: "reduce" });
       await ctx.addInitScript(([t, pre, seed]) => {
         try {
           localStorage.setItem(pre + ":theme", t);
@@ -151,7 +160,15 @@ function routesOf(root) {
           (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" }),
           band * 780,
         );
-        await p.waitForTimeout(band === 0 ? 0 : 200);
+        /*
+         * 카드가 다 떠오를 때까지 기다린다.
+         *
+         * ⚠️ reducedMotion 을 켜도 Framer 는 투명도 페이드를 남긴다(이동·확대만
+         *    끈다 — 어지럼증과 무관해서다). 0.45초짜리 페이드 도중에 찍으면
+         *    반쯤 투명한 글씨를 재게 되어, 멀쩡한 한국사 /flow 가 980곳 미달로
+         *    나왔다. 실제로 내려간 직후 카드 투명도가 0.37 이었다.
+         */
+        await p.waitForTimeout(700);
         const got = await p.evaluate(() => {
           const cv = document.createElement("canvas"); cv.width = cv.height = 1;
           const c2 = cv.getContext("2d", { willReadFrequently: true });
