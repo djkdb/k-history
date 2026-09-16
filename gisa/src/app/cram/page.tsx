@@ -110,9 +110,14 @@ export default function CramPage() {
           <Card key={from.id}>
             <div className="flex items-center gap-2">
               <SubjectBadge subject={from.subject} />
+              {/*
+                누를 수 있는 것은 24×24 보다 커야 손가락이 닿는다(WCAG 2.5.8).
+                13px 한 줄은 높이가 20px 이라 빗나간다 — 보이는 것은 그대로
+                두고 위아래 여백만 넓혀 누를 자리를 만든다.
+              */}
               <Link
                 href={`/concept/${from.id}`}
-                className="min-w-0 flex-1 truncate text-[13px] font-bold hover:text-indigo-300"
+                className="-my-1 min-w-0 flex-1 truncate py-1 text-[13px] font-bold hover:text-indigo-300"
               >
                 {from.title}
               </Link>
@@ -150,7 +155,7 @@ export default function CramPage() {
               <SubjectBadge subject={c.subject} />
               <Link
                 href={`/concept/${c.id}`}
-                className="min-w-0 flex-1 truncate text-[13px] font-bold hover:text-indigo-300"
+                className="-my-1 min-w-0 flex-1 truncate py-1 text-[13px] font-bold hover:text-indigo-300"
               >
                 {c.title}
               </Link>

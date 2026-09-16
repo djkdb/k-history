@@ -12,7 +12,7 @@ import {
   SectionTitle,
 } from "@/components/ui";
 import { CONCEPTS } from "@/data/concepts";
-import { SUBJECTS, type SubjectId } from "@/data/exam";
+import { SUBJECTS, subjectInk, type SubjectId } from "@/data/exam";
 import { useApp, useTrack } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -97,7 +97,46 @@ function LearnScreen() {
         </div>
       </Card>
 
-      <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
+      {/*
+        과목 하나를 깊이 보는 길.
+
+        칩은 목록을 거르기만 한다. "이 과목에서 무엇이 남았는가" 는 출제기준
+        주요항목대로 묶어 봐야 보이므로, 과목마다 따로 들어가는 칸을 둔다.
+      */}
+      <SectionTitle>과목별로 보기</SectionTitle>
+      <div className="grid grid-cols-2 gap-2">
+        {SUBJECTS.map((s) => {
+          const inSub = CONCEPTS.filter(
+            (c) => c.subject === s.id && c.tracks.includes(track),
+          );
+          if (!inSub.length) return null;
+          const done = inSub.filter((c) => studied.includes(c.id)).length;
+          return (
+            <Link key={s.id} href={`/learn/${s.id}`}>
+              <Card className="h-full">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[15px]">{s.symbol}</span>
+                  <span className="min-w-0 flex-1 truncate text-[13px] font-bold">
+                    {s.short}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-[11.5px] tabular-nums text-zinc-500">
+                  {done} / {inSub.length}
+                </p>
+                <ProgressBar
+                  className="mt-1.5"
+                  value={done}
+                  max={inSub.length}
+                  color={subjectInk(s.id)}
+                />
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+
+      <SectionTitle>개념 훑어보기</SectionTitle>
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
         <Chip active={subject === null} onClick={() => setSubject(null)}>
           전체 {CONCEPTS.filter((c) => c.tracks.includes(track)).length}
         </Chip>

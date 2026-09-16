@@ -146,6 +146,16 @@ export default function Page() {
           기록은 이 기기 안에만 있습니다. 서버로 보내지 않으므로 다른 기기와
           이어지지 않고, 브라우저 저장소를 지우면 함께 사라집니다.
         </p>
+        {/*
+          그렇게 말해 놓고 옮길 방법을 주지 않으면 폰을 바꾸는 사람은 몇 주치를
+          그냥 잃는다. 경고 바로 아래에 길을 둔다.
+        */}
+        <Link href="/backup">
+          <Button variant="outline" size="sm" className="mt-3 w-full">
+            <Download size={14} />
+            파일로 저장하거나 옮기기
+          </Button>
+        </Link>
       </Card>
 
       <SectionTitle>기록 지우기</SectionTitle>
