@@ -5,7 +5,7 @@
   "description": "한국사를 외우는 것이 아니라 평생 기억하게 만든다 — 장기기억 강화 한국사 학습 시스템",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/build-sw.mjs",
     "start": "npx serve out",
     "lint": "next lint",
     "preview": "npm run build && npx wrangler dev",

@@ -5,7 +5,7 @@
   "description": "정보처리기사 — 필기는 다섯 과목 과락까지, 실기는 손으로 써 보며",
   "scripts": {
     "dev": "next dev -p 3400",
-    "build": "next build",
+    "build": "next build && node scripts/build-sw.mjs",
     "start": "npx serve out",
     "deploy": "npm run audit && npm run build && npx wrangler deploy",
     "audit": "npx tsc --noEmit -p tsconfig.json && node -e \"require('jiti')(process.cwd(),{alias:{'@':process.cwd()+'/src'}})('./scripts/audit.ts')\"",

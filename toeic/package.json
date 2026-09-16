@@ -5,7 +5,7 @@
   "description": "TOEIC — 듣기는 귀로, 독해는 눈으로, 어휘는 반복으로",
   "scripts": {
     "dev": "next dev -p 3200",
-    "build": "next build && node scripts/precache.mjs",
+    "build": "next build && node scripts/build-sw.mjs",
     "start": "npx serve out",
     "deploy": "npm run audit && npm run build && npx wrangler deploy",
     "audit": "npx tsc --noEmit -p tsconfig.json && node -e \"require('jiti')(process.cwd(),{alias:{'@':process.cwd()+'/src'}})('./scripts/audit.ts')\"",
