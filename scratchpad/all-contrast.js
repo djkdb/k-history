@@ -19,6 +19,33 @@ function serve(root, port) {
   });
   return new Promise((res) => s.listen(port, () => res(s)));
 }
+/**
+ * 화면이 멈출 때까지 기다린다.
+ *
+ * ⚠️ 처음에는 700ms 를 고정으로 기다렸다. 그런데 카드마다 최대 0.4초 지연이
+ *    붙어 순서대로 떠오르고(delay: i*0.04), 거기에 0.45초 페이드가 얹히면
+ *    0.85초가 걸린다. 덜 떠오른 글씨를 찍어 한국사 사건 화면이 1.00:1 로
+ *    나왔다 — 글씨색은 (91,91,100) 인데 칠해진 것은 (215,215,217) 이었다.
+ *
+ * 몇 초를 기다릴지 미리 정할 일이 아니다. 투명도가 더 안 바뀔 때까지 본다.
+ * 일부러 흐리게 둔 곳(opacity-50 같은)은 값이 처음부터 고정이라 바로 멈춘다.
+ */
+async function settle(p, 최대 = 2400) {
+  const 읽기 = () =>
+    p.evaluate(() =>
+      [...document.querySelectorAll("*")]
+        .map((e) => getComputedStyle(e).opacity)
+        .join(","),
+    );
+  let 앞 = await 읽기();
+  for (let 잰 = 0; 잰 < 최대; 잰 += 120) {
+    await p.waitForTimeout(120);
+    const 뒤 = await 읽기();
+    if (뒤 === 앞) return;
+    앞 = 뒤;
+  }
+}
+
 function lum([r,g,b]) { const f=(v)=>{const c=v/255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);};
   return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); }
 const ratio=(a,c)=>{const[x,y]=[lum(a),lum(c)].sort((p,q)=>q-p);return (x+0.05)/(y+0.05);};
@@ -51,6 +78,8 @@ const APPS = [
  */
 const CAP = Number(process.env.CAP || 3);
 const ONLY = process.env.ONLY || "";
+/* 한 화면만 파고들 때 — ROUTE=/event/wihwado 처럼 준다 */
+const ROUTE = process.env.ROUTE || "";
 /*
  * 기록이 있어야만 나오는 글씨도 재야 한다.
  *
@@ -88,7 +117,8 @@ function routesOf(root) {
 
 (async () => {
   const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-  let port = 5100, total = 0, bad = 0, emojiSkipped = 0;
+  /* 두 벌을 같이 돌릴 때가 있다 — BASEPORT 로 자리를 비켜 준다 */
+  let port = Number(process.env.BASEPORT || 5100), total = 0, bad = 0, emojiSkipped = 0;
   for (const [name, root, prefix] of APPS) {
     if (ONLY && prefix !== ONLY) { port++; continue; }
     if (!fs.existsSync(root)) { console.log(`${name}: out 없음`); continue; }
@@ -117,6 +147,7 @@ function routesOf(root) {
       const seen = new Set();
       let hits = 0;
       for (const r of routes) {
+        if (ROUTE && r !== ROUTE) continue;
         let okLoad = false;
         for (let k = 0; k < 3 && !okLoad; k++) {
           await p.goto(`http://127.0.0.1:${port}${r}`, { waitUntil: "networkidle" }).catch(() => {});
@@ -168,7 +199,7 @@ function routesOf(root) {
          *    반쯤 투명한 글씨를 재게 되어, 멀쩡한 한국사 /flow 가 980곳 미달로
          *    나왔다. 실제로 내려간 직후 카드 투명도가 0.37 이었다.
          */
-        await p.waitForTimeout(700);
+        await settle(p);
         const got = await p.evaluate(() => {
           const cv = document.createElement("canvas"); cv.width = cv.height = 1;
           const c2 = cv.getContext("2d", { willReadFrequently: true });
@@ -325,6 +356,10 @@ function routesOf(root) {
           if (seen.has(key)) continue;
           seen.add(key);
           bad++;
+          if (process.env.DEBUG)
+            console.log(
+              `    · 글씨색 ${it.rgb.join(",")} · 칠해진색 ${inked ? inked.join(",") : "못찾음"} · 바탕 ${bg.join(",")} · 자리 ${it.x},${it.y} · 칸 ${band}`,
+            );
           console.log(`  ✗ [${theme === "dark" ? "어둡" : "밝음"}] 대비 ${rr.toFixed(2)}:1 (${need}) — "${it.t}" ${Math.round(it.size)}px ${r}`);
         }
         }

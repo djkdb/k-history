@@ -82,15 +82,22 @@ export function TimelineGraphic({
               <div data-node style={{ opacity: 1 }}>
                 <div className="flex items-baseline gap-2">
                   <span
-                    className="text-[11px] font-bold tabular-nums"
+                    /* 시대색을 글씨로 쓰는 자리 — 테마 보정을 받게 한다 */
+                    className="era-ink text-[11px] font-bold tabular-nums"
                     style={{ color: item.highlight ? color : "#a1a1aa" }}
                   >
                     {item.year}
                   </span>
                   <span
+                    /*
+                      ⚠️ text-white 는 밝은 테마에서도 흰색 그대로다. 흰 카드
+                         위에 흰 글씨가 되어 이 제목이 통째로 안 보였다(1.00:1).
+                         zinc-100 은 밝은 테마에서 #18181b 로 뒤집히므로,
+                         두 테마 모두에서 가장 진한 글씨가 된다.
+                    */
                     className={
                       item.highlight
-                        ? "text-sm font-bold text-white"
+                        ? "text-sm font-bold text-zinc-100"
                         : "text-sm font-medium text-zinc-400"
                     }
                   >

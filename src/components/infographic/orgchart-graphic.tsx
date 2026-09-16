@@ -71,7 +71,8 @@ export function OrgChartGraphic({
               background: `color-mix(in srgb, ${color} 26%, transparent)`,
               borderColor: `color-mix(in srgb, ${color} 60%, transparent)`,
             }}
-            className="rounded-xl border px-4 py-2 text-sm font-bold text-white"
+            /* 옅은 시대색 판 위 — text-white 면 밝은 테마에서 묻힌다 */
+            className="rounded-xl border px-4 py-2 text-sm font-bold text-zinc-100"
           >
             {spec.root}
           </div>

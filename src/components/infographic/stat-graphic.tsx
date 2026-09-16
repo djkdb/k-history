@@ -68,7 +68,11 @@ export function StatGraphic({
             className="rounded-xl border px-2 py-2.5 text-center"
           >
             <p className="text-[10px] text-zinc-400">{item.label}</p>
-            <p className="mt-0.5 text-xl font-black tabular-nums" style={{ color }}>
+            <p
+              /* 시대색 숫자 — 옅은 같은 색 판 위라 테마 보정이 필요하다 */
+              className="era-ink mt-0.5 text-xl font-black tabular-nums"
+              style={{ color }}
+            >
               <span data-count={item.value}>0</span>
               {item.suffix && (
                 <span className="text-xs font-bold"> {item.suffix}</span>

@@ -71,7 +71,12 @@ export function CompareGraphic({
             <p
               {...{ [`data-${side}`]: true }}
               style={{ opacity: 1, color: accent }}
-              className="mb-1.5 text-xs font-black leading-tight"
+              /*
+                ⚠️ 시대색을 그대로 글씨에 쓰면 옅은 같은 색 판 위에서 묻힌다.
+                   밝은 테마에서 초록 제목이 2.31:1, 주황 제목이 2.53:1 이었다.
+                   era-ink 는 이미 테마별로 눌러 둔 보정이다 — 그것을 쓴다.
+              */
+              className="era-ink mb-1.5 text-xs font-black leading-tight"
             >
               {data.title}
             </p>
@@ -83,7 +88,9 @@ export function CompareGraphic({
                   style={{ opacity: 1 }}
                   className="flex gap-1 text-[11px] leading-snug text-zinc-300"
                 >
-                  <span style={{ color: accent }}>·</span>
+                  <span className="era-ink" style={{ color: accent }}>
+                    ·
+                  </span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -95,7 +102,12 @@ export function CompareGraphic({
         <span
           data-vs
           style={{ opacity: 1 }}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-zinc-900 px-2 py-0.5 text-[10px] font-black text-zinc-400"
+          /*
+            ⚠️ 밝은 테마에서 이 배지가 2.29:1 이었다. 판은 bg-zinc-900 으로
+               어두운 채인데 안의 글씨만 밝은 테마 보정을 받아 같이 어두워졌다.
+               일부러 어둡게 남겨 둔 판에는 on-dark 를 달아 글씨를 되돌린다.
+          */
+          className="on-dark absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-zinc-900 px-2 py-0.5 text-[10px] font-black text-zinc-400"
         >
           VS
         </span>

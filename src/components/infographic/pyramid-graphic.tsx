@@ -55,7 +55,8 @@ export function PyramidGraphic({
                   border: `1px solid color-mix(in srgb, ${color} ${Math.round(opacity * 55)}%, transparent)`,
                 }}
               >
-                <p className="text-xs font-bold text-white">{level.label}</p>
+                {/* 옅은 시대색 판 위 — text-white 면 밝은 테마에서 묻힌다 */}
+                <p className="text-xs font-bold text-zinc-100">{level.label}</p>
                 {level.desc && (
                   <p className="mt-0.5 text-[10px] leading-tight text-zinc-400">
                     {level.desc}
