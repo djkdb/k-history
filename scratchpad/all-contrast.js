@@ -115,6 +115,43 @@ function routesOf(root) {
           okLoad = await p.evaluate(() => !!document.title);
         }
         if (!okLoad) continue;
+        /*
+         * 색 전환을 꺼 둔다.
+         *
+         * ⚠️ 글씨를 감췄다 되돌릴 때 색이 스르르 돌아온다(transition). 한 화면
+         *    안에서 내려가며 재기 시작하자, 다음 칸의 사진을 아직 돌아오는
+         *    중에 찍었다 — 글씨가 바탕에 묻힌 채로 찍혀 멀쩡한 곳 수백 군데가
+         *    미달로 나왔다. 실제로 걷어낸 직후 색이 rgba(...,0.84) 였다.
+         */
+        await p.addStyleTag({
+          content: "html{scroll-behavior:auto !important}*,*::before,*::after{transition:none !important;animation:none !important}",
+        });
+        await p.waitForTimeout(80);
+        /*
+         * 화면 밑동까지 내려가며 잰다.
+         *
+         * ⚠️ 여태 첫 844px 만 재고 "화면 133개를 다 봤다" 고 적어 왔다. 실제로
+         *    컴활 2급 홈에서 맨 아래 흐린 카드(opacity-40)를 통째로 놓쳤다 —
+         *    화면 밖에 있다고 건너뛰는 규칙에 걸려서다. 긴 화면일수록 놓치는
+         *    양이 많으니, 한 화면 높이씩 내려가며 재야 한다.
+         */
+        const 내릴수있는 = await p.evaluate(
+          () => document.documentElement.scrollHeight - innerHeight,
+        );
+        const 칸 = Math.min(8, Math.max(1, Math.ceil(내릴수있는 / 780) + 1));
+        for (let band = 0; band < 칸; band++) {
+        /*
+         * 부드럽게 내리면 안 된다.
+         *
+         * ⚠️ scroll-behavior: smooth 가 살아 있으면 scrollTo 가 애니메이션이라,
+         *    글자 자리를 읽은 뒤에도 화면이 더 내려간다. 자리와 사진이 스무남은
+         *    px 어긋나 글씨 아닌 자리를 재게 된다 — 이것이 767건의 헛것이었다.
+         */
+        await p.evaluate(
+          (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" }),
+          band * 780,
+        );
+        await p.waitForTimeout(band === 0 ? 0 : 200);
         const got = await p.evaluate(() => {
           const cv = document.createElement("canvas"); cv.width = cv.height = 1;
           const c2 = cv.getContext("2d", { willReadFrequently: true });
@@ -192,10 +229,23 @@ function routesOf(root) {
       emojiSkipped += got.skippedEmoji;
       if (!items.length) continue;
         // 글씨가 보이는 그림을 먼저 찍어 둔다 — 실제로 칠해진 글씨 색을 여기서 찾는다
-        const shotOn = PNG.sync.read(await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } }));
+        const shotOn = PNG.sync.read(await p.screenshot());
       await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
         await p.waitForTimeout(120);
-        const img = PNG.sync.read(await p.screenshot({ clip: { x:0, y:0, width:390, height:844 } }));
+        const img = PNG.sync.read(await p.screenshot());
+        /*
+         * 감춘 style 을 도로 걷어낸다.
+         *
+         * ⚠️ 화면마다 새로 열 때는 없어도 됐다 — goto 가 버려 주니까. 한 화면
+         *    안에서 내려가며 재기 시작하자 이것이 남아, 두 번째 칸부터는
+         *    getComputedStyle 이 color: transparent 를 돌려주었다. 글씨 색이
+         *    바탕과 같다고 읽혀 멀쩡한 3천여 곳이 미달로 찍혔다.
+         */
+        await p.evaluate(() => {
+          for (const st of document.querySelectorAll("style"))
+            if ((st.textContent || "").includes("color:transparent")) st.remove();
+        });
+        await p.waitForTimeout(120);
   
         /*
          * 실제로 칠해진 글씨 색을 찾는다.
@@ -253,6 +303,7 @@ function routesOf(root) {
           seen.add(key);
           bad++;
           console.log(`  ✗ [${theme === "dark" ? "어둡" : "밝음"}] 대비 ${rr.toFixed(2)}:1 (${need}) — "${it.t}" ${Math.round(it.size)}px ${r}`);
+        }
         }
       }
       console.log(`  ${theme === "dark" ? "어두운" : "밝은"} 화면 글씨 ${hits}곳`);

@@ -379,7 +379,13 @@ export default function HomePage() {
               href={included ? `/learn/${s.id}` : "/learn"}
               className={cn(!included && "pointer-events-none")}
             >
-              <Card className={cn(!included && "opacity-40")}>
+              {/*
+                    ⚠️ 카드째 opacity-40 으로 덮으니 "1급에만 있는 과목입니다"
+                       라는 안내가 1.84:1 로 떨어져 읽히지 않았다. 못 들어가는
+                       칸이라는 것은 그 문장과 눌리지 않는다는 사실이 이미
+                       말해 준다. 흐리게까지 할 일이 아니다.
+                  */}
+                  <Card>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <span className="text-lg">{s.symbol}</span>

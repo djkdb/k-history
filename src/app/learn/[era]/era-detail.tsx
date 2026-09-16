@@ -9,7 +9,6 @@ import type { EraId } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { ERA_MAP } from "@/data/eras";
 import { eventsByEra } from "@/data/events";
-import { cn } from "@/lib/utils";
 import {
   Badge,
   Button,
@@ -119,7 +118,15 @@ export function EraDetail() {
               transition={{ delay: Math.min(i * 0.04, 0.4) }}
             >
               <Link href={`/event/${e.id}`}>
-                <Card className={cn(isDone && "opacity-60")}>
+                {/*
+                  본 사건을 흐리게 덮지 않는다.
+
+                  ⚠️ 카드째 opacity-60 을 걸면 안에 든 글씨가 모두 같이 옅어져,
+                     밝은 화면에서 사건 설명이 2.77:1 까지 떨어졌다(기준 4.5).
+                     본 것과 안 본 것은 오른쪽 체크 표시가 이미 말해 준다 —
+                     읽히지 않게 만들면서까지 두 번 말할 일이 아니다.
+                */}
+                <Card>
                   <div className="flex items-center gap-2">
                     <span
                       className="text-xs font-bold era-ink"

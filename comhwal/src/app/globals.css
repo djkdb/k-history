@@ -349,7 +349,12 @@ body {
  * 작은 글씨는 아래 규칙에서 굵기로 푼다.
  */
 [data-theme="dark"] .text-zinc-500 { color: #9b9ba5; }
-[data-theme="dark"] .text-zinc-600 { color: #83838d; }
+/*
+ * ⚠️ #83838d 는 지정값으로는 4.7:1 이라 넉넉해 보이지만, 11px 한글은 획이
+ *    가늘어 지정한 색의 아홉 할쯤만 칠해진다. 실제로 재니 컴활 학습 화면의
+ *    갈래 이름이 4.22:1 까지 떨어졌다. 칠해지고 나서도 4.5 를 넘도록 올린다.
+ */
+[data-theme="dark"] .text-zinc-600 { color: #9797a1; }
 [data-theme="dark"] .hover\:text-zinc-300:hover { color: #d4d4d8; }
 [data-theme="light"] .hover\:text-zinc-200:hover,
 [data-theme="light"] .hover\:text-zinc-300:hover { color: #27272a; }

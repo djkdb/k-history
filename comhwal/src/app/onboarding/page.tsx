@@ -202,9 +202,16 @@ export default function OnboardingPage() {
                 key={s.id}
                 className={cn(
                   "flex items-start gap-3 rounded-xl border p-3",
+                  /*
+                    ⚠️ 안 들어가는 과목을 opacity-40 으로 덮고 있었다. 글씨가
+                       1.78:1 까지 떨어져, 무엇이 빠지는지 읽을 수가 없었다 —
+                       정작 급수를 고르는 데 필요한 정보가 그것인데. 흐리게
+                       하는 대신 테두리와 바탕만 눕힌다. "1급에만 있음" 이라는
+                       말이 이미 제 몫을 한다.
+                  */
                   included
                     ? "border-white/10 bg-white/[0.03]"
-                    : "border-white/5 bg-transparent opacity-40",
+                    : "border-dashed border-white/10 bg-transparent",
                 )}
               >
                 <span className="text-lg">{s.symbol}</span>

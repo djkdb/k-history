@@ -60,14 +60,23 @@ const COLLECT = () => {
  * 돌려주는 값은 [잰 곳 수, 미달 수].
  */
 async function 재기(p, 이름, theme) {
+  /* 색 전환이 살아 있으면 되돌아오는 도중을 찍는다 — 꺼 두고 잰다 */
+  await p.addStyleTag({
+    content: "html{scroll-behavior:auto !important}*,*::before,*::after{transition:none !important;animation:none !important}",
+  });
+  await p.waitForTimeout(80);
   const got = await p.evaluate(COLLECT);
   if (!got.out.length) return [0, 0];
-  const on = PNG.sync.read(await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } }));
+  const on = PNG.sync.read(await p.screenshot());
   await p.addStyleTag({ content: "*{color:transparent !important;text-shadow:none !important}" });
   await p.waitForTimeout(120);
-  const off = PNG.sync.read(await p.screenshot({ clip: { x: 0, y: 0, width: 390, height: 844 } }));
+  const off = PNG.sync.read(await p.screenshot());
   /* 넣은 style 만 걷어낸다 — 새로고침하면 눌러서 만든 화면이 사라진다 */
-  await p.evaluate(() => { const s = [...document.querySelectorAll("style")].pop(); if (s) s.remove(); });
+  await p.evaluate(() => {
+    for (const st of document.querySelectorAll("style"))
+      if ((st.textContent || "").includes("color:transparent")) st.remove();
+  });
+  await p.waitForTimeout(120);
   const pick = (im, x, y) => { x = Math.max(0, Math.min(im.width - 1, x)); y = Math.max(0, Math.min(im.height - 1, y));
     const i = (im.width * y + x) << 2; return [im.data[i], im.data[i + 1], im.data[i + 2]]; };
   let 잼 = 0, 미달 = 0;
@@ -75,8 +84,8 @@ async function 재기(p, 이름, theme) {
     const bg = pick(off, it.x, it.y);
     let best = null, far = -1;
     for (const box of it.rects)
-      for (let y = Math.max(0, box.y); y <= Math.min(843, box.y + box.h); y++)
-        for (let x = Math.max(0, box.x); x <= Math.min(389, box.x + box.w); x++) {
+      for (let y = Math.max(0, box.y); y <= Math.min(on.height - 1, box.y + box.h); y++)
+        for (let x = Math.max(0, box.x); x <= Math.min(on.width - 1, box.x + box.w); x++) {
           const i = (on.width * y + x) << 2, j = (off.width * y + x) << 2;
           const moved = Math.abs(on.data[i] - off.data[j]) + Math.abs(on.data[i + 1] - off.data[j + 1]) + Math.abs(on.data[i + 2] - off.data[j + 2]);
           if (moved < 12) continue;
