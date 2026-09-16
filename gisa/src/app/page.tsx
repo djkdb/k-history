@@ -28,6 +28,7 @@ import { dueCards, retentionRate } from "@/lib/srs";
 import { analyze } from "@/lib/weakness";
 import { useApp, useTrack } from "@/lib/store";
 import { daysUntil } from "@/lib/utils";
+import { TodayPlan } from "@/components/today-plan";
 import { InstallHint } from "@/components/install-hint";
 
 export default function Home() {
@@ -126,6 +127,9 @@ export default function Home() {
           </div>
         </Card>
       )}
+
+      {/* 무엇부터 할지 정하는 힘을 아끼도록, 앱이 먼저 서너 줄로 정해 준다 */}
+      <TodayPlan />
 
       <div className="mt-4 grid grid-cols-2 gap-2.5">
         <StatCard

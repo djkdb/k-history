@@ -23,6 +23,7 @@ export type BackupData = Pick<
   | "settings"
   | "stats"
   | "studiedIds"
+  | "studiedAt"
   | "questionMisses"
   | "clearedQuestionIds"
   | "clearedPracticalIds"
@@ -45,6 +46,7 @@ function snapshot(): BackupData {
     settings: s.settings,
     stats: s.stats,
     studiedIds: s.studiedIds,
+    studiedAt: s.studiedAt,
     questionMisses: s.questionMisses,
     clearedQuestionIds: s.clearedQuestionIds,
     clearedPracticalIds: s.clearedPracticalIds,
@@ -155,6 +157,7 @@ export function restoreBackup(file: BackupFile): void {
     settings: d.settings ?? s.settings,
     stats: d.stats ?? s.stats,
     studiedIds: d.studiedIds ?? s.studiedIds,
+    studiedAt: d.studiedAt ?? s.studiedAt,
     questionMisses: d.questionMisses ?? s.questionMisses,
     clearedQuestionIds: d.clearedQuestionIds ?? s.clearedQuestionIds,
     clearedPracticalIds: d.clearedPracticalIds ?? s.clearedPracticalIds,
@@ -196,6 +199,7 @@ function restoreInto(d: BackupData): void {
     settings: d.settings ?? s.settings,
     stats: d.stats ?? s.stats,
     studiedIds: d.studiedIds ?? s.studiedIds,
+    studiedAt: d.studiedAt ?? s.studiedAt,
     questionMisses: d.questionMisses ?? s.questionMisses,
     clearedQuestionIds: d.clearedQuestionIds ?? s.clearedQuestionIds,
     clearedPracticalIds: d.clearedPracticalIds ?? s.clearedPracticalIds,
@@ -237,6 +241,16 @@ export function mergeBackup(file: BackupFile): void {
         ),
       },
       studiedIds: [...new Set([...s.studiedIds, ...(d.studiedIds ?? [])])],
+      /* 처음 본 때는 이른 쪽을 남긴다 — 나중 것으로 덮으면 "오늘 봤다" 가 된다 */
+      studiedAt: Object.fromEntries(
+        [...Object.keys(s.studiedAt), ...Object.keys(d.studiedAt ?? {})].map(
+          (k) => {
+            const a = s.studiedAt[k] ?? Infinity;
+            const b = d.studiedAt?.[k] ?? Infinity;
+            return [k, Math.min(a, b)];
+          },
+        ),
+      ),
       /* 같은 문항을 폰에서 둘, 태블릿에서 셋 틀렸다면 더 많은 쪽을 남긴다.
          더하면 한쪽에서 옮겨 온 기록을 두 번 세게 된다. */
       questionMisses: Object.fromEntries(

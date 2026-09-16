@@ -20,6 +20,14 @@ export interface AppState {
   stats: Stats;
   /** 학습한 개념 */
   studiedIds: string[];
+  /**
+   * 개념을 처음 본 때.
+   *
+   * studiedIds 만으로는 "오늘 몇 개를 봤는가" 를 알 수 없다. 오늘 할 일이
+   * 끝났는지 말해 주려면 날짜가 있어야 한다. 예전 기록에는 이 칸이 없으니
+   * 비어 있는 것이 정상이다 — 없으면 오늘 본 것이 아닐 뿐이다.
+   */
+  studiedAt: Record<string, number>;
   /** 맞힌 적 있는 필기 문항 */
   clearedQuestionIds: string[];
   /** 맞힌 적 있는 실기 문항 */
@@ -129,6 +137,7 @@ export const useApp = create<AppState>()(
       settings: null,
       stats: initialStats,
       studiedIds: [],
+      studiedAt: {},
       questionMisses: {},
       clearedQuestionIds: [],
       clearedPracticalIds: [],
@@ -152,6 +161,7 @@ export const useApp = create<AppState>()(
           if (s.studiedIds.includes(id)) return s;
           return {
             studiedIds: [...s.studiedIds, id],
+            studiedAt: { ...s.studiedAt, [id]: Date.now() },
             reviewCards: s.reviewCards.some((c) => c.sourceId === id)
               ? s.reviewCards
               : [...s.reviewCards, createCard(id)],
@@ -246,6 +256,7 @@ export const useApp = create<AppState>()(
           settings: null,
           stats: initialStats,
           studiedIds: [],
+          studiedAt: {},
           questionMisses: {},
           clearedQuestionIds: [],
           clearedPracticalIds: [],
@@ -265,6 +276,7 @@ export const useApp = create<AppState>()(
         settings: s.settings,
         stats: s.stats,
         studiedIds: s.studiedIds,
+        studiedAt: s.studiedAt,
         questionMisses: s.questionMisses,
         clearedQuestionIds: s.clearedQuestionIds,
         clearedPracticalIds: s.clearedPracticalIds,

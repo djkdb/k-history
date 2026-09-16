@@ -76,6 +76,7 @@ export default function BackupPage() {
     settings: state.settings,
     stats: state.stats,
     studiedIds: state.studiedIds,
+    studiedAt: state.studiedAt,
     questionMisses: state.questionMisses,
     clearedQuestionIds: state.clearedQuestionIds,
     clearedPracticalIds: state.clearedPracticalIds,
