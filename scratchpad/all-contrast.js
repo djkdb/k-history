@@ -68,6 +68,7 @@ const ratio=(a,c)=>{const[x,y]=[lum(a),lum(c)].sort((p,q)=>q-p);return (x+0.05)/
  *    셈이다. out/ 에 실제로 나간 화면을 세어 전부 돈다.
  */
 const APPS = [
+  ["현관", "hub/out", "hub"],
   ["한국사", "out", "khlm"],
   ["컴활", "comhwal/out", "comhwal"],
   ["SQLD", "sqld/out", "sqld"],

@@ -41,6 +41,8 @@ function serve(root, port) {
  *    그랬다. 이미 시작한 사람으로 두고 잰다.
  */
 const APPS = [
+  /* 현관은 화면이 하나뿐이라 걸어 볼 곳도 404 밖에 없다 */
+  ["현관", "hub/out", "hub", ["/404"], null],
   ["한국사", "out", "khlm", ["/learn", "/quiz", "/flow"], null],
   ["컴활", "comhwal/out", "comhwal", ["/learn", "/quiz", "/settings"],
     { key: "comhwal-state", state: { settings: { grade: 1, kind: "written", examDate: null } } }],
