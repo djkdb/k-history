@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Brain, Keyboard, RotateCcw, FileText } from "lucide-react";
+import { BookOpen, Brain, FileText, Gamepad2, Home, Keyboard, RotateCcw } from "lucide-react";
 import { useApp, usePractical } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ const tabsFor = (practical: boolean) => [
   { href: "/", label: "홈", icon: Home },
   { href: "/learn", label: "학습", icon: BookOpen },
   { href: "/quiz", label: "퀴즈", icon: Brain },
+  { href: "/game", label: "게임", icon: Gamepad2 },
   { href: "/practical", label: "실기", icon: Keyboard },
   { href: practical ? "/practical/mock" : "/mock", label: "모의", icon: FileText },
   { href: "/review", label: "복습", icon: RotateCcw },

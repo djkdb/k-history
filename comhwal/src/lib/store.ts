@@ -38,6 +38,16 @@ export interface AppState {
   clearedFormulaIds: string[];
   /** 눌러서 맞힌 적 있는 단축키 id */
   clearedShortcutIds: string[];
+  /**
+   * 게임 최고 기록.
+   *
+   * 게임에 기록이 없으면 두 번째 판을 할 까닭이 없다. 다만 기록이 공부를
+   * 밀어내면 안 되므로, 자랑거리는 이 셋뿐으로 둔다.
+   *   ox    — 한 판에서 이어 맞힌 최고 횟수
+   *   keys  — 한 판에서 맞힌 단축키 수
+   *   match — 짝 맞추기를 끝낸 최소 뒤집기 횟수 (작을수록 좋다)
+   */
+  gameBest: { ox: number; keys: number; match: number };
   mockAttempts: MockAttempt[];
 
   setExamRunning: (v: boolean) => void;
@@ -53,6 +63,8 @@ export interface AppState {
   reviewItem: (id: string, correct: boolean) => void;
   recordMockAttempt: (attempt: MockAttempt, wrongSourceIds: string[]) => void;
   addStudyMinutes: (min: number) => void;
+  /** 게임 최고 기록을 더 좋은 쪽으로만 바꾼다 */
+  recordGameBest: (kind: "ox" | "keys" | "match", value: number) => void;
   resetAll: () => void;
 }
 
@@ -128,6 +140,7 @@ export const useApp = create<AppState>()(
       wrongIds: [],
       clearedFormulaIds: [],
       clearedShortcutIds: [],
+      gameBest: { ox: 0, keys: 0, match: 0 },
       mockAttempts: [],
 
       setExamRunning: (examRunning) => set({ examRunning }),
@@ -227,6 +240,24 @@ export const useApp = create<AppState>()(
           stats: { ...s.stats, studyMinutes: s.stats.studyMinutes + min },
         })),
 
+      recordGameBest: (kind, value) =>
+        set((s) => {
+          const 이전 = s.gameBest[kind];
+          /*
+           * 짝 맞추기만 작을수록 좋다(뒤집기 횟수). 세 값을 한 곳에 담다 보니
+           * 무심코 Math.max 로 통일하기 쉬운데, 그러면 못한 판이 기록으로
+           * 남는다. 방향을 갈라 둔다.
+           */
+          const 더좋은 =
+            kind === "match"
+              ? 이전 === 0
+                ? value
+                : Math.min(이전, value)
+              : Math.max(이전, value);
+          if (더좋은 === 이전) return s;
+          return { gameBest: { ...s.gameBest, [kind]: 더좋은 } };
+        }),
+
       resetAll: () =>
         set({
           settings: null,
@@ -237,6 +268,7 @@ export const useApp = create<AppState>()(
           wrongIds: [],
           clearedFormulaIds: [],
           clearedShortcutIds: [],
+          gameBest: { ox: 0, keys: 0, match: 0 },
           mockAttempts: [],
         }),
     }),
@@ -256,6 +288,7 @@ export const useApp = create<AppState>()(
         wrongIds: s.wrongIds,
         clearedFormulaIds: s.clearedFormulaIds,
         clearedShortcutIds: s.clearedShortcutIds,
+        gameBest: s.gameBest,
         mockAttempts: s.mockAttempts,
       }),
       // 불러오기에 실패해도 화면은 떠야 한다. 다만 그때 빈 상태를 저장하지는 않는다.
