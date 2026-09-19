@@ -49,7 +49,12 @@ export default function KeyGame() {
   const [left, setLeft] = useState(제한);
 
   const sc = pool[at];
-  const chips = useMemo(() => (sc ? keyChips(sc, seed + at) : []), [sc, seed, at]);
+  /* 미끼는 이 급수에서 실제로 나오는 다른 단축키에서 가져온다 */
+  const 전체 = useMemo(() => shortcutPool(grade), [grade]);
+  const chips = useMemo(
+    () => (sc ? keyChips(sc, 전체, seed + at) : []),
+    [sc, 전체, seed, at],
+  );
 
   const 채점 = useCallback(
     (pressed: string) => {

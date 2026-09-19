@@ -90,13 +90,36 @@ export function shortcutPool(grade: Grade): Shortcut[] {
  * 폰에서는 조각을 눌러 조합을 맞춘다. 조각은 이 단축키에 실제로 쓰이는
  * 것들과, 헷갈릴 만한 몇 개를 섞어 낸다.
  */
-export function keyChips(sc: Shortcut, seed: number): string[] {
+const 수식어 = ["ctrl", "alt", "shift"];
+
+export function keyChips(
+  sc: Shortcut,
+  pool: Shortcut[],
+  seed: number,
+): string[] {
   const want = capturableKeys(sc)[0] ?? sc.keys[0];
   const 쓰는것 = want.split("+");
-  const 보태기 = ["ctrl", "shift", "alt", "enter", "tab", "escape", "space"];
-  const 덤 = 보태기.filter((k) => !쓰는것.includes(k));
-  const 조각 = [...new Set([...쓰는것, ...덤])].slice(0, 8);
-  return shuffleSeeded(조각, seed);
+  const 쓰는키 = 쓰는것.filter((k) => !수식어.includes(k));
+
+  /*
+   * 미끼는 "다른 단축키가 실제로 쓰는 키" 에서 가져온다.
+   *
+   * ⚠️ 처음에는 Enter·Tab·Esc·Space 를 고정으로 덧붙였다. 그러면 Alt + = 같은
+   *    문항에서 수식어 셋에 = 하나만 섞여, 누르지 않아도 답이 보였다. 눌러 본
+   *    화면을 보고서야 알았다. 헷갈릴 만한 키가 여럿 있어야 문제가 된다.
+   */
+  const 미끼 = [
+    ...new Set(
+      pool
+        .filter((o) => o.id !== sc.id)
+        .flatMap((o) => capturableKeys(o))
+        .map((k) => k.split("+").filter((p) => !수식어.includes(p)).join("+"))
+        .filter((k) => k && !쓰는키.includes(k)),
+    ),
+  ];
+  const 고른미끼 = shuffleSeeded(미끼, seed).slice(0, 3);
+  const 조각 = [...new Set([...쓰는것, ...수식어, ...고른미끼])];
+  return shuffleSeeded(조각, seed + 31);
 }
 
 /** 짝 맞추기 한 판 — 용어와 한 줄 뜻 */
