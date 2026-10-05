@@ -20,7 +20,7 @@
  *   node scripts/build-all.mjs
  */
 import { execSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = process.cwd();
@@ -53,6 +53,43 @@ function fixManifest(file, base) {
   writeFileSync(file, JSON.stringify(m, null, 2) + "\n");
 }
 
+/*
+ * 글꼴 주소를 하위 경로로 옮긴다.
+ *
+ * globals.css 의 url(/fonts/...) 는 Next 가 basePath 를 붙여 주지 않는다.
+ * 그대로 두면 /gisa 의 화면이 맨 위의 /fonts 를 찾는다. 마침 현관에도 같은
+ * 이름의 글꼴이 있어 깨져 보이지는 않지만, 글꼴은 앱마다 그 앱에 쓰인 글자만
+ * 남겨 줄인 것이라 남의 것을 쓰면 글자가 빠진다.
+ */
+function fixCss(dir, base) {
+  const cssDir = join(dir, "_next", "static", "css");
+  if (!existsSync(cssDir)) return 0;
+  let n = 0;
+  for (const f of readdirSync(cssDir)) {
+    if (!f.endsWith(".css")) continue;
+    const p = join(cssDir, f);
+    const before = readFileSync(p, "utf8");
+    const after = before.replace(/url\((["']?)\/fonts\//g, (_, q) => `url(${q}${base}/fonts/`);
+    if (after !== before) {
+      writeFileSync(p, after);
+      n++;
+    }
+  }
+  return n;
+}
+
+/*
+ * 하위 경로의 첫 화면 조각.
+ *
+ * Next 는 /gisa 의 화면 조각을 /gisa.txt 로 찾는데, 내보낸 파일은
+ * /gisa/index.txt 다. 없으면 화면을 옮겨 다닐 때마다 404 를 맞고 통째로
+ * 다시 그린다. 같은 것을 그 이름으로도 놓아 둔다.
+ */
+function fixIndexPayload(dest, base) {
+  const src = join(dest, "index.txt");
+  if (existsSync(src)) cpSync(src, join(OUT, base.slice(1) + ".txt"));
+}
+
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
@@ -64,6 +101,8 @@ for (const app of APPS) {
   const dest = join(OUT, app.base.slice(1));
   cpSync(join(cwd, "out"), dest, { recursive: true });
   fixManifest(join(dest, "manifest.json"), app.base);
+  console.log(`  글꼴 주소 고친 CSS ${fixCss(dest, app.base)}개`);
+  fixIndexPayload(dest, app.base);
   /* 단독 배포용 out/ 을 하위 경로 판으로 남겨 두지 않는다 */
   rmSync(join(cwd, "out"), { recursive: true, force: true });
 }

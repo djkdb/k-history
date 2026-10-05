@@ -1,4 +1,5 @@
 import { SCHEMA_SQL } from "@/data/schema";
+import { withBase } from "@/lib/base";
 
 /**
  * 브라우저 안의 진짜 SQLite.
@@ -35,7 +36,7 @@ let loading: Promise<SqlJsStatic> | null = null;
  * 404 대신 index.html 을 돌려주기도 해서 "magic word 가 다르다"는 알 수 없는
  * 오류로 끝난다. 우리가 담아 둔 파일은 하나뿐이므로 그 하나를 가리킨다.
  */
-const WASM_URL = "/sql/sql-wasm.wasm";
+const WASM_URL = withBase("/sql/sql-wasm.wasm");
 
 /** sql.js 를 한 번만 불러온다 */
 function loadSqlJs(): Promise<SqlJsStatic> {
@@ -53,7 +54,7 @@ function loadSqlJs(): Promise<SqlJsStatic> {
       return;
     }
     const s = document.createElement("script");
-    s.src = "/sql/sql-wasm.js";
+    s.src = withBase("/sql/sql-wasm.js");
     s.async = true;
     s.onload = () => {
       if (!window.initSqlJs) {

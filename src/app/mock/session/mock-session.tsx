@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import { withBase } from "@/lib/base";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -438,7 +439,8 @@ const ZoomableImage = forwardRef<
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={src}
+          /* 시험지 그림은 /exams/... 로 적혀 있다 — 한 웹에 묶이면 /history 아래다 */
+          src={withBase(src)}
           alt={alt}
           className="w-full select-none"
           draggable={false}
