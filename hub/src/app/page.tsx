@@ -95,8 +95,33 @@ export default function Home() {
         )}
       </section>
 
+      {/*
+        틀린 곳을 알려 줄 길을 둔다. 문항이 수천 개라 혼자서는 다 못 찾는다.
+      */}
+      <section className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+        <h2 className="text-[13.5px] font-bold">틀린 곳을 찾으셨나요</h2>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+          개념이나 문제, 해설이 틀렸거나 화면이 이상하면 인스타그램 DM 으로
+          알려 주세요. 어느 자격증의 어느 화면인지 함께 적어 주시면 빨리 고칠
+          수 있습니다.
+        </p>
+        <a
+          href="https://www.instagram.com/zun_it_/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-white/[0.07] px-3 py-2 text-[12.5px] font-bold text-zinc-200"
+        >
+          @zun_it_ 에 제보하기
+          <ExternalLink size={12} className="shrink-0 text-zinc-400" />
+        </a>
+      </section>
+
       <p className="mt-6 text-center text-[11.5px] leading-relaxed text-zinc-500">
-        모든 문항은 각 시험의 공개된 출제 범위에서 직접 지어 쓴 것입니다.
+        개인이 만든 무료 공부 앱으로, 각 시험의 시행 기관과는 관계가 없습니다.
+        <br />
+        한국사 모의고사는 국사편찬위원회가 공개한 기출을 출처와 함께 실었고,
+        <br />
+        나머지 문항은 각 시험의 공개된 출제 범위에서 직접 지어 쓴 것입니다.
         <br />
         시행 기관이 공개하지 않는 기출 문제는 싣지 않았습니다.
       </p>

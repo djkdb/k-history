@@ -34,7 +34,7 @@ const no = (s) => { bad++; console.log("  ✗ " + s); };
 
   console.log("\n━━━ 다섯이 다 있는가");
   const 링크 = await p.evaluate(() =>
-    [...document.querySelectorAll("a[href^='http']")].map((a) => a.getAttribute("href")),
+    [...document.querySelectorAll("a[href^='http']:not([href*='instagram.com'])")].map((a) => a.getAttribute("href")),
   );
   if (링크.length === APPS.length) ok(`카드 ${링크.length}개`);
   else no(`카드가 ${링크.length}개다 (${APPS.length}개여야)`);
@@ -53,7 +53,7 @@ const no = (s) => { bad++; console.log("  ✗ " + s); };
 
   console.log("\n━━━ 누를 만한 크기인가");
   let 작은 = 0;
-  for (const el of await p.locator("a[href^='http']").all()) {
+  for (const el of await p.locator("a[href^='http']:not([href*='instagram.com'])").all()) {
     const r = await el.boundingBox();
     if (!r || r.height < 24 || r.width < 24) 작은++;
   }
@@ -62,17 +62,32 @@ const no = (s) => { bad++; console.log("  ✗ " + s); };
 
   console.log("\n━━━ 다른 데로 나간다고 알려 주는가");
   const 새창 = await p.evaluate(() =>
-    [...document.querySelectorAll("a[href^='http']")].every((a) => a.querySelector("svg")),
+    [...document.querySelectorAll("a[href^='http']:not([href*='instagram.com'])")].every((a) => a.querySelector("svg")),
   );
   if (새창) ok("카드마다 바깥으로 나가는 표시가 있다");
   else no("바깥으로 나간다는 표시가 없다");
+
+  console.log("\n━━━ 틀린 곳을 알릴 길이 있는가");
+  const 제보 = await p.evaluate(() => {
+    const a = document.querySelector("a[href*='instagram.com']");
+    return a ? { href: a.getAttribute("href"), text: a.textContent, target: a.target, rel: a.rel } : null;
+  });
+  if (제보 && 제보.href === "https://www.instagram.com/zun_it_/" && 제보.text.includes("@zun_it_"))
+    ok("@zun_it_ 제보 링크가 있다");
+  else no("제보 링크가 없거나 주소가 다르다 " + JSON.stringify(제보));
+  if (제보 && 제보.target === "_blank" && 제보.rel.includes("noopener")) ok("제보는 새 창으로 연다");
+  else no("제보 링크가 앱 화면을 밀어낸다");
+  if (t.includes("시행 기관과는 관계가 없습니다")) ok("시행 기관과 관계없다고 밝힌다");
+  else no("시행 기관과 관계없다는 말이 없다");
+  if (t.includes("국사편찬위원회가 공개한 기출")) ok("한국사 기출의 출처를 밝힌다");
+  else no("한국사 기출을 직접 지었다고 잘못 적었다");
 
   console.log("\n━━━ 지난번에 본 곳을 기억하는가");
   const 둘째 = APPS[2];
   await p.evaluate((id) => localStorage.setItem("hub:last", id), 둘째.id);
   await p.reload({ waitUntil: "networkidle" });
   await p.waitForTimeout(800);
-  const 첫카드 = await p.locator("a[href^='http']").first().getAttribute("href");
+  const 첫카드 = await p.locator("a[href^='http']:not([href*='instagram.com'])").first().getAttribute("href");
   if (첫카드 === 둘째.url) ok(`${둘째.name} 이 맨 위로 올라온다`);
   else no(`맨 위가 ${첫카드} 다 (${둘째.url} 이어야)`);
   const t2 = (await p.locator("main").innerText()).replace(/\s+/g, " ");
@@ -94,7 +109,7 @@ const no = (s) => { bad++; console.log("  ✗ " + s); };
   await p.evaluate(() =>
     document.addEventListener("click", (e) => e.preventDefault()),
   );
-  await p.locator("a[href^='http']").first().click().catch(() => {});
+  await p.locator("a[href^='http']:not([href*='instagram.com'])").first().click().catch(() => {});
   await p.waitForTimeout(600);
   const 남은 = await p.evaluate(() => localStorage.getItem("hub:last"));
   if (남은 === APPS[0].id) ok(`누른 곳을 적어 둔다 (${남은})`);
