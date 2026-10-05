@@ -47,7 +47,7 @@ export default function RootLayout({
             rel="preload"
             as="font"
             type="font/woff2"
-            href={`/fonts/pretendard-${w}.woff2`}
+            href={withBase(`/fonts/pretendard-${w}.woff2`)}
             crossOrigin="anonymous"
           />
         ))}

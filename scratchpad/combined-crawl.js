@@ -117,6 +117,12 @@ function 화면목록(base) {
     p.on("request", (q) => {
       const u = new URL(q.url());
       if (u.origin !== BASE) return;
+      /*
+       * /gisa.txt 는 Next 가 /gisa 의 첫 화면 조각을 찾는 정해진 이름이다.
+       * 묶을 때 그 이름으로 파일을 놓았으므로 샌 것이 아니다 — 404 가 나는지는
+       * 아래 404 목록이 따로 본다.
+       */
+      if (u.pathname === app + ".txt") return;
       if (!u.pathname.startsWith(app + "/") && u.pathname !== app) 적기(모음.샘, `${app} → ${u.pathname}`, 지금);
     });
     p.on("response", (r) => {
