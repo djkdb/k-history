@@ -122,10 +122,25 @@ const APPS = ["/history", "/comhwal", "/sqld", "/toeic", "/gisa"];
        *    정처기 4MB 를 다 받기 전에 망을 끊어, 캐시가 59개뿐인 채로 재게 됐다.
        *    워커가 "설치 중" 을 벗어나 켜질 때가 미리 받기가 끝난 때다.
        */
-      await p.waitForFunction(async (scope) => {
-        const r = await navigator.serviceWorker.getRegistration(scope);
-        return !!(r && r.active && !r.installing && !r.waiting);
-      }, BASE + u, { timeout: 90000, polling: 500 }).catch(() => {});
+      /*
+       * ⚠️ waitForFunction 에 async 함수를 주면 돌려받은 약속(Promise) 자체가 참으로
+       *    읽혀 곧바로 통과했다. 그래서 정처기 캐시를 받는 도중(21개)에 쟀다.
+       *    여기서(Node) 직접 물어보며 기다린다.
+       */
+      const 끝 = Date.now() + 120000;
+      let 켜짐 = false;
+      while (Date.now() < 끝) {
+        켜짐 = await p.evaluate(async (scope) => {
+          const r = await navigator.serviceWorker.getRegistration(scope);
+          // ⚠️ 제 워커가 아직 등록 전이면 getRegistration 은 "/" 를 맡은 현관 워커를 돌려준다.
+          //    그 워커는 이미 켜져 있으니, 맡은 길이 정확히 같은지 꼭 본다.
+          return !!(r && r.scope === new URL(scope, location.href).href && r.active &&
+            r.active.state === "activated" && !r.installing && !r.waiting);
+        }, BASE + u);
+        if (켜짐) break;
+        await p.waitForTimeout(500);
+      }
+      if (!켜짐) no(`${u} 워커가 2분 안에 켜지지 않았다`);
       await p.waitForTimeout(500);
     }
     const 등록 = await p.evaluate(async () =>
