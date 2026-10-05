@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, ExternalLink } from "lucide-react";
-import { APPS, type AppEntry } from "@/data/apps";
+import { APPS, COMBINED, hrefOf, type AppEntry } from "@/data/apps";
 import { ThemeToggle } from "@/components/theme";
 import { InstallHint } from "@/components/install-hint";
 
@@ -57,22 +57,42 @@ export default function Home() {
       </div>
 
       {/*
-        왜 한 앱이 아닌지 밝혀 둔다.
-        다섯 개를 따로 깔라고 하면서 이유를 말하지 않으면 불친절해 보인다.
+        기록이 어디에 남는지 밝혀 둔다.
+        계정도 서버도 없는 앱이라, 이것을 말하지 않으면 폰을 바꾸거나 다른
+        주소로 들어왔을 때 기록이 왜 없는지 알 길이 없다.
       */}
       <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-        <h2 className="text-[13.5px] font-bold">왜 앱이 다섯 개인가요</h2>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
-          공부 기록은 서버가 아니라 <b className="text-zinc-200">여러분 기기 안</b>
-          에만 남습니다. 계정도, 로그인도 없습니다. 그런데 브라우저는 기록을
-          주소마다 따로 보관하므로, 다섯을 한 앱으로 합치면 지금까지 각 앱에서
-          쌓아 온 기록이 사라집니다. 그래서 합치지 않고 들어가는 문만 여기에
-          모았습니다.
-        </p>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
-          앱마다 따로 홈 화면에 더해 두면 각각 앱처럼 열립니다. 한 번 열어 둔
-          뒤에는 <b className="text-zinc-200">망이 없어도</b> 공부할 수 있습니다.
-        </p>
+        {COMBINED ? (
+          <>
+            <h2 className="text-[13.5px] font-bold">기록은 어디에 남나요</h2>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+              공부 기록은 서버가 아니라 <b className="text-zinc-200">여러분 기기 안</b>
+              에만 남습니다. 계정도, 로그인도 없습니다. 자격증마다 기록을 따로
+              보관하므로 한국사를 풀어도 정처기 기록은 그대로입니다.
+            </p>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+              예전에 자격증별 주소에서 공부하셨다면, 그 기록은 그 주소에 그대로
+              남아 있습니다. 이 화면을 홈 화면에 더해 두면 앱처럼 열리고, 한 번
+              열어 둔 자격증은 <b className="text-zinc-200">망이 없어도</b> 공부할 수
+              있습니다.
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-[13.5px] font-bold">왜 앱이 다섯 개인가요</h2>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+              공부 기록은 서버가 아니라 <b className="text-zinc-200">여러분 기기 안</b>
+              에만 남습니다. 계정도, 로그인도 없습니다. 그런데 브라우저는 기록을
+              주소마다 따로 보관하므로, 다섯을 한 앱으로 합치면 지금까지 각 앱에서
+              쌓아 온 기록이 사라집니다. 그래서 합치지 않고 들어가는 문만 여기에
+              모았습니다.
+            </p>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-400">
+              앱마다 따로 홈 화면에 더해 두면 각각 앱처럼 열립니다. 한 번 열어 둔
+              뒤에는 <b className="text-zinc-200">망이 없어도</b> 공부할 수 있습니다.
+            </p>
+          </>
+        )}
       </section>
 
       <p className="mt-6 text-center text-[11.5px] leading-relaxed text-zinc-500">
@@ -87,7 +107,7 @@ export default function Home() {
 function AppCard({ app, 마지막 }: { app: AppEntry; 마지막: boolean }) {
   return (
     <a
-      href={app.url}
+      href={hrefOf(app)}
       onClick={() => {
         try {
           localStorage.setItem("hub:last", app.id);
@@ -134,8 +154,10 @@ function AppCard({ app, 마지막 }: { app: AppEntry; 마지막: boolean }) {
       <div className="mt-3 flex items-center gap-1.5 text-[12.5px] font-bold">
         <span>열기</span>
         <ArrowRight size={14} />
-        {/* 다른 주소로 나간다는 것을 미리 알린다 */}
-        <ExternalLink size={12} className="ml-auto shrink-0 text-zinc-500" />
+        {/* 다른 주소로 나간다는 것을 미리 알린다 — 한 웹에 묶였으면 나가지 않는다 */}
+        {!COMBINED && (
+          <ExternalLink size={12} className="ml-auto shrink-0 text-zinc-500" />
+        )}
       </div>
     </a>
   );

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, X } from "lucide-react";
+import { withBase } from "@/lib/base";
 
 /**
  * 서비스 워커를 등록하고, 새 판이 올라오면 알려 준다.
@@ -44,7 +45,7 @@ export function SWRegister() {
     };
 
     navigator.serviceWorker
-      .register("/sw.js")
+      .register(withBase("/sw.js"), { scope: withBase("/") })
       .then((reg) => {
         if (!alive) return;
         watch(reg);

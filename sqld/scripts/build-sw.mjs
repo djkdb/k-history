@@ -60,7 +60,19 @@ for (const 길 of 목록) {
   const 짧게 = 길 === "/index.html" ? "/" : 길.replace(/\.html$/, "");
   주소.add(짧게);
 }
-const 최종 = [...주소].sort();
+/*
+ * 하위 경로 아래로 빌드했다면(BASE_PATH=/gisa) 실제로 요청되는 주소도
+ * 그 아래다. out/ 안의 경로에 앞머리를 붙인다.
+ */
+const BASE = process.env.BASE_PATH ?? "";
+const 최종 = [...주소]
+  .map((u) => (BASE ? (u === "/" ? BASE + "/" : BASE + u) : u))
+  .sort();
+/* 맨 위 현관이 남의 앱 길까지 덮지 않게 — "/gisa/,/sqld/" 꼴로 받는다 */
+const 남의길 = (process.env.SW_SKIP ?? "")
+  .split(",")
+  .map((x) => x.trim())
+  .filter(Boolean);
 
 /* 판이 바뀌면 캐시 이름도 바뀌어야 옛 조각이 남지 않는다 */
 const 판 = createHash("sha1").update(최종.join("|")).digest("hex").slice(0, 8);
@@ -71,14 +83,33 @@ if (!existsSync(SW)) {
   process.exit(1);
 }
 let s = readFileSync(SW, "utf8");
-if (!s.includes("__PRECACHE__") || !s.includes("__BUILD__")) {
-  console.error("sw.js 에 자리 표시(__PRECACHE__ / __BUILD__)가 없다.");
+/*
+ * ⚠️ 자리 표시는 따옴표까지 붙여서 찾는다.
+ *    처음에는 "__BUILD__" 글자만 찾아 처음 나온 한 곳을 바꿨는데, 파일 맨 위
+ *    주석에 같은 글자가 먼저 나와서 정작 캐시 이름은 한 번도 안 바뀌었다
+ *    (빌드 결과가 늘 "gisa-__BUILD__" 였다). 바꾼 뒤 남은 것이 없는지도 본다.
+ */
+const 자리_목록 = "/* __PRECACHE__ */";
+const 자리_판 = '"__BUILD__"';
+if (!s.includes(자리_목록) || !s.includes(자리_판)) {
+  console.error("sw.js 에 자리 표시(/* __PRECACHE__ */ · \"__BUILD__\")가 없다.");
   process.exit(1);
 }
-s = s.replace("/* __PRECACHE__ */", 최종.map((u) => JSON.stringify(u)).join(",\n  "));
-s = s.replace("__BUILD__", 판);
+s = s.replace(자리_목록, 최종.map((u) => JSON.stringify(u)).join(",\n  "));
+s = s.split(자리_판).join(JSON.stringify(판));
+s = s.split('"__BASE__"').join(JSON.stringify(BASE));
+s = s.split('["__SKIP__"]').join(JSON.stringify(남의길));
+if (
+  s.includes(자리_목록) ||
+  s.includes(자리_판) ||
+  s.includes('"__BASE__"') ||
+  s.includes('["__SKIP__"]')
+) {
+  console.error("sw.js 에 채우지 못한 자리 표시가 남았다.");
+  process.exit(1);
+}
 writeFileSync(SW, s);
 
 console.log(
-  `미리 받아 둘 것 ${최종.length}개 · ${(바이트 / 1048576).toFixed(1)}MB · 판 ${판}`,
+  `${BASE || "/"} · 미리 받아 둘 것 ${최종.length}개 · ${(바이트 / 1048576).toFixed(1)}MB · 판 ${판}`,
 );

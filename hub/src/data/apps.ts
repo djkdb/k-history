@@ -29,7 +29,10 @@ export interface AppEntry {
    *    많게 적어 두면 거짓이 된다.
    */
   what: string[];
+  /** 따로 배포된 사이트의 주소 */
   url: string;
+  /** 다섯을 한 웹에 묶었을 때의 길 */
+  path: string;
   /** 카드 색 — 앱마다 다르게 두어 아이콘 없이도 갈라 보이게 한다 */
   color: string;
   symbol: string;
@@ -43,6 +46,7 @@ export const APPS: AppEntry[] = [
     tagline: "외우지 말고, 기억하세요",
     what: ["개념 108개", "기출 21회차", "잊을 때쯤 다시 묻는 복습"],
     url: "https://korea-history-legend-master.pages.dev",
+    path: "/history/",
     color: "#f59e0b",
     symbol: "🏛️",
   },
@@ -53,6 +57,7 @@ export const APPS: AppEntry[] = [
     tagline: "필기는 이해로, 실기는 손으로",
     what: ["개념 112개", "문제 은행 755문항", "수식 77문항 · 단축키 56개"],
     url: "https://comhwal-master.pages.dev",
+    path: "/comhwal/",
     color: "#10b981",
     symbol: "📊",
   },
@@ -63,6 +68,7 @@ export const APPS: AppEntry[] = [
     tagline: "모델링은 그림으로, SQL은 직접 쳐 보며",
     what: ["개념 61개", "문제 은행 261문항", "브라우저 안에서 도는 SQL 26문항"],
     url: "https://sqld-master.pages.dev",
+    path: "/sqld/",
     color: "#0ea5e9",
     symbol: "🗄️",
   },
@@ -73,6 +79,7 @@ export const APPS: AppEntry[] = [
     tagline: "듣기는 귀로, 독해는 눈으로, 어휘는 반복으로",
     what: ["어휘 648개 · 문법 45개", "듣기 85지문 143문항", "읽기 110세트 173문항"],
     url: "https://toeic-master.pages.dev",
+    path: "/toeic/",
     color: "#f43f5e",
     symbol: "🔤",
   },
@@ -83,7 +90,19 @@ export const APPS: AppEntry[] = [
     tagline: "필기는 다섯 과목 과락까지, 실기는 손으로 써 보며",
     what: ["개념 63개", "필기 274문항", "실기 149문항 — 적어서 채점"],
     url: "https://gisa-master.pages.dev",
+    path: "/gisa/",
     color: "#6366f1",
     symbol: "💻",
   },
 ];
+
+/**
+ * 한 웹으로 묶어 빌드했는가.
+ * scripts/build-all.mjs 가 NEXT_PUBLIC_COMBINED=1 을 주고 빌드한다.
+ */
+export const COMBINED = process.env.NEXT_PUBLIC_COMBINED === "1";
+
+/** 카드가 데려갈 곳 — 묶였으면 안쪽 길, 아니면 따로 배포된 주소 */
+export function hrefOf(app: AppEntry): string {
+  return COMBINED ? app.path : app.url;
+}

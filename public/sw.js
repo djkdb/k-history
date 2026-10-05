@@ -3,7 +3,19 @@
 // ⚠️ 이 파일의 __PRECACHE__ 와 __BUILD__ 는 빌드가 끝난 뒤
 //    scripts/build-sw.mjs 가 실제 파일 목록으로 채운다. 손으로 적지 않는다 —
 //    파일 이름에 붙는 해시가 판마다 바뀌어 금세 어긋난다.
-const CACHE_NAME = "khlm-__BUILD__";
+const CACHE_PREFIX = "khlm-";
+const CACHE_NAME = CACHE_PREFIX + "__BUILD__";
+/*
+ * 이 앱이 사는 하위 경로("/gisa" 등). 단독 배포면 빈 문자열이다.
+ * 빌드 뒤 scripts/build-sw.mjs 가 채운다.
+ */
+const BASE = "__BASE__";
+/*
+ * 내 것이 아닌 길. 다섯 자격증을 한 웹에 모으면 맨 위의 현관 워커가 모든
+ * 주소를 덮는다. 그대로 두면 /gisa 의 화면까지 현관 캐시에 담고, 망이 끊기면
+ * 정처기 화면 대신 현관을 내준다. 각 앱의 길은 그 앱의 워커에게 맡긴다.
+ */
+const 남의길 = ["__SKIP__"].filter((p) => p !== "__SKIP__" && p !== "");
 const PRECACHE = [
   /* __PRECACHE__ */
 ];
@@ -50,7 +62,16 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)),
+          /*
+           * 내 이름표가 붙은 옛 캐시만 지운다.
+           *
+           * ⚠️ 원래는 "지금 것이 아니면 전부" 지웠다. 앱이 혼자 한 주소에 있을
+           *    때는 같은 말이지만, 다섯 자격증을 한 웹에 모으면 한 앱이 새 판을
+           *    켤 때마다 나머지 네 앱이 받아 둔 오프라인 자료까지 지워 버린다.
+           */
+          keys
+            .filter((k) => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
+            .map((k) => caches.delete(k)),
         ),
       )
       .then(() => self.clients.claim()),
@@ -58,13 +79,14 @@ self.addEventListener("activate", (event) => {
 });
 
 /** 이름에 해시가 박힌 것 — 내용이 바뀌면 이름이 바뀌므로 캐시를 먼저 본다 */
-const 변하지않는것 = (path) => path.startsWith("/_next/static/");
+const 변하지않는것 = (path) => path.startsWith(BASE + "/_next/static/");
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (남의길.some((p) => url.pathname.startsWith(p))) return;
 
   /*
    * 파일 이름에 해시가 박힌 것은 캐시를 먼저 본다.
@@ -107,12 +129,13 @@ self.addEventListener("fetch", (event) => {
            */
           if (request.mode === "navigate") {
             const p = new URL(request.url).pathname.replace(/\/$/, "");
+            const 집 = BASE + "/";
             /* caches.match 는 프로미스다 — || 로 이으면 늘 참이라
                뒤가 실행되지 않는다. then 으로 이어야 실제로 다음을 본다 */
             return caches
               .match(p + ".html")
-              .then((h) => h || caches.match(p || "/"))
-              .then((h) => h || caches.match("/"));
+              .then((h) => h || caches.match(p || 집))
+              .then((h) => h || caches.match(집));
           }
           // 자바스크립트·글꼴 자리에 HTML 을 돌려주면 화면이 더 이상하게
           // 깨진다 — 차라리 실패하는 편이 낫다.
