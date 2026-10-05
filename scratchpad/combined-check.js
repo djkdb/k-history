@@ -53,10 +53,24 @@ const APPS = ["/history", "/comhwal", "/sqld", "/toeic", "/gisa"];
     console.log("    받은 것: " + (받은.join(" · ") || "없음"));
     if (받은.length && 받은.every((x) => x.startsWith("/sqld/") && x.endsWith(" 200"))) ok("엔진을 /sqld 아래에서 받았다");
     else no("엔진을 제자리에서 못 받았다");
-    /* 결과 표가 실제로 그려지는가 — 실행이 끝났다는 증거 */
-    const 표 = await p.locator("table").count();
-    if (표 > 0) ok(`SQL 을 돌린 결과 표가 ${표}개 그려졌다`);
-    else no("결과 표가 없다 — 엔진이 안 돌았다");
+    /*
+     * 실제로 돌려 본다.
+     * ⚠️ 처음에는 결과 표가 그냥 떠 있을 줄 알았다. SQL 은 "실행하기" 를
+     *    눌러야 돈다 — 누르지 않고 표를 찾으니 엔진이 멀쩡한데도 실패로 셌다.
+     */
+    const 실행 = p.locator("button", { hasText: /^실행하기$/ }).first();
+    if (!(await 실행.count())) { no("실행하기 단추가 없다"); }
+    else {
+      await p.waitForFunction(() => [...document.querySelectorAll("button")].some((b) => b.textContent.trim() === "실행하기" && !b.disabled), null, { timeout: 15000 }).catch(() => {});
+      const 전표 = await p.locator("table").count();
+      await 실행.click();
+      await p.waitForTimeout(1500);
+      const 후표 = await p.locator("table").count();
+      const 글 = (await p.locator("body").innerText()).replace(/\s+/g, " ");
+      const 오류 = /오류|error|Error/.test(글.slice(-400));
+      if (후표 > 전표 && !오류) ok(`실행하기를 누르니 결과 표가 그려졌다 (${전표} → ${후표})`);
+      else no(`실행해도 결과가 없다 (표 ${전표} → ${후표}${오류 ? " · 오류 문구" : ""})`);
+    }
     await ctx.close();
   }
 
@@ -89,6 +103,7 @@ const APPS = ["/history", "/comhwal", "/sqld", "/toeic", "/gisa"];
         localStorage.setItem("comhwal:mirror:comhwal-state", JSON.stringify({ state: { settings: { grade: 1, kind: "written", examDate: null } } }));
         localStorage.setItem("sqld:mirror:sqld-state", JSON.stringify({ state: { settings: { examDate: null } } }));
         localStorage.setItem("gisa:mirror:gisa-state", JSON.stringify({ state: { settings: { track: "written", examDate: null } } }));
+        localStorage.setItem("toeic:mirror:toeic-state", JSON.stringify({ state: { settings: { band: 700, examDate: null, speechRate: 1, showScript: false } } }));
       } catch {}
     });
     const p = await ctx.newPage();
