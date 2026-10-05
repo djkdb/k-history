@@ -54,11 +54,19 @@ let 바이트 = 0;
  * 화면 문서는 주소로도 닿을 수 있어야 한다.
  * /learn.html 을 담아 두어도 사용자가 가는 곳은 /learn 이다. 둘 다 담는다.
  */
-const 주소 = new Set(목록);
+/*
+ * 화면 문서는 사용자가 실제로 가는 주소(/learn)로만 담는다.
+ *
+ * ⚠️ 처음에는 /learn 과 /learn.html 을 둘 다 담았다. 그런데 Cloudflare 는
+ *    /learn.html 을 /learn 으로 돌려보낸다(308). 그래서 화면마다 요청이 한 번씩
+ *    헛돌았고, 돌려보내진 응답이 캐시에 남았다 — 크롬은 돌려보내진 응답을
+ *    화면 이동에 내주면 거부한다. 미리 받는 양도 거의 두 배였다.
+ */
+const 주소 = new Set();
 for (const 길 of 목록) {
-  if (!길.endsWith(".html")) continue;
-  const 짧게 = 길 === "/index.html" ? "/" : 길.replace(/\.html$/, "");
-  주소.add(짧게);
+  if (!길.endsWith(".html")) { 주소.add(길); continue; }
+  if (길 === "/404.html" || 길.endsWith("/_not-found.html")) continue;
+  주소.add(길 === "/index.html" ? "/" : 길.replace(/\/index\.html$/, "/").replace(/\.html$/, ""));
 }
 /*
  * 하위 경로 아래로 빌드했다면(BASE_PATH=/gisa) 실제로 요청되는 주소도

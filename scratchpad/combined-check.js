@@ -116,7 +116,17 @@ const APPS = ["/history", "/comhwal", "/sqld", "/toeic", "/gisa"];
     p.on("request", (q) => { const u = new URL(q.url()); if (u.pathname.endsWith(".woff2")) 글꼴.push([new URL(p.url()).pathname, u.pathname]); });
     for (const u of ["/", ...APPS.map((a) => a + "/")]) {
       await p.goto(BASE + u, { waitUntil: "networkidle" });
-      await p.waitForTimeout(2500);
+      /*
+       * 미리 받기가 다 끝날 때까지 기다린다.
+       * ⚠️ 처음에는 2.5초만 기다렸다. 로컬에서는 넉넉했지만 실제 인터넷으로는
+       *    정처기 4MB 를 다 받기 전에 망을 끊어, 캐시가 59개뿐인 채로 재게 됐다.
+       *    워커가 "설치 중" 을 벗어나 켜질 때가 미리 받기가 끝난 때다.
+       */
+      await p.waitForFunction(async (scope) => {
+        const r = await navigator.serviceWorker.getRegistration(scope);
+        return !!(r && r.active && !r.installing && !r.waiting);
+      }, BASE + u, { timeout: 90000, polling: 500 }).catch(() => {});
+      await p.waitForTimeout(500);
     }
     const 등록 = await p.evaluate(async () =>
       (await navigator.serviceWorker.getRegistrations()).map((r) => new URL(r.scope).pathname).sort());
