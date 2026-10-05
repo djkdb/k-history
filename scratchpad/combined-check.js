@@ -30,15 +30,20 @@ const srv = http.createServer((q, r) => {
   r.writeHead(code, { "content-type": MIME[path.extname(f)] || "application/octet-stream" });
   r.end(fs.readFileSync(f));
 });
-const BASE = "http://127.0.0.1:7100";
+/* LIVE=https://... 를 주면 배포된 사이트를 잰다 */
+const BASE = process.env.LIVE || "http://127.0.0.1:7100";
 let 탈 = 0;
 const ok = (s) => console.log("  ✓ " + s);
 const no = (s) => { 탈++; console.log("  ✗ " + s); };
 const APPS = ["/history", "/comhwal", "/sqld", "/toeic", "/gisa"];
 
 (async () => {
-  await new Promise((r) => srv.listen(7100, r));
-  const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+  if (!process.env.LIVE) await new Promise((r) => srv.listen(7100, r));
+  const b = await chromium.launch({
+    executablePath: "/opt/pw-browsers/chromium",
+    /* 배포된 사이트를 잴 때 — 브라우저는 HTTPS_PROXY 를 저절로 따르지 않는다 */
+    ...(process.env.LIVE && process.env.HTTPS_PROXY ? { proxy: { server: process.env.HTTPS_PROXY } } : {}),
+  });
 
   /* ── ① SQL 엔진 ── */
   {
@@ -175,7 +180,7 @@ const APPS = ["/history", "/comhwal", "/sqld", "/toeic", "/gisa"];
     await ctx.close();
   }
 
-  await b.close(); srv.close();
+  await b.close(); if (!process.env.LIVE) srv.close();
   console.log(탈 ? `\n문제 ${탈}건` : "\n문제 0건");
   process.exit(탈 ? 1 : 0);
 })();

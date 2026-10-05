@@ -71,9 +71,14 @@ function 화면목록(base) {
 }
 
 (async () => {
-  const srv = await serve(7000);
-  const BASE = "http://127.0.0.1:7000";
-  const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+  const srv = process.env.LIVE ? { close() {} } : await serve(7000);
+  /* LIVE=https://... 를 주면 배포된 사이트를 잰다 */
+const BASE = process.env.LIVE || "http://127.0.0.1:7000";
+  const b = await chromium.launch({
+    executablePath: "/opt/pw-browsers/chromium",
+    /* 배포된 사이트를 잴 때 — 브라우저는 HTTPS_PROXY 를 저절로 따르지 않는다 */
+    ...(process.env.LIVE && process.env.HTTPS_PROXY ? { proxy: { server: process.env.HTTPS_PROXY } } : {}),
+  });
   let 문제 = 0;
   const 모음 = { 404: new Map(), 샘: new Map(), 링크: new Map(), 오류: new Map() };
   const 적기 = (m, k, where) => { if (!m.has(k)) m.set(k, where); };
