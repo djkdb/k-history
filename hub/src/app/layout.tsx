@@ -3,12 +3,40 @@ import "./globals.css";
 import { SWRegister } from "@/components/sw-register";
 import { withBase } from "@/lib/base";
 
+/*
+ * 링크를 카톡·인스타 DM 에 붙이면 미리 보기 카드가 뜬다. 그림이 없으면
+ * 제목 한 줄만 덩그러니 남아 무엇인지 알 수 없다. 미리 보기 그림 주소는
+ * 반드시 "https://..." 로 시작해야 해서 사이트 주소가 있어야 한다.
+ * 합친 웹은 build-all 이 SITE_URL 을 넘긴다. 없으면 그림을 걸지 않는다.
+ */
+const SITE_URL = process.env.SITE_URL ?? "";
+const TITLE = "자격증 5종 마스터 모음";
+const DESCRIPTION =
+  "한국사 · 컴활 · SQLD · 토익 · 정보처리기사. 무료, 회원가입 없이 폰에서 바로 공부합니다.";
+
 export const metadata: Metadata = {
-  title: "시험 준비 다섯 가지",
-  description:
-    "한국사 · 컴활 · SQLD · 토익 · 정보처리기사 — 다섯 앱으로 들어가는 곳",
+  title: TITLE,
+  description: DESCRIPTION,
   manifest: withBase("/manifest.json"),
   appleWebApp: { capable: true, statusBarStyle: "black-translucent" },
+  ...(SITE_URL && {
+    metadataBase: new URL(SITE_URL),
+    openGraph: {
+      type: "website",
+      locale: "ko_KR",
+      url: "/",
+      siteName: TITLE,
+      title: TITLE,
+      description: DESCRIPTION,
+      images: [{ url: "/og.png", width: 1200, height: 630, alt: TITLE }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: TITLE,
+      description: DESCRIPTION,
+      images: ["/og.png"],
+    },
+  }),
 };
 
 export const viewport: Viewport = {

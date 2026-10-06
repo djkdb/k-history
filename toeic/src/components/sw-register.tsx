@@ -28,15 +28,24 @@ export function SWRegister() {
     }
 
     let alive = true;
+    /*
+     * 지금 이 화면을 맡은 워커가 "이 앱의" 예전 판인가.
+     * ⚠️ 다섯 앱을 한 주소에 묶으면, 처음 들어온 화면은 "/" 를 맡은 현관
+     *    워커가 이미 맡고 있다. controller 가 있는지만 보면 첫 설치를
+     *    새 판으로 착각해, 처음 온 사람에게 "새 판이 준비됐습니다" 를 띄운다.
+     */
+    const ourSW = new URL(withBase("/sw.js"), location.href).href;
+    const hasOldOurs = () =>
+      navigator.serviceWorker.controller?.scriptURL === ourSW;
     const watch = (reg: ServiceWorkerRegistration) => {
       // 이미 기다리고 있는 새 판이 있는가 (다른 창에서 받아 둔 경우)
-      if (reg.waiting && navigator.serviceWorker.controller) setWaiting(reg.waiting);
+      if (reg.waiting && hasOldOurs()) setWaiting(reg.waiting);
       reg.addEventListener("updatefound", () => {
         const next = reg.installing;
         if (!next) return;
         next.addEventListener("statechange", () => {
-          // controller 가 없으면 첫 설치다 — 알릴 것이 없다
-          if (next.state === "installed" && navigator.serviceWorker.controller && alive) {
+          // 이 앱의 예전 워커가 맡고 있지 않으면 첫 설치다 — 알릴 것이 없다
+          if (next.state === "installed" && hasOldOurs() && alive) {
             setWaiting(next);
             setHidden(false);
           }

@@ -112,6 +112,8 @@ const hub = join(ROOT, "hub");
 rmSync(join(hub, "out"), { recursive: true, force: true });
 run("npm run build", hub, {
   NEXT_PUBLIC_COMBINED: "1",
+  /* 카톡·인스타 미리 보기 그림은 절대 주소여야 한다. 주소를 옮기면 SITE_URL 로 넘긴다 */
+  SITE_URL: process.env.SITE_URL || "https://zunte.pages.dev",
   SW_SKIP: APPS.map((a) => a.base + "/").join(","),
 });
 cpSync(join(hub, "out"), OUT, { recursive: true });

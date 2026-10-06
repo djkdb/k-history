@@ -277,7 +277,7 @@ function InApp({
           </p>
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-zinc-300">
             여기서 푼 기록은 <b className="text-amber-100">이 화면 안에만</b>{" "}
-            남습니다. 나중에 {env.ios ? "사파리" : "크롬"}으로 열면 본 개념도,
+            남습니다. 나중에 {env.ios ? "사파리로" : "크롬으로"} 열면 본 개념도,
             모의고사 점수도 보이지 않습니다. 서버에 사본을 두지 않아 되찾을 수도
             없습니다.
           </p>
