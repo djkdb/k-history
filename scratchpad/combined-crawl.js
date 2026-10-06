@@ -141,6 +141,8 @@ const BASE = process.env.LIVE || "http://127.0.0.1:7000";
       await p.waitForTimeout(250);
       const 바깥 = await p.evaluate((app) =>
         [...document.querySelectorAll("a[href]")]
+          // "자격증 5종 홈" 은 일부러 앱 밖("/")으로 나가는 길이다 — 그것만 봐준다
+          .filter((a) => !(a.getAttribute("href") === "/" && a.textContent.trim() === "자격증 5종 홈"))
           .map((a) => a.getAttribute("href"))
           .filter((h) => h.startsWith("/") && !h.startsWith("//") && !h.startsWith(app + "/") && h !== app),
         app).catch(() => []);

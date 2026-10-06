@@ -9,7 +9,12 @@ const BASE_PATH = process.env.BASE_PATH ?? "";
 
 const nextConfig: NextConfig = {
   basePath: BASE_PATH || undefined,
-  env: { NEXT_PUBLIC_BASE_PATH: BASE_PATH },
+  env: {
+    NEXT_PUBLIC_BASE_PATH: BASE_PATH,
+    // 저장 전수조사용 판에서만 "1". 비워 두어도 꼭 적어 둔다 — 적지 않으면
+    // 빌드 때 값이 박히지 않아 조사용 문이 보통 판에도 죽은 채로 남는다.
+    NEXT_PUBLIC_STORAGE_AUDIT: process.env.NEXT_PUBLIC_STORAGE_AUDIT ?? "",
+  },
   reactStrictMode: true,
   // 정적 익스포트 — 서버 로직이 없는 순수 클라이언트 앱이라 out/ 으로 완전 정적 배포 가능
   // (Cloudflare Workers/Pages, 그 외 어떤 정적 호스팅에도 그대로 올라간다)

@@ -35,3 +35,4 @@ scripts/__pycache__/
 scratchpad/out-*.txt
 /out-all/
 scratchpad/persona/
+/out-audit/

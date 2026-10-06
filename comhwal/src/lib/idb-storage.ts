@@ -17,6 +17,11 @@ const DB_NAME = "comhwal";
 const STORE_NAME = "state";
 const MIRROR_PREFIX = "comhwal:mirror:";
 
+/** 이 이름의 기록이 거울(localStorage)에서 쓰는 열쇠 — 다른 창과 맞출 때 쓴다 */
+export function mirrorKeyOf(name: string): string {
+  return MIRROR_PREFIX + name;
+}
+
 let dbPromise: Promise<IDBPDatabase> | null = null;
 let idbBroken = false;
 

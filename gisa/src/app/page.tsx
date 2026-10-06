@@ -30,6 +30,7 @@ import { useApp, useTrack } from "@/lib/store";
 import { daysUntil } from "@/lib/utils";
 import { TodayPlan } from "@/components/today-plan";
 import { InstallHint } from "@/components/install-hint";
+import { HubLink } from "@/components/hub-link";
 
 export default function Home() {
   const router = useRouter();
@@ -81,6 +82,7 @@ export default function Home() {
 
   return (
     <main className="py-6">
+      <HubLink className="mb-4" />
       <header className="flex items-start">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold tracking-tight">정보처리기사</h1>

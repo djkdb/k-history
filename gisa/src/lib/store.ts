@@ -10,7 +10,7 @@ import type {
   Stats,
   Track,
 } from "@/lib/types";
-import { idbStorage } from "@/lib/idb-storage";
+import { idbStorage, mirrorKeyOf } from "@/lib/idb-storage";
 import { createCard, reviewCard } from "@/lib/srs";
 import { todayISO } from "@/lib/utils";
 
@@ -294,6 +294,56 @@ export const useApp = create<AppState>()(
     },
   ),
 );
+
+/*
+ * 같은 앱을 두 창에 띄워 둔 경우 (브라우저 탭 둘, 또는 홈 화면 앱과 탭).
+ * 한 창에서 푼 것을 다른 창은 모른다. 그 상태로 다른 창에서 하나 더 풀면
+ * 자기가 들고 있던 예전 기록으로 저장본을 통째로 덮어써 먼저 푼 것이 사라진다.
+ * 거울(localStorage)에 새 기록이 적히면 다른 창에 storage 이벤트가 오므로,
+ * 그 값으로 이 창의 기록을 맞춘다. (scratchpad/storage-audit.js ⑩ 이 감시한다)
+ */
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key !== mirrorKeyOf("gisa-state") || !e.newValue) return;
+    // 아직 불러오는 중이면 곧 저장본을 직접 읽는다
+    if (!useApp.getState().hydrated) return;
+    let saved: unknown;
+    try {
+      saved = (JSON.parse(e.newValue) as { state?: unknown }).state;
+    } catch {
+      return;
+    }
+    if (!saved || typeof saved !== "object") return;
+    const mine = useApp.persist.getOptions().partialize?.(useApp.getState());
+    // 이미 같으면 손대지 않는다 — 받은 것을 되받아 적으며 두 창이 주고받지 않게
+    if (sameRecord(mine, saved)) return;
+    useApp.setState((cur) => mergeSaved(cur, saved));
+  });
+}
+
+/** 칸 순서와 상관없이 같은 기록인가 */
+function sameRecord(a: unknown, b: unknown): boolean {
+  const canon = (v: unknown): unknown =>
+    Array.isArray(v)
+      ? v.map(canon)
+      : v && typeof v === "object"
+        ? Object.fromEntries(
+            Object.keys(v as object)
+              .sort()
+              .map((k) => [k, canon((v as Record<string, unknown>)[k])]),
+          )
+        : v;
+  return JSON.stringify(canon(a)) === JSON.stringify(canon(b));
+}
+
+/*
+ * 저장 전수조사(scratchpad/storage-audit.js)가 스토어를 직접 부르기 위한 문.
+ * NEXT_PUBLIC_STORAGE_AUDIT=1 로 따로 빌드한 판에만 생긴다. 보통 빌드에서는
+ * 조건이 빌드 때 false 로 굳어 통째로 빠진다.
+ */
+if (process.env.NEXT_PUBLIC_STORAGE_AUDIT === "1" && typeof window !== "undefined") {
+  (window as unknown as { __appStore?: unknown }).__appStore = useApp;
+}
 
 /** 지금 준비하는 것이 필기인가 실기인가 */
 export function useTrack(): Track {

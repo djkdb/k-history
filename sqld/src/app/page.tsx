@@ -31,6 +31,7 @@ import {
   StatCard,
 } from "@/components/ui";
 import { daysUntil, formatMinutes } from "@/lib/utils";
+import { HubLink } from "@/components/hub-link";
 
 export default function HomePage() {
   const router = useRouter();
@@ -97,6 +98,7 @@ export default function HomePage() {
 
   return (
     <div className="pt-6">
+      <HubLink className="mb-4" />
       <header className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium text-indigo-300">

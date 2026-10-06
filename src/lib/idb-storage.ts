@@ -21,6 +21,11 @@ const DB_NAME = "khlm";
 const STORE_NAME = "state";
 const MIRROR_PREFIX = "khlm:mirror:";
 
+/** 이 이름의 기록이 거울(localStorage)에서 쓰는 열쇠 — 다른 창과 맞출 때 쓴다 */
+export function mirrorKeyOf(name: string): string {
+  return MIRROR_PREFIX + name;
+}
+
 let dbPromise: Promise<IDBPDatabase> | null = null;
 /** IndexedDB를 아예 못 쓰는 환경(사파리 시크릿 등)인지 */
 let idbBroken = false;

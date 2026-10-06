@@ -27,6 +27,7 @@ import {
 import { cn, daysUntil } from "@/lib/utils";
 import { Badge, Button, Card, ProgressBar } from "@/components/ui";
 import { InstallGuide } from "@/components/install-guide";
+import { HubLink } from "@/components/hub-link";
 
 const PRESETS = [3, 7, 14, 30, 60];
 
@@ -75,6 +76,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="flex min-h-dvh flex-col pt-10">
+      <HubLink className="mb-4" />
       {/* 히어로 */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}

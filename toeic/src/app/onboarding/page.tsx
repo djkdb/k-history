@@ -18,6 +18,7 @@ import { useApp } from "@/lib/store";
 import { loadVoices, supported } from "@/lib/tts";
 import { cn } from "@/lib/utils";
 import { InstallHint } from "@/components/install-hint";
+import { HubLink } from "@/components/hub-link";
 
 const BAND_NOTE: Record<Band, string> = {
   600: "기초 문법과 필수 어휘부터. 영어를 오래 놓았다면 여기서 시작합니다.",
@@ -54,6 +55,7 @@ export default function Onboarding() {
 
   return (
     <main className="py-10">
+      <HubLink className="mb-4" />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

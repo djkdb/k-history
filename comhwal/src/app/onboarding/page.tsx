@@ -19,6 +19,7 @@ import { SUBJECTS, subjectsFor } from "@/data/subjects";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { InstallHint } from "@/components/install-hint";
+import { HubLink } from "@/components/hub-link";
 
 /**
  * 첫 화면 안내.
@@ -72,6 +73,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="pt-10">
+      <HubLink className="mb-4" />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

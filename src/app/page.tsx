@@ -46,6 +46,7 @@ import {
 } from "@/components/ui";
 import { InstallPrompt } from "@/components/install-guide";
 import { ThemeToggle } from "@/components/theme";
+import { HubLink } from "@/components/hub-link";
 
 
 function Skeleton() {
@@ -147,6 +148,7 @@ export default function DashboardPage() {
 
   return (
     <div className="pt-6">
+      <HubLink className="mb-4" />
       {/* 학습을 시작한 뒤 한 번만 뜨는 홈 화면 추가 안내 */}
       <InstallPrompt />
 

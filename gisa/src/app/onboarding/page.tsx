@@ -15,6 +15,7 @@ import { useApp } from "@/lib/store";
 import type { Track } from "@/lib/types";
 import { daysUntil } from "@/lib/utils";
 import { InstallHint } from "@/components/install-hint";
+import { HubLink } from "@/components/hub-link";
 
 export default function Page() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function Page() {
 
   return (
     <main className="flex min-h-[80dvh] flex-col py-8">
+      <HubLink className="mb-4" />
       <div className="flex gap-1.5">
         {[0, 1, 2].map((i) => (
           <div

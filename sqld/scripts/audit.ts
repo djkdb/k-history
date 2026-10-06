@@ -95,10 +95,22 @@ for (const other of ["comhwal", "toeic", "korea-history", "khistory"]) {
       fail(`SQL 엔진 파일이 없습니다 — ${f}`);
     }
   }
-  // 서비스 워커가 두 파일을 모두 미리 받아 두어야 오프라인에서도 돈다
-  const sw = readFileSync(join(root, "public/sw.js"), "utf8");
-  for (const f of ["/sql/sql-wasm.js", "/sql/sql-wasm.wasm"]) {
-    if (!sw.includes(f)) fail(`sw.js 가 ${f} 를 미리 받아 두지 않습니다`);
+  // 서비스 워커가 두 파일을 모두 미리 받아 두어야 오프라인에서도 돈다.
+  // public/sw.js 는 틀이고, 받아 둘 목록은 빌드 뒤 scripts/build-sw.mjs 가 out/ 을
+  // 훑어 채운다. 그래서 (1) 훑을 때 .js·.wasm 을 담는지 보고, (2) 빌드된 out/sw.js 가
+  // 있으면 거기에 실제로 들어갔는지 본다.
+  const builder = readFileSync(join(root, "scripts/build-sw.mjs"), "utf8");
+  const exts = builder.match(/담을확장자 = new Set\(\[([^\]]*)\]/)?.[1] ?? "";
+  for (const ext of ["js", "wasm"]) {
+    if (!exts.includes(`"${ext}"`)) fail(`build-sw.mjs 가 .${ext} 파일을 미리 받아 둘 목록에 넣지 않습니다`);
+  }
+  try {
+    const built = readFileSync(join(root, "out/sw.js"), "utf8");
+    for (const f of ["/sql/sql-wasm.js", "/sql/sql-wasm.wasm"]) {
+      if (!built.includes(f)) fail(`빌드된 out/sw.js 가 ${f} 를 미리 받아 두지 않습니다`);
+    }
+  } catch {
+    /* 아직 빌드 전 — (1) 로 갈음한다 */
   }
 }
 

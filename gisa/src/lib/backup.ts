@@ -269,7 +269,7 @@ export function mergeBackup(file: BackupFile): void {
         ...new Set([...s.clearedPracticalIds, ...(d.clearedPracticalIds ?? [])]),
       ],
       reviewCards: [...cards.values()],
-      quizHistory: [...s.quizHistory, ...(d.quizHistory ?? [])].slice(-500),
+      quizHistory: dedupeQuiz([...s.quizHistory, ...(d.quizHistory ?? [])]).slice(-500),
       wrongIds: [...new Set([...s.wrongIds, ...(d.wrongIds ?? [])])],
       mockAttempts: dedupeAttempts([
         ...s.mockAttempts,
@@ -277,6 +277,23 @@ export function mergeBackup(file: BackupFile): void {
       ]),
     };
   });
+}
+
+/**
+ * 같은 백업을 두 번 합쳐도 풀이 기록이 겹쳐 늘지 않게 한다.
+ * 같은 문항을 같은 순간에 푼 기록은 하나다. 겹치면 정답률·배지가 부풀려진다.
+ * 시간순으로 다시 세워, 뒤에서 자를 때 가장 최근 것이 남게 한다.
+ */
+function dedupeQuiz(list: AppState["quizHistory"]): AppState["quizHistory"] {
+  const seen = new Set<string>();
+  return list
+    .filter((r) => {
+      const k = `${r.quizId}@${r.takenAt}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .sort((a, b) => a.takenAt - b.takenAt);
 }
 
 /** 같은 응시(시험 종류 + 시작 시각)는 하나만 남긴다 */

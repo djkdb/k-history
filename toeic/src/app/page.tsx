@@ -26,6 +26,7 @@ import { BAND_LABEL } from "@/data/parts";
 import { daysUntil } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme";
 import { InstallHint } from "@/components/install-hint";
+import { HubLink } from "@/components/hub-link";
 
 export default function Home() {
   const router = useRouter();
@@ -117,6 +118,7 @@ export default function Home() {
 
   return (
     <main className="py-6">
+      <HubLink className="mb-4" />
       <header className="flex items-start justify-between">
         <div>
           <p className="text-[13px] font-bold text-indigo-300">
