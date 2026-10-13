@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#09090b"/>
+  <rect x="40" y="40" width="432" height="432" rx="88" fill="#f43f5e" fill-opacity="0.22" stroke="#f43f5e" stroke-width="10"/>
+  <text x="256" y="300" text-anchor="middle" font-family="Pretendard, Arial, sans-serif" font-weight="700" font-size="190" fill="#fafafa" letter-spacing="-6">IR</text>
+  <text x="256" y="392" text-anchor="middle" font-family="Pretendard, Arial, sans-serif" font-weight="700" font-size="58" fill="#f43f5e">중간고사</text>
+</svg>

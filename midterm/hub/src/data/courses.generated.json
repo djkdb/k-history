@@ -1,0 +1,66 @@
+[
+  {
+    "id": "db",
+    "name": "데이터베이스시스템",
+    "code": "5118026-02",
+    "color": "#0ea5e9",
+    "mark": "DB",
+    "ready": true,
+    "chapters": 9,
+    "concepts": 67,
+    "questions": 238,
+    "examDate": "2026-10-23"
+  },
+  {
+    "id": "ml",
+    "name": "머신러닝",
+    "short": "머신러닝",
+    "code": "5119015-01",
+    "color": "#a855f7",
+    "mark": "ML",
+    "ready": false,
+    "chapters": 0,
+    "concepts": 0,
+    "questions": 0,
+    "examDate": null
+  },
+  {
+    "id": "se",
+    "name": "소프트웨어공학",
+    "short": "SW공학",
+    "code": "5120004-01",
+    "color": "#10b981",
+    "mark": "SE",
+    "ready": false,
+    "chapters": 0,
+    "concepts": 0,
+    "questions": 0,
+    "examDate": null
+  },
+  {
+    "id": "cs",
+    "name": "컴퓨터시스템개론",
+    "short": "컴시개",
+    "code": "5118003-02",
+    "color": "#f59e0b",
+    "mark": "CS",
+    "ready": false,
+    "chapters": 0,
+    "concepts": 0,
+    "questions": 0,
+    "examDate": null
+  },
+  {
+    "id": "ir",
+    "name": "정보검색",
+    "short": "정보검색",
+    "code": "5119006-01",
+    "color": "#f43f5e",
+    "mark": "IR",
+    "ready": false,
+    "chapters": 0,
+    "concepts": 0,
+    "questions": 0,
+    "examDate": null
+  }
+]

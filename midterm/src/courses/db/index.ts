@@ -1,0 +1,38 @@
+import type { Course } from "@/lib/types";
+import { CHAPTERS } from "./chapters";
+import { CONCEPTS_1 } from "./concepts-1";
+import { CONCEPTS_2 } from "./concepts-2";
+import { CONCEPTS_3 } from "./concepts-3";
+import { QUESTIONS_1 } from "./questions-1";
+import { QUESTIONS_2 } from "./questions-2";
+import { QUESTIONS_3 } from "./questions-3";
+
+/**
+ * 데이터베이스시스템 (5118026-02) — Yoon Suk Kang 교수님
+ *
+ * 받은 자료: Lecture 1 Course Overview, Lecture 2 Intro & ER, Practice 1 ER(+풀이),
+ * Lecture 3 RDB, Practice 2 RDB Mapping, Lecture 4 SQL, Lecture 5 View,
+ * Lecture 6 Relational Algebra.
+ *
+ * 중간고사 범위(Weeks 1~7) 가운데 6주차 Functional Dependencies and
+ * Normalization 자료는 받지 못했다 — 지어내지 않고 화면에 알린다.
+ */
+const course: Course = {
+  id: "db",
+  name: "데이터베이스시스템",
+  short: "DB",
+  code: "5118026-02",
+  professor: "Yoon Suk Kang 교수님",
+  examDate: "2026-10-23",
+  examNote:
+    "Lecture 1 Course Overview: Mid-term 10/23(금) 9:00 am, Room 106 & 104 (휴일에 따라 바뀔 수 있음). 시험지는 영어, 답은 한국어로 써도 됩니다.",
+  missing: ["6주차 Functional Dependencies and Normalization — 강의 자료를 받지 못해 넣지 않았습니다"],
+  englishExam: true,
+  color: "#0ea5e9",
+  symbol: "🗄️",
+  chapters: CHAPTERS,
+  concepts: [...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3],
+  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3],
+};
+
+export default course;
