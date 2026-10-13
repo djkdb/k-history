@@ -38,14 +38,13 @@
   {
     "id": "cs",
     "name": "컴퓨터시스템개론",
-    "short": "컴시개",
     "code": "5118003-02",
     "color": "#f59e0b",
     "mark": "CS",
-    "ready": false,
-    "chapters": 0,
-    "concepts": 0,
-    "questions": 0,
+    "ready": true,
+    "chapters": 14,
+    "concepts": 78,
+    "questions": 431,
     "examDate": null
   },
   {
