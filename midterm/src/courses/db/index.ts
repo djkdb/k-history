@@ -1,11 +1,16 @@
 import type { Course } from "@/lib/types";
+import { withEasy } from "@/lib/easy";
 import { CHAPTERS } from "./chapters";
 import { CONCEPTS_1 } from "./concepts-1";
 import { CONCEPTS_2 } from "./concepts-2";
 import { CONCEPTS_3 } from "./concepts-3";
+import { EASY } from "./easy";
+import { NOTES_1 } from "./notes-1";
+import { NOTES_2 } from "./notes-2";
 import { QUESTIONS_1 } from "./questions-1";
 import { QUESTIONS_2 } from "./questions-2";
 import { QUESTIONS_3 } from "./questions-3";
+import { QUESTIONS_4 } from "./questions-4";
 
 /**
  * 데이터베이스시스템 (5118026-02) — Yoon Suk Kang 교수님
@@ -31,8 +36,9 @@ const course: Course = {
   color: "#0ea5e9",
   symbol: "🗄️",
   chapters: CHAPTERS,
-  concepts: [...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3],
-  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3],
+  concepts: withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY),
+  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
+  notes: { ...NOTES_1, ...NOTES_2 },
 };
 
 export default course;
