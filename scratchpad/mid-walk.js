@@ -35,6 +35,10 @@ let 문제 = 0; const ok = (m) => console.log("  ✓ " + m), no = (m) => { 문�
   if (!날짜) await p.locator("#exam-date").fill("2026-10-23");
   await 누름("시작하기", { wait: 1500 });
   (await 글()).includes("오늘 할 일") ? ok("홈이 열렸다") : no("홈이 아니다: " + p.url());
+  const 과목명 = require("../midterm/courses.json").find((x) => x.id === C).name;
+  const 남과목 = require("../midterm/courses.json").filter((x) => x.id !== C).map((x) => x.name);
+  const 첫홈글 = await 글();
+  첫홈글.includes(과목명) && !남과목.some((n) => 첫홈글.includes(n)) ? ok(`홈이 ${과목명} 자료다`) : no(`홈에 ${과목명} 자료가 아니다`);
   await 찍기("홈");
 
   console.log("━━━ 개념");

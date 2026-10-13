@@ -25,9 +25,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@course": [
-        "./src/courses/db/index.ts"
       ]
     }
   },

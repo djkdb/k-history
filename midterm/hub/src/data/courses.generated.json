@@ -14,14 +14,13 @@
   {
     "id": "ml",
     "name": "머신러닝",
-    "short": "머신러닝",
     "code": "5119015-01",
     "color": "#a855f7",
     "mark": "ML",
-    "ready": false,
-    "chapters": 0,
-    "concepts": 0,
-    "questions": 0,
+    "ready": true,
+    "chapters": 11,
+    "concepts": 71,
+    "questions": 298,
     "examDate": null
   },
   {
