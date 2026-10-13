@@ -48,7 +48,7 @@ let 문제 = 0; const ok = (m) => console.log("  ✓ " + m), no = (m) => { 문�
   (await 글()).includes("공부함") ? ok("공부함으로 표시") : no("공부함 표시가 안 된다");
   await 누름(/문제 \d+개 풀기/, { wait: 1500 });
   console.log("━━━ 퀴즈 (이 개념)");
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 12; i++) {
     const t = await 글(); if (t.includes("퀴즈 끝")) break;
     // 첫 보기를 고르거나 O 를 누르거나, 적기면 아무 말이나
     const 칸 = p.locator("main input:not([type=date])");

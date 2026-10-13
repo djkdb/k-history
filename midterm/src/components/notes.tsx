@@ -25,7 +25,8 @@ export function NotesView({ sections }: { sections: NoteSection[] }) {
             >
               <span className="min-w-0 flex-1">
                 <span className="block text-[14.5px] font-bold leading-snug">
-                  {i + 1}. {s.title}
+                  {/* 교안의 절 번호("1. 분류")를 제목에 그대로 두므로 따로 번호를 붙이지 않는다 */}
+                  {s.title}
                 </span>
                 {s.en && <span className="mt-0.5 block text-[12px] text-zinc-400">{s.en}</span>}
               </span>

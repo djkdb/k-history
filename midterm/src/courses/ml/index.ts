@@ -6,6 +6,20 @@ import { CONCEPTS_3 } from "./concepts-3";
 import { QUESTIONS_1 } from "./questions-1";
 import { QUESTIONS_2 } from "./questions-2";
 import { QUESTIONS_3 } from "./questions-3";
+import { QUESTIONS_4 } from "./questions-4";
+import { EASY } from "./easy";
+import { withEasy } from "@/lib/easy";
+import { INTRO } from "./notes/intro";
+import { CLS } from "./notes/cls";
+import { UNSUP } from "./notes/unsup";
+import { REGREC } from "./notes/regrec";
+import { CLSM } from "./notes/clsm";
+import { ENS } from "./notes/ens";
+import { REGT } from "./notes/regt";
+import { NN1 } from "./notes/nn1";
+import { NN2 } from "./notes/nn2";
+import { DL } from "./notes/dl";
+import { CNN } from "./notes/cnn";
 
 /**
  * 머신러닝 (5119015-01) — 이건명 교수님
@@ -26,8 +40,21 @@ const course: Course = {
   color: "#a855f7",
   symbol: "🤖",
   chapters: CHAPTERS,
-  concepts: [...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3],
-  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3],
+  concepts: withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY),
+  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
+  notes: {
+    intro: INTRO,
+    cls: CLS,
+    unsup: UNSUP,
+    regrec: REGREC,
+    clsm: CLSM,
+    ens: ENS,
+    regt: REGT,
+    nn1: NN1,
+    nn2: NN2,
+    dl: DL,
+    cnn: CNN,
+  },
 };
 
 export default course;
