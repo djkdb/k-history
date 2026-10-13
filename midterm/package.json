@@ -7,7 +7,8 @@
     "dev": "next dev -p 3600",
     "build": "next build && node scripts/build-sw.mjs",
     "build:all": "node scripts/build-all.mjs",
-    "audit": "npx tsc --noEmit -p tsconfig.json && node -e \"require('jiti')(process.cwd(),{alias:{'@':process.cwd()+'/src'}})('./scripts/audit.ts')\""
+    "audit": "npx tsc --noEmit -p tsconfig.json && node -e \"require('jiti')(process.cwd(),{alias:{'@':process.cwd()+'/src'}})('./scripts/audit.ts')\"",
+    "deploy": "npm run audit && npm run build:all && npx -y wrangler@3.114.0 deploy"
   },
   "dependencies": {
     "clsx": "^2.1.1",

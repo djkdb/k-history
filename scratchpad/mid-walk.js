@@ -11,7 +11,7 @@ const SHOT = "/home/user/k-history/scratchpad/mid";
 const M = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2", ".txt": "text/plain" };
 function 찾기(u) { const p = path.join(ROOT, u); const c = u.endsWith("/") ? [path.join(p, "index.html")] : [p, p + ".html", path.join(p, "index.html")]; for (const f of c) { try { if (fs.statSync(f).isFile()) return [200, f]; } catch {} } let d = path.dirname(p); while (d.startsWith(ROOT)) { const f = path.join(d, "404.html"); if (fs.existsSync(f)) return [404, f]; if (d === ROOT) break; d = path.dirname(d); } return [404, null]; }
 const srv = http.createServer((q, r) => { const [code, f] = 찾기(decodeURIComponent(q.url.split("?")[0])); if (!f) { r.writeHead(404); return r.end(); } r.writeHead(code, { "content-type": M[path.extname(f)] || "application/octet-stream" }); r.end(fs.readFileSync(f)); });
-const B = "http://127.0.0.1:7500";
+const B = process.env.MID_BASE || "http://127.0.0.1:7500";
 let 문제 = 0; const ok = (m) => console.log("  ✓ " + m), no = (m) => { 문제++; console.log("  ✗ " + m); };
 (async () => {
   await new Promise((r) => srv.listen(7500, r));

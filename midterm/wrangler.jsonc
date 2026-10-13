@@ -1,0 +1,9 @@
+{
+  // 중간고사 5과목 — 정적 결과(out-all/)를 그대로 서빙한다. 서버 런타임 불필요.
+  "name": "zunte-midterm",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./out-all",
+    "not_found_handling": "404-page"
+  }
+}
