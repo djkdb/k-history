@@ -5,7 +5,7 @@
  * 그래서 한 과목을 빌드하면 그 과목의 자료만 실린다.
  */
 import course from "@course";
-import type { Chapter, Concept, Question } from "./types";
+import type { Chapter, Concept, NoteSection, Question } from "./types";
 
 export const COURSE = course;
 
@@ -38,4 +38,9 @@ export function chapterOfQuestion(q: Question): Chapter | undefined {
 export function termLabel(c: { title: string; en?: string }): string {
   if (!c.en) return c.title;
   return course.englishExam ? `${c.en} · ${c.title}` : c.title;
+}
+
+/** 장의 강의 노트 (교안 전체) — 없으면 빈 배열 */
+export function notesOf(chapterId: string): NoteSection[] {
+  return COURSE.notes?.[chapterId] ?? [];
 }

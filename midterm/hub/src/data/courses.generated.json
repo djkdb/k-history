@@ -26,14 +26,13 @@
   {
     "id": "se",
     "name": "소프트웨어공학",
-    "short": "SW공학",
     "code": "5120004-01",
     "color": "#10b981",
     "mark": "SE",
-    "ready": false,
-    "chapters": 0,
-    "concepts": 0,
-    "questions": 0,
+    "ready": true,
+    "chapters": 8,
+    "concepts": 66,
+    "questions": 328,
     "examDate": null
   },
   {

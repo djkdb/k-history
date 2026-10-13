@@ -42,6 +42,25 @@ export interface Concept {
   trap?: string;
   /** 코드·SQL 블록 (선택) */
   code?: string;
+  /** 쉽게 말하면 — 일상의 비유로 먼저 감을 잡게 (선택) */
+  easy?: string;
+  /** 흐름·순서 — 단계마다 한 줄, 화살표로 이어 그린다 (선택) */
+  flow?: string[];
+  /** 시험엔 이렇게 — 이 개념이 문제로 나오는 모양 (선택) */
+  exam?: string;
+}
+
+/**
+ * 강의 노트 — 교안을 슬라이드 순서대로 빠짐없이 옮긴 것.
+ * 개념 카드가 '골라 외울 것'이라면 이쪽은 '교안 전체'다.
+ * lines 의 각 줄은 RichText. "· " 로 시작하면 한 단계 들여 쓴다.
+ */
+export interface NoteSection {
+  title: string;
+  en?: string;
+  lines: string[];
+  table?: { title: string; headers: string[]; rows: string[][] };
+  code?: string;
 }
 
 /** 객관식 — 보기 중 하나 */
@@ -105,6 +124,8 @@ export interface Course {
   chapters: Chapter[];
   concepts: Concept[];
   questions: Question[];
+  /** 장 id → 강의 노트 (교안 전체) */
+  notes?: Record<string, NoteSection[]>;
 }
 
 /* ── 기록 ─────────────────────────────────────────────── */

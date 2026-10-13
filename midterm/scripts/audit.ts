@@ -72,6 +72,21 @@ for (const meta of LIST) {
   const noQ = c.concepts.filter((k) => !c.questions.some((q) => q.concept === k.id));
   for (const k of noQ) fail(id, `개념 ${k.id} 에 문제가 없다`);
 
+  // 강의 노트 — 장마다 있어야 한다 (교안 전체를 담는 곳)
+  if (c.notes) {
+    for (const k of Object.keys(c.notes)) if (!chs.has(k)) fail(id, `강의 노트의 장 ${k} 이 없다`);
+    for (const ch of c.chapters) {
+      const n = c.notes[ch.id];
+      if (!n || !n.length) fail(id, `장 ${ch.id} 에 강의 노트가 없다`);
+      else for (const sec of n) if (!sec.lines.length && !sec.table && !sec.code) fail(id, `장 ${ch.id} 노트 '${sec.title}' 이 비었다`);
+    }
+  }
+  const noteSecs = c.notes ? Object.values(c.notes).reduce((a, n) => a + n.length, 0) : 0;
+  const noteLines = c.notes ? Object.values(c.notes).reduce((a, n) => a + n.reduce((b, x) => b + x.lines.length + (x.table?.rows.length ?? 0), 0), 0) : 0;
+  const easyN = c.concepts.filter((k) => k.easy).length;
+  const flowN = c.concepts.filter((k) => k.flow?.length).length;
+  const examN = c.concepts.filter((k) => k.exam).length;
+
   const kinds = { mc: 0, ox: 0, short: 0 };
   for (const q of c.questions) kinds[q.kind]++;
   const ox = c.questions.filter((q) => q.kind === "ox");
@@ -80,6 +95,9 @@ for (const meta of LIST) {
   for (const q of c.questions) if (q.kind === "mc") mcPos[q.answer]++;
   console.log(
     `· ${c.name} — 장 ${c.chapters.length} · 개념 ${c.concepts.length} · 문제 ${c.questions.length} (객관식 ${kinds.mc} · OX ${kinds.ox} [O ${oxTrue}/X ${ox.length - oxTrue}] · 적기 ${kinds.short}) · 객관식 정답 위치 ${mcPos.slice(0, 4).join("/")}`,
+  );
+  console.log(
+    `    강의 노트 ${c.notes ? `${Object.keys(c.notes).length}/${c.chapters.length}장 · ${noteSecs}절 · ${noteLines}줄` : "없음"} · 쉽게 말하면 ${easyN}/${c.concepts.length} · 흐름 ${flowN} · 시험엔 이렇게 ${examN}`,
   );
 }
 

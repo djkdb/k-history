@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, ListChecks, Star } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, ListChecks, Star } from "lucide-react";
 import { ConceptBody } from "@/components/concept-body";
 import { Gate } from "@/components/gate";
 import { Button, ImportanceBadge } from "@/components/ui";
-import { COURSE, CHAPTER_MAP, CONCEPT_MAP, questionsOf } from "@/lib/course";
+import { COURSE, CHAPTER_MAP, CONCEPT_MAP, notesOf, questionsOf } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
 import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -86,6 +86,14 @@ function Inner({ id }: { id: string }) {
           >
             <ListChecks size={16} /> 이 개념 문제 {qs.length}개 풀기
           </Button>
+        )}
+        {notesOf(c.chapter).length > 0 && (
+          <Link
+            href={`/learn/${c.chapter}#notes`}
+            className="flex items-center justify-center gap-1.5 rounded-2xl border border-white/10 px-4 py-3 text-[13.5px] font-semibold text-zinc-300"
+          >
+            <BookOpen size={15} /> 이 장 강의 노트 (교안 전체) 보기
+          </Link>
         )}
       </div>
 
