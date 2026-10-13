@@ -50,14 +50,13 @@
   {
     "id": "ir",
     "name": "정보검색",
-    "short": "정보검색",
     "code": "5119006-01",
     "color": "#f43f5e",
     "mark": "IR",
-    "ready": false,
-    "chapters": 0,
-    "concepts": 0,
-    "questions": 0,
+    "ready": true,
+    "chapters": 7,
+    "concepts": 71,
+    "questions": 372,
     "examDate": null
   }
 ]
