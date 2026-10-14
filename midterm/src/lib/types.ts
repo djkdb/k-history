@@ -23,6 +23,105 @@ export interface Chapter {
   blurb: string;
 }
 
+
+/** 그림의 색 — 화면 테마(밝게·어둡게)에 맞춰 globals.css 의 --t-* 로 칠한다 */
+export type Tone = "indigo" | "emerald" | "amber" | "rose" | "sky" | "violet" | "zinc";
+
+/** 다이어그램의 상자 하나. x, y 는 상자의 가운데 (그림 좌표, px 단위) */
+export interface FigNode {
+  id: string;
+  /** 줄바꿈은 \n */
+  label: string;
+  x: number;
+  y: number;
+  w?: number;
+  h?: number;
+  tone?: Tone;
+  shape?: "box" | "pill" | "circle" | "diamond" | "db" | "text" | "dashed";
+}
+
+export interface FigEdge {
+  from: string;
+  to: string;
+  label?: string;
+  dashed?: boolean;
+  /** 양쪽 화살표 */
+  both?: boolean;
+  /** 화살표 없이 선만 */
+  plain?: boolean;
+  /** 휘는 정도 (px, 부호로 방향) */
+  bend?: number;
+  tone?: Tone;
+}
+
+/**
+ * 그림 — 글로 읽던 것을 눈으로 보게 한다 (Mayer: 말과 그림을 가까이, 핵심을 신호로).
+ * 개념 요약 바로 아래에 붙는다.
+ */
+export type Figure =
+  | { kind: "graph"; title: string; caption?: string; w: number; h: number; nodes: FigNode[]; edges?: FigEdge[] }
+  | {
+      kind: "grid";
+      title: string;
+      caption?: string;
+      cols?: string[];
+      rows?: string[];
+      cells: string[][];
+      /** 칠할 칸 (r, c 는 cells 기준 0부터) */
+      marks?: { r: number; c: number; tone?: Tone }[];
+      mono?: boolean;
+    }
+  | { kind: "bars"; title: string; caption?: string; unit?: string; items: { label: string; value: number; tone?: Tone; text?: string }[] }
+  | {
+      kind: "gantt";
+      title: string;
+      caption?: string;
+      end: number;
+      ticks?: number[];
+      rows: { label: string; segs: { from: number; to: number; label?: string; tone?: Tone }[] }[];
+    }
+  | {
+      kind: "fields";
+      title: string;
+      caption?: string;
+      rows: { label?: string; fields: { text: string; sub?: string; span: number; tone?: Tone }[] }[];
+    }
+  | {
+      kind: "plot";
+      title: string;
+      caption?: string;
+      /** 축 이름 */
+      x?: string;
+      y?: string;
+      xr: [number, number];
+      yr: [number, number];
+      h?: number;
+      xticks?: number[];
+      yticks?: number[];
+      series: {
+        label?: string;
+        tone?: Tone;
+        pts: [number, number][];
+        dashed?: boolean;
+        /** 점으로 찍기 (산점도) */
+        dots?: boolean;
+        /** 점과 선을 함께 */
+        line?: boolean;
+      }[];
+      notes?: { x: number; y: number; text: string; tone?: Tone; anchor?: "start" | "middle" | "end" }[];
+      vlines?: { x: number; label?: string; tone?: Tone }[];
+    }
+  | {
+      kind: "stack";
+      title: string;
+      caption?: string;
+      layers: { label: string; note?: string; tone?: Tone }[];
+      shape?: "pyramid" | "box";
+      /** 위·아래 끝에 붙는 설명 (예: 빠름 · 비쌈 / 느림 · 쌈) */
+      top?: string;
+      bottom?: string;
+    };
+
 export interface Concept {
   id: string;
   chapter: string;
@@ -48,6 +147,8 @@ export interface Concept {
   flow?: string[];
   /** 시험엔 이렇게 — 이 개념이 문제로 나오는 모양 (선택) */
   exam?: string;
+  /** 그림 — 요약 바로 아래에 그린다 (선택) */
+  figures?: Figure[];
 }
 
 /**
@@ -61,6 +162,7 @@ export interface NoteSection {
   lines: string[];
   table?: { title: string; headers: string[]; rows: string[][] };
   code?: string;
+  figures?: Figure[];
 }
 
 /** 객관식 — 보기 중 하나 */

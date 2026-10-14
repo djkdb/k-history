@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { NoteSection } from "@/lib/types";
+import { Figures } from "./figure";
 import { CompareTable, RichText, SqlBlock } from "./ui";
 
 /**
@@ -56,6 +57,7 @@ export function NotesView({ sections }: { sections: NoteSection[] }) {
                     );
                   })}
                 </ul>
+                <Figures list={s.figures} />
                 {s.table && <CompareTable title={s.table.title} headers={s.table.headers} rows={s.table.rows} />}
                 {s.code && <SqlBlock className="mt-3">{s.code}</SqlBlock>}
               </div>

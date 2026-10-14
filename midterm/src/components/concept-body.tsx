@@ -2,9 +2,10 @@
 
 import { AlertTriangle, ArrowDown, GraduationCap, Lightbulb, Sparkles } from "lucide-react";
 import type { Concept } from "@/lib/types";
+import { Figures } from "./figure";
 import { CompareTable, RichText, SqlBlock } from "./ui";
 
-/** 개념 본문 — 쉽게 말하면 · 요약 · 흐름 · 외울 것 · 표 · 예시 · 코드 · 시험엔 이렇게 · 함정 */
+/** 개념 본문 — 쉽게 말하면 · 요약 · 그림 · 흐름 · 외울 것 · 표 · 예시 · 코드 · 시험엔 이렇게 · 함정 */
 export function ConceptBody({ c }: { c: Concept }) {
   return (
     <div>
@@ -22,6 +23,9 @@ export function ConceptBody({ c }: { c: Concept }) {
       <p className="text-[15px] leading-[1.85] text-zinc-200">
         <RichText>{c.summary}</RichText>
       </p>
+
+      {/* 그림은 설명 바로 아래 — 말과 그림을 가까이 둔다 */}
+      <Figures list={c.figures} />
 
       {c.flow && c.flow.length > 0 && <Flow steps={c.flow} />}
 

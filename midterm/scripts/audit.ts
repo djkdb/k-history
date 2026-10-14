@@ -14,7 +14,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { Course } from "../src/lib/types";
+import type { Course, Figure } from "../src/lib/types";
 
 const ROOT = join(__dirname, "..");
 const LIST = JSON.parse(readFileSync(join(ROOT, "courses.json"), "utf8")) as { id: string; name: string }[];
@@ -81,6 +81,36 @@ for (const meta of LIST) {
       else for (const sec of n) if (!sec.lines.length && !sec.table && !sec.code) fail(id, `장 ${ch.id} 노트 '${sec.title}' 이 비었다`);
     }
   }
+  // 그림 — 선이 없는 상자를 가리키거나, 상자가 그림 밖으로 나가거나, 표시 칸이 표 밖이면 화면이 깨진다
+  const figs: [string, Figure][] = [
+    ...c.concepts.flatMap((k) => (k.figures ?? []).map((f) => [k.id, f] as [string, Figure])),
+    ...Object.values(c.notes ?? {}).flatMap((secs) => secs.flatMap((sec) => (sec.figures ?? []).map((f) => [sec.title, f] as [string, Figure]))),
+  ];
+  for (const [where, f] of figs) {
+    if (!f.title) fail(id, `그림 제목 없음 (${where})`);
+    if (f.kind === "graph") {
+      const ids = new Set<string>();
+      for (const n of f.nodes) {
+        if (ids.has(n.id)) fail(id, `그림 '${f.title}' 상자 id 겹침: ${n.id}`);
+        ids.add(n.id);
+        const w = n.shape === "circle" ? (n.w ?? 44) : (n.w ?? 92);
+        const h = n.shape === "circle" ? (n.w ?? 44) : (n.h ?? 38);
+        if (n.x - w / 2 < 0 || n.x + w / 2 > f.w || n.y - h / 2 < 0 || n.y + h / 2 > f.h)
+          fail(id, `그림 '${f.title}' 상자 '${n.id}' 가 그림 밖으로 나감`);
+      }
+      for (const e of f.edges ?? []) if (!ids.has(e.from) || !ids.has(e.to)) fail(id, `그림 '${f.title}' 선이 없는 상자를 가리킴: ${e.from}→${e.to}`);
+    }
+    if (f.kind === "grid") {
+      const w = f.cells[0]?.length ?? 0;
+      if (f.cells.some((r) => r.length !== w)) fail(id, `그림 '${f.title}' 행마다 칸 수가 다름`);
+      if (f.cols && f.cols.length !== w) fail(id, `그림 '${f.title}' 열 이름 수(${f.cols.length}) ≠ 칸 수(${w})`);
+      if (f.rows && f.rows.length !== f.cells.length) fail(id, `그림 '${f.title}' 행 이름 수 ≠ 행 수`);
+      for (const m of f.marks ?? []) if (m.r >= f.cells.length || m.c >= w) fail(id, `그림 '${f.title}' 표시 칸이 표 밖 (${m.r},${m.c})`);
+    }
+    if (f.kind === "gantt") for (const r of f.rows) for (const sg of r.segs) if (sg.from < 0 || sg.to > f.end || sg.to <= sg.from) fail(id, `그림 '${f.title}' 구간이 이상함 ${sg.from}~${sg.to}`);
+  }
+  const figN = c.concepts.filter((k) => k.figures?.length).length;
+
   const noteSecs = c.notes ? Object.values(c.notes).reduce((a, n) => a + n.length, 0) : 0;
   const noteLines = c.notes ? Object.values(c.notes).reduce((a, n) => a + n.reduce((b, x) => b + x.lines.length + (x.table?.rows.length ?? 0), 0), 0) : 0;
   const easyN = c.concepts.filter((k) => k.easy).length;
@@ -97,7 +127,7 @@ for (const meta of LIST) {
     `· ${c.name} — 장 ${c.chapters.length} · 개념 ${c.concepts.length} · 문제 ${c.questions.length} (객관식 ${kinds.mc} · OX ${kinds.ox} [O ${oxTrue}/X ${ox.length - oxTrue}] · 적기 ${kinds.short}) · 객관식 정답 위치 ${mcPos.slice(0, 4).join("/")}`,
   );
   console.log(
-    `    강의 노트 ${c.notes ? `${Object.keys(c.notes).length}/${c.chapters.length}장 · ${noteSecs}절 · ${noteLines}줄` : "없음"} · 쉽게 말하면 ${easyN}/${c.concepts.length} · 흐름 ${flowN} · 시험엔 이렇게 ${examN}`,
+    `    강의 노트 ${c.notes ? `${Object.keys(c.notes).length}/${c.chapters.length}장 · ${noteSecs}절 · ${noteLines}줄` : "없음"} · 쉽게 말하면 ${easyN}/${c.concepts.length} · 흐름 ${flowN} · 시험엔 이렇게 ${examN} · 그림 ${figs.length}개 (개념 ${figN})`,
   );
 }
 

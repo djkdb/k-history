@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -417,8 +419,10 @@ export function CompareTable({
         <table className="cmp-table">
           <thead>
             <tr>
-              {headers.map((h) => (
-                <th key={h}>{h}</th>
+              {headers.map((h, i) => (
+                <th key={i}>
+                  <RichText>{h}</RichText>
+                </th>
               ))}
             </tr>
           </thead>
@@ -428,9 +432,9 @@ export function CompareTable({
                 {r.map((cell, j) => (
                   <td
                     key={j}
-                    className={j === 0 ? "font-bold" : "text-zinc-400"}
+                    className={j === 0 ? "font-bold" : "text-zinc-300"}
                   >
-                    {cell}
+                    <RichText>{cell}</RichText>
                   </td>
                 ))}
               </tr>
@@ -478,6 +482,7 @@ export function RichText({
   children: string;
   className?: string;
 }) {
+  const cloze = useContext(ClozeCtx);
   const out: ReactNode[] = [];
   // 백틱과 ** 를 한 번에 훑는다. 백틱 안의 별표는 코드로 남아야 하므로
   // 코드를 먼저 잡는 순서로 둔다.
@@ -497,13 +502,52 @@ export function RichText({
       );
     } else {
       out.push(
-        <strong key={m.index} className="font-bold text-zinc-100">
-          {m[2]}
-        </strong>,
+        cloze.on ? (
+          <Cloze key={`${cloze.gen}-${m.index}`} text={m[2]} />
+        ) : (
+          <strong key={m.index} className="font-bold text-zinc-100">
+            {m[2]}
+          </strong>
+        ),
       );
     }
     last = m.index + m[0].length;
   }
   if (last < children.length) out.push(children.slice(last));
   return <span className={className}>{out}</span>;
+}
+
+/**
+ * 가리고 떠올리기 — 켜 두면 굵은 핵심어가 가려진다.
+ *
+ * 다시 읽기보다 떠올려 보기(인출 연습)가 훨씬 오래 남는다(Dunlosky 2013:
+ * practice testing = high utility, rereading·highlighting = low). 이미 본문에
+ * 굵게 적어 둔 핵심어를 그대로 빈칸으로 쓰므로 자료를 따로 만들 필요가 없다.
+ * gen 이 바뀌면 모두 다시 가려진다.
+ */
+export const ClozeCtx = createContext<{ on: boolean; gen: number }>({ on: false, gen: 0 });
+
+function Cloze({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span
+      role={open ? undefined : "button"}
+      tabIndex={open ? undefined : 0}
+      aria-label={open ? undefined : "가린 핵심어 — 떠올린 뒤 눌러서 확인"}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(true);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setOpen(true);
+        }
+      }}
+      className={open ? "cloze open" : "cloze"}
+    >
+      {text}
+    </span>
+  );
 }

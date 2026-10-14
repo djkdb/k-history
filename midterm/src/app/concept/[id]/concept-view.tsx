@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, ListChecks, Star } from "lucide-react";
+import { ClozeBar } from "@/components/cloze-bar";
 import { ConceptBody } from "@/components/concept-body";
 import { Gate } from "@/components/gate";
-import { Button, ImportanceBadge } from "@/components/ui";
+import { Button, ClozeCtx, ImportanceBadge } from "@/components/ui";
+import { countKeys, useCloze } from "@/lib/cloze";
 import { COURSE, CHAPTER_MAP, CONCEPT_MAP, notesOf, questionsOf } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
 import { useApp } from "@/lib/store";
@@ -27,6 +29,7 @@ function Inner({ id }: { id: string }) {
   const markStudied = useApp((s) => s.markStudied);
   const unmarkStudied = useApp((s) => s.unmarkStudied);
   const toggleStar = useApp((s) => s.toggleStar);
+  const cloze = useCloze();
   if (!c) return <p className="py-10 text-center text-zinc-400">없는 개념입니다.</p>;
 
   const ch = CHAPTER_MAP[c.chapter];
@@ -63,7 +66,15 @@ function Inner({ id }: { id: string }) {
       {c.en && <p className="mt-1 text-[14px] font-semibold text-indigo-200">{en ? c.title : c.en}</p>}
 
       <div className="mt-5">
-        <ConceptBody c={c} />
+        <ClozeBar
+          on={cloze.on}
+          count={countKeys([JSON.stringify(c)])}
+          onToggle={cloze.toggle}
+          onRehide={cloze.rehide}
+        />
+        <ClozeCtx.Provider value={{ on: cloze.on, gen: cloze.gen }}>
+          <ConceptBody c={c} />
+        </ClozeCtx.Provider>
       </div>
 
       <div className="mt-6 flex flex-col gap-2">

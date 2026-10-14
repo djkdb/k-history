@@ -491,3 +491,264 @@ body {
     animation-iteration-count: infinite !important;
   }
 }
+
+/* ── 그림 (components/figure.tsx) ─────────────────────────
+   색은 톤별 변수 두 개(바탕·선)만 쓴다. 테마가 바뀌면 변수만 바뀐다. */
+:root {
+  --fig-ink: #e4e4e7;
+  --fig-sub: #a1a1aa;
+  --fig-frame: rgba(255, 255, 255, 0.025);
+  --fig-label: #141417;
+  --t-indigo-bg: rgba(99, 102, 241, 0.2);
+  --t-indigo-ln: #818cf8;
+  --t-emerald-bg: rgba(16, 185, 129, 0.18);
+  --t-emerald-ln: #34d399;
+  --t-amber-bg: rgba(245, 158, 11, 0.18);
+  --t-amber-ln: #fbbf24;
+  --t-rose-bg: rgba(244, 63, 94, 0.18);
+  --t-rose-ln: #fb7185;
+  --t-sky-bg: rgba(14, 165, 233, 0.18);
+  --t-sky-ln: #38bdf8;
+  --t-violet-bg: rgba(139, 92, 246, 0.2);
+  --t-violet-ln: #a78bfa;
+  --t-zinc-bg: rgba(255, 255, 255, 0.06);
+  --t-zinc-ln: #71717a;
+}
+[data-theme="light"] {
+  --fig-ink: #18181b;
+  --fig-sub: #52525b;
+  --fig-frame: #ffffff;
+  --fig-label: #ffffff;
+  --t-indigo-bg: #e0e7ff;
+  --t-indigo-ln: #4f46e5;
+  --t-emerald-bg: #d1fae5;
+  --t-emerald-ln: #059669;
+  --t-amber-bg: #fef3c7;
+  --t-amber-ln: #d97706;
+  --t-rose-bg: #ffe4e6;
+  --t-rose-ln: #e11d48;
+  --t-sky-bg: #e0f2fe;
+  --t-sky-ln: #0284c7;
+  --t-violet-bg: #ede9fe;
+  --t-violet-ln: #7c3aed;
+  --t-zinc-bg: #f4f4f5;
+  --t-zinc-ln: #71717a;
+}
+.t-indigo { --tb: var(--t-indigo-bg); --tl: var(--t-indigo-ln); }
+.t-emerald { --tb: var(--t-emerald-bg); --tl: var(--t-emerald-ln); }
+.t-amber { --tb: var(--t-amber-bg); --tl: var(--t-amber-ln); }
+.t-rose { --tb: var(--t-rose-bg); --tl: var(--t-rose-ln); }
+.t-sky { --tb: var(--t-sky-bg); --tl: var(--t-sky-ln); }
+.t-violet { --tb: var(--t-violet-bg); --tl: var(--t-violet-ln); }
+.t-zinc { --tb: var(--t-zinc-bg); --tl: var(--t-zinc-ln); }
+
+.fig-frame {
+  border: 1px solid var(--sheet-line);
+  border-radius: 1rem;
+  background: var(--fig-frame);
+  overflow: hidden;
+}
+.fig-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 2px;
+  background: var(--t-indigo-ln);
+}
+.fig-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 6px;
+  font-family: var(--font-sans);
+}
+.fig-node {
+  fill: var(--tb);
+  stroke: var(--tl);
+  stroke-width: 1.4;
+}
+.fig-node path,
+.fig-node ellipse {
+  fill: var(--tb);
+  stroke: var(--tl);
+}
+.fig-dashed {
+  stroke-dasharray: 5 4;
+}
+.fig-edge {
+  stroke: var(--tl);
+  stroke-width: 1.5;
+}
+.fig-arrow {
+  fill: var(--tl);
+}
+.fig-ink {
+  fill: var(--fig-ink);
+  font-weight: 600;
+}
+.fig-sub {
+  fill: var(--fig-sub);
+  font-weight: 600;
+}
+.fig-label-bg {
+  fill: var(--fig-label);
+  opacity: 0.92;
+}
+.fig-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  text-align: center;
+}
+.fig-grid th,
+.fig-grid td {
+  border: 1px solid var(--sheet-line);
+  padding: 0.35rem 0.4rem;
+  min-width: 1.9rem;
+}
+.fig-grid th {
+  background: var(--sheet-head);
+  font-weight: 700;
+  color: var(--fig-sub);
+}
+.fig-mark {
+  background: var(--tb);
+  box-shadow: inset 0 0 0 1.5px var(--tl);
+  font-weight: 700;
+}
+.fig-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 6px;
+  background: var(--tb);
+  border: 1.5px solid var(--tl);
+}
+.fig-track {
+  border-radius: 6px;
+  background: var(--sheet-head);
+}
+.fig-seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 5px;
+  background: var(--tb);
+  border: 1.5px solid var(--tl);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fig-ink);
+}
+.fig-field {
+  min-width: 0;
+  padding: 0.45rem 0.25rem;
+  text-align: center;
+  background: var(--tb);
+  border: 1.5px solid var(--tl);
+  margin-left: -1.5px;
+  color: var(--fig-ink);
+}
+.fig-field:first-child {
+  margin-left: 0;
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+.fig-field:last-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+.fig-layer {
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  background: var(--tb);
+  border: 1.5px solid var(--tl);
+  color: var(--fig-ink);
+}
+
+/* ── 가리고 떠올리기 (RichText 의 굵은 글씨) ── */
+.cloze {
+  display: inline;
+  padding: 0 0.3em;
+  border-radius: 0.35em;
+  background: var(--t-indigo-bg);
+  box-shadow: inset 0 -2px 0 var(--t-indigo-ln);
+  color: transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.cloze.open {
+  color: inherit;
+  background: var(--t-emerald-bg);
+  box-shadow: inset 0 -2px 0 var(--t-emerald-ln);
+  font-weight: 700;
+  cursor: default;
+}
+
+/* ── 표 읽기 쉽게: 줄무늬, 첫 열 고정 ── */
+.cmp-table tbody tr:nth-child(even) td {
+  background: var(--sheet-head);
+}
+.cmp-table td:first-child,
+.cmp-table th:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--bg);
+  z-index: 1;
+}
+.cmp-table thead th:first-child {
+  background: var(--bg);
+  background-image: linear-gradient(var(--sheet-head), var(--sheet-head));
+}
+
+/* ── 인쇄 (장 한눈에 보기) ── */
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .print-sheet {
+    break-inside: avoid;
+  }
+}
+.cmp-table tbody tr:nth-child(even) td:first-child {
+  background: linear-gradient(var(--sheet-head), var(--sheet-head)), var(--bg);
+}
+.fig-gridline {
+  stroke: var(--sheet-line);
+  stroke-width: 1;
+}
+.fig-axis {
+  stroke: var(--t-zinc-ln);
+  stroke-width: 1.2;
+}
+.fig-curve {
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.fig-note {
+  fill: var(--tl);
+  font-weight: 700;
+}
+.fig-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  border-top: 3px solid var(--tl);
+  border-radius: 2px;
+}
+.fig-swatch.dashed {
+  border-top-style: dashed;
+}
+.fig-field span {
+  overflow-wrap: anywhere;
+}

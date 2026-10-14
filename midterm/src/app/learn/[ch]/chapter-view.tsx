@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, BookOpen, CheckCircle2, ChevronRight, Layers, ListChecks, Star } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, ChevronRight, FileText, GraduationCap, Layers, ListChecks, Printer, Star } from "lucide-react";
+import { ClozeBar } from "@/components/cloze-bar";
+import { Figures } from "@/components/figure";
 import { Gate } from "@/components/gate";
 import { NotesView } from "@/components/notes";
-import { Button, Card, ImportanceBadge } from "@/components/ui";
-import { CHAPTER_MAP, conceptsOf, notesOf, questionsOf, questionsOfChapter, termLabel } from "@/lib/course";
+import { Button, Card, ClozeCtx, ImportanceBadge, RichText } from "@/components/ui";
+import { countKeys, useCloze } from "@/lib/cloze";
+import { COURSE, CHAPTER_MAP, conceptsOf, notesOf, questionsOf, questionsOfChapter, termLabel } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
 import { useApp } from "@/lib/store";
 
@@ -26,17 +29,20 @@ function Inner({ id }: { id: string }) {
   const starred = useApp((s) => s.starred);
   const log = useApp((s) => s.log);
   // 탭은 주소의 #notes 로도 고를 수 있다 (강의 노트로 바로 오는 길)
-  const [tab, setTab] = useState<"cards" | "notes">("cards");
+  type Tab = "cards" | "sheet" | "notes";
+  const [tab, setTab] = useState<Tab>("cards");
+  const cloze = useCloze();
   useEffect(() => {
     if (window.location.hash === "#notes") setTab("notes");
+    if (window.location.hash === "#sheet") setTab("sheet");
   }, []);
   if (!ch) return <p className="py-10 text-center text-zinc-400">없는 장입니다.</p>;
   const cs = conceptsOf(id);
   const qs = questionsOfChapter(id);
   const notes = notesOf(id);
-  const pick = (t: "cards" | "notes") => {
+  const pick = (t: Tab) => {
     setTab(t);
-    history.replaceState(null, "", t === "notes" ? "#notes" : location.pathname + location.search);
+    history.replaceState(null, "", t === "cards" ? location.pathname + location.search : `#${t}`);
   };
 
   return (
@@ -49,7 +55,7 @@ function Inner({ id }: { id: string }) {
       <p className="mt-2 text-[12px] text-zinc-500">자료: {ch.source}</p>
 
       <Button
-        className="mt-4 w-full"
+        className="no-print mt-4 w-full"
         variant="outline"
         onClick={() => {
           setQuizPreset({ chapter: id, mode: "all" });
@@ -59,36 +65,64 @@ function Inner({ id }: { id: string }) {
         <ListChecks size={16} /> 이 장 퀴즈 ({qs.length}문제)
       </Button>
 
-      {notes.length > 0 && (
-        <div role="tablist" className="mt-4 grid grid-cols-2 gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-1">
-          {(
-            [
-              ["cards", "개념 카드", Layers, cs.length],
-              ["notes", "강의 노트 (교안 전체)", BookOpen, notes.length],
-            ] as const
-          ).map(([k, label, Icon, n]) => (
+      <div role="tablist" className="no-print mt-4 grid grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-1">
+        {(
+          [
+            ["cards", "개념 카드", Layers, cs.length],
+            ["sheet", "한눈에", FileText, null],
+            ["notes", "강의 노트", BookOpen, notes.length],
+          ] as const
+        )
+          .filter(([k]) => k !== "notes" || notes.length > 0)
+          .map(([k, label, Icon, n]) => (
             <button
               key={k}
               role="tab"
               type="button"
               aria-selected={tab === k}
               onClick={() => pick(k)}
-              className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[12.5px] font-bold ${
+              className={`flex items-center justify-center gap-1.5 rounded-xl px-1.5 py-2 text-[12.5px] font-bold ${
                 tab === k ? "bg-white/10 text-zinc-100" : "text-zinc-400"
               }`}
             >
-              <Icon size={14} /> {label} <span className="font-normal opacity-70">{n}</span>
+              <Icon size={14} /> {label} {n !== null && <span className="font-normal opacity-70">{n}</span>}
             </button>
           ))}
-        </div>
-      )}
+      </div>
 
-      {tab === "notes" && notes.length > 0 ? (
+      {tab === "sheet" ? (
+        <div className="mt-4">
+          <div className="no-print mb-3 flex items-start gap-2">
+            <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-zinc-400">
+              이 장을 한 장으로 — 핵심 요약 · 그림 · 시험 포인트만 모았어요. 시험 직전에 훑거나 인쇄해서 보세요.
+            </p>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="flex shrink-0 items-center gap-1 rounded-xl border border-white/10 px-2.5 py-1.5 text-[12px] font-semibold text-zinc-300"
+            >
+              <Printer size={14} /> 인쇄
+            </button>
+          </div>
+          <ClozeBar on={cloze.on} count={countKeys(cs.map((c) => c.summary))} onToggle={cloze.toggle} onRehide={cloze.rehide} />
+          <ClozeCtx.Provider value={{ on: cloze.on, gen: cloze.gen }}>
+            <Sheet id={id} />
+          </ClozeCtx.Provider>
+        </div>
+      ) : tab === "notes" && notes.length > 0 ? (
         <div className="mt-4">
           <p className="mb-3 text-[12px] leading-relaxed text-zinc-400">
             교안을 슬라이드 순서대로 빠짐없이 옮겼습니다. 개념 카드에 없는 작은 내용도 여기 있어요.
           </p>
-          <NotesView sections={notes} />
+          <ClozeBar
+            on={cloze.on}
+            count={countKeys(notes.flatMap((n) => n.lines))}
+            onToggle={cloze.toggle}
+            onRehide={cloze.rehide}
+          />
+          <ClozeCtx.Provider value={{ on: cloze.on, gen: cloze.gen }}>
+            <NotesView sections={notes} />
+          </ClozeCtx.Provider>
         </div>
       ) : (
       <div className="mt-4 flex flex-col gap-2">
@@ -121,5 +155,62 @@ function Inner({ id }: { id: string }) {
       </div>
       )}
     </main>
+  );
+}
+
+/**
+ * 장 한눈에 — 개념마다 요약 · 그림 · 시험 포인트만.
+ * 긴 설명을 덜어 내고(일관성 원칙) 장 전체를 한 번에 훑게 한다.
+ */
+function Sheet({ id }: { id: string }) {
+  const cs = conceptsOf(id);
+  const en = COURSE.englishExam;
+  // 인쇄는 흰 종이 — 어두운 테마의 밝은 글씨가 흐려지지 않게 인쇄하는 동안만 밝은 테마로
+  useEffect(() => {
+    const root = document.documentElement;
+    let prev: string | null = null;
+    const before = () => {
+      prev = root.getAttribute("data-theme");
+      root.setAttribute("data-theme", "light");
+    };
+    const after = () => {
+      if (prev) root.setAttribute("data-theme", prev);
+    };
+    window.addEventListener("beforeprint", before);
+    window.addEventListener("afterprint", after);
+    return () => {
+      window.removeEventListener("beforeprint", before);
+      window.removeEventListener("afterprint", after);
+    };
+  }, []);
+  return (
+    <div className="flex flex-col gap-3">
+      {cs.map((c, i) => (
+        <section key={c.id} className="print-sheet rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="flex items-start gap-2">
+            <span className="mt-[1px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-[11px] font-bold text-indigo-200">
+              {i + 1}
+            </span>
+            <Link href={`/concept/${c.id}`} className="min-w-0 flex-1">
+              <span className="block text-[14.5px] font-bold leading-snug">{en && c.en ? c.en : c.title}</span>
+              {c.en && <span className="mt-0.5 block text-[11.5px] text-zinc-400">{en ? c.title : c.en}</span>}
+            </Link>
+            <ImportanceBadge level={c.importance} compact />
+          </div>
+          <p className="mt-2 text-[13.5px] leading-[1.75] text-zinc-200">
+            <RichText>{c.summary}</RichText>
+          </p>
+          <Figures list={c.figures} />
+          {c.exam && (
+            <p className="mt-3 flex gap-1.5 rounded-xl bg-indigo-500/[0.08] px-3 py-2 text-[12.5px] leading-relaxed text-zinc-200">
+              <GraduationCap size={14} className="mt-[3px] shrink-0 text-indigo-300" />
+              <span className="min-w-0">
+                <RichText>{c.exam}</RichText>
+              </span>
+            </p>
+          )}
+        </section>
+      ))}
+    </div>
   );
 }
