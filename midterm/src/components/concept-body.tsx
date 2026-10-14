@@ -14,13 +14,13 @@ export function ConceptBody({ c }: { c: Concept }) {
           <p className="flex items-center gap-1.5 text-[12px] font-bold text-emerald-200">
             <Sparkles size={14} /> 쉽게 말하면
           </p>
-          <p className="mt-1.5 whitespace-pre-line text-[14px] leading-[1.8] text-zinc-200">
+          <p className="mt-1.5 whitespace-pre-line text-[14px] leading-[1.8] text-zinc-200 lg:text-[15px]">
             <RichText>{c.easy}</RichText>
           </p>
         </div>
       )}
 
-      <p className="text-[15px] leading-[1.85] text-zinc-200">
+      <p className="text-[15px] leading-[1.85] text-zinc-200 lg:text-[16px]">
         <RichText>{c.summary}</RichText>
       </p>
 
@@ -34,7 +34,7 @@ export function ConceptBody({ c }: { c: Concept }) {
           <p className="mb-2 text-[12px] font-bold text-zinc-400">외울 것</p>
           <ul className="flex flex-col gap-2">
             {c.points.map((p, i) => (
-              <li key={i} className="flex gap-2.5 text-[14px] leading-relaxed text-zinc-200">
+              <li key={i} className="flex gap-2.5 text-[14px] leading-relaxed text-zinc-200 lg:text-[15px]">
                 <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400" />
                 <span className="min-w-0">
                   <RichText>{p}</RichText>
@@ -54,7 +54,7 @@ export function ConceptBody({ c }: { c: Concept }) {
           <p className="flex items-center gap-1.5 text-[12px] font-bold text-sky-200">
             <Lightbulb size={14} /> 예시
           </p>
-          <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-200">
+          <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
             <RichText>{c.example}</RichText>
           </p>
         </div>
@@ -65,7 +65,7 @@ export function ConceptBody({ c }: { c: Concept }) {
           <p className="flex items-center gap-1.5 text-[12px] font-bold text-indigo-200">
             <GraduationCap size={14} /> 시험엔 이렇게
           </p>
-          <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-200">
+          <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
             <RichText>{c.exam}</RichText>
           </p>
         </div>
@@ -76,7 +76,7 @@ export function ConceptBody({ c }: { c: Concept }) {
           <p className="flex items-center gap-1.5 text-[12px] font-bold text-amber-200">
             <AlertTriangle size={14} /> 헷갈리는 곳
           </p>
-          <p className="mt-1.5 text-[13.5px] leading-relaxed text-zinc-200">
+          <p className="mt-1.5 text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
             <RichText>{c.trap}</RichText>
           </p>
         </div>
@@ -97,7 +97,7 @@ function Flow({ steps }: { steps: string[] }) {
               <span className="mt-[1px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-[11px] font-bold text-indigo-200">
                 {i + 1}
               </span>
-              <span className="min-w-0 text-[13.5px] leading-relaxed text-zinc-200">
+              <span className="min-w-0 text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
                 <RichText>{st}</RichText>
               </span>
             </div>

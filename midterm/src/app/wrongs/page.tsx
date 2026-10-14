@@ -89,7 +89,7 @@ function WrongsView() {
   };
 
   return (
-    <main className="py-6">
+    <main className="page-read py-6">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <h1 className="text-[22px] font-bold tracking-tight">오답 노트</h1>

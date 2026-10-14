@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import type { FigEdge, FigNode, Figure, Tone } from "@/lib/types";
 import { RichText } from "./ui";
 
@@ -343,7 +344,7 @@ const TONES: Tone[] = ["indigo", "emerald", "amber", "rose", "sky", "violet", "z
 function Graph({ f }: { f: Extract<Figure, { kind: "graph" }> }) {
   const map = Object.fromEntries(f.nodes.map((n) => [n.id, n]));
   return (
-    <svg viewBox={`0 0 ${f.w} ${f.h}`} className="fig-svg" role="img" aria-label={f.title} style={{ maxWidth: f.w * 1.35 }}>
+    <svg viewBox={`0 0 ${f.w} ${f.h}`} className="fig-svg" role="img" aria-label={f.title} style={{ "--fw": `${f.w}px` } as CSSProperties}>
       <defs>
         {TONES.map((t) => (
           <marker
@@ -546,7 +547,7 @@ function Plot({ f }: { f: Extract<Figure, { kind: "plot" }> }) {
   const legend = f.series.filter((s) => s.label);
   return (
     <div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="fig-svg" role="img" aria-label={f.title} style={{ maxWidth: W * 1.35 }}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="fig-svg" role="img" aria-label={f.title} style={{ "--fw": `${W}px` } as CSSProperties}>
         {/* 눈금이 없으면 옅은 가로줄 넷 — 높낮이를 눈으로 비교하게 */}
         {!f.yticks &&
           [0.25, 0.5, 0.75, 1].map((k) => (

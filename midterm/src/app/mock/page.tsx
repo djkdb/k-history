@@ -27,7 +27,7 @@ function MockView() {
   const running = typeof window !== "undefined" ? readMock() : null;
 
   return (
-    <main className="py-6">
+    <main className="page-read py-6">
       <h1 className="text-[22px] font-bold tracking-tight">모의고사</h1>
       <p className="mt-1 text-[13px] leading-relaxed text-zinc-400">
         모든 장에서 문제 수에 비례해 고루 뽑습니다. 다 풀고 제출해야 채점합니다. 실제 시험처럼 해설 없이

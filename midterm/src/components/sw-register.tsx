@@ -89,7 +89,7 @@ export function SWRegister() {
   if (!waiting || hidden) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-[55] px-4">
+    <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-[55] px-4 lg:bottom-6 lg:left-64">
       <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-indigo-400/40 bg-indigo-950/90 px-3.5 py-3 shadow-lg backdrop-blur">
         <RefreshCw size={16} className="shrink-0 text-indigo-300" />
         <div className="min-w-0 flex-1">

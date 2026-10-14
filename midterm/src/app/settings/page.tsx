@@ -26,7 +26,7 @@ function SettingsView() {
   const [saved, setSaved] = useState(false);
 
   return (
-    <main className="py-6">
+    <main className="page-read py-6">
       <Link href="/" className="inline-flex items-center gap-1 text-[13px] font-semibold text-zinc-400">
         <ArrowLeft size={15} /> 홈
       </Link>

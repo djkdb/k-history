@@ -46,7 +46,7 @@ function LearnView() {
         강의 자료 {COURSE.chapters.length}개 · 개념 {COURSE.concepts.length}개
       </p>
 
-      <label className="mt-4 flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5">
+      <label className="mt-4 flex items-center lg:max-w-xl gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5">
         <Search size={16} className="shrink-0 text-zinc-500" />
         <input
           value={query}
@@ -63,7 +63,7 @@ function LearnView() {
       </div>
 
       {hits ? (
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-4 grid gap-2 lg:grid-cols-2">
           {hits.length === 0 && <p className="py-6 text-center text-[13.5px] text-zinc-400">찾는 개념이 없습니다.</p>}
           {hits.map((c) => (
             <Link key={c.id} href={`/concept/${c.id}`}>
@@ -79,13 +79,13 @@ function LearnView() {
           ))}
         </div>
       ) : (
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-4 grid gap-2 lg:grid-cols-2 lg:gap-3">
           {COURSE.chapters.map((ch, i) => {
             const cs = conceptsOf(ch.id);
             const done = cs.filter((c) => studied[c.id]).length;
             return (
-              <Link key={ch.id} href={`/learn/${ch.id}`}>
-                <Card>
+              <Link key={ch.id} href={`/learn/${ch.id}`} className="flex">
+                <Card className="flex-1">
                   <div className="flex items-start gap-3">
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-indigo-500/15 text-[12px] font-bold text-indigo-200">
                       {i + 1}

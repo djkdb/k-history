@@ -81,6 +81,10 @@
   --key-fg: #fafafa;
   --sheet-line: rgba(255, 255, 255, 0.1);
   --sheet-head: rgba(255, 255, 255, 0.06);
+  --cmp-bg: #111114;
+  --cmp-head: rgba(129, 140, 248, 0.13);
+  --cmp-col: rgba(255, 255, 255, 0.05);
+  --cmp-hover: rgba(129, 140, 248, 0.08);
   --exam-bar-bg: rgba(16, 16, 19, 0.94);
   --exam-bar-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
   --nav-bg: rgba(18, 18, 21, 0.92);
@@ -117,6 +121,10 @@
   --key-fg: #18181b;
   --sheet-line: rgba(0, 0, 0, 0.1);
   --sheet-head: rgba(0, 0, 0, 0.04);
+  --cmp-bg: #ffffff;
+  --cmp-head: #eef0ff;
+  --cmp-col: rgba(0, 0, 0, 0.05);
+  --cmp-hover: rgba(79, 70, 229, 0.06);
   --exam-bar-bg: rgba(255, 255, 255, 0.96);
   --exam-bar-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   --nav-bg: rgba(255, 255, 255, 0.94);
@@ -201,6 +209,67 @@ body {
   backdrop-filter: blur(12px);
 }
 
+/* 넓은 화면 왼쪽 길잡이 */
+.side-nav {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-right: 1px solid var(--glass-line);
+  backdrop-filter: blur(12px);
+}
+.side-scroll {
+  scrollbar-width: thin;
+}
+/* 마우스가 있는 화면 — 눌러 들어가는 카드는 올려 두면 테두리가 밝아진다 */
+@media (hover: hover) {
+  a > .glass,
+  button > .glass {
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  a:hover > .glass,
+  button:hover > .glass {
+    border-color: var(--glass-line-strong);
+    background: var(--glass-bg-strong, var(--glass-bg));
+  }
+}
+/* 한눈에 — 넓은 화면에서는 두 단으로 흘려 쓴다 (신문처럼) */
+.sheet-cols {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 1024px) {
+  .sheet-cols {
+    display: block;
+    columns: 2;
+    column-gap: 0.875rem;
+  }
+  .sheet-cols > * {
+    break-inside: avoid;
+    margin-bottom: 0.875rem;
+  }
+}
+@media print {
+  .sheet-cols {
+    display: block;
+    columns: 1;
+  }
+}
+
+/* 넓은 화면에서 막대·칸·시간표 그림이 끝없이 늘어나지 않게 */
+@media (min-width: 1024px) {
+  .fig-frame > div:not(.overflow-x-auto) {
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+}
+
+/* 읽기·풀기 화면은 넓은 화면에서도 한 줄이 너무 길지 않게 */
+@media (min-width: 1024px) {
+  .page-read {
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+}
+
 .nav-shell {
   padding-top: 1.5rem;
   background: linear-gradient(
@@ -247,22 +316,6 @@ body {
 }
 
 /* 개념 안의 비교 표 */
-.cmp-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8125rem;
-}
-.cmp-table th,
-.cmp-table td {
-  border: 1px solid var(--sheet-line);
-  padding: 0.5rem 0.6rem;
-  text-align: left;
-  vertical-align: top;
-}
-.cmp-table th {
-  background: var(--sheet-head);
-  font-weight: 700;
-}
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -574,6 +627,15 @@ body {
   border-radius: 2px;
   background: var(--t-indigo-ln);
 }
+/* 그림 최대 폭 — 폰에서는 원래 폭의 1.35배, 넓은 화면에서는 1.7배까지 키운다 */
+.fig-svg {
+  max-width: calc(var(--fw, 340px) * 1.35);
+}
+@media (min-width: 1024px) {
+  .fig-svg {
+    max-width: calc(var(--fw, 340px) * 1.7);
+  }
+}
 .fig-svg {
   text-rendering: geometricPrecision;
   display: block;
@@ -638,21 +700,40 @@ body {
   border-collapse: collapse;
   font-size: 0.78rem;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 .fig-grid th,
 .fig-grid td {
   border: 1px solid var(--sheet-line);
-  padding: 0.35rem 0.4rem;
+  padding: 0.4rem 0.45rem;
   min-width: 1.9rem;
+}
+/* 바깥 테두리는 그림 틀이 맡는다 — 겹선이 생기지 않게 */
+.fig-grid tr > :first-child {
+  border-left: 0;
+}
+.fig-grid tr > :last-child {
+  border-right: 0;
+}
+.fig-grid thead tr:first-child > *,
+.fig-grid tbody:first-child tr:first-child > * {
+  border-top: 0;
+}
+.fig-grid tbody tr:last-child > * {
+  border-bottom: 0;
 }
 .fig-grid th {
   background: var(--sheet-head);
   font-weight: 700;
   color: var(--fig-sub);
 }
+.fig-grid td {
+  color: var(--fig-ink);
+}
+/* 짚을 칸 — 굵은 테두리 대신 옅은 바탕 + 가는 안쪽 선 */
 .fig-mark {
   background: var(--tb);
-  box-shadow: inset 0 0 0 1.5px var(--tl);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tl) 60%, transparent);
   font-weight: 700;
 }
 .fig-bar {
@@ -731,21 +812,6 @@ body {
   cursor: default;
 }
 
-/* ── 표 읽기 쉽게: 줄무늬, 첫 열 고정 ── */
-.cmp-table tbody tr:nth-child(even) td {
-  background: var(--sheet-head);
-}
-.cmp-table td:first-child,
-.cmp-table th:first-child {
-  position: sticky;
-  left: 0;
-  background: var(--bg);
-  z-index: 1;
-}
-.cmp-table thead th:first-child {
-  background: var(--bg);
-  background-image: linear-gradient(var(--sheet-head), var(--sheet-head));
-}
 
 /* ── 인쇄 (장 한눈에 보기) ── */
 @media print {
@@ -760,9 +826,6 @@ body {
   .print-sheet {
     break-inside: avoid;
   }
-}
-.cmp-table tbody tr:nth-child(even) td:first-child {
-  background: linear-gradient(var(--sheet-head), var(--sheet-head)), var(--bg);
 }
 .fig-gridline {
   stroke: var(--sheet-line);
@@ -804,4 +867,67 @@ body {
 }
 .fig-field span {
   overflow-wrap: anywhere;
+}
+
+/* ── 비교표 (개념·강의 노트) ──
+   둥근 틀 안에 넣고, 머리줄은 옅은 남색, 줄무늬, 첫 열은 옆으로 밀어도 고정 */
+.cmp-wrap {
+  border: 1px solid var(--sheet-line);
+  border-radius: 0.9rem;
+  background: var(--cmp-bg);
+  overflow-x: auto;
+}
+.cmp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+}
+.cmp-table th,
+.cmp-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--sheet-line);
+  border-right: 1px solid var(--cmp-col);
+}
+.cmp-table tr > :last-child {
+  border-right: 0;
+}
+.cmp-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.cmp-table th {
+  background: var(--cmp-head);
+  color: var(--fig-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.cmp-table tbody tr:nth-child(even) td {
+  background: var(--sheet-head);
+}
+.cmp-table td:first-child,
+.cmp-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--cmp-bg);
+  box-shadow: inset -1px 0 0 var(--sheet-line);
+}
+.cmp-table th:first-child {
+  background: linear-gradient(var(--cmp-head), var(--cmp-head)), var(--cmp-bg);
+}
+.cmp-table tbody tr:nth-child(even) td:first-child {
+  background: linear-gradient(var(--sheet-head), var(--sheet-head)), var(--cmp-bg);
+}
+@media (hover: hover) {
+  .cmp-table tbody tr:hover td {
+    background: var(--cmp-hover);
+  }
+  .cmp-table tbody tr:hover td:first-child {
+    background: linear-gradient(var(--cmp-hover), var(--cmp-hover)), var(--cmp-bg);
+  }
 }

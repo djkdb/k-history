@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { AppShell } from "@/components/app-shell";
 import { BottomNav } from "@/components/bottom-nav";
 import { MotionGuard } from "@/components/motion-guard";
+import { SideNav } from "@/components/side-nav";
 import { SWRegister } from "@/components/sw-register";
 import { withBase } from "@/lib/base";
 import { COURSE } from "@/lib/course";
@@ -53,9 +55,10 @@ export default function RootLayout({
         />
       </head>
       <body className="app-bg min-h-dvh">
-        <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28">
+        <SideNav />
+        <AppShell>
           <MotionGuard>{children}</MotionGuard>
-        </div>
+        </AppShell>
         <BottomNav />
         <SWRegister />
       </body>

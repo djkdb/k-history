@@ -126,7 +126,7 @@ function QuizView() {
     const asked = session.filter((q) => confs[q.id]);
     const sureN = asked.filter((q) => confs[q.id] === "sure");
     return (
-      <main className="py-6">
+      <main className="page-read py-6">
         <h1 className="text-[22px] font-bold">퀴즈 끝</h1>
         <Card className="mt-4 text-center">
           <p className="text-[40px] font-black leading-none">
@@ -201,7 +201,7 @@ function QuizView() {
   if (session) {
     const q = session[at];
     return (
-      <main className="py-6">
+      <main className="page-read py-6">
         <div className="flex items-center gap-3">
           <ProgressBar value={at + (done ? 1 : 0)} max={session.length} className="flex-1" />
           <button type="button" onClick={() => setSession(null)} className="text-[12.5px] font-semibold text-zinc-500">
@@ -245,7 +245,7 @@ function QuizView() {
   }
 
   return (
-    <main className="py-6">
+    <main className="page-read py-6">
       <h1 className="text-[22px] font-bold tracking-tight">퀴즈</h1>
       <p className="mt-1 text-[13px] text-zinc-400">
         고르면 바로 채점하고 해설을 보여 줍니다. 틀린 것은 복습함에 들어갑니다.

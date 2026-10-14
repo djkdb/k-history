@@ -68,7 +68,7 @@ function ReviewView() {
   if (queue.length === 0 || at >= queue.length) {
     const right = marks.filter(Boolean).length;
     return (
-      <main className="py-6">
+      <main className="page-read py-6">
         <h1 className="text-[22px] font-bold tracking-tight">복습</h1>
         {marks.length > 0 ? (
           <Card className="mt-4 text-center">
@@ -115,7 +115,7 @@ function ReviewView() {
   };
 
   return (
-    <main className="py-6">
+    <main className="page-read py-6">
       <div className="flex items-center gap-3">
         <ProgressBar value={at} max={queue.length} className="flex-1" />
         <span className="text-[12px] text-zinc-400">

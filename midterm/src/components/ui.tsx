@@ -403,6 +403,18 @@ export function EmptyState({
 }
 
 /** 개념 안의 비교 표 — 좁은 화면에서는 표 안에서만 가로로 넘긴다 */
+/** 칸이 기호 하나뿐이면 색으로 읽게 — 맞음은 초록, 아님은 빨강, 해당 없음은 옅게 */
+const MARK_TONE: Record<string, string> = {
+  O: "font-bold text-emerald-300",
+  "○": "font-bold text-emerald-300",
+  "✓": "font-bold text-emerald-300",
+  X: "font-bold text-rose-300",
+  "✗": "font-bold text-rose-300",
+  "×": "font-bold text-rose-300",
+  "-": "text-zinc-500",
+  "—": "text-zinc-500",
+};
+
 export function CompareTable({
   title,
   headers,
@@ -413,9 +425,11 @@ export function CompareTable({
   rows: string[][];
 }) {
   return (
-    <div className="mt-4">
-      <p className="mb-2 text-[12px] font-bold text-zinc-400">{title}</p>
-      <div className="overflow-x-auto">
+    <div className="mt-5">
+      <p className="mb-2 flex items-center gap-1.5 text-[12px] font-bold text-zinc-400">
+        <span className="fig-dot" aria-hidden /> {title}
+      </p>
+      <div className="cmp-wrap">
         <table className="cmp-table">
           <thead>
             <tr>
@@ -430,10 +444,7 @@ export function CompareTable({
             {rows.map((r, i) => (
               <tr key={i}>
                 {r.map((cell, j) => (
-                  <td
-                    key={j}
-                    className={j === 0 ? "font-bold" : "text-zinc-300"}
-                  >
+                  <td key={j} className={j === 0 ? "font-bold" : (MARK_TONE[cell.trim()] ?? "text-zinc-300")}>
                     <RichText>{cell}</RichText>
                   </td>
                 ))}

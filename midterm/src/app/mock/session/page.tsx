@@ -69,7 +69,7 @@ function SessionView() {
       .filter((x) => x.n > 0);
     const wrongs = qs.filter((q) => !result.results[q.id]);
     return (
-      <main className="py-6">
+      <main className="page-read py-6">
         <h1 className="text-[22px] font-bold">채점 결과</h1>
         <Card className="mt-4 text-center">
           <p className="text-[44px] font-black leading-none">{pct}<span className="text-[20px] text-zinc-500">점</span></p>
@@ -144,7 +144,7 @@ function SessionView() {
   };
 
   return (
-    <main className="py-6">
+    <main className="page-read py-6">
       <div className="flex items-center gap-3">
         <ProgressBar value={answered} max={qs.length} className="flex-1" />
         <button

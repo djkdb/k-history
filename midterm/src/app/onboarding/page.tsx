@@ -28,7 +28,7 @@ export default function Onboarding() {
   };
 
   return (
-    <main className="flex min-h-[80dvh] flex-col py-8">
+    <main className="page-read flex min-h-[80dvh] flex-col py-8">
       <HubLink className="mb-4" />
       <p className="text-[13px] font-semibold text-indigo-300">
         {COURSE.symbol} {COURSE.code}

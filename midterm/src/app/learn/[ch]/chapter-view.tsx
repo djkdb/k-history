@@ -56,7 +56,7 @@ function Inner({ id }: { id: string }) {
       <p className="mt-2 text-[12px] text-zinc-500">자료: {ch.source}</p>
 
       <Button
-        className="no-print mt-4 w-full"
+        className="no-print mt-4 w-full lg:w-auto"
         variant="outline"
         onClick={() => {
           setQuizPreset({ chapter: id, mode: "all" });
@@ -66,7 +66,7 @@ function Inner({ id }: { id: string }) {
         <ListChecks size={16} /> 이 장 퀴즈 ({qs.length}문제)
       </Button>
 
-      <div role="tablist" className="no-print mt-4 grid grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-1">
+      <div role="tablist" className="no-print mt-4 grid grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-1 lg:max-w-xl">
         {(
           [
             ["cards", "개념 카드", Layers, cs.length],
@@ -111,7 +111,7 @@ function Inner({ id }: { id: string }) {
           </ClozeCtx.Provider>
         </div>
       ) : tab === "notes" && notes.length > 0 ? (
-        <div className="mt-4">
+        <div className="mt-4 lg:max-w-3xl">
           <p className="mb-3 text-[12px] leading-relaxed text-zinc-400">
             교안을 슬라이드 순서대로 빠짐없이 옮겼습니다. 개념 카드에 없는 작은 내용도 여기 있어요.
           </p>
@@ -126,13 +126,13 @@ function Inner({ id }: { id: string }) {
           </ClozeCtx.Provider>
         </div>
       ) : (
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-4 grid gap-2 lg:grid-cols-2">
         {cs.map((c) => {
           const cq = questionsOf(c.id);
           const ok = cq.filter((q) => log[q.id]?.lastRight).length;
           return (
-            <Link key={c.id} href={`/concept/${c.id}`}>
-              <Card className="py-3.5">
+            <Link key={c.id} href={`/concept/${c.id}`} className="flex">
+              <Card className="flex-1 py-3.5">
                 <div className="flex items-center gap-2">
                   {studied[c.id] ? (
                     <CheckCircle2 size={16} className="shrink-0 text-emerald-300" />
@@ -168,7 +168,7 @@ function Sheet({ id }: { id: string }) {
   const en = COURSE.englishExam;
   usePrintLight();
   return (
-    <div className="flex flex-col gap-3">
+    <div className="sheet-cols">
       {cs.map((c, i) => (
         <section key={c.id} className="print-sheet rounded-2xl border border-white/10 bg-white/[0.03] p-4">
           <div className="flex items-start gap-2">

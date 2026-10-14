@@ -59,7 +59,7 @@ function HomeView() {
 
   return (
     <main className="py-6">
-      <HubLink className="mb-4" />
+      <HubLink className="mb-4 lg:hidden" />
       <header className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <p className="text-[12.5px] font-semibold text-indigo-300">
@@ -67,11 +67,11 @@ function HomeView() {
           </p>
           <h1 className="mt-0.5 text-[22px] font-bold leading-tight tracking-tight">{COURSE.name}</h1>
         </div>
-        <ThemeToggle />
+        <ThemeToggle className="lg:hidden" />
         <Link
           href="/settings"
           aria-label="설정"
-          className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-zinc-400 hover:bg-white/10"
+          className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-zinc-400 hover:bg-white/10 lg:hidden"
         >
           <Settings size={18} />
         </Link>
@@ -79,6 +79,9 @@ function HomeView() {
 
       <InstallHint slot="top" />
 
+      {/* 넓은 화면: 왼쪽은 오늘 할 일, 오른쪽은 진도 */}
+      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
+      <section>
       <Card className="mt-4">
         {exam && dday !== null ? (
           <div className="flex items-end justify-between gap-3">
@@ -196,7 +199,13 @@ function HomeView() {
         )}
       </div>
 
-      <SectionTitle>진도</SectionTitle>
+      </section>
+
+      <section className="lg:mt-4">
+      <div className="lg:hidden">
+        <SectionTitle>진도</SectionTitle>
+      </div>
+      <p className="mb-3 hidden text-base font-bold tracking-tight lg:block">진도</p>
       <Card>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
@@ -261,6 +270,9 @@ function HomeView() {
           </Card>
         </>
       )}
+
+      </section>
+      </div>
 
       <p className="mt-8 text-center text-[11.5px] leading-relaxed text-zinc-500">
         강의 자료를 바탕으로 만든 개인 공부용 앱입니다.

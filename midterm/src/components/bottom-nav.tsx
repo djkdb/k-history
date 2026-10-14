@@ -24,7 +24,7 @@ export function BottomNav() {
   const path = usePathname();
   if (HIDE_ON.some((h) => path.startsWith(h))) return null;
   return (
-    <nav className="nav-shell fixed inset-x-0 bottom-0 z-50 pb-safe">
+    <nav className="nav-shell fixed inset-x-0 bottom-0 z-50 pb-safe lg:hidden">
       <div className="mx-auto flex w-full max-w-2xl items-stretch">
         {TABS.map((t) => {
           const on = t.href === "/" ? path === "/" : path.startsWith(t.href);
