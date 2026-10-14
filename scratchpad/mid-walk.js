@@ -52,9 +52,11 @@ let 문제 = 0; const ok = (m) => console.log("  ✓ " + m), no = (m) => { 문�
     const t = await 글(); if (t.includes("퀴즈 끝")) break;
     // 첫 보기를 고르거나 O 를 누르거나, 적기면 아무 말이나
     const 칸 = p.locator("main input:not([type=date])");
-    if (await 칸.count() && await 칸.first().isVisible() && await 칸.first().isEnabled()) { await 칸.first().fill("모름"); await 누름("채점하기", { wait: 500 }); }
+    if (await 칸.count() && await 칸.first().isVisible() && await 칸.first().isEnabled()) { await 칸.first().fill("모름"); await 누름(/채점하기|이 답으로/, { wait: 500 }); }
     else if (await p.locator("button[aria-label='맞다']").count()) { await p.locator("button[aria-label='맞다']").click(); await p.waitForTimeout(500); }
     else { await p.locator("main button").filter({ hasText: /^1/ }).first().click().catch(() => {}); await p.waitForTimeout(500); }
+    // 자신감 묻기 — 켜져 있으면 "반반" 을 고른다
+    if (await p.getByText("얼마나 자신 있어요").count()) { await p.locator("button", { hasText: "반반" }).click(); await p.waitForTimeout(400); }
     if (i === 0) await 찍기("퀴즈채점");
     if (!(await 누름(/다음|결과 보기/, { soft: true, wait: 600 }))) { no("다음으로 넘어갈 수 없다"); break; }
   }

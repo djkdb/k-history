@@ -143,6 +143,9 @@ body {
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+  /* 한국어는 낱말 사이에서만 줄을 바꾼다. 너무 긴 낱말(코드·URL)은 어디서든 끊는다 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .app-bg {

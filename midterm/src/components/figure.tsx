@@ -97,10 +97,23 @@ function Lines({ text, x, y, size: fs, className }: { text: string; x: number; y
  * 상자 글 — 이름은 굵게, 풀이(sub)는 작고 옅게.
  * 모든 줄이 같은 굵기면 무엇이 이름인지 한눈에 안 들어온다.
  */
-function NodeText({ text, sub, x, y, plain }: { text: string; sub?: string; x: number; y: number; plain?: boolean }) {
+function NodeText({
+  text,
+  sub,
+  x,
+  y,
+  plain,
+  size: T = 12.5,
+}: {
+  text: string;
+  sub?: string;
+  x: number;
+  y: number;
+  plain?: boolean;
+  size?: number;
+}) {
   if (plain) return <Lines text={text} x={x} y={y} size={11.5} className="fig-sub fig-halo" />;
-  if (!sub) return <Lines text={text} x={x} y={y} size={12.5} className="fig-ink" />;
-  const T = 12.5;
+  if (!sub) return <Lines text={text} x={x} y={y} size={T} className="fig-ink" />;
   const TL = T * 1.25;
   const S = 10.5;
   const SL = S * 1.3;
@@ -164,7 +177,7 @@ function Node({ n }: { n: FigNode }) {
   return (
     <g>
       {shape}
-      <NodeText text={n.label} sub={n.sub} x={n.x} y={n.y + (n.shape === "db" ? 3 : 0)} plain={n.shape === "text"} />
+      <NodeText text={n.label} sub={n.sub} x={n.x} y={n.y + (n.shape === "db" ? 3 : 0)} plain={n.shape === "text"} size={n.shape === "diamond" ? 11.5 : 12.5} />
     </g>
   );
 }
@@ -236,7 +249,11 @@ function elbow(a: FigNode, b: FigNode, route: "hv" | "vh" | "vhv") {
     const sx = b.x > a.x ? 1 : -1;
     const sy = b.y > a.y ? 1 : -1;
     const p1 = { x: sx > 0 ? A.x1 : A.x0, y: a.y };
-    const p2 = { x: b.x, y: sy > 0 ? B.y0 : B.y1 };
+    // 아래 상자가 옆으로 겹쳐 있으면(폭포수 계단) 앞 상자 끝 바로 너머로 들어간다
+    let tx = b.x;
+    if (sx > 0 && tx < A.x1 + 16) tx = Math.min(A.x1 + 16, B.x1 - 12);
+    if (sx < 0 && tx > A.x0 - 16) tx = Math.max(A.x0 - 16, B.x0 + 12);
+    const p2 = { x: tx, y: sy > 0 ? B.y0 : B.y1 };
     const r = Math.min(R, Math.abs(p2.x - p1.x) / 2, Math.abs(p2.y - p1.y) / 2);
     const d = `M${p1.x},${p1.y} L${p2.x - sx * r},${p1.y} Q${p2.x},${p1.y} ${p2.x},${p1.y + sy * r} L${p2.x},${p2.y}`;
     return { d, lx: (p1.x + p2.x) / 2, ly: p1.y };
