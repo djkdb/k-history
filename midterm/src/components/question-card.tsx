@@ -8,6 +8,7 @@ import { CONCEPT_MAP } from "@/lib/course";
 import { cn } from "@/lib/utils";
 import { seededShuffle } from "@/lib/quiz";
 import { useApp } from "@/lib/store";
+import { Explain, MathText } from "./explain";
 import { SourceBadge } from "./source-badge";
 import { Button, RichText, SqlBlock } from "./ui";
 
@@ -299,7 +300,7 @@ export function QuestionCard({
             <div className="rounded-2xl border border-sky-400/25 bg-sky-500/[0.06] p-4">
               <p className="text-[12px] font-bold text-sky-200">모범 답안</p>
               <p className="mt-1.5 whitespace-pre-line text-[14px] font-semibold leading-relaxed text-zinc-100">
-                <RichText>{q.answer}</RichText>
+                <MathText math={q.src === "pdf"}>{q.answer}</MathText>
               </p>
             </div>
           )}
@@ -389,7 +390,8 @@ export function QuestionCard({
               </span>
             </p>
           )}
-          {!right && q.kind !== "open" && (
+          {/* PDF 퀴즈 해설은 첫머리에 정답 줄(==)이 따로 있다 */}
+          {!right && q.kind !== "open" && q.src !== "pdf" && (
             <p className="mt-2 text-[13.5px] text-zinc-200">
               정답 <b className="text-zinc-50">{answerText(q)}</b>
               {q.kind === "short" && q.answers.length > 1 && (
@@ -399,14 +401,12 @@ export function QuestionCard({
               )}
             </p>
           )}
-          <p className="mt-2 text-[13.5px] leading-relaxed text-zinc-300">
-            <RichText>{q.explain}</RichText>
-          </p>
+          <Explain text={q.explain} rich={q.src === "pdf"} className="mt-2 text-[13.5px] leading-relaxed text-zinc-300" />
           {q.issue && (
             <p className="mt-3 flex gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-[12.5px] leading-relaxed text-amber-100">
               <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-300" />
               <span>
-                <b>원문 문항 주의</b> — {q.issue}
+                <b>원문 문항 주의</b> — <MathText math={q.src === "pdf"}>{q.issue}</MathText>
               </span>
             </p>
           )}

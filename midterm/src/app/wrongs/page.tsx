@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Dices, Eye, EyeOff, ListChecks, Printer, X } from "lucide-react";
 import { Gate } from "@/components/gate";
+import { Explain, MathText } from "@/components/explain";
 import { SourceBadge } from "@/components/source-badge";
 import { Button, Card, Chip, EmptyState, RichText, SqlBlock } from "@/components/ui";
 import { CONCEPT_MAP, COURSE, Q_MAP, chapterOfQuestion, termLabel } from "@/lib/course";
@@ -266,12 +267,10 @@ function NoteItem({
           <p className="mt-1 text-emerald-200">
             <span className="text-zinc-500">정답 </span>
             <b>
-              <RichText>{answerText(q)}</RichText>
+              <MathText math={q.src === "pdf"}>{answerText(q)}</MathText>
             </b>
           </p>
-          <p className="mt-2 text-zinc-300">
-            <RichText>{q.explain}</RichText>
-          </p>
+          <Explain text={q.explain} rich={q.src === "pdf"} className="mt-2 text-zinc-300" />
           <div className="no-print mt-3 flex items-center gap-3 text-[12px] font-semibold">
             {c && (
               <Link href={`/concept/${c.id}`} className="text-indigo-300">

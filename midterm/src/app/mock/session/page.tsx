@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
 import { Gate } from "@/components/gate";
 import { QuestionCard } from "@/components/question-card";
+import { Explain, MathText } from "@/components/explain";
 import { SourceBadge } from "@/components/source-badge";
 import { Button, Card, ProgressBar, RichText, SectionTitle } from "@/components/ui";
 import { COURSE, Q_MAP, chapterOfQuestion, termLabel, CONCEPT_MAP } from "@/lib/course";
@@ -116,11 +117,10 @@ function SessionView() {
                       <X size={14} className="mt-0.5 shrink-0" /> 내 답: {mine}
                     </p>
                     <p className="mt-1 flex gap-1.5 text-[12.5px] text-emerald-200">
-                      <Check size={14} className="mt-0.5 shrink-0" /> 정답: {answerText(q)}
+                      <Check size={14} className="mt-0.5 shrink-0" /> 정답:{" "}
+                      <MathText math={q.src === "pdf"}>{answerText(q)}</MathText>
                     </p>
-                    <p className="mt-2 text-[12.5px] leading-relaxed text-zinc-300">
-                      <RichText>{q.explain}</RichText>
-                    </p>
+                    <Explain text={q.explain} rich={q.src === "pdf"} className="mt-2 text-[12.5px] leading-relaxed text-zinc-300" />
                     <Link href={`/concept/${q.concept}`} className="mt-2 inline-block text-[12px] font-semibold text-indigo-300">
                       {termLabel(CONCEPT_MAP[q.concept])} 다시 보기 →
                     </Link>
