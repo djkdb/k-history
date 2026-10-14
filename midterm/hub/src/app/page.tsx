@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CalendarDays } from "lucide-react";
+import { buildPlan, readHubExam, readSnap, sumDay, type Plan } from "@/lib/plan";
 import { COURSES, type CourseCard } from "@/data/courses";
 import { ThemeToggle } from "@/components/theme";
 import { InstallHint } from "@/components/install-hint";
@@ -50,9 +52,12 @@ function fmt(iso: string) {
 export default function Home() {
   const [progress, setProgress] = useState<Record<string, Progress | null>>({});
   const [last, setLast] = useState<string | null>(null);
+  // 캘린더에서 정한 시험일 (과목 앱에 날짜가 없을 때만 쓴다)
+  const [hubExam, setHubExam] = useState<Record<string, string | null>>({});
 
   useEffect(() => {
     setProgress(Object.fromEntries(COURSES.map((c) => [c.id, readProgress(c.id)])));
+    setHubExam(Object.fromEntries(COURSES.map((c) => [c.id, readHubExam(c.id)])));
     try {
       setLast(localStorage.getItem("midhub:last"));
     } catch {
@@ -61,7 +66,7 @@ export default function Home() {
   }, []);
 
   // 시험이 가까운 과목부터 — 날짜를 모르면 뒤로
-  const dateOf = (c: CourseCard) => progress[c.id]?.examDate ?? c.examDate;
+  const dateOf = (c: CourseCard) => progress[c.id]?.examDate ?? c.examDate ?? hubExam[c.id] ?? null;
   const ordered = [...COURSES].sort((a, b) => {
     if (a.ready !== b.ready) return a.ready ? -1 : 1;
     const da = dateOf(a), db = dateOf(b);
@@ -72,7 +77,7 @@ export default function Home() {
   });
 
   return (
-    <main className="py-6">
+    <main className="mx-auto max-w-2xl py-6">
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[12.5px] font-semibold text-indigo-300">2026년 2학기</p>
@@ -86,9 +91,11 @@ export default function Home() {
 
       <InstallHint slot="top" />
 
+      <TodayCard />
+
       <div className="mt-5 flex flex-col gap-3">
         {ordered.map((c) => (
-          <Card key={c.id} c={c} p={progress[c.id] ?? null} last={c.id === last} />
+          <Card key={c.id} c={c} p={progress[c.id] ?? null} exam={dateOf(c)} last={c.id === last} />
         ))}
       </div>
 
@@ -110,8 +117,7 @@ export default function Home() {
   );
 }
 
-function Card({ c, p, last }: { c: CourseCard; p: Progress | null; last: boolean }) {
-  const exam = p?.examDate ?? c.examDate;
+function Card({ c, p, exam, last }: { c: CourseCard; p: Progress | null; exam: string | null; last: boolean }) {
   const d = exam ? dday(exam) : null;
   const body = (
     <div
@@ -167,5 +173,47 @@ function Card({ c, p, last }: { c: CourseCard; p: Progress | null; last: boolean
     >
       {body}
     </a>
+  );
+}
+
+/** 오늘 할 일 한 줄 — 누르면 통합 캘린더 */
+function TodayCard() {
+  const [plan, setPlan] = useState<Plan | null>(null);
+  useEffect(() => {
+    const ready = COURSES.filter((c) => c.ready);
+    setPlan(buildPlan(ready.map((c) => ({ id: c.id, snap: readSnap(c.id), defaultExam: c.examDate, hubExam: readHubExam(c.id) }))));
+  }, []);
+  const tasks = plan?.days[plan.today] ?? [];
+  const s = sumDay(tasks);
+  const exams = tasks.filter((t) => t.kind === "exam").length;
+  const finals = tasks.filter((t) => t.kind === "final").length;
+  return (
+    <Link
+      href="/plan"
+      className="mt-5 flex items-center gap-3 rounded-2xl border border-indigo-400/30 bg-indigo-500/10 p-4 transition-transform active:scale-[0.99]"
+    >
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-indigo-500/20 text-indigo-200">
+        <CalendarDays size={21} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-bold">시험 캘린더 · 오늘 할 일</span>
+        <span className="mt-0.5 block text-[12.5px] text-zinc-300">
+          {!plan
+            ? "다섯 과목 시험일과 하루 할당량"
+            : tasks.length === 0
+              ? "시험일을 정하면 하루 할당량이 나와요"
+              : [
+                  exams ? `시험 ${exams}과목` : "",
+                  s.concepts ? `새 개념 ${s.concepts}` : "",
+                  s.questions ? `문제 ${s.questions}` : "",
+                  s.reviews ? `복습 ${s.reviews}` : "",
+                  finals ? `총정리 ${finals}과목` : "",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+        </span>
+      </span>
+      <ArrowRight size={16} className="shrink-0" />
+    </Link>
   );
 }

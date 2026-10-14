@@ -55,6 +55,8 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
 const 카드 = [];
+// 통합 캘린더(현관 /plan)가 쓰는 범위 — 장 순서 · 개념 · 개념별 문제 id
+const 범위 = [];
 for (const c of COURSES) {
   const dataFile = join(ROOT, "src", "courses", c.id, "index.ts");
   if (!existsSync(dataFile)) {
@@ -115,10 +117,24 @@ for (const c of COURSES) {
     questions: data.questions.length,
     examDate: data.examDate ?? null,
   });
+  범위.push({
+    id: c.id,
+    missing: data.missing ?? [],
+    examNote: data.examNote ?? null,
+    chapters: data.chapters.map((ch) => ({ id: ch.id, title: ch.title })),
+    concepts: data.concepts.map((k) => ({
+      id: k.id,
+      ch: k.chapter,
+      imp: k.importance,
+      t: k.title,
+      qs: data.questions.filter((q) => q.concept === k.id).map((q) => q.id),
+    })),
+  });
 }
 
 console.log("\n━━━ 현관 → /");
 writeFileSync(join(ROOT, "hub", "src", "data", "courses.generated.json"), JSON.stringify(카드, null, 2) + "\n");
+writeFileSync(join(ROOT, "hub", "src", "data", "scope.generated.json"), JSON.stringify(범위) + "\n");
 const hub = join(ROOT, "hub");
 // 배포 빌드(Cloudflare)에서는 현관의 의존성이 아직 없다
 if (!existsSync(join(hub, "node_modules"))) run("npm install --no-audit --no-fund", hub);

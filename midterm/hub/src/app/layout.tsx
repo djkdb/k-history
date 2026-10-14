@@ -41,7 +41,8 @@ export default function RootLayout({
       <body className="app-bg min-h-dvh">
         {/* 현관에는 아래 길잡이 막대가 없다 — 갈 곳이 다섯 개뿐이라
             막대를 두면 같은 자리를 두 번 말하는 셈이다 */}
-        <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-12">
+        {/* 폭은 화면마다 정한다 — 현관은 좁게, 캘린더는 넓게 */}
+        <div className="mx-auto w-full max-w-6xl px-4 pt-safe pb-12">
           {children}
         </div>
         <SWRegister />
