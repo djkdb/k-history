@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Check, Dices, Eye, FileText, Star, X } from "lucide-react";
+import { AlertTriangle, Check, Dices, Eye, Star, X } from "lucide-react";
 import type { Conf, Question } from "@/lib/types";
 import { answerText, isCorrect, SELF_NO, SELF_OK, type Response } from "@/lib/grade";
 import { CONCEPT_MAP } from "@/lib/course";
 import { cn } from "@/lib/utils";
 import { seededShuffle } from "@/lib/quiz";
 import { useApp } from "@/lib/store";
+import { SourceBadge } from "./source-badge";
 import { Button, RichText, SqlBlock } from "./ui";
 
 /**
@@ -172,11 +173,7 @@ export function QuestionCard({
           {concept && mode === "practice" && <span className="ml-2">· {concept.en ?? concept.title}</span>}
         </p>
       )}
-      {q.src === "pdf" && (
-        <p className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-sky-500/10 px-1.5 py-0.5 text-[11px] font-bold text-sky-200">
-          <FileText size={11} /> 강의 퀴즈{q.page ? ` p.${q.page}` : ""} · 원문 그대로
-        </p>
-      )}
+      <SourceBadge q={q} className="mt-1.5" />
       <p className="mt-2 whitespace-pre-line text-[16px] font-bold leading-relaxed text-zinc-100">
         <RichText>{q.q}</RichText>
       </p>

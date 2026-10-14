@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Dices, Eye, EyeOff, ListChecks, Printer, X } from "lucide-react";
 import { Gate } from "@/components/gate";
+import { SourceBadge } from "@/components/source-badge";
 import { Button, Card, Chip, EmptyState, RichText, SqlBlock } from "@/components/ui";
 import { CONCEPT_MAP, COURSE, Q_MAP, chapterOfQuestion, termLabel } from "@/lib/course";
 import { answerText } from "@/lib/grade";
@@ -236,6 +237,7 @@ function NoteItem({
           </span>
         )}
       </div>
+      <SourceBadge q={q} className="mt-2" />
       <p className="mt-2 whitespace-pre-line text-[14.5px] font-bold leading-relaxed text-zinc-100">
         <RichText>{q.q}</RichText>
       </p>

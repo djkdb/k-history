@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
 import { Gate } from "@/components/gate";
 import { QuestionCard } from "@/components/question-card";
+import { SourceBadge } from "@/components/source-badge";
 import { Button, Card, ProgressBar, RichText, SectionTitle } from "@/components/ui";
 import { COURSE, Q_MAP, chapterOfQuestion, termLabel, CONCEPT_MAP } from "@/lib/course";
 import { answerText, isCorrect, responseText } from "@/lib/grade";
@@ -107,6 +108,7 @@ function SessionView() {
                         : responseText(q, r);
                 return (
                   <Card key={q.id}>
+                    <SourceBadge q={q} className="mb-1.5" />
                     <p className="whitespace-pre-line text-[13.5px] font-semibold leading-relaxed">
                       <RichText>{q.q}</RichText>
                     </p>
