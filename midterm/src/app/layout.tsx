@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { BottomNav } from "@/components/bottom-nav";
 import { MotionGuard } from "@/components/motion-guard";
 import { SideNav } from "@/components/side-nav";
+import { SyncAgent } from "@/components/sync-panel";
 import { SWRegister } from "@/components/sw-register";
 import { withBase } from "@/lib/base";
 import { COURSE } from "@/lib/course";
@@ -61,6 +62,7 @@ export default function RootLayout({
         </AppShell>
         <BottomNav />
         <SWRegister />
+        <SyncAgent />
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Gate } from "@/components/gate";
+import { SyncPanel } from "@/components/sync-panel";
 import { ThemePicker } from "@/components/theme";
 import { Button, Card, SectionTitle } from "@/components/ui";
 import { COURSE } from "@/lib/course";
@@ -59,10 +60,13 @@ function SettingsView() {
       <SectionTitle>화면</SectionTitle>
       <ThemePicker />
 
+      <SectionTitle>다른 기기에서 이어하기</SectionTitle>
+      <SyncPanel />
+
       <SectionTitle>기록</SectionTitle>
       <Card>
         <p className="text-[13px] leading-relaxed text-zinc-300">
-          공부 기록은 이 기기 안에만 남습니다. 지금까지 {stats.studyMinutes}분 · {stats.xp}점 · 연속 {stats.streak}일.
+          공부 기록은 이 기기에 남고, 기록 코드를 연결하면 서버에도 맡겨 둡니다. 지금까지 {stats.studyMinutes}분 · {stats.xp}점 · 연속 {stats.streak}일.
         </p>
         <Button
           variant="danger"

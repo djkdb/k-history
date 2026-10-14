@@ -13,6 +13,7 @@ import { COURSE, conceptsOf, questionsOfChapter, termLabel } from "@/lib/course"
 import { setQuizPreset } from "@/lib/handoff";
 import { dueCards } from "@/lib/srs";
 import { useApp } from "@/lib/store";
+import { useSync } from "@/lib/sync";
 import { daysUntil } from "@/lib/utils";
 
 export default function Home() {
@@ -38,6 +39,7 @@ function HomeView() {
   const starred = useApp((s) => s.starred);
   const mocks = useApp((s) => s.mocks);
   const sureWrong = useApp((s) => s.sureWrong);
+  const syncCode = useSync((s) => s.code);
   const lucky = useApp((s) => s.lucky);
   const nSure = Object.keys(sureWrong).length;
 
@@ -277,7 +279,16 @@ function HomeView() {
       <p className="mt-8 text-center text-[11.5px] leading-relaxed text-zinc-500">
         강의 자료를 바탕으로 만든 개인 공부용 앱입니다.
         <br />
-        기록은 이 기기 안에만 남습니다.
+        {syncCode ? (
+          "기록 코드로 다른 기기와 이어집니다."
+        ) : (
+          <>
+            기록은 이 기기에 남습니다 ·{" "}
+            <Link href="/settings" className="font-semibold text-indigo-300">
+              다른 기기에서 이어하기
+            </Link>
+          </>
+        )}
       </p>
     </main>
   );

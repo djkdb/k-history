@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays } from "lucide-react";
 import { HubLink } from "@/components/hub-link";
+import { SyncPanel } from "@/components/sync-panel";
 import { Button, Card } from "@/components/ui";
 import { COURSE } from "@/lib/course";
 import { useApp } from "@/lib/store";
@@ -73,6 +74,12 @@ export default function Onboarding() {
           </ul>
         </Card>
       )}
+
+      <p className="mt-6 text-[13px] font-bold text-zinc-300">다른 기기에서 공부하던 중이라면</p>
+      <div className="mt-2">
+        {/* 이 과목 기록을 받아 왔으면 바로 홈으로. 다른 과목만 하던 코드면 시험일부터 정한다 */}
+        <SyncPanel compact onLinked={() => useApp.getState().settings && router.replace("/")} />
+      </div>
 
       <div className="mt-auto flex flex-col gap-2 pt-8">
         <Button size="lg" className="w-full" disabled={!date} onClick={() => start(date)}>
