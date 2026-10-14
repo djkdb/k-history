@@ -126,7 +126,7 @@ function Inner({ id }: { id: string }) {
           </ClozeCtx.Provider>
         </div>
       ) : (
-      <div className="mt-4 grid gap-2 lg:grid-cols-2">
+      <div className="mt-4 grid gap-2 md:grid-cols-2">
         {cs.map((c) => {
           const cq = questionsOf(c.id);
           const ok = cq.filter((q) => log[q.id]?.lastRight).length;

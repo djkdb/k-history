@@ -24,8 +24,9 @@ export function BottomNav() {
   const path = usePathname();
   if (HIDE_ON.some((h) => path.startsWith(h))) return null;
   return (
-    <nav className="nav-shell fixed inset-x-0 bottom-0 z-50 pb-safe lg:hidden">
-      <div className="mx-auto flex w-full max-w-2xl items-stretch">
+    <nav className="nav-shell app-zoom fixed inset-x-0 bottom-0 z-50 pb-safe lg:hidden">
+      {/* 태블릿에서는 떠 있는 막대 — 화면 끝까지 늘어난 탭은 손가락 사이가 너무 멀다 */}
+      <div className="tab-bar mx-auto flex w-full max-w-2xl items-stretch md:mb-3 md:max-w-md md:rounded-2xl">
         {TABS.map((t) => {
           const on = t.href === "/" ? path === "/" : path.startsWith(t.href);
           const Icon = t.icon;

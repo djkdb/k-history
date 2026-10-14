@@ -63,7 +63,7 @@ function LearnView() {
       </div>
 
       {hits ? (
-        <div className="mt-4 grid gap-2 lg:grid-cols-2">
+        <div className="mt-4 grid gap-2 md:grid-cols-2">
           {hits.length === 0 && <p className="py-6 text-center text-[13.5px] text-zinc-400">찾는 개념이 없습니다.</p>}
           {hits.map((c) => (
             <Link key={c.id} href={`/concept/${c.id}`}>
@@ -79,7 +79,7 @@ function LearnView() {
           ))}
         </div>
       ) : (
-        <div className="mt-4 grid gap-2 lg:grid-cols-2 lg:gap-3">
+        <div className="mt-4 grid gap-2 md:grid-cols-2 lg:gap-3">
           {COURSE.chapters.map((ch, i) => {
             const cs = conceptsOf(ch.id);
             const done = cs.filter((c) => studied[c.id]).length;

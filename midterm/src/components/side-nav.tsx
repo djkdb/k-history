@@ -43,7 +43,7 @@ export function SideNav() {
   const on = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
 
   return (
-    <aside className="side-nav fixed inset-y-0 left-0 z-40 hidden w-64 flex-col lg:flex">
+    <aside className="side-nav app-zoom fixed inset-y-0 left-0 z-40 hidden w-64 flex-col lg:flex">
       <div className="px-5 pb-3 pt-6">
         <Link href="/" className="block">
           <p className="text-[12px] font-semibold text-indigo-300">

@@ -262,6 +262,28 @@ body {
   }
 }
 
+/* ── 태블릿 ──
+   세로(768~1023px): 폰 화면을 그대로 늘리면 글씨가 작고 빈 곳만 넓다. 한 단계 키운다.
+   가로(1024px~, 손가락): 데스크톱 배치를 쓰되 손가락에 맞게 조금 키운다. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .app-zoom {
+    zoom: 1.12;
+  }
+}
+@media (min-width: 1024px) and (pointer: coarse) {
+  .app-zoom {
+    zoom: 1.06;
+  }
+}
+@media (min-width: 768px) {
+  .tab-bar {
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border: 1px solid var(--glass-line-strong);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px);
+  }
+}
+
 /* 읽기·풀기 화면은 넓은 화면에서도 한 줄이 너무 길지 않게 */
 @media (min-width: 1024px) {
   .page-read {
@@ -630,6 +652,11 @@ body {
 /* 그림 최대 폭 — 폰에서는 원래 폭의 1.35배, 넓은 화면에서는 1.7배까지 키운다 */
 .fig-svg {
   max-width: calc(var(--fw, 340px) * 1.35);
+}
+@media (min-width: 768px) {
+  .fig-svg {
+    max-width: calc(var(--fw, 340px) * 1.6);
+  }
 }
 @media (min-width: 1024px) {
   .fig-svg {

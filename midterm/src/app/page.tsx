@@ -80,7 +80,7 @@ function HomeView() {
       <InstallHint slot="top" />
 
       {/* 넓은 화면: 왼쪽은 오늘 할 일, 오른쪽은 진도 */}
-      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
+      <div className="md:grid md:grid-cols-2 md:items-start md:gap-6 lg:gap-8">
       <section>
       <Card className="mt-4">
         {exam && dday !== null ? (
@@ -201,11 +201,11 @@ function HomeView() {
 
       </section>
 
-      <section className="lg:mt-4">
-      <div className="lg:hidden">
+      <section className="md:mt-4">
+      <div className="md:hidden">
         <SectionTitle>진도</SectionTitle>
       </div>
-      <p className="mb-3 hidden text-base font-bold tracking-tight lg:block">진도</p>
+      <p className="mb-3 hidden text-base font-bold tracking-tight md:block">진도</p>
       <Card>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
