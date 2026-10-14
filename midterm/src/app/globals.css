@@ -981,3 +981,10 @@ body {
 .tex-block .katex {
   font-size: 1.08em;
 }
+
+/* PDF별 요약본 인쇄 — 제목만 쪽 끝에 홀로 남지 않게 */
+@media print {
+  .pdf-doc h2 {
+    break-after: avoid;
+  }
+}

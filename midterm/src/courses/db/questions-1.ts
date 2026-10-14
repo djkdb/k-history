@@ -106,7 +106,7 @@ export const QUESTIONS_1: Question[] = [
 
   // weak-entity
   { kind: "mc", id: "q-we-1", concept: "weak-entity", q: "Weak entity type의 특징이 아닌 것은?", options: ["자기 키 속성이 없다", "소유 엔티티 타입에 의존한다", "identifying relationship에 partial participation이다", "partial key를 가질 수 있다"], answer: 2, explain: "약한 엔티티는 언제나 total participation이다." },
-  { kind: "short", id: "q-we-2", concept: "weak-entity", q: "같은 소유자에 딸린 약한 엔티티끼리 구별하는 속성을 무엇이라 하는가? (영어 두 단어)", answers: ["partial key", "부분 키", "부분키", "discriminator"], explain: "Partial key — 예: DEPENDENT의 Dependent_name." },
+  { kind: "short", id: "q-we-2", concept: "weak-entity", q: "같은 소유자에 딸린 약한 엔티티끼리 구별하는 속성을 무엇이라 하는가? (영어 두 단어)", answers: ["partial key", "부분 키", "부분키"], explain: "Partial key — 예: DEPENDENT의 Dependent_name." },
   { kind: "ox", id: "q-we-3", concept: "weak-entity", q: "partial key 하나만으로 약한 엔티티를 유일하게 식별할 수 있다.", answer: false, explain: "소유자의 키와 함께 써야 식별된다." },
   { kind: "mc", id: "q-we-4", concept: "weak-entity", q: "COURSE–SECTION에서 SECTION의 partial key는?", options: ["Course_no", "Section_num", "Instructor", "Semester"], answer: 1, explain: "같은 강좌 안에서 분반 번호가 겹치지 않는다." },
   { kind: "mc", id: "q-we-5", concept: "weak-entity", q: "약한 엔티티를 소유 엔티티와 잇는 관계는?", options: ["Recursive relationship", "Identifying relationship", "Ternary relationship", "Supervision"], answer: 1, explain: "Identifying relationship (이중 마름모)." },

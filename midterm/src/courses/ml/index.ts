@@ -1,4 +1,6 @@
 import type { Course } from "@/lib/types";
+import { withSources } from "@/lib/sources";
+import { PDFS, SOURCES } from "./sources";
 import { withFigures } from "@/lib/figures";
 import { CHAPTERS } from "./chapters";
 import { FIGURES } from "./figures";
@@ -43,7 +45,8 @@ const course: Course = {
   color: "#a855f7",
   symbol: "🤖",
   chapters: CHAPTERS,
-  concepts: withFigures(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), FIGURES),
+  concepts: withSources(withFigures(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), FIGURES), SOURCES),
+  pdfs: PDFS,
   // 강의 PDF 퀴즈(원문)를 먼저, 강의 내용으로 만든 추가 문제를 뒤에
   questions: [...QUESTIONS_PDF, ...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: {

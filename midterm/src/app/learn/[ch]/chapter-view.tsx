@@ -13,6 +13,7 @@ import { countKeys, useCloze } from "@/lib/cloze";
 import { COURSE, CHAPTER_MAP, conceptsOf, notesOf, questionsOf, questionsOfChapter, termLabel } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
 import { usePrintLight } from "@/lib/print";
+import { pageLabel } from "@/lib/sources";
 import { useApp } from "@/lib/store";
 
 export function ChapterView({ id }: { id: string }) {
@@ -144,11 +145,14 @@ function Inner({ id }: { id: string }) {
                   <ImportanceBadge level={c.importance} compact />
                   <ChevronRight size={15} className="shrink-0 text-zinc-500" />
                 </div>
-                {cq.length > 0 && (
-                  <p className="mt-1 pl-6 text-[11.5px] text-zinc-400">
-                    문제 {ok}/{cq.length} 맞힘
-                  </p>
-                )}
+                <p className="mt-1 flex flex-wrap gap-x-2.5 pl-6 text-[11.5px] text-zinc-400">
+                  {cq.length > 0 && (
+                    <span>
+                      문제 {ok}/{cq.length} 맞힘
+                    </span>
+                  )}
+                  {c.sources?.[0] && <span className="text-sky-300/80">📄 {pageLabel(c.sources[0])}</span>}
+                </p>
               </Card>
             </Link>
           );

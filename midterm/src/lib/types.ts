@@ -155,6 +155,15 @@ export interface Concept {
   exam?: string;
   /** 그림 — 요약 바로 아래에 그린다 (선택) */
   figures?: Figure[];
+  /** 이 개념이 나온 강의 PDF와 쪽 범위 */
+  sources?: PdfRef[];
+}
+
+/** 강의 PDF의 쪽 범위 — PDF 뷰어의 쪽 번호 그대로 (표지 = 1쪽) */
+export interface PdfRef {
+  file: string;
+  from: number;
+  to: number;
 }
 
 /**
@@ -261,6 +270,8 @@ export interface Course {
   questions: Question[];
   /** 장 id → 강의 노트 (교안 전체) */
   notes?: Record<string, NoteSection[]>;
+  /** 받은 강의 PDF 이름 — 강의 순서대로 (PDF별 요약에 쓴다) */
+  pdfs?: string[];
 }
 
 /* ── 기록 ─────────────────────────────────────────────── */

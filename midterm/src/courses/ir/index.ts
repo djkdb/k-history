@@ -1,4 +1,6 @@
 import type { Course } from "@/lib/types";
+import { withSources } from "@/lib/sources";
+import { PDFS, SOURCES } from "./sources";
 import { withFigures } from "@/lib/figures";
 import { CHAPTERS } from "./chapters";
 import { CONCEPTS_1 } from "./concepts-1";
@@ -29,7 +31,8 @@ const course: Course = {
   color: "#f43f5e",
   symbol: "🔎",
   chapters: CHAPTERS,
-  concepts: withFigures([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], FIGURES),
+  concepts: withSources(withFigures([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], FIGURES), SOURCES),
+  pdfs: PDFS,
   questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: { ...NOTES_1, ...NOTES_2, ...NOTES_3 },
 };

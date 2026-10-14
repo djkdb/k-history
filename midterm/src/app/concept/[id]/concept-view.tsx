@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, Check, CheckCircle2, ChevronLeft, ChevronRight, ListChecks, Star } from "lucide-react";
+import { PdfSource } from "@/components/pdf-source";
 import { ClozeBar } from "@/components/cloze-bar";
 import { ConceptBody } from "@/components/concept-body";
 import { Gate } from "@/components/gate";
@@ -117,6 +118,7 @@ function Inner({ id }: { id: string }) {
         <ImportanceBadge level={c.importance} />
       </div>
       {c.en && <p className="mt-1 text-[14px] font-semibold text-indigo-200">{en ? c.title : c.en}</p>}
+      <PdfSource refs={c.sources} className="mt-2.5" />
 
       <div className="mt-5">
         <ClozeBar

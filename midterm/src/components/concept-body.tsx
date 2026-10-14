@@ -2,6 +2,7 @@
 
 import { AlertTriangle, ArrowDown, GraduationCap, Lightbulb, Sparkles } from "lucide-react";
 import type { Concept } from "@/lib/types";
+import { EasyText } from "./easy-text";
 import { Figures } from "./figure";
 import { CompareTable, RichText, Sentences, SqlBlock } from "./ui";
 
@@ -14,9 +15,9 @@ export function ConceptBody({ c }: { c: Concept }) {
           <p className="flex items-center gap-1.5 text-[12px] font-bold text-emerald-200">
             <Sparkles size={14} /> 쉽게 말하면
           </p>
-          <p className="mt-1.5 whitespace-pre-line text-[14px] leading-[1.8] text-zinc-200 lg:text-[15px]">
-            <Sentences>{c.easy}</Sentences>
-          </p>
+          <div className="mt-2">
+            <EasyText>{c.easy}</EasyText>
+          </div>
         </div>
       )}
 
