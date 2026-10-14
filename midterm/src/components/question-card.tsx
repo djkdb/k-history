@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Check, Dices, Star, X } from "lucide-react";
+import { AlertTriangle, Check, Dices, Eye, FileText, Star, X } from "lucide-react";
 import type { Conf, Question } from "@/lib/types";
-import { answerText, isCorrect, type Response } from "@/lib/grade";
+import { answerText, isCorrect, SELF_NO, SELF_OK, type Response } from "@/lib/grade";
 import { CONCEPT_MAP } from "@/lib/course";
 import { cn } from "@/lib/utils";
 import { seededShuffle } from "@/lib/quiz";
@@ -61,6 +61,8 @@ export function QuestionCard({
   /** 골랐지만 아직 자신감을 고르지 않은 답 */
   const [pending, setPending] = useState<Response | undefined>(undefined);
   const [conf, setConf] = useState<Conf | undefined>(undefined);
+  /** 서술 문항 — 모범 답안을 펼쳤는가 */
+  const [revealed, setRevealed] = useState(false);
   const [text, setText] = useState(typeof response === "string" ? response : "");
   const shown = mode === "practice" && picked !== undefined;
   const right = shown && isCorrect(q, picked);
@@ -76,6 +78,7 @@ export function QuestionCard({
   useEffect(() => {
     setPending(undefined);
     setConf(undefined);
+    setRevealed(false);
   }, [q.id]);
 
   const commit = (r: Response, c?: Conf) => {
@@ -112,6 +115,8 @@ export function QuestionCard({
    */
   const order = useMemo(() => {
     if (q.kind !== "mc") return [];
+    // 강의 PDF 퀴즈는 원문 보기 순서 그대로 — 해설과 주의 글이 ①②③④ 번호로 가리킨다
+    if (q.src === "pdf") return q.options.map((_, i) => i);
     let h = seed >>> 0;
     for (const ch of q.id) h = (Math.imul(h ^ ch.charCodeAt(0), 2654435761) >>> 0);
     return seededShuffle(q.options.map((_, i) => i), h || 1);
@@ -132,6 +137,16 @@ export function QuestionCard({
           commit(pending, c);
           return;
         }
+      }
+      if (q.kind === "open" && mode === "practice") {
+        if (!revealed && (k === "enter" || k === " ")) {
+          e.preventDefault();
+          setRevealed(true);
+        } else if (revealed && (k === "1" || k === "2")) {
+          e.preventDefault();
+          commit(k === "1" ? SELF_OK : SELF_NO);
+        }
+        return;
       }
       if (q.kind === "mc") {
         const n = Number(k);
@@ -155,6 +170,11 @@ export function QuestionCard({
           {index + 1} / {total}
           {/* 모의고사에서는 어느 개념인지 감춘다 — 그 자체가 힌트다 */}
           {concept && mode === "practice" && <span className="ml-2">· {concept.en ?? concept.title}</span>}
+        </p>
+      )}
+      {q.src === "pdf" && (
+        <p className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-sky-500/10 px-1.5 py-0.5 text-[11px] font-bold text-sky-200">
+          <FileText size={11} /> 강의 퀴즈{q.page ? ` p.${q.page}` : ""} · 원문 그대로
         </p>
       )}
       <p className="mt-2 whitespace-pre-line text-[16px] font-bold leading-relaxed text-zinc-100">
@@ -267,6 +287,40 @@ export function QuestionCard({
         </form>
       )}
 
+      {q.kind === "open" && (
+        <div className="mt-4">
+          {!revealed && !shown ? (
+            <>
+              <p className="text-[12.5px] leading-relaxed text-zinc-400">
+                서술·계산 문제예요. 종이에 먼저 풀어 본 뒤 모범 답안과 비교해 스스로 채점하세요.
+              </p>
+              <Button className="mt-3 w-full" onClick={() => setRevealed(true)}>
+                <Eye size={16} /> 모범 답안 보기
+              </Button>
+            </>
+          ) : (
+            <div className="rounded-2xl border border-sky-400/25 bg-sky-500/[0.06] p-4">
+              <p className="text-[12px] font-bold text-sky-200">모범 답안</p>
+              <p className="mt-1.5 whitespace-pre-line text-[14px] font-semibold leading-relaxed text-zinc-100">
+                <RichText>{q.answer}</RichText>
+              </p>
+            </div>
+          )}
+          {revealed && !shown && mode === "practice" && (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Button variant="outline" onClick={() => commit(SELF_NO)}>
+                <X size={16} /> 틀렸어요
+                <span className="ml-1 hidden text-[10.5px] opacity-50 [@media(pointer:fine)]:inline">2</span>
+              </Button>
+              <Button onClick={() => commit(SELF_OK)}>
+                <Check size={16} /> 맞혔어요
+                <span className="ml-1 hidden text-[10.5px] opacity-50 [@media(pointer:fine)]:inline">1</span>
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
       {mode === "practice" && !shown && pending !== undefined && (
         <div className="mt-4 rounded-2xl border border-indigo-400/30 bg-indigo-500/[0.06] p-3.5">
           <p className="text-[13px] font-semibold text-zinc-200">채점 전에 — 얼마나 자신 있어요?</p>
@@ -289,7 +343,7 @@ export function QuestionCard({
         </div>
       )}
 
-      {mode === "practice" && !shown && (
+      {mode === "practice" && !shown && q.kind !== "open" && (
         <button
           type="button"
           onClick={() => commit("")}
@@ -338,7 +392,7 @@ export function QuestionCard({
               </span>
             </p>
           )}
-          {!right && (
+          {!right && q.kind !== "open" && (
             <p className="mt-2 text-[13.5px] text-zinc-200">
               정답 <b className="text-zinc-50">{answerText(q)}</b>
               {q.kind === "short" && q.answers.length > 1 && (
@@ -351,6 +405,14 @@ export function QuestionCard({
           <p className="mt-2 text-[13.5px] leading-relaxed text-zinc-300">
             <RichText>{q.explain}</RichText>
           </p>
+          {q.issue && (
+            <p className="mt-3 flex gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-[12.5px] leading-relaxed text-amber-100">
+              <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-300" />
+              <span>
+                <b>원문 문항 주의</b> — {q.issue}
+              </span>
+            </p>
+          )}
         </div>
       )}
     </div>

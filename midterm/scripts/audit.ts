@@ -59,7 +59,8 @@ for (const meta of LIST) {
   for (const q of c.questions) {
     if (!cs.has(q.concept)) fail(id, `문제 ${q.id} 의 개념 ${q.concept} 이 없다`);
     if (!q.explain.trim()) fail(id, `문제 ${q.id} 해설이 비었다`);
-    const key = q.q.replace(/\s+/g, " ").trim();
+    // PDF 퀴즈에는 "다음 중 옳지 않은 것은?" 처럼 발문이 같은 문항이 여럿 있다 — 보기까지 묶어 비교한다
+    const key = [q.q, ...(q.kind === "mc" ? q.options : [])].join("|").replace(/\s+/g, " ").trim();
     if (texts.has(key)) fail(id, `같은 문제 글: ${q.id} = ${texts.get(key)}`);
     texts.set(key, q.id);
     if (q.kind === "mc") {
@@ -68,6 +69,8 @@ for (const meta of LIST) {
       if (new Set(q.options).size !== q.options.length) fail(id, `문제 ${q.id} 보기 중복`);
     }
     if (q.kind === "short" && (!q.answers.length || q.answers.some((a) => !a.trim()))) fail(id, `문제 ${q.id} 받아 줄 답이 없다`);
+    if (q.kind === "open" && !q.answer.trim()) fail(id, `문제 ${q.id} 모범 답안이 없다`);
+    if (q.src === "pdf" && !q.page) fail(id, `문제 ${q.id} 원문 쪽 번호가 없다`);
   }
   const noQ = c.concepts.filter((k) => !c.questions.some((q) => q.concept === k.id));
   for (const k of noQ) fail(id, `개념 ${k.id} 에 문제가 없다`);
@@ -117,14 +120,14 @@ for (const meta of LIST) {
   const flowN = c.concepts.filter((k) => k.flow?.length).length;
   const examN = c.concepts.filter((k) => k.exam).length;
 
-  const kinds = { mc: 0, ox: 0, short: 0 };
+  const kinds = { mc: 0, ox: 0, short: 0, open: 0 };
   for (const q of c.questions) kinds[q.kind]++;
   const ox = c.questions.filter((q) => q.kind === "ox");
   const oxTrue = ox.filter((q) => q.kind === "ox" && q.answer).length;
   const mcPos = [0, 0, 0, 0, 0];
   for (const q of c.questions) if (q.kind === "mc") mcPos[q.answer]++;
   console.log(
-    `· ${c.name} — 장 ${c.chapters.length} · 개념 ${c.concepts.length} · 문제 ${c.questions.length} (객관식 ${kinds.mc} · OX ${kinds.ox} [O ${oxTrue}/X ${ox.length - oxTrue}] · 적기 ${kinds.short}) · 객관식 정답 위치 ${mcPos.slice(0, 4).join("/")}`,
+    `· ${c.name} — 장 ${c.chapters.length} · 개념 ${c.concepts.length} · 문제 ${c.questions.length} (객관식 ${kinds.mc} · OX ${kinds.ox} [O ${oxTrue}/X ${ox.length - oxTrue}] · 적기 ${kinds.short}${kinds.open ? ` · 서술 ${kinds.open}` : ""}${c.questions.some((q) => q.src === "pdf") ? ` · 강의 PDF 퀴즈 ${c.questions.filter((q) => q.src === "pdf").length}` : ""}) · 객관식 정답 위치 ${mcPos.slice(0, 4).join("/")}`,
   );
   console.log(
     `    강의 노트 ${c.notes ? `${Object.keys(c.notes).length}/${c.chapters.length}장 · ${noteSecs}절 · ${noteLines}줄` : "없음"} · 쉽게 말하면 ${easyN}/${c.concepts.length} · 흐름 ${flowN} · 시험엔 이렇게 ${examN} · 그림 ${figs.length}개 (개념 ${figN})`,

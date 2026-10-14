@@ -104,7 +104,7 @@ function SessionView() {
                       ? q.options[r as number]
                       : q.kind === "ox"
                         ? (r ? "O" : "X")
-                        : String(r);
+                        : responseText(q, r);
                 return (
                   <Card key={q.id}>
                     <p className="whitespace-pre-line text-[13.5px] font-semibold leading-relaxed">

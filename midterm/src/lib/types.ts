@@ -171,8 +171,20 @@ export interface NoteSection {
   figures?: Figure[];
 }
 
+/**
+ * 문제 출처 — 강의 자료의 Quiz 슬라이드를 원문 그대로 옮긴 문항에만 붙는다.
+ * 없으면 강의 내용으로 만든 문제(추가 문제)다.
+ */
+export interface QSource {
+  src?: "pdf";
+  /** 원문 쪽 번호 */
+  page?: number;
+  /** 원문 문항 자체가 애매한 점 — 풀고 나면 보인다 */
+  issue?: string;
+}
+
 /** 객관식 — 보기 중 하나 */
-export interface McQuestion {
+export interface McQuestion extends QSource {
   kind: "mc";
   id: string;
   concept: string;
@@ -185,7 +197,7 @@ export interface McQuestion {
 }
 
 /** 맞다/틀리다 */
-export interface OxQuestion {
+export interface OxQuestion extends QSource {
   kind: "ox";
   id: string;
   concept: string;
@@ -196,7 +208,7 @@ export interface OxQuestion {
 }
 
 /** 짧게 적기 — 받아 줄 답을 여럿 둔다 (대소문자·띄어쓰기는 보지 않는다) */
-export interface ShortQuestion {
+export interface ShortQuestion extends QSource {
   kind: "short";
   id: string;
   concept: string;
@@ -208,7 +220,22 @@ export interface ShortQuestion {
   hint?: string;
 }
 
-export type Question = McQuestion | OxQuestion | ShortQuestion;
+/**
+ * 서술·계산 — 정답을 보고 스스로 채점한다 (풀이 과정이 답이라 글자 비교로 채점할 수 없다).
+ * 모의고사에는 넣지 않는다.
+ */
+export interface OpenQuestion extends QSource {
+  kind: "open";
+  id: string;
+  concept: string;
+  q: string;
+  /** 모범 답안 */
+  answer: string;
+  explain: string;
+  code?: string;
+}
+
+export type Question = McQuestion | OxQuestion | ShortQuestion | OpenQuestion;
 
 export interface Course {
   id: string;

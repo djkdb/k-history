@@ -8,6 +8,7 @@ import { Gate } from "@/components/gate";
 import { Button, Card, Chip, SectionTitle } from "@/components/ui";
 import { COURSE } from "@/lib/course";
 import { newMock, readMock } from "@/lib/mock";
+import { HAS_PDF, QSET_LABEL, inSet, useQSet, type QSet } from "@/lib/qset";
 import { useApp } from "@/lib/store";
 
 export default function Mock() {
@@ -21,7 +22,8 @@ export default function Mock() {
 function MockView() {
   const router = useRouter();
   const mocks = useApp((s) => s.mocks);
-  const max = COURSE.questions.length;
+  const [qset, setQset] = useQSet();
+  const max = COURSE.questions.filter((q) => q.kind !== "open" && inSet(q, qset)).length;
   const sizes = [20, 30, 50].filter((n) => n < max).concat(max <= 60 ? [max] : []);
   const [size, setSize] = useState(Math.min(30, max));
   const running = typeof window !== "undefined" ? readMock() : null;
@@ -46,6 +48,20 @@ function MockView() {
         </Card>
       )}
 
+      {HAS_PDF && (
+        <>
+          <SectionTitle>문제 모음</SectionTitle>
+          <div className="flex flex-wrap gap-2">
+            {(["pdf", "extra", "all"] as QSet[]).map((v) => (
+              <Chip key={v} active={qset === v} onClick={() => setQset(v)}>
+                {QSET_LABEL[v]}
+              </Chip>
+            ))}
+          </div>
+          <p className="mt-2 text-[12px] text-zinc-500">서술·계산 문제는 모의고사에서 빼고, 퀴즈에서 스스로 채점합니다.</p>
+        </>
+      )}
+
       <SectionTitle>문제 수</SectionTitle>
       <div className="flex flex-wrap gap-2">
         {sizes.map((n) => (
@@ -58,7 +74,7 @@ function MockView() {
         size="lg"
         className="mt-6 w-full"
         onClick={() => {
-          newMock(size);
+          newMock(Math.min(size, max), qset);
           router.push("/mock/session");
         }}
       >

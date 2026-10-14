@@ -11,6 +11,7 @@ import { COURSE, CONCEPT_MAP, CHAPTER_MAP, questionsOf, questionsOfChapter, term
 import { responseText, type Response } from "@/lib/grade";
 import { takeQuizPreset } from "@/lib/handoff";
 import { usePref } from "@/lib/prefs";
+import { HAS_PDF, QSET_LABEL, inSet, useQSet, type QSet } from "@/lib/qset";
 import { filterQuiz, pickQuiz, type QuizMarks, type QuizMode } from "@/lib/quiz";
 import { useApp } from "@/lib/store";
 import type { Conf, Question } from "@/lib/types";
@@ -66,11 +67,13 @@ function QuizView() {
     if (p.mode) setMode(p.mode);
   }, []);
 
+  const [qset, setQset] = useQSet();
   const pool = useMemo(() => {
+    // 한 개념만 풀 때는 모음을 가리지 않는다 — 그 개념의 문제를 모두
     if (concept) return questionsOf(concept);
-    if (chapter !== "all") return questionsOfChapter(chapter);
-    return COURSE.questions;
-  }, [chapter, concept]);
+    const base = chapter !== "all" ? questionsOfChapter(chapter) : COURSE.questions;
+    return base.filter((q) => inSet(q, qset));
+  }, [chapter, concept, qset]);
   // 시작할 때의 기록으로 고른다 — 푸는 동안 기록이 바뀌어도 판은 그대로
   const marksOf: QuizMarks = useMemo(
     () => ({ log, wrongIds, sure: Object.keys(sureWrong), lucky, starred }),
@@ -261,6 +264,26 @@ function QuizView() {
         </Card>
       ) : (
         <>
+          {HAS_PDF && (
+            <>
+              <SectionTitle>문제 모음</SectionTitle>
+              <div className="flex flex-wrap gap-2">
+                {(["pdf", "extra", "all"] as QSet[]).map((v) => (
+                  <Chip key={v} active={qset === v} onClick={() => setQset(v)}>
+                    {QSET_LABEL[v]}
+                    <span className="ml-1 opacity-60">{COURSE.questions.filter((q) => inSet(q, v)).length}</span>
+                  </Chip>
+                ))}
+              </div>
+              <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
+                {qset === "pdf"
+                  ? "강의 자료 끝의 Quiz 슬라이드 문항을 문제·보기·순서까지 원문 그대로. 서술·계산 문제는 모범 답안을 보고 스스로 채점합니다."
+                  : qset === "extra"
+                    ? "강의 내용으로 따로 만든 문제 — PDF 퀴즈에 없는 부분까지 훑습니다."
+                    : "PDF 퀴즈와 추가 문제를 함께."}
+              </p>
+            </>
+          )}
           <SectionTitle>범위</SectionTitle>
           <div className="flex flex-wrap gap-2">
             <Chip active={chapter === "all"} onClick={() => setChapter("all")}>

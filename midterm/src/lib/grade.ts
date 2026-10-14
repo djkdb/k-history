@@ -38,9 +38,15 @@ export function shortMatches(input: string, accepted: string[]): boolean {
 /** 사용자의 응답 — 객관식은 보기 번호, OX 는 참/거짓, 적기는 글 */
 export type Response = number | boolean | string;
 
+/** 서술 문항 스스로 채점 결과 (Response 로 기록한다) */
+export const SELF_OK = "__self_ok";
+export const SELF_NO = "__self_no";
+
 export function isCorrect(q: Question, r: Response | undefined): boolean {
   if (r === undefined) return false;
   switch (q.kind) {
+    case "open":
+      return r === SELF_OK;
     case "mc":
       return r === q.answer;
     case "ox":
@@ -53,6 +59,7 @@ export function isCorrect(q: Question, r: Response | undefined): boolean {
 /** 낸 답을 사람이 읽는 글로 (오답 노트의 "내가 쓴 답") */
 export function responseText(q: Question, r: Response): string {
   if (r === "" || r === undefined) return "모르겠음";
+  if (q.kind === "open") return r === SELF_OK ? "스스로 채점: 맞음" : "스스로 채점: 틀림";
   if (q.kind === "mc" && typeof r === "number") return q.options[r] ?? "";
   if (q.kind === "ox" && typeof r === "boolean") return r ? "O (맞다)" : "X (틀리다)";
   return String(r);
@@ -68,5 +75,7 @@ export function answerText(q: Question): string {
       return q.answer ? "O (맞다)" : "X (틀리다)";
     case "short":
       return q.answers[0];
+    case "open":
+      return q.answer;
   }
 }

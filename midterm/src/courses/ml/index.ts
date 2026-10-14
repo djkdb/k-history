@@ -9,6 +9,7 @@ import { QUESTIONS_1 } from "./questions-1";
 import { QUESTIONS_2 } from "./questions-2";
 import { QUESTIONS_3 } from "./questions-3";
 import { QUESTIONS_4 } from "./questions-4";
+import { QUESTIONS_PDF } from "./questions-pdf";
 import { EASY } from "./easy";
 import { withEasy } from "@/lib/easy";
 import { INTRO } from "./notes/intro";
@@ -43,7 +44,8 @@ const course: Course = {
   symbol: "🤖",
   chapters: CHAPTERS,
   concepts: withFigures(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), FIGURES),
-  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
+  // 강의 PDF 퀴즈(원문)를 먼저, 강의 내용으로 만든 추가 문제를 뒤에
+  questions: [...QUESTIONS_PDF, ...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: {
     intro: INTRO,
     cls: CLS,
