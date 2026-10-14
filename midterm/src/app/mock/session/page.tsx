@@ -8,7 +8,7 @@ import { Gate } from "@/components/gate";
 import { QuestionCard } from "@/components/question-card";
 import { Button, Card, ProgressBar, RichText, SectionTitle } from "@/components/ui";
 import { COURSE, Q_MAP, chapterOfQuestion, termLabel, CONCEPT_MAP } from "@/lib/course";
-import { answerText, isCorrect } from "@/lib/grade";
+import { answerText, isCorrect, responseText } from "@/lib/grade";
 import { clearMock, readMock, writeMock, type MockRun } from "@/lib/mock";
 import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -40,7 +40,11 @@ function SessionView() {
 
   const submit = () => {
     const results: Record<string, boolean> = {};
-    for (const q of qs) results[q.id] = isCorrect(q, run.responses[q.id]);
+    const said: Record<string, string> = {};
+    for (const q of qs) {
+      results[q.id] = isCorrect(q, run.responses[q.id]);
+      if (!results[q.id]) said[q.id] = responseText(q, run.responses[q.id] ?? "");
+    }
     const correct = Object.values(results).filter(Boolean).length;
     recordMock({
       startedAt: run.startedAt,
@@ -49,7 +53,7 @@ function SessionView() {
       results,
       correct,
       total: qs.length,
-    });
+    }, said);
     clearMock();
     setResult({ correct, total: qs.length, results });
     window.scrollTo({ top: 0 });

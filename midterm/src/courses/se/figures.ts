@@ -30,10 +30,10 @@ export const FIGURES: Record<string, Figure[]> = {
       w: 340,
       h: 150,
       nodes: [
-        { id: "s", label: "명세화\nSpecification", x: 85, y: 34, w: 120, h: 42, tone: "indigo" },
-        { id: "d", label: "개발\nDevelopment", x: 255, y: 34, w: 120, h: 42, tone: "sky" },
-        { id: "v", label: "검증\nValidation", x: 255, y: 116, w: 120, h: 42, tone: "emerald" },
-        { id: "e", label: "진화\nEvolution", x: 85, y: 116, w: 120, h: 42, tone: "amber" },
+        { id: "s", label: "명세화", sub: "Specification", x: 85, y: 34, w: 120, h: 42, tone: "indigo" },
+        { id: "d", label: "개발", sub: "Development", x: 255, y: 34, w: 120, h: 42, tone: "sky" },
+        { id: "v", label: "검증", sub: "Validation", x: 255, y: 116, w: 120, h: 42, tone: "emerald" },
+        { id: "e", label: "진화", sub: "Evolution", x: 85, y: 116, w: 120, h: 42, tone: "amber" },
       ],
       edges: [
         { from: "s", to: "d" },
@@ -209,7 +209,7 @@ export const FIGURES: Record<string, Figure[]> = {
       w: 340,
       h: 140,
       nodes: [
-        { id: "t", label: "테스트 먼저 작성\n(아직 실패)", x: 80, y: 30, w: 130, h: 40, tone: "rose" },
+        { id: "t", label: "테스트 먼저 작성", sub: "(아직 실패)", x: 80, y: 30, w: 130, h: 40, tone: "rose" },
         { id: "i", label: "기능 구현", x: 260, y: 30, w: 100, h: 32, tone: "indigo" },
         { id: "r", label: "새 + 이전 테스트\n모두 자동 실행", x: 260, y: 108, w: 130, h: 40, tone: "sky" },
         { id: "n", label: "통과 → 다음 기능", x: 80, y: 108, w: 130, h: 32, tone: "emerald" },
@@ -305,10 +305,10 @@ export const FIGURES: Record<string, Figure[]> = {
       w: 340,
       h: 140,
       nodes: [
-        { id: "i", label: "식별\n체크리스트", x: 75, y: 30, w: 110, h: 40, tone: "indigo" },
-        { id: "a", label: "분석\n확률 × 결과", x: 265, y: 30, w: 110, h: 40, tone: "amber" },
-        { id: "p", label: "계획\n회피·최소화·비상", x: 265, y: 110, w: 120, h: 40, tone: "sky" },
-        { id: "m", label: "감시\n정기 재평가", x: 75, y: 110, w: 110, h: 40, tone: "emerald" },
+        { id: "i", label: "식별", sub: "체크리스트", x: 75, y: 30, w: 110, h: 40, tone: "indigo" },
+        { id: "a", label: "분석", sub: "확률 × 결과", x: 265, y: 30, w: 110, h: 40, tone: "amber" },
+        { id: "p", label: "계획", sub: "회피·최소화·비상", x: 265, y: 110, w: 120, h: 40, tone: "sky" },
+        { id: "m", label: "감시", sub: "정기 재평가", x: 75, y: 110, w: 110, h: 40, tone: "emerald" },
       ],
       edges: [
         { from: "i", to: "a" },

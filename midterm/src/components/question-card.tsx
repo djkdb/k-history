@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, X } from "lucide-react";
-import type { Question } from "@/lib/types";
+import { AlertTriangle, Check, Dices, Star, X } from "lucide-react";
+import type { Conf, Question } from "@/lib/types";
 import { answerText, isCorrect, type Response } from "@/lib/grade";
 import { CONCEPT_MAP } from "@/lib/course";
 import { cn } from "@/lib/utils";
 import { seededShuffle } from "@/lib/quiz";
+import { useApp } from "@/lib/store";
 import { Button, RichText, SqlBlock } from "./ui";
 
 /**
@@ -17,7 +18,20 @@ import { Button, RichText, SqlBlock } from "./ui";
  *
  * 적기 문제는 제출 단추를 따로 둔다. 한 글자 칠 때마다 채점하면 쓰다 만
  * 답이 "틀렸습니다" 로 찍힌다.
+ *
+ * askConf 를 켜면 답을 고른 뒤 채점 전에 "얼마나 자신 있나" 를 묻는다.
+ * 확신했는데 틀린 답은 해설을 보면 오히려 잘 고쳐지지만(과잉교정 효과)
+ * 며칠 뒤 옛 답이 되살아나기 쉽다 — 그래서 따로 모아 다시 묻는다.
+ * 찍어서 맞힌 것도 아는 것으로 치지 않는다.
+ *
+ * 글쇠: 1~5 보기 · O/X · (자신감) 1 확신 2 반반 3 찍음
  */
+
+const CONFS: { id: Conf; label: string; cls: string }[] = [
+  { id: "sure", label: "확신해요", cls: "border-emerald-400/40 text-emerald-100 hover:bg-emerald-500/10" },
+  { id: "half", label: "반반", cls: "border-amber-400/40 text-amber-100 hover:bg-amber-500/10" },
+  { id: "guess", label: "찍었어요", cls: "border-white/15 text-zinc-300 hover:bg-white/[0.06]" },
+];
 export function QuestionCard({
   q,
   mode,
@@ -26,12 +40,13 @@ export function QuestionCard({
   index,
   total,
   seed = 0,
+  askConf = false,
 }: {
   q: Question;
   mode: "practice" | "exam";
   /** 이미 낸 답 (모의고사에서 앞 문제로 돌아왔을 때) */
   response?: Response;
-  onRespond: (r: Response, correct: boolean) => void;
+  onRespond: (r: Response, correct: boolean, conf?: Conf) => void;
   index?: number;
   total?: number;
   /**
@@ -39,25 +54,56 @@ export function QuestionCard({
    * 앞 문제로 돌아와도 보기 순서가 그대로다.
    */
   seed?: number;
+  /** (연습) 채점 전에 자신감을 묻는다 */
+  askConf?: boolean;
 }) {
   const [picked, setPicked] = useState<Response | undefined>(response);
+  /** 골랐지만 아직 자신감을 고르지 않은 답 */
+  const [pending, setPending] = useState<Response | undefined>(undefined);
+  const [conf, setConf] = useState<Conf | undefined>(undefined);
   const [text, setText] = useState(typeof response === "string" ? response : "");
   const shown = mode === "practice" && picked !== undefined;
   const right = shown && isCorrect(q, picked);
   const inputRef = useRef<HTMLInputElement>(null);
+  const starred = useApp((s) => s.starred.includes(q.concept));
+  const toggleStar = useApp((s) => s.toggleStar);
 
   useEffect(() => {
     setPicked(response);
     setText(typeof response === "string" ? response : "");
   }, [q.id, response]);
+  // 자신감은 문제가 바뀔 때만 지운다 — 채점하면 response 가 바뀌어 위 효과가 다시 돈다
+  useEffect(() => {
+    setPending(undefined);
+    setConf(undefined);
+  }, [q.id]);
+
+  const commit = (r: Response, c?: Conf) => {
+    setPicked(r);
+    setPending(undefined);
+    setConf(c);
+    onRespond(r, isCorrect(q, r), c);
+  };
 
   const respond = (r: Response) => {
-    if (mode === "practice" && picked !== undefined) return;
-    setPicked(r);
-    onRespond(r, isCorrect(q, r));
+    if (mode === "exam") {
+      setPicked(r);
+      onRespond(r, isCorrect(q, r));
+      return;
+    }
+    if (picked !== undefined) return;
+    // 모르겠다고 한 것에는 자신감을 묻지 않는다
+    if (askConf && r !== "") {
+      setPending(r);
+      inputRef.current?.blur();
+      return;
+    }
+    commit(r);
   };
 
   const concept = CONCEPT_MAP[q.concept];
+  /** 눈에 보이는 선택 — 채점된 답, 아니면 자신감을 기다리는 답 */
+  const chosen = picked ?? pending;
 
   /*
    * 보기 순서를 섞는다.
@@ -70,6 +116,37 @@ export function QuestionCard({
     for (const ch of q.id) h = (Math.imul(h ^ ch.charCodeAt(0), 2654435761) >>> 0);
     return seededShuffle(q.options.map((_, i) => i), h || 1);
   }, [q, seed]);
+
+  // 글쇠로 고르기 — 적는 칸에 있을 때는 건드리지 않는다
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (mode === "practice" && picked !== undefined) return;
+      const k = e.key.toLowerCase();
+      if (mode === "practice" && pending !== undefined) {
+        const c = ({ "1": "sure", "2": "half", "3": "guess" } as Record<string, Conf>)[k];
+        if (c) {
+          e.preventDefault();
+          commit(pending, c);
+          return;
+        }
+      }
+      if (q.kind === "mc") {
+        const n = Number(k);
+        if (n >= 1 && n <= order.length) {
+          e.preventDefault();
+          respond(order[n - 1]);
+        }
+      } else if (q.kind === "ox") {
+        if (k === "o" || (k === "1" && pending === undefined)) respond(true);
+        else if (k === "x" || (k === "2" && pending === undefined)) respond(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   return (
     <div>
@@ -89,7 +166,7 @@ export function QuestionCard({
         <div className="mt-4 flex flex-col gap-2">
           {order.map((i, pos) => {
             const o = q.options[i];
-            const isPick = picked === i;
+            const isPick = chosen === i;
             const isAns = shown && i === q.answer;
             const isBad = shown && isPick && i !== q.answer;
             return (
@@ -126,7 +203,7 @@ export function QuestionCard({
       {q.kind === "ox" && (
         <div className="mt-4 grid grid-cols-2 gap-2">
           {([true, false] as const).map((v) => {
-            const isPick = picked === v;
+            const isPick = chosen === v;
             const isAns = shown && v === q.answer;
             const isBad = shown && isPick && v !== q.answer;
             return (
@@ -167,6 +244,8 @@ export function QuestionCard({
             value={text}
             onChange={(e) => {
               setText(e.target.value);
+              // 고친 답은 다시 제출해야 자신감을 묻는다
+              if (pending !== undefined) setPending(undefined);
               // 모의고사에서는 적는 대로 답안지에 옮겨 둔다 (제출을 잊어도 남게)
               if (mode === "exam") {
                 setPicked(e.target.value);
@@ -180,21 +259,44 @@ export function QuestionCard({
             spellCheck={false}
             className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3 text-[15px] text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-indigo-400/60"
           />
-          {mode === "practice" && !shown && (
+          {mode === "practice" && !shown && pending === undefined && (
             <Button type="submit" className="mt-2 w-full" disabled={!text.trim()}>
-              채점하기
+              {askConf ? "이 답으로" : "채점하기"}
             </Button>
           )}
-          {mode === "practice" && !shown && (
-            <button
-              type="button"
-              onClick={() => respond("")}
-              className="mt-2 w-full py-2 text-[12.5px] font-semibold text-zinc-500"
-            >
-              모르겠어요 — 답 보기
-            </button>
-          )}
         </form>
+      )}
+
+      {mode === "practice" && !shown && pending !== undefined && (
+        <div className="mt-4 rounded-2xl border border-indigo-400/30 bg-indigo-500/[0.06] p-3.5">
+          <p className="text-[13px] font-semibold text-zinc-200">채점 전에 — 얼마나 자신 있어요?</p>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {CONFS.map((c, i) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => commit(pending, c.id)}
+                className={cn("rounded-xl border py-2.5 text-[13.5px] font-bold transition-colors", c.cls)}
+              >
+                {c.label}
+                <span className="ml-1 hidden text-[10.5px] font-semibold opacity-50 [@media(pointer:fine)]:inline">{i + 1}</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-[11.5px] text-zinc-500">
+            {q.kind === "short" ? "답을 고치려면 위 칸을 다시 쓰세요" : "답을 바꾸려면 다른 보기를 누르세요"}
+          </p>
+        </div>
+      )}
+
+      {mode === "practice" && !shown && (
+        <button
+          type="button"
+          onClick={() => commit("")}
+          className="mt-2 w-full py-2 text-[12.5px] font-semibold text-zinc-500"
+        >
+          모르겠어요 — 답 보기
+        </button>
       )}
 
       {shown && (
@@ -207,7 +309,35 @@ export function QuestionCard({
           <p className={cn("flex items-center gap-1.5 text-[14px] font-bold", right ? "text-emerald-200" : "text-rose-200")}>
             {right ? <Check size={16} /> : <X size={16} />}
             {right ? "맞았습니다" : "틀렸습니다"}
+            <button
+              type="button"
+              onClick={() => toggleStar(q.concept)}
+              aria-pressed={starred}
+              className={cn(
+                "ml-auto flex items-center gap-1 rounded-lg px-2 py-1 text-[11.5px] font-semibold",
+                starred ? "bg-amber-400/15 text-amber-200" : "bg-white/5 text-zinc-400",
+              )}
+            >
+              <Star size={12} className={starred ? "fill-current" : ""} /> {starred ? "별표함" : "개념 별표"}
+            </button>
           </p>
+          {!right && conf === "sure" && (
+            <p className="mt-2 flex gap-2 rounded-xl bg-rose-500/10 px-3 py-2 text-[12.5px] leading-relaxed text-rose-100">
+              <AlertTriangle size={14} className="mt-0.5 shrink-0 text-rose-300" />
+              <span>
+                <b>확신했는데 틀렸어요.</b> 오답 노트에 넣었습니다 — 서로 다른 날 두 번 맞혀야 빠집니다. 내 답이 왜
+                그럴듯해 보였는지 한 번 짚고 넘어가세요.
+              </span>
+            </p>
+          )}
+          {right && conf === "guess" && (
+            <p className="mt-2 flex gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-[12.5px] leading-relaxed text-amber-100">
+              <Dices size={14} className="mt-0.5 shrink-0 text-amber-300" />
+              <span>
+                <b>찍어서 맞혔어요.</b> 아는 것으로 치지 않고 다시 냅니다. 해설을 읽고 이유를 붙여 두세요.
+              </span>
+            </p>
+          )}
           {!right && (
             <p className="mt-2 text-[13.5px] text-zinc-200">
               정답 <b className="text-zinc-50">{answerText(q)}</b>

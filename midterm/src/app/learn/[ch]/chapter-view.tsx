@@ -12,6 +12,7 @@ import { Button, Card, ClozeCtx, ImportanceBadge, RichText } from "@/components/
 import { countKeys, useCloze } from "@/lib/cloze";
 import { COURSE, CHAPTER_MAP, conceptsOf, notesOf, questionsOf, questionsOfChapter, termLabel } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
+import { usePrintLight } from "@/lib/print";
 import { useApp } from "@/lib/store";
 
 export function ChapterView({ id }: { id: string }) {
@@ -165,24 +166,7 @@ function Inner({ id }: { id: string }) {
 function Sheet({ id }: { id: string }) {
   const cs = conceptsOf(id);
   const en = COURSE.englishExam;
-  // 인쇄는 흰 종이 — 어두운 테마의 밝은 글씨가 흐려지지 않게 인쇄하는 동안만 밝은 테마로
-  useEffect(() => {
-    const root = document.documentElement;
-    let prev: string | null = null;
-    const before = () => {
-      prev = root.getAttribute("data-theme");
-      root.setAttribute("data-theme", "light");
-    };
-    const after = () => {
-      if (prev) root.setAttribute("data-theme", prev);
-    };
-    window.addEventListener("beforeprint", before);
-    window.addEventListener("afterprint", after);
-    return () => {
-      window.removeEventListener("beforeprint", before);
-      window.removeEventListener("afterprint", after);
-    };
-  }, []);
+  usePrintLight();
   return (
     <div className="flex flex-col gap-3">
       {cs.map((c, i) => (

@@ -1,11 +1,14 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type {
+  Calib,
+  Conf,
   MockAttempt,
   QuestionLog,
   ReviewCard,
   Settings,
   Stats,
+  SureMiss,
 } from "./types";
 import { createCard, reviewCard } from "./srs";
 import { idbStorage, mirrorKeyOf } from "./idb-storage";
@@ -28,17 +31,33 @@ export interface AppState {
   /** 별표한 개념 */
   starred: string[];
   mocks: MockAttempt[];
+  /** 확신했는데 틀린 문제 — 서로 다른 날 두 번 맞혀야 빠진다 */
+  sureWrong: Record<string, SureMiss>;
+  /** 찍어서 맞힌 문제 — 아는 것이 아니다. 자신 있게 맞히면 빠진다 */
+  lucky: string[];
+  /** 자신감별 정답 기록 */
+  calib: Calib;
 
   setExamDate: (d: string | null) => void;
   markStudied: (conceptId: string) => void;
   unmarkStudied: (conceptId: string) => void;
   toggleStar: (conceptId: string) => void;
-  answer: (questionId: string, correct: boolean) => void;
+  /** conf 는 퀴즈에서 자신감을 물었을 때만, said 는 낸 답을 글로 */
+  answer: (questionId: string, correct: boolean, conf?: Conf, said?: string) => void;
+  /** 오답 노트에서 손으로 빼기 */
+  dismissSure: (questionId: string) => void;
   reviewConcept: (conceptId: string, correct: boolean) => void;
-  recordMock: (attempt: MockAttempt) => void;
+  /** said: 문제 id → 낸 답 (글) — 오답 노트에 쓴다 */
+  recordMock: (attempt: MockAttempt, said?: Record<string, string>) => void;
   addStudyMinutes: (min: number) => void;
   resetAll: () => void;
 }
+
+const initialCalib: Calib = {
+  sure: { n: 0, right: 0 },
+  half: { n: 0, right: 0 },
+  guess: { n: 0, right: 0 },
+};
 
 const initialStats: Stats = {
   xp: 0,
@@ -88,30 +107,51 @@ function grade(cards: ReviewCard[], id: string, correct: boolean): ReviewCard[] 
   return cards.map((c, k) => (k === i ? reviewCard(c, correct) : c));
 }
 
+type Tracked = Pick<AppState, "log" | "wrongIds" | "cards" | "stats" | "sureWrong" | "lucky" | "calib">;
+
 /** 문제 하나의 결과를 기록에 반영한다 (퀴즈와 모의고사가 같이 쓴다) */
-function applyAnswer(
-  s: Pick<AppState, "log" | "wrongIds" | "cards" | "stats">,
-  qid: string,
-  correct: boolean,
-  now: number,
-) {
+function applyAnswer(s: Tracked, qid: string, correct: boolean, now: number, conf?: Conf, said?: string) {
   const prev = s.log[qid] ?? { right: 0, wrong: 0, last: 0, lastRight: false };
-  const log = {
-    ...s.log,
-    [qid]: {
-      right: prev.right + (correct ? 1 : 0),
-      wrong: prev.wrong + (correct ? 0 : 1),
-      last: now,
-      lastRight: correct,
-    },
+  const entry: QuestionLog = {
+    right: prev.right + (correct ? 1 : 0),
+    wrong: prev.wrong + (correct ? 0 : 1),
+    last: now,
+    lastRight: correct,
   };
+  if (conf) entry.conf = conf;
+  // 맞히면 예전 오답은 지운다 — 남겨 두면 다 고친 문제에 옛 답이 보인다
+  if (!correct && said !== undefined) entry.said = said;
+  const log = { ...s.log, [qid]: entry };
   const wrongIds = correct
     ? s.wrongIds.filter((x) => x !== qid)
     : [qid, ...s.wrongIds.filter((x) => x !== qid)];
   const concept = Q_MAP[qid]?.concept;
   const cards = concept ? grade(s.cards, concept, correct) : s.cards;
   const stats = bumpStreak({ ...s.stats, xp: s.stats.xp + (correct ? 10 : 2) });
-  return { log, wrongIds, cards, stats };
+
+  // 확신 오답: 확신하고 틀리면 넣고, 맞힌 날을 모아 서로 다른 날 두 번이면 뺀다.
+  // 다시 틀리면 처음부터.
+  let sureWrong = s.sureWrong;
+  const miss = sureWrong[qid];
+  if (!correct && (conf === "sure" || miss)) {
+    sureWrong = { ...sureWrong, [qid]: { at: conf === "sure" ? now : (miss?.at ?? now), okDays: [] } };
+  } else if (correct && miss) {
+    const day = todayISO(new Date(now));
+    const okDays = miss.okDays.includes(day) ? miss.okDays : [...miss.okDays, day];
+    sureWrong = { ...sureWrong };
+    if (okDays.length >= 2) delete sureWrong[qid];
+    else sureWrong[qid] = { ...miss, okDays };
+  }
+
+  // 찍어서 맞힌 것은 아는 것이 아니다. 자신 있게 맞히거나 틀리면(→ 틀린 목록) 뺀다
+  let lucky = s.lucky;
+  if (correct && conf === "guess") lucky = lucky.includes(qid) ? lucky : [qid, ...lucky];
+  else if (lucky.includes(qid) && (conf || !correct)) lucky = lucky.filter((x) => x !== qid);
+
+  const calib = conf
+    ? { ...s.calib, [conf]: { n: s.calib[conf].n + 1, right: s.calib[conf].right + (correct ? 1 : 0) } }
+    : s.calib;
+  return { log, wrongIds, cards, stats, sureWrong, lucky, calib };
 }
 
 export const useApp = create<AppState>()(
@@ -126,6 +166,9 @@ export const useApp = create<AppState>()(
       wrongIds: [],
       starred: [],
       mocks: [],
+      sureWrong: {},
+      lucky: [],
+      calib: initialCalib,
 
       setExamDate: (examDate) => set({ settings: { examDate } }),
 
@@ -158,8 +201,16 @@ export const useApp = create<AppState>()(
             : [...s.starred, id],
         })),
 
-      answer: (qid, correct) =>
-        set((s) => applyAnswer(s, qid, correct, Date.now())),
+      answer: (qid, correct, conf, said) =>
+        set((s) => applyAnswer(s, qid, correct, Date.now(), conf, said)),
+
+      dismissSure: (qid) =>
+        set((s) => {
+          if (!s.sureWrong[qid]) return s;
+          const sureWrong = { ...s.sureWrong };
+          delete sureWrong[qid];
+          return { sureWrong };
+        }),
 
       reviewConcept: (id, correct) =>
         set((s) => ({
@@ -167,14 +218,14 @@ export const useApp = create<AppState>()(
           stats: bumpStreak({ ...s.stats, xp: s.stats.xp + 5 }),
         })),
 
-      recordMock: (attempt) =>
+      recordMock: (attempt, said) =>
         set((s) => {
           // 채점 뒤 다시 제출해도 같은 응시를 두 번 세지 않는다
           const again = s.mocks.some((m) => m.startedAt === attempt.startedAt);
-          let acc: Pick<AppState, "log" | "wrongIds" | "cards" | "stats"> = s;
+          let acc: Tracked = s;
           if (!again) {
             for (const [qid, ok] of Object.entries(attempt.results))
-              acc = applyAnswer(acc, qid, ok, attempt.finishedAt);
+              acc = applyAnswer(acc, qid, ok, attempt.finishedAt, undefined, said?.[qid]);
           }
           const mocks = again
             ? s.mocks.map((m) => (m.startedAt === attempt.startedAt ? attempt : m))
@@ -202,6 +253,9 @@ export const useApp = create<AppState>()(
           wrongIds: [],
           starred: [],
           mocks: [],
+          sureWrong: {},
+          lucky: [],
+          calib: initialCalib,
         }),
     }),
     {
@@ -219,6 +273,9 @@ export const useApp = create<AppState>()(
         wrongIds: s.wrongIds,
         starred: s.starred,
         mocks: s.mocks,
+        sureWrong: s.sureWrong,
+        lucky: s.lucky,
+        calib: s.calib,
       }),
       merge: (saved, current) => mergeSaved(current, saved),
       onRehydrateStorage: () => (_state, error) => {

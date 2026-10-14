@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, ListChecks, ThumbsDown, ThumbsUp } from "lucide-react";
+import { AlertTriangle, Eye, ListChecks, NotebookPen, ThumbsDown, ThumbsUp } from "lucide-react";
 import { ConceptBody } from "@/components/concept-body";
 import { Gate } from "@/components/gate";
 import { Button, Card, EmptyState, ProgressBar, SectionTitle } from "@/components/ui";
@@ -31,6 +31,7 @@ function ReviewView() {
   const cards = useApp((s) => s.cards);
   const wrongIds = useApp((s) => s.wrongIds);
   const reviewConcept = useApp((s) => s.reviewConcept);
+  const nSure = useApp((s) => Object.keys(s.sureWrong).length);
   // 시작할 때의 목록을 붙들어 둔다 — 채점할 때마다 목록이 바뀌면 자리가 밀린다
   const [queue] = useState(() => dueCards(cards).map((c) => c.sourceId).filter((id) => CONCEPT_MAP[id]));
   const [at, setAt] = useState(0);
@@ -42,17 +43,26 @@ function ReviewView() {
     [cards],
   );
 
-  const wrongBlock = wrongIds.length > 0 && (
-    <Button
-      variant="outline"
-      className="mt-3 w-full"
-      onClick={() => {
-        setQuizPreset({ mode: "wrong" });
-        router.push("/quiz");
-      }}
-    >
-      <ListChecks size={16} /> 틀린 문제 {wrongIds.length}개 다시 풀기
-    </Button>
+  const quiz = (mode: "wrong" | "sure") => {
+    setQuizPreset({ mode });
+    router.push("/quiz");
+  };
+  const wrongBlock = (
+    <div className="mt-3 flex flex-col gap-2">
+      {nSure > 0 && (
+        <Button variant="outline" className="w-full" onClick={() => quiz("sure")}>
+          <AlertTriangle size={16} className="text-rose-300" /> 확신했는데 틀린 문제 {nSure}개 다시 풀기
+        </Button>
+      )}
+      {wrongIds.length > 0 && (
+        <Button variant="outline" className="w-full" onClick={() => quiz("wrong")}>
+          <ListChecks size={16} /> 틀린 문제 {wrongIds.length}개 다시 풀기
+        </Button>
+      )}
+      <Button variant="ghost" className="w-full" onClick={() => router.push("/wrongs")}>
+        <NotebookPen size={16} /> 오답 노트
+      </Button>
+    </div>
   );
 
   if (queue.length === 0 || at >= queue.length) {

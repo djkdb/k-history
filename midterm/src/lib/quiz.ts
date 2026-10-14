@@ -17,33 +17,67 @@ export function seededShuffle<T>(arr: T[], seed: number): T[] {
   return a;
 }
 
-export type QuizMode = "all" | "new" | "wrong";
+export type QuizMode = "all" | "new" | "wrong" | "sure" | "shaky" | "starred";
+
+/** 문제를 고를 때 보는 내 기록 */
+export interface QuizMarks {
+  log: Record<string, QuestionLog>;
+  /** 지금 틀린 채로 남은 것 */
+  wrongIds: string[];
+  /** 확신했는데 틀린 것 */
+  sure: string[];
+  /** 찍어서 맞힌 것 */
+  lucky: string[];
+  /** 별표한 개념 */
+  starred: string[];
+}
+
+/** 이 조건에 드는 문제 */
+export function filterQuiz(pool: Question[], m: QuizMarks, mode: QuizMode): Question[] {
+  switch (mode) {
+    case "new":
+      return pool.filter((q) => !m.log[q.id]);
+    case "wrong": {
+      const w = new Set(m.wrongIds);
+      return pool.filter((q) => w.has(q.id));
+    }
+    case "sure": {
+      const w = new Set(m.sure);
+      return pool.filter((q) => w.has(q.id));
+    }
+    case "shaky": {
+      // 확신 오답 + 틀린 것 + 찍어 맞힌 것 — 아직 안다고 할 수 없는 것 전부
+      const w = new Set([...m.sure, ...m.wrongIds, ...m.lucky]);
+      return pool.filter((q) => w.has(q.id));
+    }
+    case "starred": {
+      const st = new Set(m.starred);
+      return pool.filter((q) => st.has(q.concept));
+    }
+    default:
+      return pool;
+  }
+}
 
 /**
  * 퀴즈에 낼 문제를 고른다.
  *
- *   all   — 섞어서. 다만 아직 안 푼 것과 틀린 것을 앞에 둔다
- *   new   — 한 번도 안 푼 것만
- *   wrong — 지금 틀린 채로 남은 것만
+ *   all     — 섞어서. 다만 확신 오답 → 틀린 것·찍어 맞힌 것 → 안 푼 것 순으로 앞에 둔다
+ *   new     — 한 번도 안 푼 것만
+ *   wrong   — 지금 틀린 채로 남은 것만
+ *   sure    — 확신했는데 틀린 것만
+ *   shaky   — 아직 안다고 할 수 없는 것 전부
+ *   starred — 별표한 개념의 문제
  *
  * 같은 개념의 문제가 연달아 나오지 않게 한 번 더 흩는다 — 바로 앞 문제가
  * 답을 알려 주는 꼴이 된다.
  */
-export function pickQuiz(
-  pool: Question[],
-  log: Record<string, QuestionLog>,
-  wrongIds: string[],
-  mode: QuizMode,
-  count: number,
-  seed: number,
-): Question[] {
-  const wrong = new Set(wrongIds);
-  let cand = pool;
-  if (mode === "new") cand = pool.filter((q) => !log[q.id]);
-  if (mode === "wrong") cand = pool.filter((q) => wrong.has(q.id));
-  const shuffled = seededShuffle(cand, seed);
-  const rank = (q: Question) => (wrong.has(q.id) ? 0 : !log[q.id] ? 1 : 2);
-  const ordered = mode === "all" ? [...shuffled].sort((a, b) => rank(a) - rank(b)) : shuffled;
+export function pickQuiz(pool: Question[], m: QuizMarks, mode: QuizMode, count: number, seed: number): Question[] {
+  const sure = new Set(m.sure);
+  const weak = new Set([...m.wrongIds, ...m.lucky]);
+  const shuffled = seededShuffle(filterQuiz(pool, m, mode), seed);
+  const rank = (q: Question) => (sure.has(q.id) ? 0 : weak.has(q.id) ? 1 : !m.log[q.id] ? 2 : 3);
+  const ordered = mode === "new" ? shuffled : [...shuffled].sort((a, b) => rank(a) - rank(b));
   return spread(ordered.slice(0, count));
 }
 

@@ -12,8 +12,8 @@ export const FIGURES: Record<string, Figure[]> = {
       nodes: [
         { id: "u", label: "사용자 · 프로그래머", x: 170, y: 18, w: 150, h: 28, shape: "pill", tone: "sky" },
         { id: "a", label: "응용 프로그램 · 질의", x: 170, y: 66, w: 150, h: 30 },
-        { id: "dbms", label: "DBMS 소프트웨어\n질의 처리 · 저장 데이터 접근", x: 170, y: 120, w: 210, h: 44, tone: "indigo" },
-        { id: "meta", label: "DB 정의\n(메타데이터)", x: 95, y: 178, w: 100, h: 40, shape: "db", tone: "amber" },
+        { id: "dbms", label: "DBMS 소프트웨어", sub: "질의 처리 · 저장 데이터 접근", x: 170, y: 120, w: 210, h: 44, tone: "indigo" },
+        { id: "meta", label: "DB 정의", sub: "(메타데이터)", x: 95, y: 178, w: 100, h: 40, shape: "db", tone: "amber" },
         { id: "db", label: "저장된\n데이터베이스", x: 245, y: 178, w: 100, h: 40, shape: "db", tone: "emerald" },
       ],
       edges: [
@@ -35,8 +35,8 @@ export const FIGURES: Record<string, Figure[]> = {
         { id: "v1", label: "External\nview 1", x: 60, y: 26, w: 84, h: 38, tone: "sky" },
         { id: "v2", label: "External\nview 2", x: 170, y: 26, w: 84, h: 38, tone: "sky" },
         { id: "v3", label: "External\nview n", x: 280, y: 26, w: 84, h: 38, tone: "sky" },
-        { id: "c", label: "Conceptual schema\n(representational model)", x: 170, y: 104, w: 220, h: 40, tone: "indigo" },
-        { id: "i", label: "Internal schema\n(physical model)", x: 170, y: 166, w: 200, h: 40, tone: "violet" },
+        { id: "c", label: "Conceptual schema", sub: "(representational model)", x: 170, y: 104, w: 220, h: 40, tone: "indigo" },
+        { id: "i", label: "Internal schema", sub: "(physical model)", x: 170, y: 166, w: 200, h: 40, tone: "violet" },
         { id: "db", label: "Stored DB", x: 170, y: 218, w: 120, h: 30, shape: "db", tone: "emerald" },
       ],
       edges: [
@@ -129,10 +129,10 @@ export const FIGURES: Record<string, Figure[]> = {
       nodes: [
         { id: "l1", label: "1", x: 106, y: 18, w: 16, h: 14, shape: "text" },
         { id: "l2", label: "N · total", x: 234, y: 18, w: 60, h: 14, shape: "text" },
-        { id: "e", label: "EMPLOYEE\n(소유자)", x: 48, y: 50, w: 84, h: 40, tone: "indigo" },
+        { id: "e", label: "EMPLOYEE", sub: "(소유자)", x: 48, y: 50, w: 84, h: 40, tone: "indigo" },
         { id: "r", label: "DEPENDENTS\n_OF", x: 170, y: 50, w: 104, h: 48, shape: "diamond", tone: "amber" },
-        { id: "w", label: "DEPENDENT\n(약한 엔티티)", x: 290, y: 50, w: 92, h: 40, tone: "rose" },
-        { id: "k", label: "Dependent_name = partial key\n→ PK = (Essn, Dependent_name)", x: 190, y: 122, w: 270, h: 36, shape: "dashed" },
+        { id: "w", label: "DEPENDENT", sub: "(약한 엔티티)", x: 290, y: 50, w: 92, h: 40, tone: "rose" },
+        { id: "k", label: "Dependent_name = partial key", sub: "→ PK = (Essn, Dependent_name)", x: 190, y: 122, w: 270, h: 36, shape: "dashed" },
       ],
       edges: [
         { from: "e", to: "r", plain: true },
@@ -162,8 +162,8 @@ export const FIGURES: Record<string, Figure[]> = {
       w: 340,
       h: 150,
       nodes: [
-        { id: "e", label: "EMPLOYEE\nSsn (PK) · … · Super_ssn · Dno", x: 170, y: 30, w: 250, h: 42, tone: "indigo" },
-        { id: "d", label: "DEPARTMENT\nDnumber (PK) · Dname · Mgr_ssn", x: 170, y: 122, w: 250, h: 42, tone: "emerald" },
+        { id: "e", label: "EMPLOYEE", sub: "Ssn (PK) · … · Super_ssn · Dno", x: 170, y: 30, w: 250, h: 42, tone: "indigo" },
+        { id: "d", label: "DEPARTMENT", sub: "Dnumber (PK) · Dname · Mgr_ssn", x: 170, y: 122, w: 250, h: 42, tone: "emerald" },
       ],
       edges: [
         { from: "e", to: "d", bend: 120, label: "Dno → Dnumber" },
@@ -272,8 +272,8 @@ export const FIGURES: Record<string, Figure[]> = {
       h: 130,
       nodes: [
         { id: "q", label: "뷰에 대한 질의", x: 60, y: 65, w: 100, h: 34, shape: "pill", tone: "sky" },
-        { id: "m", label: "Query modification\n→ base table 질의로 변환", x: 240, y: 28, w: 190, h: 40, tone: "indigo" },
-        { id: "z", label: "View materialization\n→ 실제 테이블로 두고 증분 갱신", x: 240, y: 102, w: 190, h: 40, tone: "amber" },
+        { id: "m", label: "Query modification", sub: "→ base table 질의로 변환", x: 240, y: 28, w: 190, h: 40, tone: "indigo" },
+        { id: "z", label: "View materialization", sub: "→ 실제 테이블로 두고 증분 갱신", x: 240, y: 102, w: 190, h: 40, tone: "amber" },
       ],
       edges: [
         { from: "q", to: "m" },

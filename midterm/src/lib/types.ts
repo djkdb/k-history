@@ -30,8 +30,10 @@ export type Tone = "indigo" | "emerald" | "amber" | "rose" | "sky" | "violet" | 
 /** 다이어그램의 상자 하나. x, y 는 상자의 가운데 (그림 좌표, px 단위) */
 export interface FigNode {
   id: string;
-  /** 줄바꿈은 \n */
+  /** 이름. 줄바꿈은 \n */
   label: string;
+  /** 이름 아래 작고 옅게 붙는 풀이 (줄바꿈은 \n) */
+  sub?: string;
   x: number;
   y: number;
   w?: number;
@@ -51,6 +53,10 @@ export interface FigEdge {
   plain?: boolean;
   /** 휘는 정도 (px, 부호로 방향) */
   bend?: number;
+  /** 꺾은 선 — hv: 가로로 나가 세로로 들어감, vh: 세로로 나가 가로로 들어감, vhv: 나무 모양(아래-가로-아래) */
+  route?: "hv" | "vh" | "vhv";
+  /** 반듯한 선을 나란히 밀기 (px) — 세로선은 오른쪽(+), 가로선은 아래(+)로 */
+  offset?: number;
   tone?: Tone;
 }
 
@@ -249,7 +255,30 @@ export interface QuestionLog {
   last: number;
   /** 마지막에 맞혔는가 */
   lastRight: boolean;
+  /** 마지막에 답할 때 얼마나 자신 있었나 (모의고사·예전 기록에는 없다) */
+  conf?: Conf;
+  /** 마지막으로 틀렸을 때 고른 답 — 오답 노트에 "내가 쓴 답" 으로 보인다 */
+  said?: string;
 }
+
+/** 답하기 전 자신감 — 확신 / 반반 / 찍음 */
+export type Conf = "sure" | "half" | "guess";
+
+/**
+ * 확신했는데 틀린 문제.
+ * 확신 오답은 해설을 보면 잘 고쳐지지만(과잉교정 효과) 며칠 지나면 옛 답이
+ * 되살아나기 쉽다. 그래서 한 번 맞혔다고 빼지 않고, 서로 다른 날 두 번
+ * 맞혀야 뺀다.
+ */
+export interface SureMiss {
+  /** 확신하고 틀린 때 */
+  at: number;
+  /** 그 뒤로 맞힌 날 (YYYY-MM-DD) — 서로 다른 날 두 번이면 졸업 */
+  okDays: string[];
+}
+
+/** 자신감별 정답 기록 — 내 확신이 얼마나 믿을 만한지 */
+export type Calib = Record<Conf, { n: number; right: number }>;
 
 export interface MockAttempt {
   startedAt: number;

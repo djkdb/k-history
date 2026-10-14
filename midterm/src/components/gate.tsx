@@ -33,5 +33,5 @@ export function Gate({ children, allowNew = false }: { children: ReactNode; allo
 export interface QuizPreset {
   chapter?: string;
   concept?: string;
-  mode?: "all" | "new" | "wrong";
+  mode?: "all" | "new" | "wrong" | "sure" | "shaky" | "starred";
 }

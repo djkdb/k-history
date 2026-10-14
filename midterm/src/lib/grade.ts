@@ -50,6 +50,14 @@ export function isCorrect(q: Question, r: Response | undefined): boolean {
   }
 }
 
+/** 낸 답을 사람이 읽는 글로 (오답 노트의 "내가 쓴 답") */
+export function responseText(q: Question, r: Response): string {
+  if (r === "" || r === undefined) return "모르겠음";
+  if (q.kind === "mc" && typeof r === "number") return q.options[r] ?? "";
+  if (q.kind === "ox" && typeof r === "boolean") return r ? "O (맞다)" : "X (틀리다)";
+  return String(r);
+}
+
 /** 정답을 사람이 읽을 글로 */
 export function answerText(q: Question): string {
   switch (q.kind) {

@@ -495,8 +495,12 @@ body {
 /* ── 그림 (components/figure.tsx) ─────────────────────────
    색은 톤별 변수 두 개(바탕·선)만 쓴다. 테마가 바뀌면 변수만 바뀐다. */
 :root {
-  --fig-ink: #e4e4e7;
+  --fig-ink: #f4f4f5;
   --fig-sub: #a1a1aa;
+  --fig-note-ink: #b4b4bd;
+  --fig-halo: #0e0e10;
+  --fig-line: #8e8e99;
+  --fig-shadow: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
   --fig-frame: rgba(255, 255, 255, 0.025);
   --fig-label: #141417;
   --t-indigo-bg: rgba(99, 102, 241, 0.2);
@@ -517,6 +521,10 @@ body {
 [data-theme="light"] {
   --fig-ink: #18181b;
   --fig-sub: #52525b;
+  --fig-note-ink: #52525b;
+  --fig-halo: #ffffff;
+  --fig-line: #8b8b95;
+  --fig-shadow: drop-shadow(0 1px 1.5px rgba(24, 24, 27, 0.1));
   --fig-frame: #ffffff;
   --fig-label: #ffffff;
   --t-indigo-bg: #e0e7ff;
@@ -541,7 +549,16 @@ body {
 .t-sky { --tb: var(--t-sky-bg); --tl: var(--t-sky-ln); }
 .t-violet { --tb: var(--t-violet-bg); --tl: var(--t-violet-ln); }
 .t-zinc { --tb: var(--t-zinc-bg); --tl: var(--t-zinc-ln); }
+/* 무채색 선은 상자 테두리보다 한 단계 밝게 — 어두운 바탕에서 화살표가 묻히지 않게 */
+.fig-edge.t-zinc,
+.fig-arrow.t-zinc {
+  --tl: var(--fig-line);
+}
 
+/* 한국어는 낱말 사이에서만 줄을 바꾼다 ("플래/시" 처럼 쪼개지지 않게) */
+.fig {
+  word-break: keep-all;
+}
 .fig-frame {
   border: 1px solid var(--sheet-line);
   border-radius: 1rem;
@@ -555,6 +572,7 @@ body {
   background: var(--t-indigo-ln);
 }
 .fig-svg {
+  text-rendering: geometricPrecision;
   display: block;
   width: 100%;
   height: auto;
@@ -565,7 +583,13 @@ body {
 .fig-node {
   fill: var(--tb);
   stroke: var(--tl);
-  stroke-width: 1.4;
+  stroke-width: 1.5;
+  filter: var(--fig-shadow);
+}
+/* 묶음 상자(점선)는 그림자 없이 옅게 — 안의 상자가 주인공이다 */
+.fig-group {
+  filter: none;
+  fill-opacity: 0.45;
 }
 .fig-node path,
 .fig-node ellipse {
@@ -577,13 +601,24 @@ body {
 }
 .fig-edge {
   stroke: var(--tl);
-  stroke-width: 1.5;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .fig-arrow {
   fill: var(--tl);
 }
 .fig-ink {
   fill: var(--fig-ink);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.fig-note-ink {
+  fill: var(--fig-note-ink);
+  font-weight: 500;
+}
+.fig-label {
+  fill: var(--fig-sub);
   font-weight: 600;
 }
 .fig-sub {
@@ -592,7 +627,8 @@ body {
 }
 .fig-label-bg {
   fill: var(--fig-label);
-  opacity: 0.92;
+  stroke: var(--sheet-line);
+  stroke-width: 1;
 }
 .fig-grid {
   width: 100%;
@@ -620,8 +656,11 @@ body {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: 6px;
-  background: var(--tb);
+  background: linear-gradient(90deg, var(--tb), color-mix(in srgb, var(--tl) 42%, var(--tb)));
   border: 1.5px solid var(--tl);
+}
+.fig-bar-val {
+  color: var(--fig-ink);
 }
 .fig-track {
   border-radius: 6px;
@@ -725,6 +764,17 @@ body {
 .fig-gridline {
   stroke: var(--sheet-line);
   stroke-width: 1;
+}
+.fig-gridline.faint {
+  stroke-dasharray: 2 4;
+  opacity: 0.7;
+}
+/* 선 위에 얹힌 글자 — 바탕색 테두리를 둘러 선이 글자를 가르지 않게 */
+.fig-halo {
+  paint-order: stroke fill;
+  stroke: var(--fig-halo);
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
 }
 .fig-axis {
   stroke: var(--t-zinc-ln);

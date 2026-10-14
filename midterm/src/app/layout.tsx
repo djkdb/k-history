@@ -30,7 +30,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko" data-theme="dark">
+    <html lang="ko" data-theme="dark" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href={withBase("/apple-touch-icon.png")} />
         <link rel="icon" href={withBase("/icon.svg")} type="image/svg+xml" />

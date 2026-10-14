@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, BookOpen, ChevronRight, ListChecks, RotateCw, Settings, Star } from "lucide-react";
+import { AlertTriangle, BookOpen, ChevronRight, ListChecks, NotebookPen, RotateCw, Settings, Star } from "lucide-react";
 import { Gate } from "@/components/gate";
 import { HubLink } from "@/components/hub-link";
 import { InstallHint } from "@/components/install-hint";
@@ -37,6 +37,9 @@ function HomeView() {
   const wrongIds = useApp((s) => s.wrongIds);
   const starred = useApp((s) => s.starred);
   const mocks = useApp((s) => s.mocks);
+  const sureWrong = useApp((s) => s.sureWrong);
+  const lucky = useApp((s) => s.lucky);
+  const nSure = Object.keys(sureWrong).length;
 
   const exam = settings?.examDate ?? null;
   const dday = exam ? daysUntil(exam) : null;
@@ -134,6 +137,18 @@ function HomeView() {
             </Card>
           </Link>
         )}
+        {nSure > 0 && (
+          <button type="button" onClick={() => go({ mode: "sure" })} className="text-left">
+            <Card className="flex items-center gap-3 border-rose-400/25">
+              <AlertTriangle size={18} className="shrink-0 text-rose-300" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold">확신했는데 틀린 문제 {nSure}개</p>
+                <p className="text-[12.5px] text-zinc-400">시험장에서 제일 위험한 것 — 다른 날 두 번 맞히면 빠집니다</p>
+              </div>
+              <ChevronRight size={16} className="text-zinc-500" />
+            </Card>
+          </button>
+        )}
         {wrongIds.length > 0 && (
           <button type="button" onClick={() => go({ mode: "wrong" })} className="text-left">
             <Card className="flex items-center gap-3">
@@ -156,6 +171,20 @@ function HomeView() {
             <ChevronRight size={16} className="text-zinc-500" />
           </Card>
         </button>
+        {(wrongIds.length > 0 || nSure > 0 || lucky.length > 0) && (
+          <Link href="/wrongs">
+            <Card className="flex items-center gap-3">
+              <NotebookPen size={18} className="shrink-0 text-violet-300" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold">오답 노트</p>
+                <p className="text-[12.5px] text-zinc-400">
+                  확신 오답 {nSure} · 틀린 것 {wrongIds.length} · 찍어서 맞힘 {lucky.length}
+                </p>
+              </div>
+              <ChevronRight size={16} className="text-zinc-500" />
+            </Card>
+          </Link>
+        )}
         {starred.length > 0 && (
           <Link href="/learn?starred=1">
             <Card className="flex items-center gap-3">

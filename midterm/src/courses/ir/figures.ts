@@ -1,4 +1,7 @@
-import type { Figure } from "@/lib/types";
+import type { Figure, Tone } from "@/lib/types";
+
+/** 분산 색인의 세 구간 (a-f · g-p · q-z) 색 */
+const PART: Tone[] = ["sky", "violet", "amber"];
 
 /** 정보검색 그림 — 개념 id → 그림들 */
 export const FIGURES: Record<string, Figure[]> = {
@@ -88,9 +91,9 @@ export const FIGURES: Record<string, Figure[]> = {
       nodes: [2, 4, 8, 34, 35, 64, 128].map((d, i) => ({
         id: `n${d}`,
         label: String(d),
-        x: 25 + i * 48,
+        x: 22 + i * 49,
         y: 82,
-        w: 32,
+        w: 28,
         shape: "circle" as const,
         tone: d === 34 || d === 128 ? ("indigo" as const) : ("zinc" as const),
       })),
@@ -241,13 +244,14 @@ export const FIGURES: Record<string, Figure[]> = {
       nodes: [
         ...[0, 1, 2].map((i) => ({ id: `s${i}`, label: "split", x: 36, y: 40 + i * 75, w: 52, h: 30 })),
         ...[0, 1, 2].map((i) => ({ id: `p${i}`, label: "파서", x: 125, y: 40 + i * 75, w: 62, h: 32, tone: "indigo" as const })),
-        ...["a-f", "g-p", "q-z"].map((r, i) => ({ id: `v${i}`, label: `인버터\n${r}`, x: 290, y: 40 + i * 75, w: 76, h: 40, tone: "emerald" as const })),
+        ...["a-f", "g-p", "q-z"].map((r, i) => ({ id: `v${i}`, label: "인버터", sub: r, x: 290, y: 40 + i * 75, w: 76, h: 40, tone: PART[i] })),
         { id: "m1", label: "map phase", x: 125, y: 222, w: 90, h: 16, shape: "text" as const },
         { id: "m2", label: "reduce phase", x: 290, y: 222, w: 90, h: 16, shape: "text" as const },
       ],
       edges: [
         ...[0, 1, 2].map((i) => ({ from: `s${i}`, to: `p${i}` })),
-        ...[0, 1, 2].flatMap((i) => [0, 1, 2].map((j) => ({ from: `p${i}`, to: `v${j}`, tone: "zinc" as const }))),
+        // 구간마다 색을 달리해 엇갈리는 선을 따라가게 한다
+        ...[0, 1, 2].flatMap((i) => [0, 1, 2].map((j) => ({ from: `p${i}`, to: `v${j}`, tone: PART[j] }))),
       ],
     },
   ],
@@ -539,7 +543,7 @@ export const FIGURES: Record<string, Figure[]> = {
         { id: "qp", label: "자유 텍스트\n질의 파서", x: 280, y: 100, w: 96, h: 40 },
         { id: "idx", label: "색인: 존·필드 · 계층 위치\n부정확 top K · k-gram", x: 120, y: 172, w: 200, h: 48, tone: "indigo" },
         { id: "spell", label: "철자 교정", x: 284, y: 172, w: 88, h: 32 },
-        { id: "mlr", label: "MLR\n(학습 집합)", x: 60, y: 245, w: 90, h: 40, tone: "violet" },
+        { id: "mlr", label: "MLR", sub: "(학습 집합)", x: 60, y: 245, w: 90, h: 40, tone: "violet" },
         { id: "rank", label: "점수 계산·순위", x: 210, y: 245, w: 120, h: 34, tone: "amber" },
         { id: "res", label: "결과 페이지", x: 278, y: 288, w: 104, h: 22, tone: "emerald" },
       ],
