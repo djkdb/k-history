@@ -3,7 +3,7 @@
 import { AlertTriangle, ArrowDown, GraduationCap, Lightbulb, Sparkles } from "lucide-react";
 import type { Concept } from "@/lib/types";
 import { Figures } from "./figure";
-import { CompareTable, RichText, SqlBlock } from "./ui";
+import { CompareTable, RichText, Sentences, SqlBlock } from "./ui";
 
 /** 개념 본문 — 쉽게 말하면 · 요약 · 그림 · 흐름 · 외울 것 · 표 · 예시 · 코드 · 시험엔 이렇게 · 함정 */
 export function ConceptBody({ c }: { c: Concept }) {
@@ -15,13 +15,13 @@ export function ConceptBody({ c }: { c: Concept }) {
             <Sparkles size={14} /> 쉽게 말하면
           </p>
           <p className="mt-1.5 whitespace-pre-line text-[14px] leading-[1.8] text-zinc-200 lg:text-[15px]">
-            <RichText>{c.easy}</RichText>
+            <Sentences>{c.easy}</Sentences>
           </p>
         </div>
       )}
 
       <p className="text-[15px] leading-[1.85] text-zinc-200 lg:text-[16px]">
-        <RichText>{c.summary}</RichText>
+        <Sentences>{c.summary}</Sentences>
       </p>
 
       {/* 그림은 설명 바로 아래 — 말과 그림을 가까이 둔다 */}
@@ -55,7 +55,7 @@ export function ConceptBody({ c }: { c: Concept }) {
             <Lightbulb size={14} /> 예시
           </p>
           <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
-            <RichText>{c.example}</RichText>
+            <Sentences>{c.example}</Sentences>
           </p>
         </div>
       )}
@@ -66,7 +66,7 @@ export function ConceptBody({ c }: { c: Concept }) {
             <GraduationCap size={14} /> 시험엔 이렇게
           </p>
           <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
-            <RichText>{c.exam}</RichText>
+            <Sentences>{c.exam}</Sentences>
           </p>
         </div>
       )}
@@ -77,7 +77,7 @@ export function ConceptBody({ c }: { c: Concept }) {
             <AlertTriangle size={14} /> 헷갈리는 곳
           </p>
           <p className="mt-1.5 text-[13.5px] leading-relaxed text-zinc-200 lg:text-[14.5px]">
-            <RichText>{c.trap}</RichText>
+            <Sentences>{c.trap}</Sentences>
           </p>
         </div>
       )}

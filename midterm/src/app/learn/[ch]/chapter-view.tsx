@@ -8,7 +8,7 @@ import { ClozeBar } from "@/components/cloze-bar";
 import { Figures } from "@/components/figure";
 import { Gate } from "@/components/gate";
 import { NotesView } from "@/components/notes";
-import { Button, Card, ClozeCtx, ImportanceBadge, RichText } from "@/components/ui";
+import { Button, Card, ClozeCtx, ImportanceBadge, RichText, Sentences } from "@/components/ui";
 import { countKeys, useCloze } from "@/lib/cloze";
 import { COURSE, CHAPTER_MAP, conceptsOf, notesOf, questionsOf, questionsOfChapter, termLabel } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
@@ -182,14 +182,14 @@ function Sheet({ id }: { id: string }) {
             <ImportanceBadge level={c.importance} compact />
           </div>
           <p className="mt-2 text-[13.5px] leading-[1.75] text-zinc-200">
-            <RichText>{c.summary}</RichText>
+            <Sentences gap="mt-1">{c.summary}</Sentences>
           </p>
           <Figures list={c.figures} />
           {c.exam && (
             <p className="mt-3 flex gap-1.5 rounded-xl bg-indigo-500/[0.08] px-3 py-2 text-[12.5px] leading-relaxed text-zinc-200">
               <GraduationCap size={14} className="mt-[3px] shrink-0 text-indigo-300" />
               <span className="min-w-0">
-                <RichText>{c.exam}</RichText>
+                <Sentences gap="mt-1">{c.exam}</Sentences>
               </span>
             </p>
           )}

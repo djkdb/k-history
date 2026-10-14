@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { ChevronRight } from "lucide-react";
+import { splitSentences } from "@/lib/sentences";
 import {
   cn,
   importanceBg,
@@ -486,6 +487,24 @@ export function SqlBlock({
  *
  * 마크다운 전부를 들이지 않고 이 둘만 읽는다 — 본문에 쓰는 것이 이 둘뿐이다.
  */
+/**
+ * 문단을 한 문장씩 줄을 바꿔 보인다 — 긴 문단보다 눈이 덜 헤맨다.
+ * 문장 나누기 규칙은 lib/sentences.ts.
+ */
+export function Sentences({ children, gap = "mt-1.5" }: { children: string; gap?: string }) {
+  const parts = splitSentences(children);
+  if (parts.length <= 1) return <RichText>{children}</RichText>;
+  return (
+    <>
+      {parts.map((p, i) => (
+        <span key={i} className={i ? `block ${gap}` : "block"}>
+          <RichText>{p}</RichText>
+        </span>
+      ))}
+    </>
+  );
+}
+
 export function RichText({
   children,
   className,
