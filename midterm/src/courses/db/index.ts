@@ -42,7 +42,15 @@ const course: Course = {
   chapters: CHAPTERS,
   concepts: withSources(withFigures(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), FIGURES), SOURCES),
   pdfs: PDFS,
-  notesPdf: { "Lecture 2. Introduction to DB Systems & ER Model": "notes-L2.pdf" },
+  notesPdf: {
+    "Lecture 2. Introduction to DB Systems & ER Model": "notes-L2.pdf",
+    "Practice 1. ER Model (해답)": "notes-P1.pdf",
+    "Lecture 3. Relational Data Model": "notes-L3.pdf",
+    "Practice 2. RDB Mapping (해답)": "notes-P2.pdf",
+    "Lecture 4. Basic and Advanced SQL": "notes-L4.pdf",
+    "Lecture 5. Advanced SQL: View": "notes-L5.pdf",
+    "Lecture 6. Relational Algebra": "notes-L6.pdf",
+  },
   questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: { ...NOTES_1, ...NOTES_2 },
 };

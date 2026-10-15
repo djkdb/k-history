@@ -27,6 +27,8 @@ const pages = PAGES.map((pg, i) => {
   const ko = pg.ko
     .map((l) => {
       const depth = (l.match(/^ */)[0].length / 2) | 0;
+      // "$ " 로 시작하면 SQL·식 한 줄 — 고정폭 글씨로
+      if (l.trim().startsWith("$ ")) return `<li class="code d${Math.min(depth, 3)}">${esc(l.trim().slice(2))}</li>`;
       return `<li class="d${Math.min(depth, 3)}">${rich(l.trim())}</li>`;
     })
     .join("");
@@ -74,6 +76,8 @@ header .pno{font-weight:700;color:#1f2330}
 .ko li::before{content:"";position:absolute;left:.6mm;top:.62em;width:1.3mm;height:1.3mm;border-radius:50%;background:#9aa3b5}
 .ko li.d1{margin-left:4.5mm}.ko li.d2{margin-left:9mm}.ko li.d3{margin-left:13.5mm}
 .ko li.d1::before,.ko li.d2::before,.ko li.d3::before{background:none;border:.25mm solid #9aa3b5}
+li.code{font-family:Menlo,Consolas,monospace;font-size:.86em;background:#f1efe6;border-radius:1mm;padding:.2mm 1.5mm .2mm 3.6mm;margin:.4mm 0;white-space:pre-wrap;color:#253055}
+li.code::before{display:none}
 mark{background:linear-gradient(transparent 42%,rgba(255,222,70,.7) 42%);color:inherit;padding:0 .4mm;font-weight:600;border-radius:.6mm}
 .margin{flex:1;min-width:0;border-left:.5mm dashed #e3b9b9;padding-left:4mm;font-family:'Nanum Pen Script',cursive;
   background:repeating-linear-gradient(transparent 0 7.6mm,#e9eef7 7.6mm 7.9mm);overflow:hidden}
