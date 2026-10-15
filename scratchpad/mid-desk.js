@@ -14,9 +14,9 @@ const srv = http.createServer((q, r) => { const f = find(decodeURIComponent(q.ur
   const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
   const ctx = await b.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1, ...(process.env.TOUCH ? { hasTouch: true, isMobile: true } : {}) });
   const p = await ctx.newPage();
-  const errs = []; p.on("pageerror", (e) => errs.push(e.message));
+  const errs = []; p.on("pageerror", (e) => errs.push(p.url() + " " + e.message.slice(0, 60)));
   const U = (s) => `http://127.0.0.1:7505/${C}${s}`;
-  await p.goto(U("/")); await p.evaluate(([k, t]) => localStorage.setItem(`mid-${k}:theme`, t), [C, THEME]);
+  await p.goto(U("/")); await p.evaluate(([k, t, fz]) => { localStorage.setItem(`mid-${k}:theme`, t); if (fz) localStorage.setItem("mid-font-scale", fz); }, [C, THEME, process.env.FZ]);
   await p.goto(U("/onboarding")); await p.waitForTimeout(500);
   const d = p.locator("#exam-date"); if (await d.count()) { if (!(await d.inputValue())) await d.fill("2026-10-23"); await p.locator("button", { hasText: "시작하기" }).first().click(); await p.waitForTimeout(600); }
   for (const pt of PATHS) try {

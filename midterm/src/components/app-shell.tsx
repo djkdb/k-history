@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const full = FULL.some((h) => path.startsWith(h));
   return (
     <div className={cn("app-zoom", !full && "lg:pl-64")}>
-      <div className="mx-auto w-full max-w-2xl px-4 pt-safe pb-28 md:max-w-[46rem] md:px-6 md:pb-32 lg:max-w-[1120px] lg:px-10 lg:pb-16 lg:pt-4">
+      <div className="text-scale mx-auto w-full max-w-2xl px-4 pt-safe pb-28 md:max-w-[46rem] md:px-6 md:pb-32 lg:max-w-[1120px] lg:px-10 lg:pb-16 lg:pt-4">
         {children}
       </div>
     </div>

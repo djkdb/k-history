@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, Check, CheckCircle2, ChevronLeft, ChevronRight, ListChecks, Star } from "lucide-react";
+import { FontSizeControl } from "@/components/font-size";
 import { PdfSource } from "@/components/pdf-source";
 import { ClozeBar } from "@/components/cloze-bar";
 import { ConceptBody } from "@/components/concept-body";
@@ -100,6 +101,7 @@ function Inner({ id }: { id: string }) {
         <Link href={`/learn/${c.chapter}`} className="inline-flex min-w-0 flex-1 items-center gap-1 text-[13px] font-semibold text-zinc-400">
           <ArrowLeft size={15} className="shrink-0" /> <span className="truncate">{ch?.title}</span>
         </Link>
+        <FontSizeControl className="shrink-0 lg:hidden" />
         <button
           type="button"
           onClick={() => toggleStar(id)}

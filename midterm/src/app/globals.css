@@ -988,3 +988,8 @@ body {
     break-after: avoid;
   }
 }
+
+/* 글씨 크기 — 본문만 키운다 (길잡이 막대는 그대로). lib/font-scale.ts */
+.text-scale {
+  zoom: var(--fz, 1);
+}

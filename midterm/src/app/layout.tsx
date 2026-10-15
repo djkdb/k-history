@@ -9,6 +9,7 @@ import { SWRegister } from "@/components/sw-register";
 import { withBase } from "@/lib/base";
 import { COURSE } from "@/lib/course";
 import { KEY } from "@/lib/course-id";
+import { FONT_BOOT } from "@/lib/font-boot";
 
 export const metadata: Metadata = {
   title: `${COURSE.name} 중간고사`,
@@ -54,6 +55,8 @@ export default function RootLayout({
             __html: `(function(){try{var p=localStorage.getItem(${JSON.stringify(KEY + ":theme")});var a=p==="light"||(p==="system"&&matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";document.documentElement.setAttribute("data-theme",a);document.documentElement.style.colorScheme=a;}catch(e){}})();`,
           }}
         />
+        {/* 글씨 크기도 칠하기 전에 */}
+        <script dangerouslySetInnerHTML={{ __html: FONT_BOOT }} />
       </head>
       <body className="app-bg min-h-dvh">
         <SideNav />

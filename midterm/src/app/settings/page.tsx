@@ -1,5 +1,6 @@
 "use client";
 
+import { FontSizeControl } from "@/components/font-size";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -59,6 +60,13 @@ function SettingsView() {
 
       <SectionTitle>화면</SectionTitle>
       <ThemePicker />
+      <Card className="mt-2 flex items-center justify-between gap-3">
+        <span className="text-[13.5px] font-semibold text-zinc-200">
+          글씨 크기
+          <span className="block text-[11.5px] font-normal text-zinc-400">다섯 과목에 다 같이 적용돼요</span>
+        </span>
+        <FontSizeControl />
+      </Card>
 
       <SectionTitle>다른 기기에서 이어하기</SectionTitle>
       <SyncPanel />

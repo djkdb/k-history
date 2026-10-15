@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ClipboardList, Home, ListChecks, RotateCw } from "lucide-react";
+import { BookOpen, Brain, ClipboardList, Home, ListChecks, RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TABS = [
   { href: "/", label: "홈", icon: Home },
   { href: "/learn", label: "개념", icon: BookOpen },
+  { href: "/memo", label: "암기", icon: Brain },
   { href: "/quiz", label: "퀴즈", icon: ListChecks },
   { href: "/review", label: "복습", icon: RotateCw },
   { href: "/mock", label: "모의고사", icon: ClipboardList },

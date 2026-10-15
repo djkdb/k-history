@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Printer } from "lucide-react";
 import { ClozeBar } from "@/components/cloze-bar";
 import { EasyText } from "@/components/easy-text";
 import { Figures } from "@/components/figure";
+import { FontSizeControl } from "@/components/font-size";
 import { Gate } from "@/components/gate";
 import { ClozeCtx, CompareTable, ImportanceBadge, RichText, Sentences, SqlBlock } from "@/components/ui";
 import { countKeys, useCloze } from "@/lib/cloze";
@@ -48,6 +49,7 @@ function Inner({ n }: { n: number }) {
         <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-zinc-400">
           개념 {list.length}개를 슬라이드 순서대로 모았어요. 회색 쪽 번호는 원본 PDF의 쪽입니다.
         </p>
+        <FontSizeControl className="no-print shrink-0" />
         <button
           type="button"
           onClick={() => window.print()}

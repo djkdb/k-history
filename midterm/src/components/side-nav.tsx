@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { BookOpen, ClipboardList, FileText, Home, LayoutGrid, ListChecks, NotebookPen, RotateCw, Settings } from "lucide-react";
+import { BookOpen, Brain, ClipboardList, FileText, Home, LayoutGrid, ListChecks, NotebookPen, RotateCw, Settings } from "lucide-react";
 import { BASE } from "@/lib/base";
 import { COURSE, conceptsOf } from "@/lib/course";
 import { dueCards } from "@/lib/srs";
 import { useApp } from "@/lib/store";
 import { cn, daysUntil } from "@/lib/utils";
+import { FontSizeControl } from "./font-size";
 import { ThemeToggle } from "./theme";
 
 /**
@@ -36,6 +37,7 @@ export function SideNav() {
     { href: "/", label: "홈", icon: Home },
     { href: "/learn", label: "개념", icon: BookOpen },
     { href: "/pdf", label: "PDF별 요약", icon: FileText },
+    { href: "/memo", label: "암기", icon: Brain },
     { href: "/quiz", label: "퀴즈", icon: ListChecks },
     { href: "/review", label: "복습", icon: RotateCw, badge: due },
     { href: "/mock", label: "모의고사", icon: ClipboardList },
@@ -124,7 +126,11 @@ export function SideNav() {
         })}
       </div>
 
-      <div className="flex items-center gap-2 border-t border-white/5 px-4 py-3">
+      <div className="flex items-center justify-between gap-2 border-t border-white/5 px-4 pt-3">
+        <span className="text-[11.5px] font-semibold text-zinc-500">글씨 크기</span>
+        <FontSizeControl />
+      </div>
+      <div className="flex items-center gap-2 px-4 py-3">
         {BASE && (
           <a
             href="/"
