@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { FileText } from "lucide-react";
 import { COURSE } from "@/lib/course";
-import { pageLabel } from "@/lib/sources";
+import { BASE } from "@/lib/base";
+import { notesPdfUrl, pageLabel } from "@/lib/sources";
 import type { PdfRef } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -23,13 +24,29 @@ export function PdfSource({ refs, className }: { refs?: PdfRef[]; className?: st
         );
         const cls =
           "inline-flex max-w-full items-center gap-1.5 rounded-lg border border-sky-400/20 bg-sky-500/[0.08] px-2 py-1 text-sky-200";
-        return n >= 0 ? (
-          <Link key={i} href={`/pdf/${n + 1}`} className={cn(cls, "hover:bg-sky-500/15")} title="이 PDF 요약본 보기">
+        const notes = notesPdfUrl(COURSE.notesPdf, r.file, BASE);
+        const link = n >= 0 ? (
+          <Link key={`l${i}`} href={`/pdf/${n + 1}`} className={cn(cls, "hover:bg-sky-500/15")} title="이 PDF 요약본 보기">
             {body}
           </Link>
         ) : (
-          <span key={i} className={cls}>
+          <span key={`s${i}`} className={cls}>
             {body}
+          </span>
+        );
+        if (!notes) return link;
+        return (
+          <span key={i} className="inline-flex max-w-full flex-wrap items-center gap-1.5">
+            {link}
+            <a
+              href={`${notes}#page=${r.from}`}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1 rounded-lg border border-amber-400/25 bg-amber-500/[0.08] px-2 py-1 font-semibold text-amber-200 hover:bg-amber-500/15"
+              title="원본 슬라이드 + 한글 번역 + 필기 PDF, 이 쪽으로 열기"
+            >
+              ✍ 한글 필기 p.{r.from}
+            </a>
           </span>
         );
       })}

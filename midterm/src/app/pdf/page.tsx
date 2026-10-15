@@ -43,6 +43,7 @@ function Inner() {
                     <p className="text-[14.5px] font-bold leading-snug">{f}</p>
                     <p className="mt-0.5 text-[12px] text-zinc-400">
                       개념 {cs.length}개 · p.{from}–{to}
+                      {COURSE.notesPdf?.[f] && <span className="ml-1.5 font-semibold text-amber-200">· ✍ 한글 필기 PDF</span>}
                     </p>
                     <ProgressBar value={done} max={Math.max(1, cs.length)} className="mt-2" />
                   </div>

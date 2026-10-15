@@ -29,3 +29,9 @@ export function pdfConcepts(concepts: Concept[], file: string): { c: Concept; re
   }
   return out.sort((a, b) => a.ref.from - b.ref.from || a.ref.to - b.ref.to);
 }
+
+/** 한글 필기 PDF 주소 — 없으면 null */
+export function notesPdfUrl(notes: Record<string, string> | undefined, file: string, base: string): string | null {
+  const f = notes?.[file];
+  return f ? `${base}/${f}` : null;
+}

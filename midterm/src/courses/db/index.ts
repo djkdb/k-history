@@ -42,6 +42,7 @@ const course: Course = {
   chapters: CHAPTERS,
   concepts: withSources(withFigures(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), FIGURES), SOURCES),
   pdfs: PDFS,
+  notesPdf: { "Lecture 2. Introduction to DB Systems & ER Model": "notes-L2.pdf" },
   questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: { ...NOTES_1, ...NOTES_2 },
 };

@@ -272,6 +272,8 @@ export interface Course {
   notes?: Record<string, NoteSection[]>;
   /** 받은 강의 PDF 이름 — 강의 순서대로 (PDF별 요약에 쓴다) */
   pdfs?: string[];
+  /** PDF 이름 → 한글 번역·필기를 덧붙인 PDF (과목 폴더 assets/<과목>/ 에 둔 파일 이름) */
+  notesPdf?: Record<string, string>;
 }
 
 /* ── 기록 ─────────────────────────────────────────────── */

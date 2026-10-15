@@ -11,7 +11,8 @@ import { ClozeCtx, CompareTable, ImportanceBadge, RichText, Sentences, SqlBlock 
 import { countKeys, useCloze } from "@/lib/cloze";
 import { COURSE, CHAPTER_MAP } from "@/lib/course";
 import { usePrintLight } from "@/lib/print";
-import { pageLabel, pagesOf, pdfConcepts } from "@/lib/sources";
+import { BASE } from "@/lib/base";
+import { notesPdfUrl, pageLabel, pagesOf, pdfConcepts } from "@/lib/sources";
 import { useApp } from "@/lib/store";
 import type { Concept, PdfRef } from "@/lib/types";
 
@@ -44,6 +45,20 @@ function Inner({ n }: { n: number }) {
       </Link>
       <p className="mt-3 text-[12px] font-bold text-sky-300">📄 PDF {n} / {pdfs.length}</p>
       <h1 className="mt-1 text-[23px] font-bold leading-tight tracking-tight lg:text-[26px]">{file}</h1>
+      {notesPdfUrl(COURSE.notesPdf, file, BASE) && (
+        <a
+          href={notesPdfUrl(COURSE.notesPdf, file, BASE)!}
+          target="_blank"
+          rel="noopener"
+          className="no-print mt-3 flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-500/[0.08] px-4 py-3 lg:max-w-xl"
+        >
+          <span className="text-[20px]">✍</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14px] font-bold text-amber-100">한글 번역 + 필기 PDF 열기</span>
+            <span className="block text-[12px] text-zinc-400">원본 슬라이드 옆에 번역 · ★시험 포인트 · ⚠️헷갈리는 것 · 풀이 (쪽 번호 원본과 같음)</span>
+          </span>
+        </a>
+      )}
 
       <div className="mt-3 flex items-start gap-2">
         <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-zinc-400">

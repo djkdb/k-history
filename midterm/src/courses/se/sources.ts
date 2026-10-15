@@ -37,7 +37,7 @@ export const SOURCES: Record<string, PdfRef[]> = {
   "evolution": [{ file: F[1], from: 40, to: 40 }],
   "coping-change": [{ file: F[1], from: 42, to: 44 }],
   "prototyping": [{ file: F[1], from: 45, to: 51 }],
-  "incremental-delivery": [{ file: F[1], from: 52, to: 55 }],
+  "incremental-delivery": [{ file: F[1], from: 52, to: 56 }],
   "process-improvement": [{ file: F[1], from: 58, to: 63 }],
   "cmm": [{ file: F[1], from: 64, to: 65 }],
   "agile-background": [{ file: F[2], from: 4, to: 9 }],

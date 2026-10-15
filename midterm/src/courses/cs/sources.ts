@@ -54,7 +54,7 @@ export const SOURCES: Record<string, PdfRef[]> = {
   "pc-ir": [{ file: F[5], from: 8, to: 8 }],
   "memory-hierarchy": [{ file: F[5], from: 9, to: 10 }],
   "locality": [{ file: F[5], from: 14, to: 14 }],
-  "bus": [{ file: F[5], from: 15, to: 15 }],
+  "bus": [{ file: F[5], from: 15, to: 16 }],
   "von-neumann": [{ file: F[5], from: 18, to: 18 }],
   "machine-instruction": [{ file: F[6], from: 4, to: 5 }],
   "instruction-kinds": [{ file: F[6], from: 6, to: 9 }],

@@ -1,7 +1,7 @@
 {
   // 중간고사 5과목 — 정적 결과(out-all/)를 그대로 서빙하고,
   // 기기 간 이어하기(/api/sync)만 작은 Worker 가 받는다 (worker/index.ts).
-  "name": "zunte-midterm",
+  "name": "zuntest-mid",
   "compatibility_date": "2025-01-01",
   "main": "worker/index.ts",
   "assets": {
