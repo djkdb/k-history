@@ -35,6 +35,10 @@ const course: Course = {
   chapters: CHAPTERS,
   concepts: withSources(withFigures([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], FIGURES), SOURCES),
   pdfs: PDFS,
+  notesPdf: {
+    "IIR 1. Boolean Retrieval (01intro)": "notes-1.pdf",
+    "IIR 2. The term vocabulary and postings lists (02voc)": "notes-2.pdf",
+  },
   questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: { ...NOTES_1, ...NOTES_2, ...NOTES_3 },
 };

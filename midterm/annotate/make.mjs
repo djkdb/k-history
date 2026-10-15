@@ -1,6 +1,5 @@
 // 필기 PDF 만들기 — node make.mjs <notes.mjs> <이미지 폴더> <출력.pdf> <과목 표시>
-// 필요한 것: 같은 폴더에 x1/ (npm pack @fontsource/nanum-pen-script@5.1.0 을 푼 것), 원본 PDF를 pdftoppm -r 96 -jpeg 로 뽑은 그림 폴더. 4:3 슬라이드는 RATIO=4:3.
-// 쪽마다: 왼쪽 위 원본 슬라이드, 그 아래 한글 번역, 오른쪽 여백에 손글씨 필기.
+// 쪽마다: 왼쪽 위 원본 슬라이드, 그 아래 한글 번역, 오른쪽 여백에 메모.
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, readdirSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { createRequire } from "node:module";
@@ -43,7 +42,7 @@ const pages = PAGES.map((pg, i) => {
       <div class="ko"><h2>${rich(pg.t)}</h2><ul>${ko}</ul></div>
     </div>
     <aside class="margin">
-      <p class="mh">필기 ✍</p>
+      <p class="mh">✍ 메모</p>
       <ul>${notes || '<li class="n none">— 넘어가도 되는 쪽</li>'}</ul>
     </aside>
   </div>
@@ -80,14 +79,14 @@ header .pno{font-weight:700;color:#1f2330}
 li.code{font-family:Menlo,Consolas,monospace;font-size:.86em;background:#f1efe6;border-radius:1mm;padding:.2mm 1.5mm .2mm 3.6mm;margin:.4mm 0;white-space:pre-wrap;color:#253055}
 li.code::before{display:none}
 mark{background:linear-gradient(transparent 42%,rgba(255,222,70,.7) 42%);color:inherit;padding:0 .4mm;font-weight:600;border-radius:.6mm}
-.margin{flex:1;min-width:0;border-left:.5mm dashed #e3b9b9;padding-left:4mm;font-family:'Nanum Pen Script',cursive;
-  background:repeating-linear-gradient(transparent 0 7.6mm,#e9eef7 7.6mm 7.9mm);overflow:hidden}
-.mh{font-size:19pt;color:#b04a4a;line-height:1;margin:1mm 0 2.5mm}
-.margin ul{list-style:none;font-size:var(--ns,19pt);line-height:1.12}
-.n{margin-bottom:3mm;transform:rotate(calc(var(--r) * .25deg));transform-origin:left}
-.n .ic{font-family:Pre,sans-serif;font-size:.62em;margin-right:.6mm}
-.n .lb{font-size:.8em;padding:0 1.2mm;border-radius:1mm;margin-right:.6mm}
-.n mark{font-weight:400;background:linear-gradient(transparent 50%,rgba(255,232,110,.75) 50%)}
+.margin{flex:1;min-width:0;border-left:.5mm dashed #e3b9b9;padding-left:4mm;font-family:Pre,sans-serif;
+  background:#fbfaf6;border-radius:0 2mm 2mm 0;padding-top:1mm;padding-right:2mm;overflow:hidden}
+.mh{font-size:10pt;font-weight:700;color:#b04a4a;line-height:1;margin:1.5mm 0 3mm}
+.margin ul{list-style:none;font-size:var(--ns,10.5pt);line-height:1.55}
+.n{margin-bottom:2.6mm;font-weight:600}
+.n .ic{font-size:.95em;margin-right:.8mm}
+.n .lb{font-size:.82em;font-weight:700;padding:.2mm 1.4mm;border-radius:1mm;margin-right:1mm}
+.n mark{font-weight:700;background:linear-gradient(transparent 50%,rgba(255,232,110,.75) 50%)}
 .star{color:#c0262d}.star .lb{background:#fde2e2}
 .warn{color:#c25c00}.warn .lb{background:#ffe9cc}
 .tip{color:#1d56b8}.tip .lb{background:#dde8ff}
@@ -99,7 +98,7 @@ mark{background:linear-gradient(transparent 42%,rgba(255,222,70,.7) 42%);color:i
 for (const pg of document.querySelectorAll('.page')) {
   const ko = pg.querySelector('.ko'), mg = pg.querySelector('.margin');
   for (let s = 10; s > 6.5 && ko.scrollHeight > ko.clientHeight + 1; s -= 0.25) ko.style.setProperty('--ks', s + 'pt');
-  for (let s = 19; s > 11 && mg.scrollHeight > mg.clientHeight + 1; s -= 0.5) mg.style.setProperty('--ns', s + 'pt');
+  for (let s = 10.5; s > 7 && mg.scrollHeight > mg.clientHeight + 1; s -= 0.25) mg.style.setProperty('--ns', s + 'pt');
 }
 document.body.dataset.done = '1';
 </script></body></html>`;
@@ -117,7 +116,7 @@ const over = await p.evaluate(() => {
   for (const [i, pg] of [...document.querySelectorAll('.page')].entries()) {
     const ko = pg.querySelector('.ko'), mg = pg.querySelector('.margin');
     for (let s = 10; s > 6.5 && ko.scrollHeight > ko.clientHeight + 1; s -= 0.25) ko.style.setProperty('--ks', s + 'pt');
-    for (let s = 19; s > 11 && mg.scrollHeight > mg.clientHeight + 1; s -= 0.5) mg.style.setProperty('--ns', s + 'pt');
+    for (let s = 10.5; s > 7 && mg.scrollHeight > mg.clientHeight + 1; s -= 0.25) mg.style.setProperty('--ns', s + 'pt');
     if (ko.scrollHeight > ko.clientHeight + 1 || mg.scrollHeight > mg.clientHeight + 1) out.push(i + 1);
   }
   return out;
