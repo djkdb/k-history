@@ -1,5 +1,5 @@
 // 필기 PDF 만들기 — node make.mjs <notes.mjs> <이미지 폴더> <출력.pdf> <과목 표시>
-// 필요한 것: 같은 폴더에 x1/ (npm pack @fontsource/nanum-pen-script@5.1.0 을 푼 것), 원본 PDF를 pdftoppm -r 96 -jpeg 로 뽑은 그림 폴더.
+// 필요한 것: 같은 폴더에 x1/ (npm pack @fontsource/nanum-pen-script@5.1.0 을 푼 것), 원본 PDF를 pdftoppm -r 96 -jpeg 로 뽑은 그림 폴더. 4:3 슬라이드는 RATIO=4:3.
 // 쪽마다: 왼쪽 위 원본 슬라이드, 그 아래 한글 번역, 오른쪽 여백에 손글씨 필기.
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, readdirSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
@@ -59,6 +59,7 @@ ${fontCss}
 @font-face{font-family:Pre;font-weight:600;src:url(${pre(600)})}
 @font-face{font-family:Pre;font-weight:700;src:url(${pre(700)})}
 @page{size:A4 landscape;margin:0}
+${process.env.RATIO === "4:3" ? ":root{--lw:146mm;--lh:109.5mm}" : ""}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Pre,sans-serif;color:#1f2330;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .page{width:297mm;height:210mm;padding:7mm 8mm 6mm;display:flex;flex-direction:column;page-break-after:always;overflow:hidden;background:#fffdf7}
@@ -67,8 +68,8 @@ header .crs{font-weight:700;color:#0e7aa6}
 header .ttl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 header .pno{font-weight:700;color:#1f2330}
 .body{flex:1;display:flex;gap:5mm;min-height:0}
-.left{width:172mm;display:flex;flex-direction:column;min-height:0}
-.slide{width:172mm;height:96.75mm;object-fit:contain;border:.3mm solid #d9d4c5;border-radius:1.5mm;background:#fff;box-shadow:0 .6mm 1.8mm rgba(0,0,0,.08)}
+.left{width:var(--lw,172mm);display:flex;flex-direction:column;min-height:0}
+.slide{width:var(--lw,172mm);height:var(--lh,96.75mm);object-fit:contain;border:.3mm solid #d9d4c5;border-radius:1.5mm;background:#fff;box-shadow:0 .6mm 1.8mm rgba(0,0,0,.08)}
 .ko{flex:1;min-height:0;margin-top:3mm;overflow:hidden}
 .ko h2{font-size:12.5pt;font-weight:700;color:#14213d;margin-bottom:1.6mm}
 .ko ul{list-style:none;font-size:var(--ks,10pt);line-height:1.5}

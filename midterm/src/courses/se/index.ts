@@ -38,6 +38,13 @@ const course: Course = {
   chapters: CHAPTERS,
   concepts: withSources(withFigures(withEasy(CONCEPTS, EASY), FIGURES), SOURCES),
   pdfs: PDFS,
+  notesPdf: {
+    "#1 Ch1 Software Quality and Principles": "notes-1.pdf",
+    "#2 Ch2-1 SW Processes (1)": "notes-2.pdf",
+    "#2 Ch2-2 Agile Software Development": "notes-3.pdf",
+    "#3 Ch2-3 SW Processes (3) DevOps": "notes-4.pdf",
+    "#3-1 Project Management (HR, Risk, Team)": "notes-5.pdf",
+  },
   questions: [...QUESTIONS_1, ...QUESTIONS_2],
   notes: NOTES,
 };
