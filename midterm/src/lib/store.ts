@@ -37,6 +37,11 @@ export interface AppState {
   lucky: string[];
   /** 자신감별 정답 기록 */
   calib: Calib;
+  /**
+   * 암기 탭의 "외웠어요" — 개념 id → 때(ms). 양수 = 외움, 음수 = 그때 표시를 뗌.
+   * 뗀 것도 때를 남겨야 다른 기기와 맞출 때 "나중에 한 쪽"을 따를 수 있다.
+   */
+  memo: Record<string, number>;
 
   setExamDate: (d: string | null) => void;
   markStudied: (conceptId: string) => void;
@@ -50,6 +55,10 @@ export interface AppState {
   /** said: 문제 id → 낸 답 (글) — 오답 노트에 쓴다 */
   recordMock: (attempt: MockAttempt, said?: Record<string, string>) => void;
   addStudyMinutes: (min: number) => void;
+  /** 외웠어요 표시를 켜고 끈다 */
+  toggleMemo: (conceptId: string) => void;
+  /** 예전(이 기기에만 두던) 외움 표시를 기록으로 옮긴다 */
+  importMemo: (ids: string[]) => void;
   resetAll: () => void;
 }
 
@@ -169,6 +178,7 @@ export const useApp = create<AppState>()(
       sureWrong: {},
       lucky: [],
       calib: initialCalib,
+      memo: {},
 
       setExamDate: (examDate) => set({ settings: { examDate } }),
 
@@ -243,6 +253,20 @@ export const useApp = create<AppState>()(
       addStudyMinutes: (min) =>
         set((s) => ({ stats: { ...s.stats, studyMinutes: s.stats.studyMinutes + min } })),
 
+      toggleMemo: (id) =>
+        set((s) => {
+          const now = Date.now();
+          return { memo: { ...s.memo, [id]: (s.memo[id] ?? 0) > 0 ? -now : now } };
+        }),
+
+      importMemo: (ids) =>
+        set((s) => {
+          const memo = { ...s.memo };
+          const now = Date.now();
+          for (const id of ids) if (memo[id] === undefined) memo[id] = now;
+          return { memo };
+        }),
+
       resetAll: () =>
         set({
           settings: null,
@@ -256,6 +280,7 @@ export const useApp = create<AppState>()(
           sureWrong: {},
           lucky: [],
           calib: initialCalib,
+          memo: {},
         }),
     }),
     {
@@ -276,6 +301,7 @@ export const useApp = create<AppState>()(
         sureWrong: s.sureWrong,
         lucky: s.lucky,
         calib: s.calib,
+        memo: s.memo,
       }),
       merge: (saved, current) => mergeSaved(current, saved),
       onRehydrateStorage: () => (_state, error) => {

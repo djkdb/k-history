@@ -26,7 +26,7 @@ const CODE_RE = /^[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{10}$/;
 
 export type Persisted = Pick<
   AppState,
-  "settings" | "stats" | "studied" | "cards" | "log" | "wrongIds" | "starred" | "mocks" | "sureWrong" | "lucky" | "calib"
+  "settings" | "stats" | "studied" | "cards" | "log" | "wrongIds" | "starred" | "mocks" | "sureWrong" | "lucky" | "calib" | "memo"
 >;
 
 /* ── 저장소 ─────────────────────────────────────────── */
@@ -99,6 +99,7 @@ function fill(s: Partial<Persisted>): Persisted {
     sureWrong: s.sureWrong ?? {},
     lucky: s.lucky ?? [],
     calib: s.calib ?? { sure: zero, half: zero, guess: zero },
+    memo: s.memo ?? {},
   };
 }
 
@@ -167,6 +168,10 @@ export function mergeState(l: Persisted, lAt: number, r: Persisted, rAt: number)
     studyMinutes: Math.max(N.stats.studyMinutes, O.stats.studyMinutes),
   };
 
+  // 외웠어요 — 개념마다 더 나중에 누른 쪽 (켬·끔 모두 때가 남는다)
+  const memo: Record<string, number> = { ...O.memo };
+  for (const [id, t] of Object.entries(N.memo)) if (memo[id] === undefined || Math.abs(t) >= Math.abs(memo[id])) memo[id] = t;
+
   const total = (s: Persisted) => s.calib.sure.n + s.calib.half.n + s.calib.guess.n;
 
   return {
@@ -181,6 +186,7 @@ export function mergeState(l: Persisted, lAt: number, r: Persisted, rAt: number)
     sureWrong,
     lucky,
     calib: total(N) >= total(O) ? N.calib : O.calib,
+    memo,
   };
 }
 

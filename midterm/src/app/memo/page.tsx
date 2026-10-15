@@ -11,6 +11,7 @@ import { countKeys, useCloze } from "@/lib/cloze";
 import { COURSE, termLabel } from "@/lib/course";
 import { KEY } from "@/lib/course-id";
 import { usePrintLight } from "@/lib/print";
+import { useApp } from "@/lib/store";
 import { pageLabel, pdfConcepts } from "@/lib/sources";
 import type { Concept, PdfRef } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -18,16 +19,20 @@ import { cn } from "@/lib/utils";
 /**
  * 암기 — PDF 하나씩, 외울 것만.
  * 설명·비유는 빼고 외울 것 · 표 · 순서 · 시험 포인트 · 함정만 남겨 빽빽하지 않게 늘어놓는다.
- * 가리고 떠올리기를 켜면 굵은 핵심어가 가려진다. "외웠어요" 표시는 이 기기에만 남는다.
+ * 가리고 떠올리기를 켜면 굵은 핵심어가 가려진다. "외웠어요" 표시는 공부 기록(memo)에 남아 기록 코드로 맞춰진다.
  */
 const PDF_KEY = `${KEY}:memo-pdf`;
 const DONE_KEY = `${KEY}:memo-done`;
 
-function readDone(): Record<string, 1> {
+/** 예전 판은 외움 표시를 이 기기에만 두었다 — 한 번 읽어 기록으로 옮기고 지운다 */
+function takeOldDone(): string[] {
   try {
-    return JSON.parse(localStorage.getItem(DONE_KEY) || "{}");
+    const raw = localStorage.getItem(DONE_KEY);
+    if (!raw) return [];
+    localStorage.removeItem(DONE_KEY);
+    return Object.keys(JSON.parse(raw) as Record<string, 1>);
   } catch {
-    return {};
+    return [];
   }
 }
 
@@ -45,19 +50,23 @@ function Inner() {
   const pdfs = COURSE.pdfs ?? [];
   const [n, setN] = useState(0);
   const [filter, setFilter] = useState<Filter>("all");
-  const [done, setDone] = useState<Record<string, 1>>({});
+  const memo = useApp((s) => s.memo);
+  const toggleMemo = useApp((s) => s.toggleMemo);
+  const importMemo = useApp((s) => s.importMemo);
+  const done = (id: string) => (memo[id] ?? 0) > 0;
   const cloze = useCloze();
   usePrintLight();
 
   useEffect(() => {
-    setDone(readDone());
+    const old = takeOldDone();
+    if (old.length) importMemo(old);
     try {
       const v = Number(localStorage.getItem(PDF_KEY));
       if (v >= 0 && v < pdfs.length) setN(v);
     } catch {
       /* 처음 PDF 로 */
     }
-  }, [pdfs.length]);
+  }, [pdfs.length, importMemo]);
 
   const pick = (i: number) => {
     setN(i);
@@ -68,21 +77,9 @@ function Inner() {
     }
     window.scrollTo({ top: 0 });
   };
-  const toggleDone = (id: string) => {
-    const next = { ...done };
-    if (next[id]) delete next[id];
-    else next[id] = 1;
-    setDone(next);
-    try {
-      localStorage.setItem(DONE_KEY, JSON.stringify(next));
-    } catch {
-      /* 이번 창에서만 */
-    }
-  };
-
   const all = useMemo(() => (pdfs[n] ? pdfConcepts(COURSE.concepts, pdfs[n]) : []), [n, pdfs]);
-  const list = all.filter(({ c }) => (filter === "key" ? c.importance !== "normal" : filter === "left" ? !done[c.id] : true));
-  const nDone = all.filter(({ c }) => done[c.id]).length;
+  const list = all.filter(({ c }) => (filter === "key" ? c.importance !== "normal" : filter === "left" ? !done(c.id) : true));
+  const nDone = all.filter(({ c }) => done(c.id)).length;
 
   return (
     <main className="py-6 lg:max-w-3xl">
@@ -144,7 +141,7 @@ function Inner() {
       <ClozeCtx.Provider value={{ on: cloze.on, gen: cloze.gen }}>
         <ol className="mt-4 flex flex-col gap-3">
           {list.map(({ c, ref }) => (
-            <MemoCard key={c.id} c={c} r={ref} no={all.findIndex((x) => x.c.id === c.id) + 1} done={!!done[c.id]} onDone={() => toggleDone(c.id)} />
+            <MemoCard key={c.id} c={c} r={ref} no={all.findIndex((x) => x.c.id === c.id) + 1} done={done(c.id)} onDone={() => toggleMemo(c.id)} />
           ))}
         </ol>
       </ClozeCtx.Provider>
