@@ -38,6 +38,11 @@ const course: Course = {
   notesPdf: {
     "IIR 1. Boolean Retrieval (01intro)": "notes-1.pdf",
     "IIR 2. The term vocabulary and postings lists (02voc)": "notes-2.pdf",
+    "IIR 3. Dictionaries and tolerant retrieval (03dict)": "notes-3.pdf",
+    "IIR 4. Index Construction (04const)": "notes-4.pdf",
+    "IIR 5. Index Compression (05comp)": "notes-5.pdf",
+    "IIR 6. Scoring, term weighting, the vector space model (06score)": "notes-6.pdf",
+    "IIR 7. Scores in a complete search system (07system)": "notes-7.pdf",
   },
   questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
   notes: { ...NOTES_1, ...NOTES_2, ...NOTES_3 },
