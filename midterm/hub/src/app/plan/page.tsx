@@ -13,9 +13,11 @@ import {
   fromIso,
   iso,
   readHubExam,
+  readHubStart,
   readSnap,
   sumDay,
   writeHubExam,
+  writeHubStart,
   type CourseState,
   type DayTask,
   type Plan,
@@ -42,7 +44,9 @@ function usePlan() {
     const snaps = Object.fromEntries(ready.map((c) => [c.id, readSnap(c.id)]));
     setOpened(Object.fromEntries(ready.map((c) => [c.id, !!snaps[c.id]])));
     setPlan(
-      buildPlan(ready.map((c) => ({ id: c.id, snap: snaps[c.id], defaultExam: c.examDate, hubExam: readHubExam(c.id) }))),
+      buildPlan(
+        ready.map((c) => ({ id: c.id, snap: snaps[c.id], defaultExam: c.examDate, hubExam: readHubExam(c.id), start: readHubStart(c.id) })),
+      ),
     );
   }, []);
   useEffect(() => {
@@ -146,7 +150,7 @@ function ExamStrip({ plan, opened, onChange }: { plan: Plan; opened: Record<stri
             {c.exam ? (
               <p className="mt-1.5 text-[12px] text-zinc-400">
                 {md(c.exam)}
-                {c.examFrom === "material" && " · 강의 자료"}
+                {c.examFrom === "material" && " · 확정"}
                 {c.examFrom === "hub" && (
                   <button
                     type="button"
@@ -175,6 +179,7 @@ function ExamStrip({ plan, opened, onChange }: { plan: Plan; opened: Record<stri
                 />
               </label>
             )}
+            {c.exam && c.exam > plan.today && <StartPicker c={c} today={plan.today} onChange={onChange} />}
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
               <div className="h-full rounded-full" style={{ width: `${pct}%`, background: m.color }} />
             </div>
@@ -186,6 +191,47 @@ function ExamStrip({ plan, opened, onChange }: { plan: Plan; opened: Record<stri
         );
       })}
     </section>
+  );
+}
+
+/** 이날부터 시작 — 정하지 않았으면 "지금부터"만 보이고, 누르면 날짜 칸이 열린다 */
+function StartPicker({ c, today, onChange }: { c: CourseState; today: string; onChange: () => void }) {
+  const [open, setOpen] = useState(false);
+  if (!c.start && !open)
+    return (
+      <button type="button" onClick={() => setOpen(true)} className="mt-1 text-[12px] text-zinc-400 underline-offset-2 hover:underline">
+        시작: 지금부터 · 바꾸기
+      </button>
+    );
+  return (
+    <label className="mt-1 flex items-center gap-1.5 text-[12px] text-zinc-400">
+      <span className="shrink-0">시작</span>
+      <input
+        type="date"
+        value={c.start ?? ""}
+        min={today}
+        max={addDays(c.exam!, -1)}
+        className="min-w-0 flex-1 rounded-lg border border-white/15 bg-transparent px-1.5 py-0.5 text-[12px] text-zinc-200"
+        onChange={(e) => {
+          writeHubStart(c.id, e.target.value || null);
+          onChange();
+        }}
+        aria-label={`${META[c.id].name} 시작일 — 이 날 전에는 할당량을 잡지 않아요`}
+      />
+      {c.start && (
+        <button
+          type="button"
+          className="shrink-0 underline"
+          onClick={() => {
+            writeHubStart(c.id, null);
+            setOpen(false);
+            onChange();
+          }}
+        >
+          지금부터
+        </button>
+      )}
+    </label>
   );
 }
 
@@ -352,6 +398,13 @@ function DayDetail({ plan, date }: { plan: Plan; date: string }) {
     <section id="day-detail" className="scroll-mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4" aria-live="polite">
       <p className="text-[12px] font-bold text-indigo-300">{isToday ? "오늘 할 일" : date < plan.today ? "지난 날" : "이날 할 일"}</p>
       <h2 className="mt-0.5 text-[18px] font-bold">{md(date)}</h2>
+      {plan.courses
+        .filter((c) => c.start && date < c.start)
+        .map((c) => (
+          <p key={c.id} className="mt-1.5 text-[12px] text-zinc-400">
+            ⏳ {META[c.id].name}은 {md(c.start!)}부터 시작해요
+          </p>
+        ))}
       {tasks.length === 0 ? (
         <p className="mt-3 text-[13px] text-zinc-400">
           {date < plan.today ? "지난 날이에요." : "잡힌 할 일이 없어요. 시험일을 정하면 여기에 채워집니다."}

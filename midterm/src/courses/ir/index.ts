@@ -27,6 +27,8 @@ const course: Course = {
   name: "정보검색",
   short: "정보검색",
   code: "5119006-01",
+  examDate: "2026-10-27",
+  examNote: "중간고사 10/27(화) — 강의 자료에는 날짜가 없어 직접 알려 준 날짜로 넣었습니다.",
   englishExam: true,
   color: "#f43f5e",
   symbol: "🔎",

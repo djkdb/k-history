@@ -14,7 +14,7 @@ import { createCard, reviewCard } from "./srs";
 import { idbStorage, mirrorKeyOf } from "./idb-storage";
 import { todayISO } from "./utils";
 import { KEY } from "./course-id";
-import { Q_MAP } from "./course";
+import { COURSE, Q_MAP } from "./course";
 
 export interface AppState {
   hydrated: boolean;
@@ -335,5 +335,5 @@ if (process.env.NEXT_PUBLIC_STORAGE_AUDIT === "1" && typeof window !== "undefine
 
 /** 시험일까지 남은 날 (정하지 않았으면 null) */
 export function useExamDate(): string | null {
-  return useApp((s) => s.settings?.examDate ?? null);
+  return useApp((s) => s.settings?.examDate ?? COURSE.examDate ?? null);
 }

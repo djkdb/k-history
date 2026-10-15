@@ -43,7 +43,7 @@ function HomeView() {
   const lucky = useApp((s) => s.lucky);
   const nSure = Object.keys(sureWrong).length;
 
-  const exam = settings?.examDate ?? null;
+  const exam = settings?.examDate ?? COURSE.examDate ?? null;
   const dday = exam ? daysUntil(exam) : null;
   const due = useMemo(() => dueCards(cards), [cards]);
   const nextConcept = COURSE.concepts.find((c) => !studied[c.id]);

@@ -73,6 +73,30 @@ export function writeHubExam(id: string, iso: string | null) {
   }
 }
 
+/**
+ * 과목을 언제부터 시작할지 — 그 전에는 그 과목 몫을 잡지 않는다.
+ * 기본값: 정보검색은 다음 주 시험들을 먼저 치르고 10/23(금)부터 몰아서 (직접 정한 계획).
+ * 캘린더에서 바꾸면 이 기기에 남는다. 빈 문자열 = "지금부터".
+ */
+export const DEFAULT_START: Record<string, string> = { ir: "2026-10-23" };
+
+export function readHubStart(id: string): string | null {
+  try {
+    const v = localStorage.getItem(`midhub:start:${id}`);
+    if (v !== null) return v || null;
+  } catch {
+    /* 막아 둔 브라우저 */
+  }
+  return DEFAULT_START[id] ?? null;
+}
+export function writeHubStart(id: string, iso: string | null) {
+  try {
+    localStorage.setItem(`midhub:start:${id}`, iso ?? "");
+  } catch {
+    /* 막아 둔 브라우저 */
+  }
+}
+
 /* ── 날짜 ─────────────────────────────────────────── */
 
 export function iso(d: Date): string {
@@ -111,6 +135,8 @@ export interface CourseState {
   exam: string | null;
   /** 날짜가 어디서 왔나 */
   examFrom: "course" | "material" | "hub" | null;
+  /** 이날부터 시작 (오늘 이후일 때만) */
+  start: string | null;
   total: number;
   studied: number;
   questions: number;
@@ -129,7 +155,7 @@ export interface Plan {
 }
 
 export function buildPlan(
-  inputs: { id: string; snap: Snap | null; defaultExam: string | null; hubExam: string | null }[],
+  inputs: { id: string; snap: Snap | null; defaultExam: string | null; hubExam: string | null; start?: string | null }[],
   now: Date = new Date(),
 ): Plan {
   const today = iso(now);
@@ -138,7 +164,7 @@ export function buildPlan(
   const push = (d: string, t: DayTask) => (days[d] ??= []).push(t);
   const courses: CourseState[] = [];
 
-  for (const { id, snap, defaultExam, hubExam } of inputs) {
+  for (const { id, snap, defaultExam, hubExam, start: startFrom } of inputs) {
     const scope = SCOPES.find((s) => s.id === id);
     if (!scope) continue;
     const studied = snap?.studied ?? {};
@@ -150,10 +176,13 @@ export function buildPlan(
     const leftAtStart = (cid: string) => !studied[cid] || studied[cid] >= start;
     const unsolvedAtStart = (qid: string) => !log[qid] || log[qid].last >= start;
     const allQ = scope.concepts.flatMap((c) => c.qs);
+    // 시작일은 오늘 뒤 · 시험 전일 때만 뜻이 있다
+    const begin = startFrom && startFrom > today && (!exam || startFrom < exam) ? startFrom : null;
     const st: CourseState = {
       id,
       exam,
       examFrom,
+      start: begin,
       total: scope.concepts.length,
       studied: scope.concepts.filter((c) => studied[c.id]).length,
       questions: allQ.length,
@@ -177,7 +206,8 @@ export function buildPlan(
     };
 
     push(exam, { course: id, kind: "exam", concepts: [], questions: 0, reviews: 0 });
-    const before = diffDays(today, exam); // 오늘부터 시험 전날까지 날 수
+    const first = begin ?? today;
+    const before = diffDays(first, exam); // 시작하는 날부터 시험 전날까지 날 수
     if (before <= 0) continue;
 
     const reserve = before >= 3;
@@ -189,7 +219,7 @@ export function buildPlan(
     let i = 0;
     let extraLeft = extraQ;
     for (let k = 0; k < learnDays; k++) {
-      const d = addDays(today, k);
+      const d = addDays(first, k);
       const n = Math.ceil((left.length - i) / (learnDays - k));
       const cs = left.slice(i, i + n);
       i += n;

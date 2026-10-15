@@ -26,7 +26,7 @@ export function SideNav() {
   const cards = useApp((s) => s.cards);
   const sureWrong = useApp((s) => s.sureWrong);
   const studied = useApp((s) => s.studied);
-  const exam = useApp((s) => s.settings?.examDate ?? null);
+  const exam = useApp((s) => s.settings?.examDate ?? COURSE.examDate ?? null);
   const due = useMemo(() => dueCards(cards).length, [cards]);
   const nSure = Object.keys(sureWrong).length;
   if (HIDE_ON.some((h) => path.startsWith(h))) return null;

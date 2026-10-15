@@ -23,7 +23,7 @@ function SettingsView() {
   const setExamDate = useApp((s) => s.setExamDate);
   const resetAll = useApp((s) => s.resetAll);
   const stats = useApp((s) => s.stats);
-  const [date, setDate] = useState(settings?.examDate ?? "");
+  const [date, setDate] = useState(settings?.examDate ?? COURSE.examDate ?? "");
   const [saved, setSaved] = useState(false);
 
   return (

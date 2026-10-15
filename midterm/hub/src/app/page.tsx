@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CalendarDays } from "lucide-react";
-import { buildPlan, readHubExam, readSnap, sumDay, type Plan } from "@/lib/plan";
+import { buildPlan, readHubExam, readHubStart, readSnap, sumDay, type Plan } from "@/lib/plan";
 import { COURSES, type CourseCard } from "@/data/courses";
 import { ThemeToggle } from "@/components/theme";
 import { InstallHint } from "@/components/install-hint";
@@ -181,7 +181,7 @@ function TodayCard() {
   const [plan, setPlan] = useState<Plan | null>(null);
   useEffect(() => {
     const ready = COURSES.filter((c) => c.ready);
-    setPlan(buildPlan(ready.map((c) => ({ id: c.id, snap: readSnap(c.id), defaultExam: c.examDate, hubExam: readHubExam(c.id) }))));
+    setPlan(buildPlan(ready.map((c) => ({ id: c.id, snap: readSnap(c.id), defaultExam: c.examDate, hubExam: readHubExam(c.id), start: readHubStart(c.id) }))));
   }, []);
   const tasks = plan?.days[plan.today] ?? [];
   const s = sumDay(tasks);

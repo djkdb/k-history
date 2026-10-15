@@ -31,12 +31,12 @@ const scope = JSON.parse(fs.readFileSync(path.join(__dirname, "../midterm/hub/sr
   await p.screenshot({ path: `${OUT}/plan-home-${W}.png` });
   await p.goto("http://127.0.0.1:7507/plan"); await p.waitForTimeout(800);
   // 정보검색 시험일을 현관에서 정해 본다
-  const inp = p.locator('input[type="date"]');
-  if (await inp.count()) { await inp.first().fill("2026-10-28"); await p.waitForTimeout(400); }
+  // 정보검색: 시험일 10/27(과목 자료) · 시작 10/23(기본값)이 잡혔는지
+  console.log("IR 줄:", (await p.locator("section[aria-label='과목별 시험일'] > div").filter({ hasText: "정보검색" }).innerText()).replace(/\n/g, " | "));
   const sw = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth);
   await p.screenshot({ path: `${OUT}/plan-${W}-${THEME}.png`, fullPage: true });
   // 다른 날 눌러 보기
-  await p.locator('button[aria-label^="10/22"]').first().click(); await p.waitForTimeout(300);
+  await p.locator('button[aria-label^="10/23"]').first().click(); await p.waitForTimeout(300);
   await p.screenshot({ path: `${OUT}/plan-sel-${W}.png` });
   console.log("가로 넘침:", sw, "errors:", errs.length ? errs : "none");
   await b.close(); srv.close();
