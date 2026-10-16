@@ -73,12 +73,14 @@ for (const c of COURSES.length ? COURSES : ALL) {
   const file = join(ROOT, "src/courses", c, "listen.ts");
   if (!existsSync(file)) continue;
   const { LISTEN } = await jiti.import(file);
+  const fullFile = join(ROOT, "src/courses", c, "listen-full.ts");
+  const LISTEN_FULL = existsSync(fullFile) ? (await jiti.import(fullFile)).LISTEN_FULL : [];
   const dir = join(ROOT, "assets", c, "listen");
   mkdirSync(dir, { recursive: true });
   const manPath = join(ROOT, "src/courses", c, "listen-audio.json");
   const man = existsSync(manPath) ? JSON.parse(readFileSync(manPath, "utf8")) : {};
   const want = new Map();
-  for (const s of LISTEN) for (const p of s.parts) want.set(fnv(p.say), p);
+  for (const s of [...LISTEN, ...LISTEN_FULL]) for (const p of s.parts) want.set(fnv(p.say), p);
   const todo = [...want].filter(([h]) => !(man[h] && existsSync(join(dir, `${h}.mp3`))));
   const chars = todo.reduce((a, [, p]) => a + p.say.length, 0);
   totalChars += chars;
