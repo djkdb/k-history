@@ -340,3 +340,18 @@ export interface Stats {
   lastStudyDate: string | null;
   studyMinutes: number;
 }
+
+/** 듣기 — 강의 PDF 하나를 귀로 듣는 대본 */
+export interface ListenPart {
+  /** 조각 제목 (화면·잠금화면에 보인다) */
+  t: string;
+  /** 읽을 글. 기호 대신 말로 쓴다 — 음성이 그대로 읽는다 */
+  say: string;
+}
+export interface ListenScript {
+  /** Course.pdfs 의 이름과 같아야 한다 */
+  pdf: string;
+  /** 짧은 제목 */
+  title: string;
+  parts: ListenPart[];
+}

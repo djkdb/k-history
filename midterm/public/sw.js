@@ -94,6 +94,44 @@ self.addEventListener("fetch", (event) => {
   if (남의길.some((p) => url.pathname.startsWith(p))) return;
 
   /*
+   * 듣기 녹음(mp3) — 여기서 캐시에 담지 않는다(수십 MB). 사용자가 "오프라인 저장"을
+   * 누른 강의만 listen-audio 캐시에 있다. 있으면 거기서, 재생기가 보내는 Range
+   * 요청에 맞춰 잘라서 내준다(사파리는 206 이 아니면 재생하지 않는다).
+   */
+  if (url.pathname.startsWith(BASE + "/listen/") && url.pathname.endsWith(".mp3")) {
+    event.respondWith(
+      caches.open("listen-audio-v1").then((c) =>
+        c.match(url.pathname).then((hit) => {
+          if (!hit) return fetch(request);
+          const range = request.headers.get("range");
+          if (!range) return hit;
+          return hit.blob().then((blob) => {
+            const m = /bytes=(\d*)-(\d*)/.exec(range);
+            const size = blob.size;
+            let start = m && m[1] ? Number(m[1]) : 0;
+            let end = m && m[2] ? Number(m[2]) : size - 1;
+            if (m && !m[1] && m[2]) {
+              start = size - Number(m[2]);
+              end = size - 1;
+            }
+            end = Math.min(end, size - 1);
+            return new Response(blob.slice(start, end + 1), {
+              status: 206,
+              headers: {
+                "Content-Type": "audio/mpeg",
+                "Content-Range": `bytes ${start}-${end}/${size}`,
+                "Content-Length": String(end - start + 1),
+                "Accept-Ranges": "bytes",
+              },
+            });
+          });
+        }),
+      ),
+    );
+    return;
+  }
+
+  /*
    * 파일 이름에 해시가 박힌 것은 캐시를 먼저 본다.
    * 내용이 바뀌면 이름이 바뀌니 헌 것을 내줄 일이 없고, 망이 느린 곳에서
    * 화면이 뜨는 속도가 크게 달라진다.

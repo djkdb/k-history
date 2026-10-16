@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { BookOpen, Brain, ClipboardList, FileText, Home, LayoutGrid, ListChecks, NotebookPen, RotateCw, Settings } from "lucide-react";
+import { BookOpen, Brain, ClipboardList, FileText, Headphones, Home, LayoutGrid, ListChecks, NotebookPen, RotateCw, Settings } from "lucide-react";
 import { BASE } from "@/lib/base";
 import { COURSE, conceptsOf } from "@/lib/course";
 import { dueCards } from "@/lib/srs";
@@ -38,6 +38,7 @@ export function SideNav() {
     { href: "/learn", label: "개념", icon: BookOpen },
     { href: "/pdf", label: "PDF별 요약", icon: FileText },
     { href: "/memo", label: "암기", icon: Brain },
+    { href: "/listen", label: "레전드 듣기", icon: Headphones },
     { href: "/quiz", label: "퀴즈", icon: ListChecks },
     { href: "/review", label: "복습", icon: RotateCw, badge: due },
     { href: "/mock", label: "모의고사", icon: ClipboardList },

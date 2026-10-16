@@ -72,7 +72,7 @@ for (const c of COURSES) {
 
   // 과목 아이콘과 manifest — 홈 화면에 과목마다 따로 얹을 수 있게
   const out = join(ROOT, "out");
-  for (const f of readdirSync(join(ROOT, "assets", c.id))) cpSync(join(ROOT, "assets", c.id, f), join(out, f));
+  for (const f of readdirSync(join(ROOT, "assets", c.id))) cpSync(join(ROOT, "assets", c.id, f), join(out, f), { recursive: true });
   writeFileSync(
     join(out, "manifest.json"),
     JSON.stringify(

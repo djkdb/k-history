@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { MiniPlayer } from "./mini-player";
 
 /** 왼쪽 길잡이를 감추는 화면 — side-nav.tsx 의 HIDE_ON 과 같다 */
 const FULL = ["/onboarding", "/mock/session"];
@@ -20,6 +21,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="text-scale mx-auto w-full max-w-2xl px-4 pt-safe pb-28 md:max-w-[46rem] md:px-6 md:pb-32 lg:max-w-[1120px] lg:px-10 lg:pb-16 lg:pt-4">
         {children}
       </div>
+      <MiniPlayer />
     </div>
   );
 }
