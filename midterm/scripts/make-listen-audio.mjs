@@ -15,6 +15,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync,
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createJiti } from "jiti";
+import { execFileSync } from "node:child_process";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const jiti = createJiti(import.meta.url, { alias: { "@": join(ROOT, "src") } });
@@ -25,7 +26,8 @@ const COURSES = args.filter((a) => !a.startsWith("--"));
 const ALL = ["db", "ml", "se", "cs", "ir"];
 const KEY = process.env.FISH_API_KEY;
 const VOICE = process.env.FISH_VOICE || "7bae2c48d30048c3a27b946279ac05ef";
-const MODEL = process.env.FISH_MODEL || "s1";
+// 크레딧 없이 쓰는 모델 (s1 은 API 크레딧이 있어야 한다 — 402)
+const MODEL = process.env.FISH_MODEL || "s2.1-pro-free";
 const BITRATE = 64;
 
 /** src/lib/fnv.ts 와 같은 셈 */
@@ -49,8 +51,19 @@ async function tts(text) {
     const body = await res.text();
     if (res.status === 402) throw new Error(`크레딧 부족(402): ${body}`);
     if (res.status === 401) throw new Error(`키가 틀림(401): ${body}`);
-    if (attempt >= 4) throw new Error(`${res.status}: ${body}`);
-    await new Promise((r) => setTimeout(r, 2000 * 2 ** attempt));
+    if (attempt >= 8) throw new Error(`${res.status}: ${body}`);
+    // 무료 모델은 요청이 몰리면 429 — 길게 쉬었다 다시
+    await new Promise((r) => setTimeout(r, (res.status === 429 ? 15000 : 2000) * Math.min(2 ** attempt, 16)));
+  }
+}
+
+/** 녹음 길이(초) — ffprobe 가 있으면 정확히, 없으면 비트레이트로 어림 */
+function duration(file, bytes) {
+  try {
+    const out = execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString().trim();
+    return Math.round(Number(out) * 10) / 10;
+  } catch {
+    return Math.round(((bytes * 8) / (BITRATE * 1000)) * 10) / 10;
   }
 }
 
@@ -78,13 +91,13 @@ for (const c of COURSES.length ? COURSES : ALL) {
       const [h, p] = it;
       const buf = await tts(p.say);
       writeFileSync(join(dir, `${h}.mp3`), buf);
-      man[h] = Math.round((buf.length * 8) / (BITRATE * 1000) * 10) / 10;
+      man[h] = duration(join(dir, `${h}.mp3`), buf.length);
       writeFileSync(manPath, JSON.stringify(man, null, 1) + "\n");
       made++;
       console.log(`  ✓ ${c} ${p.t} (${man[h]}초)`);
     }
   };
-  await Promise.all([worker(), worker(), worker()]);
+  await Promise.all([worker(), worker()]);
   if (PRUNE) {
     for (const f of readdirSync(dir)) {
       const h = f.replace(/\.mp3$/, "");
