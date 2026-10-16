@@ -3,8 +3,21 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Headphones, Pause, Play, Redo2, SkipForward, Undo2 } from "lucide-react";
-import { next, skip, toggle, usePlayer } from "@/lib/listen-player";
+import {
+  Headphones,
+  Pause,
+  Play,
+  Redo2,
+  SkipBack,
+  SkipForward,
+  Undo2,
+} from "lucide-react";
+import { next, prev, seek, skip, toggle, usePlayer } from "@/lib/listen-player";
+
+function clock(sec: number) {
+  const s = Math.max(0, Math.floor(sec));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
 
 /** 듣기를 켜 둔 채 다른 화면으로 가도 아래에 작게 남는 재생 막대 */
 export function MiniPlayer() {
@@ -23,9 +36,22 @@ export function MiniPlayer() {
   useEffect(() => {
     if (!hasQueue) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== " " || e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+      if (
+        e.key !== " " ||
+        e.repeat ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.altKey ||
+        e.shiftKey
+      )
+        return;
       const t = e.target as HTMLElement | null;
-      if (t && (["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) || t.isContentEditable)) return;
+      if (
+        t &&
+        (["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) ||
+          t.isContentEditable)
+      )
+        return;
       const onListen = path.startsWith("/listen");
       if (!onListen && /^\/(quiz|mock|review|wrongs|memo)/.test(path)) return;
       if (!onListen && !st.started) return;
@@ -36,32 +62,101 @@ export function MiniPlayer() {
     return () => window.removeEventListener("keydown", onKey);
   }, [hasQueue, path, st.started]);
 
-  if (!cur || path.startsWith("/listen") || path.startsWith("/onboarding") || path.startsWith("/mock/session")) return null;
+  if (
+    !cur ||
+    path.startsWith("/listen") ||
+    path.startsWith("/onboarding") ||
+    path.startsWith("/mock/session")
+  )
+    return null;
   if (!st.started) return null;
   return (
     <div className="app-zoom fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-40 px-3 lg:bottom-4 lg:pl-64">
-      <div className="mx-auto flex max-w-2xl items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/95 py-2 pl-3 pr-2 shadow-xl backdrop-blur md:max-w-[46rem]">
-        <Link href="/listen" className="flex min-w-0 flex-1 items-center gap-2.5">
-          <Headphones size={17} className="shrink-0 text-indigo-300" />
-          <span className="min-w-0">
-            <span className="block truncate text-[13.5px] font-semibold">{cur.title}</span>
-            <span className="block truncate text-[11.5px] text-zinc-500">{cur.pdfTitle}</span>
+      <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-zinc-900/95 pb-2 pl-3 pr-2 pt-1.5 shadow-xl backdrop-blur md:max-w-[46rem]">
+        {/* 길이 바 — 끌어서 옮긴다 */}
+        <div className="flex items-center gap-2 pr-1">
+          <input
+            type="range"
+            min={0}
+            max={Math.max(1, st.len)}
+            step={st.mode === "audio" ? 0.1 : 1}
+            value={Math.min(st.pos, Math.max(1, st.len))}
+            onChange={(e) => seek(Number(e.target.value))}
+            aria-label="재생 위치"
+            className="h-1 min-w-0 flex-1 cursor-pointer accent-indigo-400"
+          />
+          <span className="shrink-0 font-mono text-[10.5px] tabular-nums text-zinc-500">
+            {st.mode === "audio"
+              ? `${clock(st.pos)} / ${clock(st.len)}`
+              : `${Math.round(st.pos) + 1} / ${Math.max(1, st.len)}`}
           </span>
-        </Link>
-        <button type="button" onClick={() => skip(-3)} aria-label="3초 뒤로" className="relative grid size-10 place-items-center rounded-full text-zinc-300">
-          <Undo2 size={18} />
-          <span className="absolute bottom-0.5 text-[9px] font-bold text-zinc-400">3</span>
-        </button>
-        <button type="button" onClick={toggle} aria-label={st.playing ? "일시정지" : "재생"} className="grid size-10 place-items-center rounded-full bg-indigo-500 text-white">
-          {st.playing ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
-        </button>
-        <button type="button" onClick={() => skip(3)} aria-label="3초 앞으로" className="relative grid size-10 place-items-center rounded-full text-zinc-300">
-          <Redo2 size={18} />
-          <span className="absolute bottom-0.5 text-[9px] font-bold text-zinc-400">3</span>
-        </button>
-        <button type="button" onClick={next} aria-label="다음" className="grid size-10 place-items-center rounded-full text-zinc-300">
-          <SkipForward size={18} />
-        </button>
+        </div>
+        <div className="mt-1 flex items-center gap-1.5">
+          <Link
+            href="/listen"
+            className="flex min-w-0 flex-1 items-center gap-2.5"
+          >
+            <Headphones size={17} className="shrink-0 text-indigo-300" />
+            <span className="min-w-0">
+              <span className="block truncate text-[13.5px] font-semibold">
+                {cur.title}
+              </span>
+              <span className="block truncate text-[11.5px] text-zinc-500">
+                {cur.pdfTitle}
+              </span>
+            </span>
+          </Link>
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="이전"
+            className="grid size-10 place-items-center rounded-full text-zinc-300"
+          >
+            <SkipBack size={18} />
+          </button>
+          <button
+            type="button"
+            onClick={() => skip(-3)}
+            aria-label="3초 뒤로"
+            className="relative grid size-10 place-items-center rounded-full text-zinc-300"
+          >
+            <Undo2 size={18} />
+            <span className="absolute bottom-0.5 text-[9px] font-bold text-zinc-400">
+              3
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={st.playing ? "일시정지" : "재생"}
+            className="grid size-10 place-items-center rounded-full bg-indigo-500 text-white"
+          >
+            {st.playing ? (
+              <Pause size={18} />
+            ) : (
+              <Play size={18} className="ml-0.5" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => skip(3)}
+            aria-label="3초 앞으로"
+            className="relative grid size-10 place-items-center rounded-full text-zinc-300"
+          >
+            <Redo2 size={18} />
+            <span className="absolute bottom-0.5 text-[9px] font-bold text-zinc-400">
+              3
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="다음"
+            className="grid size-10 place-items-center rounded-full text-zinc-300"
+          >
+            <SkipForward size={18} />
+          </button>
+        </div>
       </div>
     </div>
   );
