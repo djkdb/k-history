@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  Fragment,
   useCallback,
   useContext,
   useEffect,
@@ -10,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { ChevronRight } from "lucide-react";
+import { glossOf } from "@/lib/gloss";
 import { splitSentences } from "@/lib/sentences";
 import {
   cn,
@@ -505,6 +507,15 @@ export function Sentences({ children, gap = "mt-1.5" }: { children: string; gap?
   );
 }
 
+/**
+ * 굵은 영어 용어 옆에 "(한글 뜻)" 을 흐리게 붙인다. 바로 뒤에 이미 괄호 설명이 있으면 붙이지 않는다.
+ */
+function glossAfter(term: string, rest: string): ReactNode {
+  if (/^\s*[(（]/.test(rest)) return null;
+  const ko = glossOf(term);
+  return ko ? <span className="font-normal text-zinc-400"> ({ko})</span> : null;
+}
+
 export function RichText({
   children,
   className,
@@ -535,9 +546,10 @@ export function RichText({
         cloze.on ? (
           <Cloze key={`${cloze.gen}-${m.index}`} text={m[2]} />
         ) : (
-          <strong key={m.index} className="font-bold text-zinc-100">
-            {m[2]}
-          </strong>
+          <Fragment key={m.index}>
+            <strong className="font-bold text-zinc-100">{m[2]}</strong>
+            {glossAfter(m[2], children.slice(m.index + m[0].length))}
+          </Fragment>
         ),
       );
     }
