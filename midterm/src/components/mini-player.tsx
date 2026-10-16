@@ -1,15 +1,41 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Headphones, Pause, Play, SkipForward } from "lucide-react";
-import { next, toggle, usePlayer } from "@/lib/listen-player";
+import { Headphones, Pause, Play, Redo2, SkipForward, Undo2 } from "lucide-react";
+import { next, skip, toggle, usePlayer } from "@/lib/listen-player";
 
 /** 듣기를 켜 둔 채 다른 화면으로 가도 아래에 작게 남는 재생 막대 */
 export function MiniPlayer() {
   const path = usePathname();
   const st = usePlayer();
   const cur = st.queue[st.idx];
+  const hasQueue = st.queue.length > 0;
+
+  /*
+   * 스페이스바 = 재생/일시정지 (넓은 화면에서 듣는 사람용).
+   * 문제를 푸는 화면은 스페이스를 "다음 문제·정답 보기"에 이미 쓰므로 비켜 간다.
+   * 입력칸에서는 글자를 쳐야 하니 건드리지 않는다.
+   * 버튼에 초점이 있으면 스페이스가 그 버튼을 눌러 버리므로(재생 버튼이면 두 번 토글)
+   * 기본 동작을 막고 여기서 한 번만 토글한다.
+   */
+  useEffect(() => {
+    if (!hasQueue) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== " " || e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) || t.isContentEditable)) return;
+      const onListen = path.startsWith("/listen");
+      if (!onListen && /^\/(quiz|mock|review|wrongs|memo)/.test(path)) return;
+      if (!onListen && !st.started) return;
+      e.preventDefault();
+      toggle();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [hasQueue, path, st.started]);
+
   if (!cur || path.startsWith("/listen") || path.startsWith("/onboarding") || path.startsWith("/mock/session")) return null;
   if (!st.started) return null;
   return (
@@ -22,8 +48,16 @@ export function MiniPlayer() {
             <span className="block truncate text-[11.5px] text-zinc-500">{cur.pdfTitle}</span>
           </span>
         </Link>
+        <button type="button" onClick={() => skip(-3)} aria-label="3초 뒤로" className="relative grid size-10 place-items-center rounded-full text-zinc-300">
+          <Undo2 size={18} />
+          <span className="absolute bottom-0.5 text-[9px] font-bold text-zinc-400">3</span>
+        </button>
         <button type="button" onClick={toggle} aria-label={st.playing ? "일시정지" : "재생"} className="grid size-10 place-items-center rounded-full bg-indigo-500 text-white">
           {st.playing ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
+        </button>
+        <button type="button" onClick={() => skip(3)} aria-label="3초 앞으로" className="relative grid size-10 place-items-center rounded-full text-zinc-300">
+          <Redo2 size={18} />
+          <span className="absolute bottom-0.5 text-[9px] font-bold text-zinc-400">3</span>
         </button>
         <button type="button" onClick={next} aria-label="다음" className="grid size-10 place-items-center rounded-full text-zinc-300">
           <SkipForward size={18} />
