@@ -3,152 +3,152 @@ import type { Question } from "@/lib/types";
 /* nn1 · nn2 · dl · cnn */
 export const QUESTIONS_3: Question[] = [
   // neuron
-  { kind: "mc", id: "ml-q-ne-1", concept: "neuron", q: "인공 신경세포에서 가중치의 역할은?", options: ["출력 값을 고정", "입력 신호의 중요도 조절", "활성화 함수 선택", "학습률 결정"], answer: 1, explain: "모든 입력이 같은 가중치를 갖지 않는다." },
-  { kind: "mc", id: "ml-q-ne-2", concept: "neuron", q: "신경세포에서 신호를 받아들이는 부분은?", options: ["축색돌기", "수상돌기", "신경연접", "세포핵"], answer: 1, explain: "수상돌기로 받고 축색돌기로 내보낸다. 연결 부위가 신경연접(synapse)." },
-  { kind: "ox", id: "ml-q-ne-3", concept: "neuron", q: "활성화 함수는 뉴런의 가중합을 그대로(선형으로) 출력하기 위해 쓴다.", answer: false, explain: "선형 출력을 비선형으로 바꿔 뉴런 출력을 정한다." },
-  { kind: "ox", id: "ml-q-ne-4", concept: "neuron", q: "인공 신경세포는 생물 신경세포와 완전히 동일한 방식으로 동작한다.", answer: false, explain: "모사(계산 모델)한 것이다." },
+  { kind: "mc", id: "ml-q-ne-1", concept: "neuron", q: "인공 신경세포에서 가중치의 역할은?", options: ["출력 값을 고정", "입력 신호의 중요도 조절", "활성화 함수 선택", "학습률 결정"], answer: 1, explain: "== 정답: 입력 신호의 중요도 조절\n### 왜 정답인가요\n뉴런은 입력마다 **가중치**를 곱해 더해요. 가중치가 크면 그 입력을 **중요하게**, 작으면 덜 중요하게 반영해요. 학습은 이 가중치를 고치는 과정이에요.\n### 다른 보기\n- 출력 고정, 활성화 함수 선택, 학습률 결정: 가중치의 역할이 아니에요." },
+  { kind: "mc", id: "ml-q-ne-2", concept: "neuron", q: "신경세포에서 신호를 받아들이는 부분은?", options: ["축색돌기", "수상돌기", "신경연접", "세포핵"], answer: 1, explain: "== 정답: 수상돌기\n### 왜 정답인가요\n신경세포는 **수상돌기(dendrite)** 로 신호를 **받고**, 세포체에서 모은 뒤, **축색돌기(axon)** 로 **내보내요.** 다른 세포와 이어지는 부위가 **신경연접(synapse)** 이에요.\n### 다른 보기\n- 축색돌기: 내보내는 쪽이에요.\n- 신경연접: 연결 부위예요.\n- 세포핵: 신호 수신 부위가 아니에요." },
+  { kind: "ox", id: "ml-q-ne-3", concept: "neuron", q: "활성화 함수는 뉴런의 가중합을 그대로(선형으로) 출력하기 위해 쓴다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n활성화 함수는 가중합을 **비선형**으로 바꿔서 뉴런의 출력을 정해요. 선형 그대로면 층을 아무리 쌓아도 결국 하나의 선형 함수라 의미가 없어요." },
+  { kind: "ox", id: "ml-q-ne-4", concept: "neuron", q: "인공 신경세포는 생물 신경세포와 완전히 동일한 방식으로 동작한다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n인공 신경세포는 생물 신경세포를 **단순화해 흉내 낸(모사한) 계산 모델**이에요. 실제 뉴런의 복잡한 동작과 똑같지 않아요." },
 
   // perceptron
-  { kind: "mc", id: "ml-q-pe-1", concept: "perceptron", q: "퍼셉트론을 제안한 사람은?", options: ["McCulloch", "Rosenblatt", "Minsky", "Hinton"], answer: 1, explain: "Frank Rosenblatt, 1957." },
-  { kind: "mc", id: "ml-q-pe-2", concept: "perceptron", q: "단층 퍼셉트론으로 풀 수 없는 문제는?", options: ["AND", "OR", "XOR", "NOT"], answer: 2, explain: "선형 분리 불가 (Minsky & Papert, 1969)." },
-  { kind: "ox", id: "ml-q-pe-3", concept: "perceptron", q: "퍼셉트론의 결정 경계는 선형이다.", answer: true, explain: "그래서 선형 분리 가능한 문제만 푼다." },
-  { kind: "short", id: "ml-q-pe-4", concept: "perceptron", q: "XOR에서 입력 (1, 1)의 출력은?", answers: ["0"], explain: "(0,0)→0, (0,1)→1, (1,0)→1, (1,1)→0.", hint: "숫자만" },
-  { kind: "ox", id: "ml-q-pe-5", concept: "perceptron", q: "학습률은 가중치를 한 번 업데이트할 때의 크기를 조절한다.", answer: true, explain: "너무 크면 최적점을 지나치고, 너무 작으면 느리다." },
+  { kind: "mc", id: "ml-q-pe-1", concept: "perceptron", q: "퍼셉트론을 제안한 사람은?", options: ["McCulloch", "Rosenblatt", "Minsky", "Hinton"], answer: 1, explain: "== 정답: Rosenblatt\n### 왜 정답인가요\n**Frank Rosenblatt**가 **1957년** 퍼셉트론을 제안했어요.\n### 다른 보기\n- McCulloch: Pitts와 함께 1943년 최초의 인공 뉴런 모델을 만들었어요.\n- Minsky: 1969년 퍼셉트론이 XOR을 못 푼다는 한계를 보였어요.\n- Hinton: 오차 역전파·딥러닝을 발전시켰어요." },
+  { kind: "mc", id: "ml-q-pe-2", concept: "perceptron", q: "단층 퍼셉트론으로 풀 수 없는 문제는?", options: ["AND", "OR", "XOR", "NOT"], answer: 2, explain: "== 정답: XOR\n### 왜 정답인가요\n단층 퍼셉트론은 **직선(초평면) 하나**로만 나눠요. XOR은 (0,1), (1,0)이 1이고 (0,0), (1,1)이 0이라 **직선 하나로 나눌 수 없어요**(Minsky & Papert, 1969).\n### 다른 보기\n- AND, OR, NOT: 모두 직선 하나로 나눌 수 있어요." },
+  { kind: "ox", id: "ml-q-pe-3", concept: "perceptron", q: "퍼셉트론의 결정 경계는 선형이다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n퍼셉트론은 wᵀx + b = 0인 **직선(초평면)** 을 경계로 나눠요. 그래서 **선형 분리 가능한** 문제만 풀 수 있어요." },
+  { kind: "short", id: "ml-q-pe-4", concept: "perceptron", q: "XOR에서 입력 (1, 1)의 출력은?", answers: ["0"], explain: "== 정답: 0\n### 풀이\nXOR은 두 입력이 **다르면 1, 같으면 0**이에요. (1, 1)은 같으니 **0**.\n- (0,0) → 0, (0,1) → 1, (1,0) → 1, (1,1) → 0", hint: "숫자만" },
+  { kind: "ox", id: "ml-q-pe-5", concept: "perceptron", q: "학습률은 가중치를 한 번 업데이트할 때의 크기를 조절한다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n학습률은 한 번 갱신할 때의 **보폭**이에요. 너무 크면 최적점을 **지나쳐** 버리고, 너무 작으면 학습이 **느려요.**" },
 
   // mlp
-  { kind: "short", id: "ml-q-mp-1", concept: "mlp", q: "입력 10 – 은닉 20 – 출력 5 노드인 MLP의 파라미터(가중치+편향) 수는?", answers: ["325"], explain: "(10×20 + 20) + (20×5 + 5) = 220 + 105 = 325.", hint: "숫자만" },
-  { kind: "mc", id: "ml-q-mp-2", concept: "mlp", q: "MLP 학습에서 계단 함수 대신 시그모이드를 쓰는 이유는?", options: ["계산이 더 빨라서", "미분 가능해서 경사 하강법(오차 역전파)을 쓸 수 있어서", "출력이 정수라서", "파라미터가 줄어서"], answer: 1, explain: "계단 함수는 미분할 수 없다." },
-  { kind: "ox", id: "ml-q-mp-3", concept: "mlp", q: "다층 퍼셉트론은 XOR 같은 비선형 문제도 풀 수 있다.", answer: true, explain: "은닉층이 비선형 결정 경계를 만든다." },
-  { kind: "ox", id: "ml-q-mp-4", concept: "mlp", q: "MLP의 모든 은닉층은 뉴런 수가 같아야 한다.", answer: false, explain: "층마다 달라도 된다." },
-  { kind: "ox", id: "ml-q-mp-5", concept: "mlp", q: "MLP는 분류에만 쓸 수 있고 회귀에는 쓸 수 없다.", answer: false, explain: "분류·회귀 모두에 쓴다." },
+  { kind: "short", id: "ml-q-mp-1", concept: "mlp", q: "입력 10 – 은닉 20 – 출력 5 노드인 MLP의 파라미터(가중치+편향) 수는?", answers: ["325"], explain: "== 정답: 325\n### 풀이\n층마다 (입력 수 × 출력 수) 가중치 + 출력 수만큼 편향이에요.\n- 입력 → 은닉: 10 × 20 + 20 = **220**\n- 은닉 → 출력: 20 × 5 + 5 = **105**\n- 합 = **325**", hint: "숫자만" },
+  { kind: "mc", id: "ml-q-mp-2", concept: "mlp", q: "MLP 학습에서 계단 함수 대신 시그모이드를 쓰는 이유는?", options: ["계산이 더 빨라서", "미분 가능해서 경사 하강법(오차 역전파)을 쓸 수 있어서", "출력이 정수라서", "파라미터가 줄어서"], answer: 1, explain: "== 정답: 미분 가능해서 경사 하강법(오차 역전파)을 쓸 수 있어서\n### 왜 정답인가요\n계단 함수는 0에서 끊기고 나머지는 기울기가 0이라 **미분으로 학습할 수 없어요.** 시그모이드는 매끄러워서 **미분 가능**하니 오차 역전파로 가중치를 고칠 수 있어요.\n### 다른 보기\n- 더 빠름, 출력이 정수, 파라미터 감소: 이유가 아니에요." },
+  { kind: "ox", id: "ml-q-mp-3", concept: "mlp", q: "다층 퍼셉트론은 XOR 같은 비선형 문제도 풀 수 있다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n은닉층이 입력을 새로운 공간으로 바꿔 주면, 그 공간에서는 선형으로 나눌 수 있게 돼요. 결과적으로 **비선형 결정 경계**를 만들어 XOR도 풀어요." },
+  { kind: "ox", id: "ml-q-mp-4", concept: "mlp", q: "MLP의 모든 은닉층은 뉴런 수가 같아야 한다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n은닉층마다 뉴런 수는 **달라도 돼요**(예: 128 → 64 → 32). 층 크기는 설계자가 정하는 하이퍼파라미터예요." },
+  { kind: "ox", id: "ml-q-mp-5", concept: "mlp", q: "MLP는 분류에만 쓸 수 있고 회귀에는 쓸 수 없다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\nMLP는 출력층과 오차 함수만 바꾸면 **분류**(소프트맥스 + 교차 엔트로피)와 **회귀**(선형 출력 + MSE) 모두에 쓸 수 있어요." },
 
   // activation
-  { kind: "mc", id: "ml-q-ac-1", concept: "activation", q: "ReLU에 음수 입력이 들어오면 출력은?", options: ["입력 그대로", "0", "1", "−1"], answer: 1, explain: "max(0, x)." },
-  { kind: "mc", id: "ml-q-ac-2", concept: "activation", q: "tanh 함수의 출력 범위는?", options: ["(0, 1)", "(−1, 1)", "[0, ∞)", "(−∞, ∞)"], answer: 1, explain: "시그모이드는 (0, 1)." },
-  { kind: "short", id: "ml-q-ac-3", concept: "activation", q: "시그모이드(a=1)의 x = 0에서 도함수 값은?", answers: ["0.25", "1/4"], explain: "σ(0)(1 − σ(0)) = 0.5 × 0.5 = 0.25.", hint: "소수" },
-  { kind: "ox", id: "ml-q-ac-4", concept: "activation", q: "시그모이드의 도함수는 함수 값 σ(x)만으로 계산할 수 있다.", answer: true, explain: "σ′ = σ(1 − σ)." },
-  { kind: "ox", id: "ml-q-ac-5", concept: "activation", q: "모든 신경망은 같은 활성화 함수를 사용한다.", answer: false, explain: "계단·시그모이드·tanh·ReLU 등 층과 목적에 따라 다르게 쓴다." },
+  { kind: "mc", id: "ml-q-ac-1", concept: "activation", q: "ReLU에 음수 입력이 들어오면 출력은?", options: ["입력 그대로", "0", "1", "−1"], answer: 1, explain: "== 정답: 0\n### 풀이\nReLU = max(0, x). 음수면 **0**, 양수면 그대로예요." },
+  { kind: "mc", id: "ml-q-ac-2", concept: "activation", q: "tanh 함수의 출력 범위는?", options: ["(0, 1)", "(−1, 1)", "[0, ∞)", "(−∞, ∞)"], answer: 1, explain: "== 정답: (−1, 1)\n### 왜 정답인가요\n**tanh**의 출력은 **−1과 1 사이**예요. 0을 중심으로 대칭이에요.\n### 다른 보기\n- (0, 1): 시그모이드예요.\n- [0, ∞): ReLU예요.\n- (−∞, ∞): 선형(항등) 함수예요." },
+  { kind: "short", id: "ml-q-ac-3", concept: "activation", q: "시그모이드(a=1)의 x = 0에서 도함수 값은?", answers: ["0.25", "1/4"], explain: "== 정답: 0.25\n### 풀이\nσ′(x) = σ(x)(1 − σ(x)), σ(0) = 1/(1 + e⁰) = **0.5**\n- σ′(0) = 0.5 × 0.5 = **0.25**\n이 값이 시그모이드 도함수의 **최댓값**이에요(기울기 소멸의 원인).", hint: "소수" },
+  { kind: "ox", id: "ml-q-ac-4", concept: "activation", q: "시그모이드의 도함수는 함수 값 σ(x)만으로 계산할 수 있다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\nσ′ = **σ(1 − σ)** 라서, 순전파 때 구해 둔 σ(x) 값만 있으면 도함수를 바로 계산해요. 역전파 계산이 쉬워지는 장점이에요." },
+  { kind: "ox", id: "ml-q-ac-5", concept: "activation", q: "모든 신경망은 같은 활성화 함수를 사용한다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n층과 목적에 따라 달라요. 은닉층은 주로 **ReLU**, 이진 분류 출력은 **시그모이드**, 다부류 출력은 **소프트맥스**처럼 골라 써요." },
 
   // derivative
-  { kind: "short", id: "ml-q-dv-1", concept: "derivative", q: "f(x) = 2x² + 1의 도함수 f′(x)는?", answers: ["4x"], explain: "2·2x = 4x, 상수 1의 미분은 0.", hint: "식" },
-  { kind: "mc", id: "ml-q-dv-2", concept: "derivative", q: "f(x, y) = x²y의 ∂f/∂x는?", options: ["2x", "2xy", "x²", "y"], answer: 1, explain: "y를 상수로 보고 미분." },
-  { kind: "ox", id: "ml-q-dv-3", concept: "derivative", q: "그레디언트는 함수 값이 가장 커지는 방향과 크기를 가리킨다.", answer: true, explain: "경사 하강법은 그 반대로." },
-  { kind: "short", id: "ml-q-dv-4", concept: "derivative", q: "f(x, y) = x² + xy + y²일 때 (1, 2)에서 ∂f/∂x는?", answers: ["4"], explain: "2x + y = 2 + 2 = 4.", hint: "숫자만" },
+  { kind: "short", id: "ml-q-dv-1", concept: "derivative", q: "f(x) = 2x² + 1의 도함수 f′(x)는?", answers: ["4x"], explain: "== 정답: 4x\n### 풀이\n- 2x²의 미분 = 2 × 2x = **4x**\n- 상수 1의 미분 = **0**\n- f′(x) = **4x**", hint: "식" },
+  { kind: "mc", id: "ml-q-dv-2", concept: "derivative", q: "f(x, y) = x²y의 ∂f/∂x는?", options: ["2x", "2xy", "x²", "y"], answer: 1, explain: "== 정답: 2xy\n### 왜 정답인가요\nx로 편미분할 땐 **y를 상수**로 봐요. x²y → y × (x²)′ = y × 2x = **2xy**.\n### 다른 보기\n- 2x: y를 빼먹었어요.\n- x²: y로 편미분한 결과예요.\n- y: 맞지 않아요." },
+  { kind: "ox", id: "ml-q-dv-3", concept: "derivative", q: "그레디언트는 함수 값이 가장 커지는 방향과 크기를 가리킨다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n그레디언트(편미분 벡터)는 함수 값이 **가장 빠르게 커지는 방향**과 그 **크기**를 가리켜요. 경사 하강법은 그 **반대**로 움직여요." },
+  { kind: "short", id: "ml-q-dv-4", concept: "derivative", q: "f(x, y) = x² + xy + y²일 때 (1, 2)에서 ∂f/∂x는?", answers: ["4"], explain: "== 정답: 4\n### 풀이\ny를 상수로 보고 x로 편미분하면\n- x² → 2x, xy → y, y² → 0\n- ∂f/∂x = 2x + y → (1, 2)에서 2 + 2 = **4**", hint: "숫자만" },
 
   // backprop
-  { kind: "mc", id: "ml-q-bp-1", concept: "backprop", q: "오차 역전파 알고리즘의 주된 목적은?", options: ["입력 데이터 정규화", "가중치와 편향을 오차가 줄도록 조정", "활성화 함수 선택", "데이터 증강"], answer: 1, explain: "출력층 오차를 입력층 쪽으로 전파하며 그레디언트 계산." },
-  { kind: "mc", id: "ml-q-bp-2", concept: "backprop", q: "학습률이 너무 크면?", options: ["학습이 매우 느려진다", "최적점을 뛰어넘어 발산할 수 있다", "항상 더 정확해진다", "영향 없다"], answer: 1, explain: "너무 작으면 느리다." },
-  { kind: "ox", id: "ml-q-bp-3", concept: "backprop", q: "오차 역전파는 연쇄 법칙으로 각 가중치의 그레디언트를 구한다.", answer: true, explain: "오차 함수에 경사 하강법을 적용한 것." },
-  { kind: "ox", id: "ml-q-bp-4", concept: "backprop", q: "오차 역전파는 입력층의 오차를 출력층 쪽으로 전파한다.", answer: false, explain: "출력층 → 입력층 방향으로 거꾸로." },
+  { kind: "mc", id: "ml-q-bp-1", concept: "backprop", q: "오차 역전파 알고리즘의 주된 목적은?", options: ["입력 데이터 정규화", "가중치와 편향을 오차가 줄도록 조정", "활성화 함수 선택", "데이터 증강"], answer: 1, explain: "== 정답: 가중치와 편향을 오차가 줄도록 조정\n### 왜 정답인가요\n오차 역전파는 **출력층의 오차**를 입력층 쪽으로 거꾸로 전하면서 각 가중치·편향의 **그레디언트**를 구하고, 오차가 줄도록 고쳐요.\n### 다른 보기\n- 정규화, 활성화 함수 선택, 데이터 증강: 역전파의 목적이 아니에요." },
+  { kind: "mc", id: "ml-q-bp-2", concept: "backprop", q: "학습률이 너무 크면?", options: ["학습이 매우 느려진다", "최적점을 뛰어넘어 발산할 수 있다", "항상 더 정확해진다", "영향 없다"], answer: 1, explain: "== 정답: 최적점을 뛰어넘어 발산할 수 있다\n### 왜 정답인가요\n보폭이 너무 크면 골짜기 바닥(최솟값)을 **훌쩍 넘어가서** 반대편으로 튀고, 심하면 점점 멀어져 **발산**해요.\n### 다른 보기\n- 매우 느려진다: 학습률이 너무 **작을** 때예요.\n- 항상 정확해진다, 영향 없다: 아니에요." },
+  { kind: "ox", id: "ml-q-bp-3", concept: "backprop", q: "오차 역전파는 연쇄 법칙으로 각 가중치의 그레디언트를 구한다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n신경망은 함수가 겹겹이 합성된 거라, 각 가중치가 오차에 주는 영향을 **연쇄 법칙**(미분의 곱)으로 구해요. 결국 오차 함수에 **경사 하강법**을 적용하는 거예요." },
+  { kind: "ox", id: "ml-q-bp-4", concept: "backprop", q: "오차 역전파는 입력층의 오차를 출력층 쪽으로 전파한다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n오차는 **출력층**에서 계산되니, 역전파는 **출력층 → 입력층** 방향(거꾸로)으로 전해요. 이름의 '역(back)'이 그 뜻이에요." },
 
   // cls-kinds
-  { kind: "mc", id: "ml-q-ck-1", concept: "cls-kinds", q: "사진 한 장에 개와 고양이 모두를 표시하는 문제는?", options: ["이진 분류", "다부류 분류", "다중레이블 분류", "회귀"], answer: 2, explain: "한 대상에 여러 부류를 동시에 지정 → 다중레이블." },
-  { kind: "mc", id: "ml-q-ck-2", concept: "cls-kinds", q: "개·고양이·토끼 중 하나로 분류하는 문제는?", options: ["이진 분류", "다부류 분류", "다중레이블 분류", "군집화"], answer: 1, explain: "셋 이상 중 하나 → 다부류(multiclass)." },
-  { kind: "ox", id: "ml-q-ck-3", concept: "cls-kinds", q: "한 곡에 여러 장르를 붙이는 음악 장르 분류는 이진 분류의 예다.", answer: false, explain: "여러 부류를 동시에 지정 → 다중레이블 분류." },
-  { kind: "mc", id: "ml-q-ck-4", concept: "cls-kinds", q: "다중레이블 분류 평가 척도가 아닌 것은?", options: ["P@K", "mAP@K", "Sampled F1", "R²"], answer: 3, explain: "R²는 회귀." },
+  { kind: "mc", id: "ml-q-ck-1", concept: "cls-kinds", q: "사진 한 장에 개와 고양이 모두를 표시하는 문제는?", options: ["이진 분류", "다부류 분류", "다중레이블 분류", "회귀"], answer: 2, explain: "== 정답: 다중레이블 분류\n### 왜 정답인가요\n한 사진에 개 **와** 고양이를 **동시에** 붙이니, 한 대상에 여러 부류를 지정하는 **다중레이블(multi-label)** 분류예요.\n### 다른 보기\n- 이진 분류: 둘 중 하나예요.\n- 다부류 분류: 여러 부류 중 **하나**만 골라요.\n- 회귀: 숫자 예측이에요." },
+  { kind: "mc", id: "ml-q-ck-2", concept: "cls-kinds", q: "개·고양이·토끼 중 하나로 분류하는 문제는?", options: ["이진 분류", "다부류 분류", "다중레이블 분류", "군집화"], answer: 1, explain: "== 정답: 다부류 분류\n### 왜 정답인가요\n셋 이상의 부류 중 **하나**를 고르니 **다부류(multiclass)** 분류예요.\n### 다른 보기\n- 이진: 부류가 둘이에요.\n- 다중레이블: 여러 개를 동시에 붙여요.\n- 군집화: 라벨이 없는 비지도 학습이에요." },
+  { kind: "ox", id: "ml-q-ck-3", concept: "cls-kinds", q: "한 곡에 여러 장르를 붙이는 음악 장르 분류는 이진 분류의 예다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n한 곡에 **여러 장르를 동시에** 붙이니 **다중레이블 분류**예요. 이진 분류는 두 부류 중 하나만 고르는 거예요." },
+  { kind: "mc", id: "ml-q-ck-4", concept: "cls-kinds", q: "다중레이블 분류 평가 척도가 아닌 것은?", options: ["P@K", "mAP@K", "Sampled F1", "R²"], answer: 3, explain: "== 정답: R²\n### 왜 정답인가요\nR²는 **회귀** 모델의 설명력 지표예요.\n### 다른 보기\n- P@K, mAP@K, Sampled F1: 모두 다중레이블 분류의 평가 척도예요." },
 
   // encoding
-  { kind: "short", id: "ml-q-ec-1", concept: "encoding", q: "'사과' [1,0,0], '바나나' [0,1,0]일 때 '체리'의 one-hot 벡터는?", answers: ["[0,0,1]", "0,0,1", "(0,0,1)"], explain: "세 번째 자리가 1.", hint: "[a,b,c]" },
-  { kind: "ox", id: "ml-q-ec-2", concept: "encoding", q: "one-hot 벡터에는 1이 여러 개 들어갈 수 있다.", answer: false, explain: "1은 하나뿐, 그 위치가 ID. 벡터 크기는 서로 다른 부류(단어)의 개수." },
-  { kind: "mc", id: "ml-q-ec-3", concept: "encoding", q: "부류 'cold', 'warm', 'hot'을 0, 2, 1처럼 바꾸는 것은?", options: ["one-hot 인코딩", "정수 인코딩", "정규화", "임베딩 평균"], answer: 1, explain: "부류마다 정수 하나를 붙인다. one-hot은 [1,0,0] 꼴." },
+  { kind: "short", id: "ml-q-ec-1", concept: "encoding", q: "'사과' [1,0,0], '바나나' [0,1,0]일 때 '체리'의 one-hot 벡터는?", answers: ["[0,0,1]", "0,0,1", "(0,0,1)"], explain: "== 정답: [0,0,1]\n### 풀이\none-hot은 부류 수만큼 칸을 두고 **자기 자리만 1**이에요. 사과 1번째, 바나나 2번째, 체리는 **3번째** → **[0, 0, 1]**.", hint: "[a,b,c]" },
+  { kind: "ox", id: "ml-q-ec-2", concept: "encoding", q: "one-hot 벡터에는 1이 여러 개 들어갈 수 있다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\none-hot 벡터에는 **1이 딱 하나**뿐이고, 그 **위치**가 부류(단어)의 ID예요. 벡터 길이는 서로 다른 부류의 개수예요." },
+  { kind: "mc", id: "ml-q-ec-3", concept: "encoding", q: "부류 'cold', 'warm', 'hot'을 0, 2, 1처럼 바꾸는 것은?", options: ["one-hot 인코딩", "정수 인코딩", "정규화", "임베딩 평균"], answer: 1, explain: "== 정답: 정수 인코딩\n### 왜 정답인가요\n부류마다 **정수 하나**를 붙이는 게 **정수 인코딩**이에요(cold → 0, hot → 1, warm → 2).\n### 다른 보기\n- one-hot: [1,0,0]처럼 벡터로 바꿔요.\n- 정규화: 값 범위를 맞추는 거예요.\n- 임베딩 평균: 관계없어요." },
 
   // loss
-  { kind: "short", id: "ml-q-ls-1", concept: "loss", q: "예측 [3, 4, 2, 5, 6], 실제 [2, 4, 3, 5, 7]일 때 MSE는?", answers: ["0.6", "3/5"], explain: "(1+0+1+0+1)/5 = 0.6.", hint: "소수" },
-  { kind: "short", id: "ml-q-ls-2", concept: "loss", q: "정답 부류의 소프트맥스 확률이 0.3일 때 교차 엔트로피(자연로그)는? (소수 셋째 자리)", answers: ["1.204", "1.20", "1.2"], explain: "−ln 0.3 ≈ 1.204.", hint: "소수" },
-  { kind: "mc", id: "ml-q-ls-3", concept: "loss", q: "다부류 분류에 주로 쓰는 출력층과 오차 함수 조합은?", options: ["ReLU + MSE", "소프트맥스 + 교차 엔트로피", "시그모이드 + MAE", "tanh + 지니"], answer: 1, explain: "회귀는 MSE, 이진 분류는 시그모이드 + 교차 엔트로피." },
-  { kind: "ox", id: "ml-q-ls-4", concept: "loss", q: "교차 엔트로피 값이 0에 가까울수록 예측이 정확하다.", answer: true, explain: "정답 확률이 1이면 −ln 1 = 0." },
-  { kind: "ox", id: "ml-q-ls-5", concept: "loss", q: "음의 로그 가능도를 최소화하는 것은 최대 가능도 추정과 같은 효과를 낸다.", answer: true, explain: "가능도를 최대로 하는 것 = 음의 로그 가능도를 최소로 하는 것." },
-  { kind: "ox", id: "ml-q-ls-6", concept: "loss", q: "교차 엔트로피는 경사 상승법으로 최대화한다.", answer: false, explain: "경사 하강법으로 최소화한다." },
-  { kind: "short", id: "ml-q-ls-7", concept: "loss", q: "예측 [1, 2, 3, 4], 실제 [1, 3, 2, 5]일 때 MAE는?", answers: ["0.75", "3/4"], explain: "(0+1+1+1)/4 = 0.75.", hint: "소수" },
+  { kind: "short", id: "ml-q-ls-1", concept: "loss", q: "예측 [3, 4, 2, 5, 6], 실제 [2, 4, 3, 5, 7]일 때 MSE는?", answers: ["0.6", "3/5"], explain: "== 정답: 0.6\n### 풀이\n- 오차: 1, 0, −1, 0, −1\n- 제곱: 1, 0, 1, 0, 1 → 합 **3**\n- MSE = 3 / 5 = **0.6**", hint: "소수" },
+  { kind: "short", id: "ml-q-ls-2", concept: "loss", q: "정답 부류의 소프트맥스 확률이 0.3일 때 교차 엔트로피(자연로그)는? (소수 셋째 자리)", answers: ["1.204", "1.20", "1.2"], explain: "== 정답: 1.204\n### 풀이\n교차 엔트로피 = −ln(정답 부류의 확률) = −ln 0.3 ≈ **1.204**. 정답 확률이 낮을수록 손실이 커져요.", hint: "소수" },
+  { kind: "mc", id: "ml-q-ls-3", concept: "loss", q: "다부류 분류에 주로 쓰는 출력층과 오차 함수 조합은?", options: ["ReLU + MSE", "소프트맥스 + 교차 엔트로피", "시그모이드 + MAE", "tanh + 지니"], answer: 1, explain: "== 정답: 소프트맥스 + 교차 엔트로피\n### 왜 정답인가요\n다부류 분류는 출력을 **소프트맥스**로 확률로 바꾸고, 정답 확률을 높이도록 **교차 엔트로피**로 학습해요.\n### 다른 보기\n- ReLU + MSE: 회귀에 가까워요.\n- 시그모이드 + MAE, tanh + 지니: 표준 조합이 아니에요.\n!! 정리: 회귀 = 선형 + MSE / 이진 분류 = 시그모이드 + 교차 엔트로피 / 다부류 = 소프트맥스 + 교차 엔트로피." },
+  { kind: "ox", id: "ml-q-ls-4", concept: "loss", q: "교차 엔트로피 값이 0에 가까울수록 예측이 정확하다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n정답 부류 확률이 1이면 −ln 1 = **0**이에요. 교차 엔트로피가 0에 가까울수록 정답을 확신 있게 맞힌 거예요." },
+  { kind: "ox", id: "ml-q-ls-5", concept: "loss", q: "음의 로그 가능도를 최소화하는 것은 최대 가능도 추정과 같은 효과를 낸다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n로그는 증가 함수라 가능도를 최대로 하는 것 = 로그 가능도를 최대로 하는 것 = **음의 로그 가능도를 최소로** 하는 것이에요. 그래서 경사 하강법으로 풀 수 있어요." },
+  { kind: "ox", id: "ml-q-ls-6", concept: "loss", q: "교차 엔트로피는 경사 상승법으로 최대화한다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n교차 엔트로피는 **손실**이라 **경사 하강법으로 최소화**해요." },
+  { kind: "short", id: "ml-q-ls-7", concept: "loss", q: "예측 [1, 2, 3, 4], 실제 [1, 3, 2, 5]일 때 MAE는?", answers: ["0.75", "3/4"], explain: "== 정답: 0.75\n### 풀이\n- 절댓값 오차: 0, 1, 1, 1 → 합 **3**\n- MAE = 3 / 4 = **0.75**", hint: "소수" },
 
   // softmax
-  { kind: "mc", id: "ml-q-sm-1", concept: "softmax", q: "소프트맥스 층의 출력에 대한 설명으로 옳은 것은?", options: ["합이 1인 확률들", "항상 음수", "정수", "합이 0"], answer: 0, explain: "yₖ = e^(zₖ)/Σe^(zᵢ)." },
-  { kind: "ox", id: "ml-q-sm-2", concept: "softmax", q: "소프트맥스 출력 중 가장 큰 확률의 인덱스가 예측된 클래스다.", answer: true, explain: "argmax." },
-  { kind: "ox", id: "ml-q-sm-3", concept: "softmax", q: "소프트맥스 출력은 음수가 될 수 있다.", answer: false, explain: "e^z > 0이므로 항상 0 이상." },
+  { kind: "mc", id: "ml-q-sm-1", concept: "softmax", q: "소프트맥스 층의 출력에 대한 설명으로 옳은 것은?", options: ["합이 1인 확률들", "항상 음수", "정수", "합이 0"], answer: 0, explain: "== 정답: 합이 1인 확률들\n### 왜 정답인가요\n소프트맥스는 yₖ = e^(zₖ) / Σe^(zᵢ)라서 출력이 모두 **0~1**이고 **합이 1**인 확률 분포예요.\n### 다른 보기\n- 항상 음수: e^z > 0이라 양수예요.\n- 정수, 합이 0: 아니에요." },
+  { kind: "ox", id: "ml-q-sm-2", concept: "softmax", q: "소프트맥스 출력 중 가장 큰 확률의 인덱스가 예측된 클래스다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n소프트맥스 출력 중 **가장 큰 확률의 위치(argmax)** 가 예측 부류예요." },
+  { kind: "ox", id: "ml-q-sm-3", concept: "softmax", q: "소프트맥스 출력은 음수가 될 수 있다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n분자 e^(zₖ)는 언제나 **양수**라서 소프트맥스 출력은 **항상 양수**(0보다 큼)예요." },
 
   // deep-learning
-  { kind: "mc", id: "ml-q-dl-1", concept: "deep-learning", q: "일반 신경망과 딥러닝 신경망의 주요 차이는?", options: ["입력 데이터 형식", "네트워크의 깊이", "활성화 함수가 없음", "출력층이 없음"], answer: 1, explain: "은닉층이 많다." },
-  { kind: "ox", id: "ml-q-dl-2", concept: "deep-learning", q: "딥러닝은 특징 추출과 문제 해결을 함께 학습한다.", answer: true, explain: "사람이 직접 특징을 만들 필요가 줄어든다." },
-  { kind: "ox", id: "ml-q-dl-3", concept: "deep-learning", q: "일반 신경망은 원시 데이터를 그대로 넣어도 특징을 스스로 잘 뽑으므로 특징의 품질과 무관하다.", answer: false, explain: "사람이 추출한 특징(handcrafted)을 쓰므로 그 품질에 좌우된다." },
+  { kind: "mc", id: "ml-q-dl-1", concept: "deep-learning", q: "일반 신경망과 딥러닝 신경망의 주요 차이는?", options: ["입력 데이터 형식", "네트워크의 깊이", "활성화 함수가 없음", "출력층이 없음"], answer: 1, explain: "== 정답: 네트워크의 깊이\n### 왜 정답인가요\n딥러닝의 '딥'은 **은닉층이 많다(깊다)** 는 뜻이에요. 층이 많아서 복잡한 특징을 단계적으로 배워요.\n### 다른 보기\n- 입력 형식, 활성화 함수 없음, 출력층 없음: 차이가 아니에요." },
+  { kind: "ox", id: "ml-q-dl-2", concept: "deep-learning", q: "딥러닝은 특징 추출과 문제 해결을 함께 학습한다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n딥러닝은 원시 데이터(픽셀 등)에서 **특징 추출과 문제 해결(분류 등)을 함께** 학습해요(end-to-end). 사람이 특징을 직접 만드는 부담이 줄어요." },
+  { kind: "ox", id: "ml-q-dl-3", concept: "deep-learning", q: "일반 신경망은 원시 데이터를 그대로 넣어도 특징을 스스로 잘 뽑으므로 특징의 품질과 무관하다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n일반(얕은) 신경망은 보통 **사람이 뽑은 특징(handcrafted feature)** 을 입력으로 써서, 성능이 그 **특징의 품질에 좌우돼요.** 스스로 특징을 잘 뽑는 건 딥러닝 쪽이에요." },
 
   // vanishing-gradient
-  { kind: "mc", id: "ml-q-vg-1", concept: "vanishing-gradient", q: "기울기 소멸 문제의 설명으로 옳은 것은?", options: ["오차가 아래층으로 갈수록 크게 줄어 학습이 안 된다", "기울기가 무한히 커진다", "학습률이 0이 된다", "데이터가 사라진다"], answer: 0, explain: "은닉층이 많을수록, 시그모이드·tanh에서 심하다." },
-  { kind: "mc", id: "ml-q-vg-2", concept: "vanishing-gradient", q: "기울기 소멸 완화 방법이 아닌 것은?", options: ["ReLU 계열 활성화 함수", "적절한 가중치 초기화", "배치 정규화", "계단 함수 사용"], answer: 3, explain: "계단 함수는 미분조차 할 수 없다." },
-  { kind: "mc", id: "ml-q-vg-3", concept: "vanishing-gradient", q: "ReLU의 dead neuron 문제를 해결하려고 음수 영역에 작은 기울기를 둔 함수는?", options: ["tanh", "Leaky ReLU", "시그모이드", "softmax"], answer: 1, explain: "ELU, GELU, SELU, Swish, Mish 등도 변형." },
-  { kind: "ox", id: "ml-q-vg-4", concept: "vanishing-gradient", q: "시그모이드의 도함수 최댓값은 0.25이므로 층이 깊어질수록 곱해진 기울기가 작아진다.", answer: true, explain: "0.25 이하 값을 여러 번 곱하면 0에 가까워진다." },
+  { kind: "mc", id: "ml-q-vg-1", concept: "vanishing-gradient", q: "기울기 소멸 문제의 설명으로 옳은 것은?", options: ["오차가 아래층으로 갈수록 크게 줄어 학습이 안 된다", "기울기가 무한히 커진다", "학습률이 0이 된다", "데이터가 사라진다"], answer: 0, explain: "== 정답: 오차가 아래층으로 갈수록 크게 줄어 학습이 안 된다\n### 왜 정답인가요\n역전파에서 기울기는 층마다 **곱해지며** 아래(입력 쪽)로 내려가요. 작은 값이 계속 곱해지면 아래층에 닿을 땐 거의 **0**이 돼서 그 층이 학습되지 않아요. 층이 많을수록, 시그모이드·tanh에서 심해요.\n### 다른 보기\n- 기울기가 무한히 커진다: **기울기 폭주(exploding)** 예요.\n- 학습률이 0, 데이터가 사라짐: 아니에요." },
+  { kind: "mc", id: "ml-q-vg-2", concept: "vanishing-gradient", q: "기울기 소멸 완화 방법이 아닌 것은?", options: ["ReLU 계열 활성화 함수", "적절한 가중치 초기화", "배치 정규화", "계단 함수 사용"], answer: 3, explain: "== 정답: 계단 함수 사용\n### 왜 정답인가요\n계단 함수는 **미분할 수 없어서**(기울기가 0) 역전파 자체가 안 돼요. 해결책이 될 수 없어요.\n### 다른 보기\n- ReLU 계열, 적절한 가중치 초기화(He 등), 배치 정규화: 모두 기울기 소멸 완화 방법이에요." },
+  { kind: "mc", id: "ml-q-vg-3", concept: "vanishing-gradient", q: "ReLU의 dead neuron 문제를 해결하려고 음수 영역에 작은 기울기를 둔 함수는?", options: ["tanh", "Leaky ReLU", "시그모이드", "softmax"], answer: 1, explain: "== 정답: Leaky ReLU\n### 왜 정답인가요\nReLU는 음수 입력에서 출력도 기울기도 0이라, 한번 음수 쪽에 빠진 뉴런은 다시 학습되지 않아요(**dead neuron**). **Leaky ReLU**는 음수 쪽에 **작은 기울기**(예: 0.01x)를 줘서 이를 막아요.\n### 다른 보기\n- tanh, 시그모이드: ReLU 변형이 아니에요.\n- softmax: 출력층용이에요." },
+  { kind: "ox", id: "ml-q-vg-4", concept: "vanishing-gradient", q: "시그모이드의 도함수 최댓값은 0.25이므로 층이 깊어질수록 곱해진 기울기가 작아진다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n시그모이드 도함수의 최댓값은 **0.25**예요. 층마다 0.25 이하를 곱하면 10층만 지나도 0.25¹⁰ ≈ 0.000001이라 **기울기가 사라져요.**" },
 
   // weight-init
-  { kind: "mc", id: "ml-q-wi-1", concept: "weight-init", q: "He 초기화의 분포 크기는?", options: ["N(0,1)·√(1/nᵢ)", "N(0,1)·√(2/nᵢ)", "모두 0", "모두 1"], answer: 1, explain: "Xavier는 √(1/nᵢ). He는 ReLU와 함께 쓴다." },
-  { kind: "ox", id: "ml-q-wi-2", concept: "weight-init", q: "가중치를 모두 0으로 초기화하면 뉴런들이 같은 것을 배워 학습이 제대로 되지 않는다.", answer: true, explain: "대칭이 깨지지 않는다." },
-  { kind: "ox", id: "ml-q-wi-3", concept: "weight-init", q: "초기 가중치는 학습 성능에 거의 영향을 주지 않는다.", answer: false, explain: "큰 영향을 준다." },
+  { kind: "mc", id: "ml-q-wi-1", concept: "weight-init", q: "He 초기화의 분포 크기는?", options: ["N(0,1)·√(1/nᵢ)", "N(0,1)·√(2/nᵢ)", "모두 0", "모두 1"], answer: 1, explain: "== 정답: N(0,1)·√(2/nᵢ)\n### 왜 정답인가요\n**He 초기화**는 표준정규분포 값에 **√(2/nᵢ)** 를 곱해요(nᵢ = 입력 수). ReLU가 음수를 0으로 버려 분산이 반으로 주는 걸 2배로 보정한 거예요. ReLU와 함께 써요.\n### 다른 보기\n- √(1/nᵢ): **Xavier** 초기화예요(시그모이드·tanh용).\n- 모두 0, 모두 1: 대칭 문제로 학습이 안 돼요." },
+  { kind: "ox", id: "ml-q-wi-2", concept: "weight-init", q: "가중치를 모두 0으로 초기화하면 뉴런들이 같은 것을 배워 학습이 제대로 되지 않는다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n가중치가 모두 같으면 같은 층의 뉴런들이 **똑같은 출력, 똑같은 기울기**를 받아 영원히 같은 것을 배워요(**대칭이 깨지지 않음**). 그래서 무작위 초기화를 써요." },
+  { kind: "ox", id: "ml-q-wi-3", concept: "weight-init", q: "초기 가중치는 학습 성능에 거의 영향을 주지 않는다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n초기 가중치가 너무 크면 기울기 폭주, 너무 작으면 기울기 소멸이 생겨요. 초기화는 학습 성능에 **큰 영향**을 줘요. 그래서 Xavier, He 같은 방법이 있어요." },
 
   // regularization-dropout
-  { kind: "mc", id: "ml-q-rd-1", concept: "regularization-dropout", q: "드롭아웃에 대한 설명으로 옳은 것은?", options: ["추론할 때도 노드를 무작위로 끈다", "학습할 때 일정 확률로 노드를 없는 것으로 간주한다", "학습률을 높인다", "가중치를 0으로 초기화한다"], answer: 1, explain: "추론할 때는 모든 노드를 쓴다." },
-  { kind: "mc", id: "ml-q-rd-2", concept: "regularization-dropout", q: "과적합 방지 기법이 아닌 것은?", options: ["드롭아웃", "데이터 증강", "조기 종료", "학습률 증가"], answer: 3, explain: "학습률은 과적합 방지 기법이 아니다." },
-  { kind: "ox", id: "ml-q-rd-3", concept: "regularization-dropout", q: "L1 규제화는 가중치의 절댓값 합을, L2 규제화는 제곱 합을 벌점으로 쓴다.", answer: true, explain: "오차 함수 = 오차 항 + λ·복잡도 항." },
-  { kind: "ox", id: "ml-q-rd-4", concept: "regularization-dropout", q: "규제화를 아무리 강하게 해도 과소적합은 생기지 않는다.", answer: false, explain: "너무 강하면 과소적합." },
+  { kind: "mc", id: "ml-q-rd-1", concept: "regularization-dropout", q: "드롭아웃에 대한 설명으로 옳은 것은?", options: ["추론할 때도 노드를 무작위로 끈다", "학습할 때 일정 확률로 노드를 없는 것으로 간주한다", "학습률을 높인다", "가중치를 0으로 초기화한다"], answer: 1, explain: "== 정답: 학습할 때 일정 확률로 노드를 없는 것으로 간주한다\n### 왜 정답인가요\n드롭아웃은 **학습할 때만** 매번 일정 확률로 노드를 꺼요. 특정 노드에 기대지 못하게 해서 과적합을 막아요. **추론할 때는 모든 노드를 써요.**\n### 다른 보기\n- 추론할 때도 끈다: 추론 땐 다 켜요.\n- 학습률을 높인다, 가중치를 0으로 초기화: 드롭아웃과 관계없어요." },
+  { kind: "mc", id: "ml-q-rd-2", concept: "regularization-dropout", q: "과적합 방지 기법이 아닌 것은?", options: ["드롭아웃", "데이터 증강", "조기 종료", "학습률 증가"], answer: 3, explain: "== 정답: 학습률 증가\n### 왜 정답인가요\n학습률은 갱신 **보폭**일 뿐, 과적합을 막는 장치가 아니에요. 너무 크면 오히려 발산해요.\n### 다른 보기\n- 드롭아웃, 데이터 증강, 조기 종료: 모두 과적합 방지 기법이에요." },
+  { kind: "ox", id: "ml-q-rd-3", concept: "regularization-dropout", q: "L1 규제화는 가중치의 절댓값 합을, L2 규제화는 제곱 합을 벌점으로 쓴다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n오차 함수 = 오차 항 + λ·복잡도 항. **L1**은 복잡도로 가중치 **절댓값의 합**, **L2**는 **제곱의 합**을 써요." },
+  { kind: "ox", id: "ml-q-rd-4", concept: "regularization-dropout", q: "규제화를 아무리 강하게 해도 과소적합은 생기지 않는다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n규제를 너무 강하게 하면 가중치를 지나치게 눌러서 모델이 너무 단순해져요. 그러면 **과소적합**이 생겨요." },
 
   // minibatch
-  { kind: "short", id: "ml-q-mb-1", concept: "minibatch", q: "데이터 1,000개, 배치 크기 100이면 한 에포크는 몇 iteration인가?", answers: ["10"], explain: "1000/100 = 10.", hint: "숫자만" },
-  { kind: "mc", id: "ml-q-mb-2", concept: "minibatch", q: "데이터 하나마다 가중치를 갱신하는 방법은?", options: ["배치 갱신", "확률적 갱신(SGD)", "미니배치 갱신", "에포크 갱신"], answer: 1, explain: "변동이 심하다." },
-  { kind: "ox", id: "ml-q-mb-3", concept: "minibatch", q: "에포크는 가중치를 한 번 갱신하는 단위다.", answer: false, explain: "에포크는 전체 데이터로 한 번 학습을 마치는 것. 한 번 갱신은 iteration(배치 하나)." },
+  { kind: "short", id: "ml-q-mb-1", concept: "minibatch", q: "데이터 1,000개, 배치 크기 100이면 한 에포크는 몇 iteration인가?", answers: ["10"], explain: "== 정답: 10\n### 풀이\n한 에포크 = 데이터 전체를 한 번 도는 것. 배치 하나마다 한 번 갱신(iteration)이니 1000 / 100 = **10번**이에요.", hint: "숫자만" },
+  { kind: "mc", id: "ml-q-mb-2", concept: "minibatch", q: "데이터 하나마다 가중치를 갱신하는 방법은?", options: ["배치 갱신", "확률적 갱신(SGD)", "미니배치 갱신", "에포크 갱신"], answer: 1, explain: "== 정답: 확률적 갱신(SGD)\n### 왜 정답인가요\n데이터 **하나**마다 바로 가중치를 고치는 게 **확률적 갱신(SGD)** 이에요. 자주 고치지만 데이터 하나에 휘둘려 **변동이 심해요.**\n### 다른 보기\n- 배치 갱신: 전체 데이터를 다 보고 한 번 고쳐요.\n- 미니배치 갱신: 몇십~몇백 개씩 묶어서 고쳐요.\n- 에포크 갱신: 표준 용어가 아니에요." },
+  { kind: "ox", id: "ml-q-mb-3", concept: "minibatch", q: "에포크는 가중치를 한 번 갱신하는 단위다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n**에포크**는 **전체 데이터**로 한 번 학습을 마치는 단위예요. 가중치를 **한 번** 고치는 단위는 **iteration**(배치 하나)이에요." },
 
   // batch-norm
-  { kind: "mc", id: "ml-q-bn-1", concept: "batch-norm", q: "배치 정규화에서 정규화한 뒤 적용하는 학습 파라미터는?", options: ["α와 ε", "크기조정 γ와 이동 β", "학습률과 모멘텀", "커널과 스트라이드"], answer: 1, explain: "평균 0·표준편차 1로 정규화한 뒤 γ·x̂ + β." },
-  { kind: "short", id: "ml-q-bn-2", concept: "batch-norm", q: "미니배치 [1, 3, 5, 7]의 평균은?", answers: ["4"], explain: "16/4 = 4. 분산 5, 표준편차 √5.", hint: "숫자만" },
-  { kind: "short", id: "ml-q-bn-3", concept: "batch-norm", q: "미니배치 [1, 3, 5, 7]의 분산은? (모분산)", answers: ["5"], explain: "(9+1+1+9)/4 = 5.", hint: "숫자만" },
-  { kind: "ox", id: "ml-q-bn-4", concept: "batch-norm", q: "추론할 때 배치 정규화는 학습 중 미니배치들의 평균·분산을 이동평균으로 저장해 쓴다.", answer: true, explain: "지수감소 이동평균(모멘텀 0.9, 0.99)." },
-  { kind: "ox", id: "ml-q-bn-5", concept: "batch-norm", q: "배치 정규화에는 데이터를 회전(rotation)하는 연산이 포함된다.", answer: false, explain: "정규화·스케일·이동뿐." },
+  { kind: "mc", id: "ml-q-bn-1", concept: "batch-norm", q: "배치 정규화에서 정규화한 뒤 적용하는 학습 파라미터는?", options: ["α와 ε", "크기조정 γ와 이동 β", "학습률과 모멘텀", "커널과 스트라이드"], answer: 1, explain: "== 정답: 크기조정 γ와 이동 β\n### 왜 정답인가요\n배치 정규화는 평균 0·표준편차 1로 정규화한 x̂에 **γ·x̂ + β**를 적용해요. γ(크기)와 β(이동)는 **학습**되는 값이라, 필요하면 정규화를 되돌릴 수도 있어요.\n### 다른 보기\n- α와 ε: ε은 0으로 나누는 걸 막는 작은 상수예요.\n- 학습률과 모멘텀: 옵티마이저 설정이에요.\n- 커널과 스트라이드: 컨볼루션 설정이에요." },
+  { kind: "short", id: "ml-q-bn-2", concept: "batch-norm", q: "미니배치 [1, 3, 5, 7]의 평균은?", answers: ["4"], explain: "== 정답: 4\n### 풀이\n(1 + 3 + 5 + 7) / 4 = 16 / 4 = **4**.", hint: "숫자만" },
+  { kind: "short", id: "ml-q-bn-3", concept: "batch-norm", q: "미니배치 [1, 3, 5, 7]의 분산은? (모분산)", answers: ["5"], explain: "== 정답: 5\n### 풀이\n평균 4에서의 차이: −3, −1, 1, 3 → 제곱 9, 1, 1, 9 → 합 20 → 20 / 4 = **5**. 표준편차는 √5 ≈ 2.24예요.", hint: "숫자만" },
+  { kind: "ox", id: "ml-q-bn-4", concept: "batch-norm", q: "추론할 때 배치 정규화는 학습 중 미니배치들의 평균·분산을 이동평균으로 저장해 쓴다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n추론할 땐 데이터가 한 개씩 올 수도 있어서 미니배치 평균을 못 구해요. 그래서 학습 중 미니배치들의 평균·분산을 **지수감소 이동평균**(모멘텀 0.9, 0.99 등)으로 저장해 두고 그 값을 써요." },
+  { kind: "ox", id: "ml-q-bn-5", concept: "batch-norm", q: "배치 정규화에는 데이터를 회전(rotation)하는 연산이 포함된다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n배치 정규화는 **정규화(평균 빼고 표준편차로 나누기) → 크기조정 γ → 이동 β**뿐이에요. 회전 연산은 없어요." },
 
   // optimizers
-  { kind: "mc", id: "ml-q-op-1", concept: "optimizers", q: "Adam은 어떤 두 방법을 결합했나?", options: ["모멘텀 + RMSprop", "Adagrad + SGD", "NAG + Adadelta", "드롭아웃 + 배치 정규화"], answer: 0, explain: "그레디언트의 1차·2차 모멘트." },
-  { kind: "mc", id: "ml-q-op-2", concept: "optimizers", q: "과거 그레디언트의 제곱을 누적해 가중치별 학습률을 다르게 하는 것은?", options: ["모멘텀", "Adagrad", "NAG", "AdamW"], answer: 1, explain: "Adadelta·RMSprop은 과거 영향을 줄여 Adagrad를 보완." },
-  { kind: "mc", id: "ml-q-op-3", concept: "optimizers", q: "모멘텀으로 먼저 이동한 위치의 그레디언트를 쓰는 방법은?", options: ["RMSprop", "NAG", "Adagrad", "AdaMax"], answer: 1, explain: "Nesterov Accelerated Gradient." },
-  { kind: "ox", id: "ml-q-op-4", concept: "optimizers", q: "RMSprop은 그레디언트 제곱의 이동 평균을 써서 학습률을 조정한다.", answer: true, explain: "Adam = 모멘텀 + RMSprop." },
-  { kind: "ox", id: "ml-q-op-5", concept: "optimizers", q: "Adam은 모든 문제에서 언제나 가장 우수한 옵티마이저다.", answer: false, explain: "문제에 따라 다르다 — AdamW, cosine annealing 등도 쓴다." },
+  { kind: "mc", id: "ml-q-op-1", concept: "optimizers", q: "Adam은 어떤 두 방법을 결합했나?", options: ["모멘텀 + RMSprop", "Adagrad + SGD", "NAG + Adadelta", "드롭아웃 + 배치 정규화"], answer: 0, explain: "== 정답: 모멘텀 + RMSprop\n### 왜 정답인가요\n**Adam**은 그레디언트의 **1차 모멘트**(평균, 모멘텀처럼 관성)와 **2차 모멘트**(제곱의 평균, RMSprop처럼 학습률 조정)를 함께 써요.\n### 다른 보기\n- Adagrad + SGD, NAG + Adadelta: Adam의 구성이 아니에요.\n- 드롭아웃 + 배치 정규화: 옵티마이저가 아니에요." },
+  { kind: "mc", id: "ml-q-op-2", concept: "optimizers", q: "과거 그레디언트의 제곱을 누적해 가중치별 학습률을 다르게 하는 것은?", options: ["모멘텀", "Adagrad", "NAG", "AdamW"], answer: 1, explain: "== 정답: Adagrad\n### 왜 정답인가요\n**Adagrad**는 가중치마다 과거 그레디언트 **제곱을 누적**해서, 많이 바뀐 가중치는 학습률을 줄여요. 단점은 누적이 계속 커져 학습률이 0에 가까워지는 것이라 **Adadelta·RMSprop**이 이를 보완해요.\n### 다른 보기\n- 모멘텀: 관성(이전 이동 방향)을 써요.\n- NAG: 미리 가 본 위치의 그레디언트를 써요.\n- AdamW: Adam에 가중치 감쇠를 분리한 버전이에요." },
+  { kind: "mc", id: "ml-q-op-3", concept: "optimizers", q: "모멘텀으로 먼저 이동한 위치의 그레디언트를 쓰는 방법은?", options: ["RMSprop", "NAG", "Adagrad", "AdaMax"], answer: 1, explain: "== 정답: NAG\n### 왜 정답인가요\n**NAG(Nesterov Accelerated Gradient)** 는 모멘텀 방향으로 **먼저 가 본 위치**에서 그레디언트를 계산해요. 미리 내다보니 지나치는 걸 줄여요.\n### 다른 보기\n- RMSprop, Adagrad: 학습률을 조정하는 방법이에요.\n- AdaMax: Adam의 변형이에요." },
+  { kind: "ox", id: "ml-q-op-4", concept: "optimizers", q: "RMSprop은 그레디언트 제곱의 이동 평균을 써서 학습률을 조정한다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n**RMSprop**은 그레디언트 제곱의 **이동 평균**으로 학습률을 나눠요. Adagrad와 달리 오래된 값의 영향이 줄어서 학습률이 0으로 사라지지 않아요." },
+  { kind: "ox", id: "ml-q-op-5", concept: "optimizers", q: "Adam은 모든 문제에서 언제나 가장 우수한 옵티마이저다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n어떤 옵티마이저가 가장 좋은지는 **문제에 따라 달라요.** SGD + 모멘텀이 더 나은 경우도 있고, AdamW나 cosine annealing 스케줄을 함께 쓰기도 해요." },
 
   // cnn-intro
-  { kind: "mc", id: "ml-q-ci-1", concept: "cnn-intro", q: "CNN이 영감을 받은 것은?", options: ["청각 피질", "동물의 시각피질", "운동 신경", "후각 수용체"], answer: 1, explain: "수용 영역, 계층적 처리." },
-  { kind: "ox", id: "ml-q-ci-2", concept: "cnn-intro", q: "CNN의 하위 계층은 엣지·질감을, 상위 계층은 복잡한 패턴·객체를 감지한다.", answer: true, explain: "계층적으로 점점 추상적인 특징을 뽑는다." },
-  { kind: "ox", id: "ml-q-ci-3", concept: "cnn-intro", q: "시각피질의 신경세포는 시야 전체의 자극에 반응한다.", answer: false, explain: "특정 영역(수용 영역)의 자극만 받는다." },
+  { kind: "mc", id: "ml-q-ci-1", concept: "cnn-intro", q: "CNN이 영감을 받은 것은?", options: ["청각 피질", "동물의 시각피질", "운동 신경", "후각 수용체"], answer: 1, explain: "== 정답: 동물의 시각피질\n### 왜 정답인가요\nCNN은 **동물의 시각피질** 연구(Hubel & Wiesel)에서 영감을 받았어요. 뉴런이 시야의 **일부(수용 영역)** 만 보고, 단계적으로 복잡한 모양을 알아보는 구조를 흉내 냈어요.\n### 다른 보기\n- 청각 피질, 운동 신경, 후각 수용체: CNN의 영감이 아니에요." },
+  { kind: "ox", id: "ml-q-ci-2", concept: "cnn-intro", q: "CNN의 하위 계층은 엣지·질감을, 상위 계층은 복잡한 패턴·객체를 감지한다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\nCNN은 **계층적**으로 특징을 뽑아요. 아래층은 엣지·색·질감 같은 단순한 특징, 위층은 눈·바퀴 같은 복잡한 패턴과 객체를 감지해요." },
+  { kind: "ox", id: "ml-q-ci-3", concept: "cnn-intro", q: "시각피질의 신경세포는 시야 전체의 자극에 반응한다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n시각피질 뉴런은 시야의 **특정 영역(수용 영역, receptive field)** 의 자극에만 반응해요. CNN 필터가 이미지의 작은 부분만 보는 것도 이 때문이에요." },
 
   // convolution
-  { kind: "short", id: "ml-q-cv2-1", concept: "convolution", q: "5×5 입력에 3×3 커널, 스트라이드 1, 패딩 0을 적용한 출력 크기는? (n×n)", answers: ["3x3", "3×3", "3"], explain: "(5 − 3)/1 + 1 = 3.", hint: "n×n" },
-  { kind: "short", id: "ml-q-cv2-2", concept: "convolution", q: "7×7 입력에 3×3 커널, 스트라이드 2를 적용한 출력 크기는? (n×n)", answers: ["3x3", "3×3", "3"], explain: "(7 − 3)/2 + 1 = 3.", hint: "n×n" },
-  { kind: "short", id: "ml-q-cv2-3", concept: "convolution", q: "8×8 입력에 3×3 커널, 패딩 1, 스트라이드 1을 적용한 출력 크기는? (n×n)", answers: ["8x8", "8×8", "8"], explain: "(8 + 2 − 3)/1 + 1 = 8.", hint: "n×n" },
-  { kind: "mc", id: "ml-q-cv2-4", concept: "convolution", q: "컨볼루션 출력 크기를 입력과 같게 유지하려면?", options: ["스트라이드 증가", "패딩 적용", "풀링 적용", "필터 수 증가"], answer: 1, explain: "입력 둘레를 0으로 채운다." },
-  { kind: "mc", id: "ml-q-cv2-5", concept: "convolution", q: "RGB(3채널) 입력에 쓰는 3×3 필터의 깊이는?", options: ["1", "3", "9", "필터 개수"], answer: 1, explain: "필터 채널 수 = 입력 채널 수." },
-  { kind: "ox", id: "ml-q-cv2-6", concept: "convolution", q: "CNN의 연산 부하 대부분은 풀링 연산에서 생긴다.", answer: false, explain: "대부분은 컨볼루션 연산. 풀링은 파라미터도 없고 가볍다." },
-  { kind: "short", id: "ml-q-cv2-7", concept: "convolution", q: "입력 [[1,2,3],[0,1,2],[3,0,1]]에 커널 [[1,0],[0,1]]을 스트라이드 1로 적용할 때 왼쪽 위 출력 값은?", answers: ["2"], explain: "1·1 + 2·0 + 0·0 + 1·1 = 2. 전체 [[2,4],[0,2]].", hint: "숫자만" },
+  { kind: "short", id: "ml-q-cv2-1", concept: "convolution", q: "5×5 입력에 3×3 커널, 스트라이드 1, 패딩 0을 적용한 출력 크기는? (n×n)", answers: ["3x3", "3×3", "3"], explain: "== 정답: 3×3\n### 풀이\n출력 크기 = (입력 + 2×패딩 − 커널) / 스트라이드 + 1\n- (5 + 0 − 3) / 1 + 1 = **3** → **3×3**", hint: "n×n" },
+  { kind: "short", id: "ml-q-cv2-2", concept: "convolution", q: "7×7 입력에 3×3 커널, 스트라이드 2를 적용한 출력 크기는? (n×n)", answers: ["3x3", "3×3", "3"], explain: "== 정답: 3×3\n### 풀이\n(7 + 0 − 3) / 2 + 1 = 4 / 2 + 1 = **3** → **3×3**", hint: "n×n" },
+  { kind: "short", id: "ml-q-cv2-3", concept: "convolution", q: "8×8 입력에 3×3 커널, 패딩 1, 스트라이드 1을 적용한 출력 크기는? (n×n)", answers: ["8x8", "8×8", "8"], explain: "== 정답: 8×8\n### 풀이\n(8 + 2×1 − 3) / 1 + 1 = 7 + 1 = **8** → **8×8**. 3×3 커널에 패딩 1이면 크기가 그대로 유지돼요.", hint: "n×n" },
+  { kind: "mc", id: "ml-q-cv2-4", concept: "convolution", q: "컨볼루션 출력 크기를 입력과 같게 유지하려면?", options: ["스트라이드 증가", "패딩 적용", "풀링 적용", "필터 수 증가"], answer: 1, explain: "== 정답: 패딩 적용\n### 왜 정답인가요\n컨볼루션을 하면 가장자리가 깎여 출력이 작아져요. 입력 둘레를 **0으로 채우는 패딩**을 하면 크기를 그대로 유지할 수 있어요(3×3 커널이면 패딩 1).\n### 다른 보기\n- 스트라이드 증가, 풀링: 오히려 더 작아져요.\n- 필터 수 증가: 깊이(채널)만 늘어요." },
+  { kind: "mc", id: "ml-q-cv2-5", concept: "convolution", q: "RGB(3채널) 입력에 쓰는 3×3 필터의 깊이는?", options: ["1", "3", "9", "필터 개수"], answer: 1, explain: "== 정답: 3\n### 풀이\n필터의 깊이(채널 수)는 항상 **입력 채널 수와 같아요.** RGB 3채널이면 필터 하나가 **3×3×3**이에요.\n### 다른 보기\n- 1: 흑백(1채널) 입력일 때예요.\n- 9: 3×3의 칸 수예요.\n- 필터 개수: 그건 **출력** 채널 수를 정해요." },
+  { kind: "ox", id: "ml-q-cv2-6", concept: "convolution", q: "CNN의 연산 부하 대부분은 풀링 연산에서 생긴다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n연산 대부분은 곱셈·덧셈이 많은 **컨볼루션**에서 생겨요. 풀링은 최댓값이나 평균만 구하고 **파라미터도 없어서** 가벼워요." },
+  { kind: "short", id: "ml-q-cv2-7", concept: "convolution", q: "입력 [[1,2,3],[0,1,2],[3,0,1]]에 커널 [[1,0],[0,1]]을 스트라이드 1로 적용할 때 왼쪽 위 출력 값은?", answers: ["2"], explain: "== 정답: 2\n### 풀이\n왼쪽 위 2×2 영역 [[1,2],[0,1]]과 커널 [[1,0],[0,1]]을 칸끼리 곱해 더해요.\n- 1·1 + 2·0 + 0·0 + 1·1 = **2**\n- 전체 출력은 [[2, 4], [0, 2]]", hint: "숫자만" },
 
   // feature-map
-  { kind: "mc", id: "ml-q-fm-1", concept: "feature-map", q: "특징지도의 깊이(채널 수)를 결정하는 것은?", options: ["입력 크기", "필터(커널)의 개수", "스트라이드", "패딩"], answer: 1, explain: "k개 필터 → k개 특징지도." },
-  { kind: "short", id: "ml-q-fm-2", concept: "feature-map", q: "입력 채널 4, 3×3 커널 5개인 컨볼루션 층의 파라미터 수(편향 포함)는?", answers: ["185"], explain: "3×3×4×5 + 5 = 185.", hint: "숫자만" },
-  { kind: "ox", id: "ml-q-fm-3", concept: "feature-map", q: "특징지도의 각 원소는 필터가 표현한 특징이 그 위치에 있는 정도를 나타낸다.", answer: true, explain: "필터와의 내적이 클수록 그 특징이 강하다." },
-  { kind: "short", id: "ml-q-fm-4", concept: "feature-map", q: "입력 3채널, 출력 64채널, 3×3 컨볼루션의 가중치 수(편향 제외)는?", answers: ["1728", "1,728"], explain: "3×3×3×64 = 1,728.", hint: "숫자만" },
+  { kind: "mc", id: "ml-q-fm-1", concept: "feature-map", q: "특징지도의 깊이(채널 수)를 결정하는 것은?", options: ["입력 크기", "필터(커널)의 개수", "스트라이드", "패딩"], answer: 1, explain: "== 정답: 필터(커널)의 개수\n### 왜 정답인가요\n필터 하나가 특징지도 **하나**를 만들어요. 그래서 필터가 k개면 출력 채널(깊이)도 **k개**예요.\n### 다른 보기\n- 입력 크기, 스트라이드, 패딩: 특징지도의 **가로·세로 크기**에 영향을 줘요." },
+  { kind: "short", id: "ml-q-fm-2", concept: "feature-map", q: "입력 채널 4, 3×3 커널 5개인 컨볼루션 층의 파라미터 수(편향 포함)는?", answers: ["185"], explain: "== 정답: 185\n### 풀이\n- 필터 하나의 가중치 = 3 × 3 × 4(입력 채널) = **36**\n- 필터 5개 = 36 × 5 = **180**\n- 편향 = 필터마다 1개 → **5**\n- 합 = **185**", hint: "숫자만" },
+  { kind: "ox", id: "ml-q-fm-3", concept: "feature-map", q: "특징지도의 각 원소는 필터가 표현한 특징이 그 위치에 있는 정도를 나타낸다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n특징지도의 각 값은 그 위치에서 **필터와 입력의 내적**이에요. 값이 클수록 필터가 나타내는 특징(예: 세로 엣지)이 그 위치에 **강하게** 있다는 뜻이에요." },
+  { kind: "short", id: "ml-q-fm-4", concept: "feature-map", q: "입력 3채널, 출력 64채널, 3×3 컨볼루션의 가중치 수(편향 제외)는?", answers: ["1728", "1,728"], explain: "== 정답: 1728\n### 풀이\n3 × 3(커널) × 3(입력 채널) × 64(출력 채널) = 27 × 64 = **1,728**. 편향까지 넣으면 1,792예요.", hint: "숫자만" },
 
   // conv-variants
-  { kind: "mc", id: "ml-q-cvv-1", concept: "conv-variants", q: "1×1 컨볼루션의 주된 목적은?", options: ["공간 해상도 확대", "연산량을 줄이며 채널 간 상호작용(채널 수 조절)", "풀링 대체", "패딩 제거"], answer: 1, explain: "공간 크기는 그대로 두고 채널 방향으로만 섞는다." },
-  { kind: "mc", id: "ml-q-cvv-2", concept: "conv-variants", q: "입력보다 큰 출력을 만드는(업샘플링) 컨볼루션은?", options: ["팽창 컨볼루션", "디컨볼루션(transposed)", "집단 컨볼루션", "1×1 컨볼루션"], answer: 1, explain: "Transposed / fractionally-strided convolution." },
-  { kind: "short", id: "ml-q-cvv-3", concept: "conv-variants", q: "입력 3·출력 64채널, 3×3 깊이별 분할(depthwise separable) 컨볼루션의 가중치 수는?", answers: ["219"], explain: "3×3×3 + 1×1×3×64 = 27 + 192 = 219.", hint: "숫자만" },
-  { kind: "ox", id: "ml-q-cvv-4", concept: "conv-variants", q: "팽창(dilated) 컨볼루션은 커널 사이에 간격을 두어 수용 영역을 넓힌다.", answer: true, explain: "atrous = 구멍." },
+  { kind: "mc", id: "ml-q-cvv-1", concept: "conv-variants", q: "1×1 컨볼루션의 주된 목적은?", options: ["공간 해상도 확대", "연산량을 줄이며 채널 간 상호작용(채널 수 조절)", "풀링 대체", "패딩 제거"], answer: 1, explain: "== 정답: 연산량을 줄이며 채널 간 상호작용(채널 수 조절)\n### 왜 정답인가요\n**1×1 컨볼루션**은 공간 크기는 그대로 두고 **채널 방향으로만** 섞어요. 채널 수를 줄여(병목) 뒤쪽 연산량을 크게 줄이는 데 많이 써요(GoogLeNet, ResNet).\n### 다른 보기\n- 공간 해상도 확대: 디컨볼루션이에요.\n- 풀링 대체, 패딩 제거: 주된 목적이 아니에요." },
+  { kind: "mc", id: "ml-q-cvv-2", concept: "conv-variants", q: "입력보다 큰 출력을 만드는(업샘플링) 컨볼루션은?", options: ["팽창 컨볼루션", "디컨볼루션(transposed)", "집단 컨볼루션", "1×1 컨볼루션"], answer: 1, explain: "== 정답: 디컨볼루션(transposed)\n### 왜 정답인가요\n**디컨볼루션(transposed / fractionally-strided convolution)** 은 입력보다 **큰** 출력을 만들어요. 분할(segmentation)·생성 모델에서 해상도를 다시 키울 때 써요.\n### 다른 보기\n- 팽창 컨볼루션: 수용 영역을 넓혀요.\n- 집단 컨볼루션: 채널을 그룹으로 나눠 계산해요.\n- 1×1 컨볼루션: 채널 수를 조절해요." },
+  { kind: "short", id: "ml-q-cvv-3", concept: "conv-variants", q: "입력 3·출력 64채널, 3×3 깊이별 분할(depthwise separable) 컨볼루션의 가중치 수는?", answers: ["219"], explain: "== 정답: 219\n### 풀이\n깊이별 분할 컨볼루션 = **깊이별(depthwise)** + **점별(pointwise, 1×1)**\n- 깊이별: 채널마다 3×3 필터 하나 → 3 × 3 × 3 = **27**\n- 점별: 1 × 1 × 3 × 64 = **192**\n- 합 = **219** (일반 컨볼루션 1,728개보다 훨씬 적어요)", hint: "숫자만" },
+  { kind: "ox", id: "ml-q-cvv-4", concept: "conv-variants", q: "팽창(dilated) 컨볼루션은 커널 사이에 간격을 두어 수용 영역을 넓힌다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n**팽창(dilated, atrous = 구멍)** 컨볼루션은 커널 칸 사이에 **간격**을 둬서, 파라미터 수는 그대로 두고 더 **넓은 영역**을 봐요." },
 
   // pooling
-  { kind: "mc", id: "ml-q-pl-1", concept: "pooling", q: "풀링의 역할이 아닌 것은?", options: ["특징지도 크기 축소", "위치 변화에 강건", "계산량 감소", "학습 파라미터 증가"], answer: 3, explain: "풀링에는 학습할 파라미터가 없다." },
-  { kind: "short", id: "ml-q-pl-2", concept: "pooling", q: "10×10 입력에 3×3 풀링, 스트라이드 2를 적용한 출력 크기는? (n×n)", answers: ["4x4", "4×4", "4"], explain: "(10 − 3)/2 + 1 = 4 (내림).", hint: "n×n" },
-  { kind: "short", id: "ml-q-pl-3", concept: "pooling", q: "[[4,3,2,1],[2,2,3,4],[1,0,1,3],[5,2,1,0]]에 2×2 최대 풀링(스트라이드 2)을 하면 오른쪽 아래 값은?", answers: ["3"], explain: "블록 [[1,3],[1,0]]의 최대 = 3. 전체 [[4,4],[5,3]].", hint: "숫자만" },
-  { kind: "ox", id: "ml-q-pl-4", concept: "pooling", q: "최대값 풀링 층은 학습해야 할 가중치가 많다.", answer: false, explain: "0개." },
-  { kind: "ox", id: "ml-q-pl-5", concept: "pooling", q: "확률적 풀링은 값 크기에 비례하는 확률로 대푯값을 고른다.", answer: true, explain: "추론할 때는 확률적 가중합을 쓴다." },
+  { kind: "mc", id: "ml-q-pl-1", concept: "pooling", q: "풀링의 역할이 아닌 것은?", options: ["특징지도 크기 축소", "위치 변화에 강건", "계산량 감소", "학습 파라미터 증가"], answer: 3, explain: "== 정답: 학습 파라미터 증가\n### 왜 정답인가요\n풀링은 최댓값·평균만 계산해서 **학습할 파라미터가 0개**예요.\n### 다른 보기\n- 크기 축소, 위치 변화에 강건, 계산량 감소: 모두 풀링의 역할이에요." },
+  { kind: "short", id: "ml-q-pl-2", concept: "pooling", q: "10×10 입력에 3×3 풀링, 스트라이드 2를 적용한 출력 크기는? (n×n)", answers: ["4x4", "4×4", "4"], explain: "== 정답: 4×4\n### 풀이\n(10 − 3) / 2 + 1 = 3.5 + 1 = 4.5 → **내림**해서 **4** → **4×4**.", hint: "n×n" },
+  { kind: "short", id: "ml-q-pl-3", concept: "pooling", q: "[[4,3,2,1],[2,2,3,4],[1,0,1,3],[5,2,1,0]]에 2×2 최대 풀링(스트라이드 2)을 하면 오른쪽 아래 값은?", answers: ["3"], explain: "== 정답: 3\n### 풀이\n2×2 블록 넷으로 나눠 각 블록의 **최댓값**을 골라요.\n- 왼쪽 위 [[4,3],[2,2]] → 4\n- 오른쪽 위 [[2,1],[3,4]] → 4\n- 왼쪽 아래 [[1,0],[5,2]] → 5\n- 오른쪽 아래 [[1,3],[1,0]] → **3**", hint: "숫자만" },
+  { kind: "ox", id: "ml-q-pl-4", concept: "pooling", q: "최대값 풀링 층은 학습해야 할 가중치가 많다.", answer: false, explain: "== 정답: X (틀린 말)\n### 왜 틀렸나요\n최대값 풀링은 영역의 최댓값을 고를 뿐이라 학습할 가중치가 **0개**예요." },
+  { kind: "ox", id: "ml-q-pl-5", concept: "pooling", q: "확률적 풀링은 값 크기에 비례하는 확률로 대푯값을 고른다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n**확률적 풀링**은 값이 클수록 뽑힐 확률이 큰 방식으로 대푯값을 **무작위로** 골라요(학습 중). 추론할 때는 확률로 가중한 합을 써요." },
 
   // cnn-architecture
-  { kind: "mc", id: "ml-q-ca-1", concept: "cnn-architecture", q: "CNN에서 완전연결층(FC)의 역할은?", options: ["특징 추출", "최종 예측(분류·회귀)", "크기 축소", "패딩"], answer: 1, explain: "앞부분 Conv–ReLU–Pool이 특징 추출, 뒷부분 FC가 예측." },
-  { kind: "mc", id: "ml-q-ca-2", concept: "cnn-architecture", q: "CNN 컨볼루션 층 뒤에 주로 쓰는 활성화 함수는?", options: ["계단 함수", "ReLU", "소프트맥스", "항등 함수"], answer: 1, explain: "기울기 소멸이 적고 계산이 간단하다." },
-  { kind: "short", id: "ml-q-ca-3", concept: "cnn-architecture", q: "입력 10, 노드 20인 완전연결층의 파라미터 수(편향 포함)는?", answers: ["220"], explain: "10×20 + 20 = 220.", hint: "숫자만" },
-  { kind: "ox", id: "ml-q-ca-4", concept: "cnn-architecture", q: "분류용 CNN은 마지막에 소프트맥스 층을 두는 경우가 많다.", answer: true, explain: "…–FC–SM. 소프트맥스가 부류 확률을 낸다." },
+  { kind: "mc", id: "ml-q-ca-1", concept: "cnn-architecture", q: "CNN에서 완전연결층(FC)의 역할은?", options: ["특징 추출", "최종 예측(분류·회귀)", "크기 축소", "패딩"], answer: 1, explain: "== 정답: 최종 예측(분류·회귀)\n### 왜 정답인가요\nCNN 앞부분(Conv–ReLU–Pool 반복)이 **특징을 추출**하고, 뒷부분 **완전연결층(FC)** 이 그 특징으로 **최종 예측**을 해요.\n### 다른 보기\n- 특징 추출: 컨볼루션 층이에요.\n- 크기 축소: 풀링이에요.\n- 패딩: 컨볼루션 설정이에요." },
+  { kind: "mc", id: "ml-q-ca-2", concept: "cnn-architecture", q: "CNN 컨볼루션 층 뒤에 주로 쓰는 활성화 함수는?", options: ["계단 함수", "ReLU", "소프트맥스", "항등 함수"], answer: 1, explain: "== 정답: ReLU\n### 왜 정답인가요\n**ReLU**는 계산이 간단하고 양수 쪽 기울기가 1이라 **기울기 소멸이 적어서** 컨볼루션 뒤에 주로 써요.\n### 다른 보기\n- 계단 함수: 미분할 수 없어요.\n- 소프트맥스: 마지막 출력층용이에요.\n- 항등 함수: 비선형성이 없어요." },
+  { kind: "short", id: "ml-q-ca-3", concept: "cnn-architecture", q: "입력 10, 노드 20인 완전연결층의 파라미터 수(편향 포함)는?", answers: ["220"], explain: "== 정답: 220\n### 풀이\n가중치 10 × 20 = **200** + 편향 **20** = **220**.", hint: "숫자만" },
+  { kind: "ox", id: "ml-q-ca-4", concept: "cnn-architecture", q: "분류용 CNN은 마지막에 소프트맥스 층을 두는 경우가 많다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n분류용 CNN은 보통 …–FC–**SM(소프트맥스)** 로 끝나요. 소프트맥스가 각 부류의 **확률**을 내요." },
 
   // autodiff
-  { kind: "short", id: "ml-q-ad-1", concept: "autodiff", q: "f(x, y) = xy + x²y³일 때 (1, 2)에서 ∂f/∂x는?", answers: ["18"], explain: "y + 2xy³ = 2 + 16 = 18.", hint: "숫자만" },
-  { kind: "short", id: "ml-q-ad-2", concept: "autodiff", q: "f(x, y) = xy + x²y³일 때 (1, 2)에서 ∂f/∂y는?", answers: ["13"], explain: "x + 3x²y² = 1 + 12 = 13.", hint: "숫자만" },
-  { kind: "mc", id: "ml-q-ad-3", concept: "autodiff", q: "함수를 기본 연산의 계산 그래프로 나타내고 연쇄 법칙으로 미분 값을 구하는 방법은?", options: ["수치적 미분", "기호적 미분", "자동 미분", "유한 차분"], answer: 2, explain: "수치적 미분은 근사, 기호적 미분은 수식 미분." },
-  { kind: "ox", id: "ml-q-ad-4", concept: "autodiff", q: "연쇄 법칙에서는 중간 변수의 도함수들을 서로 곱한다.", answer: true, explain: "경로가 여럿이면 더한다." },
+  { kind: "short", id: "ml-q-ad-1", concept: "autodiff", q: "f(x, y) = xy + x²y³일 때 (1, 2)에서 ∂f/∂x는?", answers: ["18"], explain: "== 정답: 18\n### 풀이\ny를 상수로 보고 x로 편미분해요.\n- xy → **y**\n- x²y³ → **2xy³**\n- ∂f/∂x = y + 2xy³ → (1, 2)에서 2 + 2·1·8 = **18**", hint: "숫자만" },
+  { kind: "short", id: "ml-q-ad-2", concept: "autodiff", q: "f(x, y) = xy + x²y³일 때 (1, 2)에서 ∂f/∂y는?", answers: ["13"], explain: "== 정답: 13\n### 풀이\nx를 상수로 보고 y로 편미분해요.\n- xy → **x**\n- x²y³ → **3x²y²**\n- ∂f/∂y = x + 3x²y² → (1, 2)에서 1 + 3·1·4 = **13**", hint: "숫자만" },
+  { kind: "mc", id: "ml-q-ad-3", concept: "autodiff", q: "함수를 기본 연산의 계산 그래프로 나타내고 연쇄 법칙으로 미분 값을 구하는 방법은?", options: ["수치적 미분", "기호적 미분", "자동 미분", "유한 차분"], answer: 2, explain: "== 정답: 자동 미분\n### 왜 정답인가요\n**자동 미분**은 함수를 덧셈·곱셈 같은 **기본 연산의 계산 그래프**로 나누고, **연쇄 법칙**으로 정확한 미분 값을 구해요. 딥러닝 프레임워크(PyTorch 등)가 이 방식을 써요.\n### 다른 보기\n- 수치적 미분, 유한 차분: 아주 작은 h로 (f(x + h) − f(x))/h를 계산하는 **근사**예요.\n- 기호적 미분: 수식 자체를 미분해 도함수 **식**을 얻어요." },
+  { kind: "ox", id: "ml-q-ad-4", concept: "autodiff", q: "연쇄 법칙에서는 중간 변수의 도함수들을 서로 곱한다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n연쇄 법칙: z가 y를 거쳐 x에 의존하면 dz/dx = dz/dy × dy/dx처럼 **곱해요.** 계산 그래프에서 경로가 여러 개면 경로별 곱을 **더해요.**" },
 ];
