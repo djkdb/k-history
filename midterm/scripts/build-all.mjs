@@ -122,11 +122,14 @@ for (const c of COURSES) {
     missing: data.missing ?? [],
     examNote: data.examNote ?? null,
     chapters: data.chapters.map((ch) => ({ id: ch.id, title: ch.title })),
+    pdfs: data.pdfs ?? [],
     concepts: data.concepts.map((k) => ({
       id: k.id,
       ch: k.chapter,
       imp: k.importance,
       t: k.title,
+      // 캘린더 'PDF 단위' — 이 개념이 나온 첫 PDF 번호와 쪽
+      p: k.sources?.length && data.pdfs ? [data.pdfs.indexOf(k.sources[0].file), k.sources[0].from] : null,
       qs: data.questions.filter((q) => q.concept === k.id).map((q) => q.id),
     })),
   });

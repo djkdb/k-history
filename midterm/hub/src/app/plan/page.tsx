@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ArrowLeft, CalendarDays, ChevronRight } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CalendarDays, ChevronRight, FileText } from "lucide-react";
 import { COURSES, type CourseCard } from "@/data/courses";
 import { ThemeToggle } from "@/components/theme";
 import {
@@ -15,10 +15,13 @@ import {
   readHubExam,
   readHubStart,
   readSnap,
+  readSplitMode,
   sumDay,
   writeHubExam,
   writeHubStart,
+  writeSplitMode,
   type CourseState,
+  type SplitMode,
   type DayTask,
   type Plan,
 } from "@/lib/plan";
@@ -39,13 +42,18 @@ function md(s: string) {
 function usePlan() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [opened, setOpened] = useState<Record<string, boolean>>({});
+  const [mode, setMode] = useState<SplitMode>("concept");
   const load = useCallback(() => {
+    const m = readSplitMode();
+    setMode(m);
     const ready = COURSES.filter((c) => c.ready);
     const snaps = Object.fromEntries(ready.map((c) => [c.id, readSnap(c.id)]));
     setOpened(Object.fromEntries(ready.map((c) => [c.id, !!snaps[c.id]])));
     setPlan(
       buildPlan(
         ready.map((c) => ({ id: c.id, snap: snaps[c.id], defaultExam: c.examDate, hubExam: readHubExam(c.id), start: readHubStart(c.id) })),
+        new Date(),
+        m,
       ),
     );
   }, []);
@@ -62,11 +70,11 @@ function usePlan() {
       document.removeEventListener("visibilitychange", onVis);
     };
   }, [load]);
-  return { plan, opened, reload: load };
+  return { plan, opened, mode, reload: load };
 }
 
 export default function PlanPage() {
-  const { plan, opened, reload } = usePlan();
+  const { plan, opened, mode, reload } = usePlan();
   const [sel, setSel] = useState<string | null>(null);
   if (!plan) return <main className="py-6" />;
   const day = sel ?? plan.today;
@@ -82,8 +90,18 @@ export default function PlanPage() {
             <CalendarDays size={22} className="text-indigo-300" /> 시험 캘린더
           </h1>
           <p className="mt-1 text-[13px] leading-relaxed text-zinc-400">
-            시험일까지 남은 개념·문제를 날마다 고르게 나눴어요. 시험 전날은 총정리로 비워 둡니다.
+            {mode === "pdf"
+              ? "강의 PDF 순서대로 하루에 PDF 하나씩 잡았어요. 날이 남으면 큰 PDF를 나눠 보고, 모자라면 이웃한 PDF를 묶어요."
+              : "시험일까지 남은 개념·문제를 날마다 고르게 나눴어요."}{" "}
+            시험 전날은 총정리로 비워 둡니다.
           </p>
+          <ModeToggle
+            mode={mode}
+            onChange={(m) => {
+              writeSplitMode(m);
+              reload();
+            }}
+          />
         </div>
         <ThemeToggle />
       </header>
@@ -114,6 +132,33 @@ export default function PlanPage() {
         이 기기에 남은 기록으로 셉니다. 다른 기기에서 공부했다면 그 과목을 한 번 열어 기록을 맞춘 뒤 돌아오세요.
       </p>
     </main>
+  );
+}
+
+/** 나누는 방식 — 개념 고르게 / PDF 단위 */
+function ModeToggle({ mode, onChange }: { mode: SplitMode; onChange: (m: SplitMode) => void }) {
+  const opts: [SplitMode, string][] = [
+    ["concept", "개념 고르게"],
+    ["pdf", "PDF 단위"],
+  ];
+  return (
+    <div role="radiogroup" aria-label="할 일 나누는 방식" className="mt-3 inline-flex rounded-xl border border-white/10 bg-white/[0.03] p-0.5">
+      {opts.map(([m, label]) => (
+        <button
+          key={m}
+          type="button"
+          role="radio"
+          aria-checked={mode === m}
+          onClick={() => mode !== m && onChange(m)}
+          className={cn(
+            "rounded-lg px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+            mode === m ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-zinc-200",
+          )}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -362,7 +407,13 @@ function Cell({ d, plan, max, on, onSel }: { d: string; plan: Plan; max: number;
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: META[t.course].color }} />
                 <span className="truncate">
                   {META[t.course].mark}{" "}
-                  {t.kind === "final" ? "총정리" : t.concepts.length ? `${t.concepts.length}개` : `문제 ${t.questions}`}
+                  {t.kind === "final"
+                    ? "총정리"
+                    : t.pdfs?.length
+                      ? `PDF ${t.pdfs.map((p) => p.n + (p.part ? `(${p.part})` : "")).join("·")}`
+                      : t.concepts.length
+                        ? `${t.concepts.length}개`
+                        : `문제 ${t.questions}`}
                 </span>
               </span>
             ))}
@@ -454,7 +505,26 @@ function TaskRow({ t, st, isToday }: { t: DayTask; st: CourseState; isToday: boo
             새 개념 <b>{t.concepts.length}</b>개 · 문제 <b>{t.questions}</b>
             {t.reviews > 0 && <> · 복습 <b>{t.reviews}</b></>}
           </p>
-          <p className="mt-0.5 text-[12px] text-zinc-400">{chTitles.join(" · ")}</p>
+          {t.pdfs?.length ? (
+            <ul className="mt-1.5 flex flex-col gap-1">
+              {t.pdfs.map((p) => (
+                <li key={p.n + (p.part ?? "")}>
+                  <a
+                    href={`/${t.course}/pdf/${p.n}`}
+                    className="flex items-start gap-1.5 rounded-lg bg-white/5 px-2 py-1.5 text-[12.5px] leading-snug text-zinc-200 hover:bg-white/10"
+                  >
+                    <FileText size={14} className="mt-0.5 shrink-0 text-sky-300" />
+                    <span className="min-w-0 flex-1">
+                      {p.title}
+                      {p.part && <span className="ml-1 font-bold text-sky-300">({p.part})</span>}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-0.5 text-[12px] text-zinc-400">{chTitles.join(" · ")}</p>
+          )}
           <p className="mt-1 text-[11.5px] leading-relaxed text-zinc-500">
             {t.concepts.slice(0, 4).map((c) => c.t).join(", ")}
             {t.concepts.length > 4 && ` 외 ${t.concepts.length - 4}개`}
