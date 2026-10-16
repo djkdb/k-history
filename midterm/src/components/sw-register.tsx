@@ -28,6 +28,7 @@ export function SWRegister() {
     }
 
     let alive = true;
+    let cleanup = () => {};
     /*
      * 지금 이 화면을 맡은 워커가 "이 앱의" 예전 판인가.
      * ⚠️ 다섯 앱을 한 주소에 묶으면, 처음 들어온 화면은 "/" 를 맡은 현관
@@ -65,6 +66,21 @@ export function SWRegister() {
         watch(reg);
         // 앱을 다시 열 때마다 한 번 확인한다
         reg.update().catch(() => {});
+        /*
+         * 노트북처럼 탭을 며칠씩 열어 두면 "다시 열기"가 없어 새 판을 영영 못 본다.
+         * 창으로 돌아올 때마다, 그리고 30분마다 한 번 더 확인한다.
+         */
+        const check = () => {
+          if (document.visibilityState === "visible") reg.update().catch(() => {});
+        };
+        document.addEventListener("visibilitychange", check);
+        window.addEventListener("focus", check);
+        const timer = window.setInterval(check, 30 * 60 * 1000);
+        cleanup = () => {
+          document.removeEventListener("visibilitychange", check);
+          window.removeEventListener("focus", check);
+          window.clearInterval(timer);
+        };
       })
       .catch(() => {
         // 오프라인 지원 실패는 치명적이지 않다
@@ -72,6 +88,7 @@ export function SWRegister() {
 
     return () => {
       alive = false;
+      cleanup();
     };
   }, []);
 
@@ -85,6 +102,14 @@ export function SWRegister() {
     );
     waiting.postMessage({ type: "SKIP_WAITING" });
   }, [waiting]);
+
+  /*
+   * 모의고사를 보는 중이 아니면 새 판을 바로 켠다 — 알림을 못 보고 지나치면
+   * 예전 화면이 계속 남는다(노트북에서 실제로 그랬다). 학습 기록은 그대로다.
+   */
+  useEffect(() => {
+    if (waiting && !location.pathname.includes("/mock/session")) apply();
+  }, [waiting, apply]);
 
   if (!waiting || hidden) return null;
 
