@@ -42,12 +42,20 @@ function fnv(text) {
 
 async function tts(text) {
   for (let attempt = 1; ; attempt++) {
-    const res = await fetch("https://api.fish.audio/v1/tts", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", model: MODEL },
-      body: JSON.stringify({ text, reference_id: VOICE, format: "mp3", mp3_bitrate: BITRATE, normalize: true, latency: "normal" }),
-    });
-    if (res.ok) return Buffer.from(await res.arrayBuffer());
+    let res;
+    try {
+      res = await fetch("https://api.fish.audio/v1/tts", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", model: MODEL },
+        body: JSON.stringify({ text, reference_id: VOICE, format: "mp3", mp3_bitrate: BITRATE, normalize: true, latency: "normal" }),
+      });
+      if (res.ok) return Buffer.from(await res.arrayBuffer());
+    } catch (e) {
+      // 연결이 끊기면(소켓 오류) 잠깐 쉬었다 다시
+      if (attempt >= 8) throw e;
+      await new Promise((r) => setTimeout(r, 5000 * attempt));
+      continue;
+    }
     const body = await res.text();
     if (res.status === 402) throw new Error(`크레딧 부족(402): ${body}`);
     if (res.status === 401) throw new Error(`키가 틀림(401): ${body}`);
