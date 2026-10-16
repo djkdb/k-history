@@ -6,6 +6,7 @@ import { LISTEN } from "@listen";
 import AUDIO from "@listen-audio";
 import { Gate } from "@/components/gate";
 import { COURSE } from "@/lib/course";
+import { COURSE_ID } from "@/lib/course-id";
 import { fnv } from "@/lib/fnv";
 import {
   RATES,
@@ -56,7 +57,7 @@ function buildQueue(): Track[] {
     s.parts.forEach((p, partIdx) => {
       const h = fnv(p.say);
       const dur = (AUDIO as Record<string, number>)[h];
-      q.push({ pdfIdx, partIdx, pdfTitle: s.title, title: p.t, text: p.say, src: dur ? `/listen/${h}.mp3` : null, dur: dur ?? null });
+      q.push({ pdfIdx, partIdx, pdfTitle: s.title, title: p.t, text: p.say, src: dur ? `/api/audio/${COURSE_ID}/${h}.mp3` : null, dur: dur ?? null });
     }),
   );
   return q;

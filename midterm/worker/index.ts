@@ -79,9 +79,46 @@ async function api(req: Request, env: Env, parts: string[]): Promise<Response> {
   return json({ error: "지원하지 않는 요청" }, 405);
 }
 
+/**
+ * 듣기 녹음 — /api/audio/<과목>/<지문>.mp3
+ * 정적 파일 서빙은 Range 요청을 받지 않아(늘 200 통째) 아이폰 사파리가 재생·탐색을
+ * 못 한다. 그래서 녹음만 여기를 거쳐 요청한 바이트 구간을 206 으로 잘라 준다.
+ * 파일 이름이 글의 지문이라 내용이 바뀌면 이름도 바뀐다 → 오래 캐시해도 된다.
+ */
+const AUDIO = /^\/api\/audio\/(db|ml|se|cs|ir)\/([0-9a-z]+)\.mp3$/;
+async function audio(req: Request, env: Env, course: string, hash: string, origin: string): Promise<Response> {
+  const res = await env.ASSETS.fetch(new Request(`${origin}/${course}/listen/${hash}.mp3`));
+  if (!res.ok) return new Response("없는 녹음", { status: 404 });
+  const buf = await res.arrayBuffer();
+  const size = buf.byteLength;
+  const base = {
+    "content-type": "audio/mpeg",
+    "accept-ranges": "bytes",
+    "cache-control": "public, max-age=31536000, immutable",
+  };
+  const range = req.headers.get("range");
+  const m = range && /bytes=(\d*)-(\d*)/.exec(range);
+  if (!m) return new Response(req.method === "HEAD" ? null : buf, { headers: { ...base, "content-length": String(size) } });
+  let start = m[1] ? Number(m[1]) : 0;
+  let end = m[2] ? Number(m[2]) : size - 1;
+  if (!m[1] && m[2]) {
+    start = Math.max(0, size - Number(m[2]));
+    end = size - 1;
+  }
+  end = Math.min(end, size - 1);
+  if (start > end || start >= size)
+    return new Response(null, { status: 416, headers: { ...base, "content-range": `bytes */${size}` } });
+  return new Response(req.method === "HEAD" ? null : buf.slice(start, end + 1), {
+    status: 206,
+    headers: { ...base, "content-range": `bytes ${start}-${end}/${size}`, "content-length": String(end - start + 1) },
+  });
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
+    const a = AUDIO.exec(url.pathname);
+    if (a && (req.method === "GET" || req.method === "HEAD")) return audio(req, env, a[1], a[2], url.origin);
     if (url.pathname.startsWith("/api/sync/")) {
       try {
         return await api(req, env, url.pathname.slice("/api/sync/".length).split("/").filter(Boolean));

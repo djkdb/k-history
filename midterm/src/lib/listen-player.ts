@@ -18,7 +18,7 @@ export interface Track {
   pdfTitle: string;
   title: string;
   text: string;
-  /** 녹음 주소 — 없으면 기기 음성 */
+  /** 녹음 주소 (/api/audio/… — 과목 경로 밖이라 base 를 붙이지 않는다). 없으면 기기 음성 */
   src: string | null;
   /** 녹음 길이(초) */
   dur: number | null;
@@ -233,7 +233,7 @@ function load(idx: number, startAt = 0, autoplay = true) {
   if (t.src) {
     const a = el();
     set({ mode: "audio" });
-    const url = withBase(t.src);
+    const url = t.src;
     if (!a.src.endsWith(url)) a.src = url;
     a.playbackRate = state.rate;
     const go = () => {
@@ -280,7 +280,7 @@ export function setQueue(queue: Track[]) {
     set({ idx, pos: 0, len: t?.dur ?? 0, mode: t?.src ? "audio" : "tts" });
     if (t?.src) {
       const a = el();
-      a.src = withBase(t.src);
+      a.src = t.src;
       if (s.pos && i >= 0) a.addEventListener("loadedmetadata", () => (a.currentTime = s.pos!), { once: true });
       a.playbackRate = state.rate;
     }
@@ -359,14 +359,14 @@ export async function savedOffline(srcs: string[]): Promise<number> {
   if (typeof caches === "undefined") return 0;
   const c = await caches.open(OFFLINE_CACHE);
   let n = 0;
-  for (const s of srcs) if (await c.match(withBase(s))) n++;
+  for (const s of srcs) if (await c.match(s)) n++;
   return n;
 }
 export async function saveOffline(srcs: string[], onProgress: (done: number) => void): Promise<void> {
   const c = await caches.open(OFFLINE_CACHE);
   let done = 0;
   for (const s of srcs) {
-    const url = withBase(s);
+    const url = s;
     if (!(await c.match(url))) {
       const res = await fetch(url, { cache: "reload" });
       if (!res.ok) throw new Error(`${res.status}`);
@@ -377,5 +377,5 @@ export async function saveOffline(srcs: string[], onProgress: (done: number) => 
 }
 export async function removeOffline(srcs: string[]): Promise<void> {
   const c = await caches.open(OFFLINE_CACHE);
-  for (const s of srcs) await c.delete(withBase(s));
+  for (const s of srcs) await c.delete(s);
 }

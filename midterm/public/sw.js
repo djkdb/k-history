@@ -98,7 +98,7 @@ self.addEventListener("fetch", (event) => {
    * 누른 강의만 listen-audio 캐시에 있다. 있으면 거기서, 재생기가 보내는 Range
    * 요청에 맞춰 잘라서 내준다(사파리는 206 이 아니면 재생하지 않는다).
    */
-  if (url.pathname.startsWith(BASE + "/listen/") && url.pathname.endsWith(".mp3")) {
+  if (url.pathname.startsWith("/api/audio/") && url.pathname.endsWith(".mp3")) {
     event.respondWith(
       caches.open("listen-audio-v1").then((c) =>
         c.match(url.pathname).then((hit) => {
