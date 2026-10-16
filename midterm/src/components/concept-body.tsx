@@ -1,15 +1,25 @@
 "use client";
 
-import { AlertTriangle, ArrowDown, GraduationCap, Lightbulb, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowDown, BookOpen, GraduationCap, Lightbulb, Sparkles } from "lucide-react";
 import type { Concept } from "@/lib/types";
 import { EasyText } from "./easy-text";
 import { Figures } from "./figure";
-import { CompareTable, RichText, Sentences, SqlBlock } from "./ui";
+import { ClozeCtx, CompareTable, RichText, Sentences, SqlBlock } from "./ui";
 
-/** 개념 본문 — 쉽게 말하면 · 요약 · 그림 · 흐름 · 외울 것 · 표 · 예시 · 코드 · 시험엔 이렇게 · 함정 */
+/** 개념 본문 — 자세히 풀어보기 · 쉽게 말하면 · 요약 · 그림 · 흐름 · 외울 것 · 표 · 예시 · 코드 · 시험엔 이렇게 · 함정 */
 export function ConceptBody({ c }: { c: Concept }) {
   return (
     <div>
+      {c.explain && <Explain text={c.explain} />}
+
+      {c.explain && (
+        <p className="mb-3 mt-7 flex items-center gap-2 text-[12px] font-bold text-zinc-500">
+          <span className="h-px flex-1 bg-white/10" />
+          한눈에 정리
+          <span className="h-px flex-1 bg-white/10" />
+        </p>
+      )}
+
       {c.easy && (
         <div className="mb-4 rounded-2xl border border-emerald-400/25 bg-emerald-500/[0.07] p-4">
           <p className="flex items-center gap-1.5 text-[12px] font-bold text-emerald-200">
@@ -107,5 +117,27 @@ function Flow({ steps }: { steps: string[] }) {
         ))}
       </ol>
     </div>
+  );
+}
+
+/** 자세히 풀어보기 — 선생님이 옆에서 말로 풀어 주듯, 문단 단위로 넉넉하게 */
+function Explain({ text }: { text: string }) {
+  const paras = text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  return (
+    <section className="mb-2 rounded-2xl border border-violet-400/25 bg-violet-500/[0.06] p-4 lg:p-5">
+      <p className="flex items-center gap-1.5 text-[12px] font-bold text-violet-200">
+        <BookOpen size={14} /> 자세히 풀어보기
+      </p>
+      {/* 설명 문단은 읽는 글이라 가리고 떠올리기에서 뺀다 */}
+      <ClozeCtx.Provider value={{ on: false, gen: 0 }}>
+        <div className="mt-2.5 flex flex-col gap-3.5">
+          {paras.map((p, i) => (
+            <p key={i} className="text-[15px] leading-[1.9] text-zinc-100 lg:text-[16px]">
+              <RichText>{p}</RichText>
+            </p>
+          ))}
+        </div>
+      </ClozeCtx.Provider>
+    </section>
   );
 }

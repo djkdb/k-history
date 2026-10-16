@@ -19,3 +19,10 @@ export function withEasy(concepts: Concept[], extra: Record<string, EasyExtra>):
     return { ...c, ...x, example, code };
   });
 }
+
+/** 개념에 '자세히 풀어보기' 설명을 붙인다. 없는 개념 id 를 적으면 빌드가 멈춘다. */
+export function withExplain(concepts: Concept[], extra: Record<string, string>): Concept[] {
+  const ids = new Set(concepts.map((c) => c.id));
+  for (const k of Object.keys(extra)) if (!ids.has(k)) throw new Error(`자세히 풀어보기: 없는 개념 id "${k}"`);
+  return concepts.map((c) => (extra[c.id] ? { ...c, explain: extra[c.id] } : c));
+}
