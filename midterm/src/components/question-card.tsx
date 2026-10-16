@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Check, Dices, Eye, Star, X } from "lucide-react";
+import { AlertTriangle, BookOpen, Check, Dices, Eye, Star, X } from "lucide-react";
 import type { Conf, Question } from "@/lib/types";
 import { answerText, isCorrect, SELF_NO, SELF_OK, type Response } from "@/lib/grade";
-import { CONCEPT_MAP } from "@/lib/course";
+import { COURSE, CONCEPT_MAP } from "@/lib/course";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { seededShuffle } from "@/lib/quiz";
 import { useApp } from "@/lib/store";
@@ -107,6 +108,8 @@ export function QuestionCard({
   };
 
   const concept = CONCEPT_MAP[q.concept];
+  /** 줄머리 표시(정답 줄·소제목)로 쓴 해설 */
+  const richExplain = q.src === "pdf" || q.explain.startsWith("== ");
   /** 눈에 보이는 선택 — 채점된 답, 아니면 자신감을 기다리는 답 */
   const chosen = picked ?? pending;
 
@@ -390,8 +393,8 @@ export function QuestionCard({
               </span>
             </p>
           )}
-          {/* PDF 퀴즈 해설은 첫머리에 정답 줄(==)이 따로 있다 */}
-          {!right && q.kind !== "open" && q.src !== "pdf" && (
+          {/* 첫머리에 정답 줄(==)이 있는 해설(PDF 퀴즈·다시 쓴 해설)은 따로 적지 않는다 */}
+          {!right && q.kind !== "open" && !richExplain && (
             <p className="mt-2 text-[13.5px] text-zinc-200">
               정답 <b className="text-zinc-50">{answerText(q)}</b>
               {q.kind === "short" && q.answers.length > 1 && (
@@ -401,7 +404,25 @@ export function QuestionCard({
               )}
             </p>
           )}
-          <Explain text={q.explain} rich={q.src === "pdf"} className="mt-2 text-[13.5px] leading-relaxed text-zinc-300" />
+          <Explain
+            text={q.explain}
+            rich={richExplain}
+            math={q.src === "pdf" || COURSE.id === "ml"}
+            className="mt-2 text-[13.5px] leading-relaxed text-zinc-300"
+          />
+          {concept && mode === "practice" && (
+            <details className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[12.5px] text-zinc-300">
+              <summary className="flex cursor-pointer items-center gap-1.5 font-semibold text-indigo-200">
+                <BookOpen size={13} /> 관련 개념 다시 보기 · {concept.title}
+              </summary>
+              <div className="mt-2 leading-relaxed">
+                <RichText>{concept.easy ?? concept.summary}</RichText>
+              </div>
+              <Link href={`/concept/${concept.id}`} className="mt-2 inline-block font-semibold text-indigo-300">
+                개념 카드에서 자세히 보기 →
+              </Link>
+            </details>
+          )}
           {q.issue && (
             <p className="mt-3 flex gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-[12.5px] leading-relaxed text-amber-100">
               <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-300" />

@@ -63,7 +63,18 @@ export function MathText({ children, math = true }: { children: string; math?: b
  *   rich 이면 줄머리 표시를 읽는다:
  *     ### 소제목   == 정답 줄   !! 기억할 점   - 목록   $$수식$$ (한 줄 전체)
  */
-export function Explain({ text, rich, className }: { text: string; rich?: boolean; className?: string }) {
+export function Explain({
+  text,
+  rich,
+  math = true,
+  className,
+}: {
+  text: string;
+  rich?: boolean;
+  /** $…$ 를 수식으로 읽을까 — $ 를 기호로 쓰는 과목(정보검색 등)에서는 끈다 */
+  math?: boolean;
+  className?: string;
+}) {
   if (!rich) {
     return (
       <p className={className ?? "text-[13.5px] leading-relaxed text-zinc-300"}>
@@ -83,7 +94,7 @@ export function Explain({ text, rich, className }: { text: string; rich?: boolea
           <li key={i} className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-zinc-500" />
             <span className="min-w-0">
-              <MathText>{it}</MathText>
+              <MathText math={math}>{it}</MathText>
             </span>
           </li>
         ))}
@@ -109,7 +120,7 @@ export function Explain({ text, rich, className }: { text: string; rich?: boolea
         <p key={k} className="mt-2 flex gap-2 rounded-xl bg-emerald-500/10 px-3 py-2 font-semibold text-emerald-50">
           <CheckCircle2 size={15} className="mt-[3px] shrink-0 text-emerald-300" />
           <span className="min-w-0">
-            <MathText>{line.slice(3)}</MathText>
+            <MathText math={math}>{line.slice(3)}</MathText>
           </span>
         </p>,
       );
@@ -118,11 +129,11 @@ export function Explain({ text, rich, className }: { text: string; rich?: boolea
         <p key={k} className="mt-2.5 flex gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-amber-50">
           <Lightbulb size={15} className="mt-[3px] shrink-0 text-amber-300" />
           <span className="min-w-0">
-            <MathText>{line.slice(3)}</MathText>
+            <MathText math={math}>{line.slice(3)}</MathText>
           </span>
         </p>,
       );
-    } else if (/^\$\$[\s\S]+\$\$$/.test(line.trim())) {
+    } else if (math && /^\$\$[\s\S]+\$\$$/.test(line.trim())) {
       blocks.push(
         <div key={k} className="my-1.5 overflow-x-auto">
           <Tex tex={line.trim().slice(2, -2).trim()} display />
@@ -131,7 +142,7 @@ export function Explain({ text, rich, className }: { text: string; rich?: boolea
     } else {
       blocks.push(
         <p key={k} className="mt-1">
-          <MathText>{line}</MathText>
+          <MathText math={math}>{line}</MathText>
         </p>,
       );
     }

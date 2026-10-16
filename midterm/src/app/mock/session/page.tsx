@@ -120,7 +120,7 @@ function SessionView() {
                       <Check size={14} className="mt-0.5 shrink-0" /> 정답:{" "}
                       <MathText math={q.src === "pdf"}>{answerText(q)}</MathText>
                     </p>
-                    <Explain text={q.explain} rich={q.src === "pdf"} className="mt-2 text-[12.5px] leading-relaxed text-zinc-300" />
+                    <Explain text={q.explain} rich={q.src === "pdf" || q.explain.startsWith("== ")} math={q.src === "pdf" || COURSE.id === "ml"} className="mt-2 text-[12.5px] leading-relaxed text-zinc-300" />
                     <Link href={`/concept/${q.concept}`} className="mt-2 inline-block text-[12px] font-semibold text-indigo-300">
                       {termLabel(CONCEPT_MAP[q.concept])} 다시 보기 →
                     </Link>

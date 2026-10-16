@@ -270,7 +270,7 @@ function NoteItem({
               <MathText math={q.src === "pdf"}>{answerText(q)}</MathText>
             </b>
           </p>
-          <Explain text={q.explain} rich={q.src === "pdf"} className="mt-2 text-zinc-300" />
+          <Explain text={q.explain} rich={q.src === "pdf" || q.explain.startsWith("== ")} math={q.src === "pdf" || COURSE.id === "ml"} className="mt-2 text-zinc-300" />
           <div className="no-print mt-3 flex items-center gap-3 text-[12px] font-semibold">
             {c && (
               <Link href={`/concept/${c.id}`} className="text-indigo-300">
