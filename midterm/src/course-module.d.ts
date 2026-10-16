@@ -13,6 +13,10 @@ declare module "@course" {
 declare module "@listen" {
   export const LISTEN: import("@/lib/types").ListenScript[];
 }
+declare module "@listen-full" {
+  /** 완전판 — 슬라이드를 빠짐없이 짚는 시험 대비용 */
+  export const LISTEN_FULL: import("@/lib/types").ListenScript[];
+}
 declare module "@listen-audio" {
   /** 대본 조각의 지문(fnv) → 녹음 길이(초). 녹음이 없는 조각은 기기 음성으로 읽는다 */
   const audio: Record<string, number>;

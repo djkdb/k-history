@@ -32,8 +32,9 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias["@course"] = path.join(COURSE_DIR, "index.ts");
     // 듣기 대본은 듣기 화면만 쓴다 — 과목 자료(@course)에 넣으면 모든 화면이 함께 받는다
-    config.resolve.alias["@listen"] = path.join(COURSE_DIR, "listen.ts");
-    config.resolve.alias["@listen-audio"] = path.join(COURSE_DIR, "listen-audio.json");
+    config.resolve.alias["@listen$"] = path.join(COURSE_DIR, "listen.ts");
+    config.resolve.alias["@listen-full$"] = path.join(COURSE_DIR, "listen-full.ts");
+    config.resolve.alias["@listen-audio$"] = path.join(COURSE_DIR, "listen-audio.json");
     return config;
   },
 };

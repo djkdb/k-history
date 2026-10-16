@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, CloudDownload, Headphones, Pause, Play, Redo2, SkipBack, SkipForward, Trash2, Undo2 } from "lucide-react";
 import { LISTEN } from "@listen";
+import { LISTEN_FULL } from "@listen-full";
 import AUDIO from "@listen-audio";
 import { Gate } from "@/components/gate";
 import { COURSE } from "@/lib/course";
-import { COURSE_ID } from "@/lib/course-id";
+import { COURSE_ID, KEY } from "@/lib/course-id";
 import { fnv } from "@/lib/fnv";
 import {
   RATES,
@@ -25,6 +26,7 @@ import {
   usePlayer,
   type Track,
 } from "@/lib/listen-player";
+import type { ListenScript } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /**
@@ -49,9 +51,12 @@ function fmt(sec: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-function buildQueue(): Track[] {
+type Mode = "full" | "short";
+const MODE_KEY = `${KEY}:listen-mode`;
+
+function buildQueue(list: ListenScript[]): Track[] {
   const order = COURSE.pdfs ?? [];
-  const scripts = [...LISTEN].sort((a, b) => order.indexOf(a.pdf) - order.indexOf(b.pdf));
+  const scripts = [...list].sort((a, b) => order.indexOf(a.pdf) - order.indexOf(b.pdf));
   const q: Track[] = [];
   scripts.forEach((s, pdfIdx) =>
     s.parts.forEach((p, partIdx) => {
@@ -64,7 +69,27 @@ function buildQueue(): Track[] {
 }
 
 function Inner() {
-  const queue = useMemo(buildQueue, []);
+  // 완전판이 있으면 기본은 완전판 (시험 대비). 요약판은 복습·자투리 시간용
+  const hasFull = LISTEN_FULL.length > 0;
+  const [mode, setMode] = useState<Mode>(hasFull ? "full" : "short");
+  useEffect(() => {
+    try {
+      const m = localStorage.getItem(MODE_KEY);
+      if ((m === "full" && hasFull) || m === "short") setMode(m);
+    } catch {
+      /* 저장이 막힌 창 */
+    }
+  }, [hasFull]);
+  const pick = (m: Mode) => {
+    setMode(m);
+    try {
+      localStorage.setItem(MODE_KEY, m);
+    } catch {
+      /* 무시 */
+    }
+  };
+  const list = mode === "full" && hasFull ? LISTEN_FULL : LISTEN;
+  const queue = useMemo(() => buildQueue(list), [list]);
   const st = usePlayer();
   const cur = st.queue[st.idx];
   const [open, setOpen] = useState<number | null>(null);
@@ -77,10 +102,10 @@ function Inner() {
   const pdfs = useMemo(() => {
     const m: { title: string; pdf: string; tracks: { t: Track; i: number }[] }[] = [];
     queue.forEach((t, i) => {
-      (m[t.pdfIdx] ??= { title: t.pdfTitle, pdf: LISTEN.find((s) => s.title === t.pdfTitle)?.pdf ?? "", tracks: [] }).tracks.push({ t, i });
+      (m[t.pdfIdx] ??= { title: t.pdfTitle, pdf: list.find((s) => s.title === t.pdfTitle)?.pdf ?? "", tracks: [] }).tracks.push({ t, i });
     });
     return m;
-  }, [queue]);
+  }, [queue, list]);
 
   const recorded = queue.filter((t) => t.src).length;
   const total = queue.reduce((a, t) => a + (t.dur ?? estSec(t.text)), 0);
@@ -96,6 +121,28 @@ function Inner() {
       <p className="mt-1.5 text-[13.5px] leading-relaxed text-zinc-400">
         강의 PDF 하나를 한 편의 강의처럼 귀로 들어요 · {pdfs.length}강 · 약 {Math.round(total / 60)}분
       </p>
+      {hasFull && (
+        <div className="mt-3 grid grid-cols-2 gap-1 rounded-xl bg-white/[0.05] p-1 text-[13.5px] font-semibold" role="tablist">
+          {(
+            [
+              ["full", "📚 완전판", "슬라이드 빠짐없이 · 시험 대비"],
+              ["short", "⚡ 요약판", "핵심만 · 복습용"],
+            ] as const
+          ).map(([m, label, sub]) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              aria-selected={mode === m}
+              onClick={() => pick(m)}
+              className={cn("rounded-lg px-2 py-2 leading-tight", mode === m ? "bg-indigo-500 text-white" : "text-zinc-400")}
+            >
+              {label}
+              <span className={cn("block text-[11px] font-normal", mode === m ? "text-indigo-100" : "text-zinc-500")}>{sub}</span>
+            </button>
+          ))}
+        </div>
+      )}
       {recorded < queue.length ? (
         <p className="mt-3 rounded-xl border border-amber-400/25 bg-amber-500/[0.07] px-3.5 py-2.5 text-[12.5px] leading-relaxed text-amber-100/90">
           {recorded === 0 ? "아직 녹음 전이라" : `녹음 ${recorded}/${queue.length}조각 — 나머지는`} 기기 음성으로 읽어요. 기기 음성은 <b>화면을 켜 둬야</b> 이어져요.

@@ -270,22 +270,29 @@ function advance() {
 export function setQueue(queue: Track[]) {
   const same = state.queue.length === queue.length && state.queue.every((t, i) => t.text === queue[i].text && t.src === queue[i].src);
   if (same) return;
-  const wasEmpty = state.queue.length === 0;
+  const first = state.queue.length === 0;
+  // 완전판 ↔ 요약판을 바꾸면 듣던 것을 멈추고 새 목록의 그 강의 처음으로
+  const curPdf = state.queue[state.idx]?.pdfIdx;
+  if (!first) {
+    audio?.pause();
+    stopTts();
+    set({ playing: false });
+  }
   const s = readSaved();
   set({ queue, rate: s.rate ?? state.rate, stopAtPdfEnd: s.stop ?? state.stopAtPdfEnd });
-  if (wasEmpty) {
-    const i = queue.findIndex((t) => t.pdfTitle === s.pdf && t.partIdx === s.part);
-    const idx = i >= 0 ? i : 0;
-    const t = queue[idx];
-    set({ idx, pos: 0, len: t?.dur ?? 0, mode: t?.src ? "audio" : "tts" });
-    if (t?.src) {
-      const a = el();
-      a.src = t.src;
-      if (s.pos && i >= 0) a.addEventListener("loadedmetadata", () => (a.currentTime = s.pos!), { once: true });
-      a.playbackRate = state.rate;
-    }
-    mediaSession();
+  let i = -1;
+  if (first) i = queue.findIndex((t) => t.pdfTitle === s.pdf && t.partIdx === s.part);
+  else if (curPdf != null) i = queue.findIndex((t) => t.pdfIdx === curPdf);
+  const idx = i >= 0 ? i : 0;
+  const t = queue[idx];
+  set({ idx, pos: 0, len: t?.dur ?? 0, mode: t?.src ? "audio" : "tts" });
+  if (t?.src) {
+    const a = el();
+    a.src = t.src;
+    if (first && s.pos && i >= 0) a.addEventListener("loadedmetadata", () => (a.currentTime = s.pos!), { once: true });
+    a.playbackRate = state.rate;
   }
+  mediaSession();
 }
 
 export function playAt(idx: number) {
