@@ -20,7 +20,7 @@ import { QUESTIONS_4 } from "./questions-4";
  * 데이터베이스시스템 (5118026-02) — Yoon Suk Kang 교수님
  *
  * 받은 자료: Lecture 1 Course Overview, Lecture 2 Intro & ER, Practice 1 ER(+풀이),
- * Lecture 3 RDB, Practice 2 RDB Mapping, Lecture 4 SQL, Lecture 5 View,
+ * Lecture 3 RDB, Practice 2 RDB Mapping, Lecture 4 SQL, Practice 3 SQL(+풀이), Lecture 5 View,
  * Lecture 6 Relational Algebra.
  *
  * 중간고사 범위(Weeks 1~7) 가운데 6주차 Functional Dependencies and
@@ -47,6 +47,7 @@ const course: Course = {
     "Practice 1. ER Model (해답)": "notes-P1.pdf",
     "Lecture 3. Relational Data Model": "notes-L3.pdf",
     "Practice 2. RDB Mapping (해답)": "notes-P2.pdf",
+    "Practice 3. SQL Hands-on (해답)": "notes-P3.pdf",
     "Lecture 4. Basic and Advanced SQL": "notes-L4.pdf",
     "Lecture 5. Advanced SQL: View": "notes-L5.pdf",
     "Lecture 6. Relational Algebra": "notes-L6.pdf",

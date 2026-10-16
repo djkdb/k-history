@@ -1,6 +1,6 @@
 import type { NoteSection } from "@/lib/types";
 
-/** DB 강의 노트 (2) — Lecture 3 · Practice 2 · Lecture 4 · Lecture 5 · Lecture 6 */
+/** DB 강의 노트 (2) — Lecture 3 · Practice 2 · Lecture 4 · Practice 3 · Lecture 5 · Lecture 6 */
 export const NOTES_2: Record<string, NoteSection[]> = {
   rel: [
     {
@@ -496,6 +496,74 @@ export const NOTES_2: Record<string, NoteSection[]> = {
         "**Action**: 자동 실행할 규칙 행동 — SQL 문의 나열, DB 트랜잭션, 또는 외부 프로그램",
       ],
       code: "CREATE ASSERTION SALARY_CONSTRAINT\nCHECK ( NOT EXISTS ( SELECT *\n                     FROM   EMPLOYEE E, EMPLOYEE M, DEPARTMENT D\n                     WHERE  E.Salary > M.Salary\n                       AND  E.Dno = D.Dnumber\n                       AND  D.Mgr_ssn = M.Ssn ) );\n\nCREATE TRIGGER SALARY_VIOLATION\nBEFORE INSERT OR UPDATE OF SALARY, SUPERVISOR_SSN ON EMPLOYEE\nFOR EACH ROW\nWHEN ( NEW.SALARY > ( SELECT SALARY FROM EMPLOYEE\n                      WHERE SSN = NEW.SUPERVISOR_SSN ) )\n  INFORM_SUPERVISOR(NEW.Supervisor_ssn, NEW.Ssn);",
+    },
+    {
+      title: "Practice 3 — SQL 실습 (해답)",
+      en: "SQL (Hands-on Practices)",
+      lines: [
+        "Recap: **Nested Query**(다른 질의의 WHERE 안에 든 SELECT-FROM-WHERE 블록) · **Joined Table**(내부·외부 조인) · **Aggregate Functions**(여러 튜플을 요약) · **Grouping**(튜플을 그룹으로 나눔)",
+        "실습 세 종류: ① 자연어 질의를 SQL로 쓰기 (Exercise 1·2) ② SQL을 실행한 결과를 쓰고 원래 의도를 추론하기 (Exercise 3·4·5) ③ SQL의 오류를 찾아 고치기 (Exercise 6)",
+        "아래 결과는 교안의 COMPANY DB 상태(EMPLOYEE 8명: Smith·Wong·Zelaya·Wallace·Narayan·English·Jabbar·Borg)로 계산했다 — pptx 뒤쪽의 정답 슬라이드와 같다",
+      ],
+    },
+    {
+      title: "Exercise 1 — 자연어를 SQL로 (COMPANY)",
+      lines: [
+        "**Q1-1** 전체 직원 중 월급이 가장 높은 직원이 있는 부서에서 일하는 모든 직원의 이름 → 2단 중첩: 가장 안쪽 MAX(Salary) → 그 월급인 직원의 Dno → 그 Dno인 직원",
+        "· 결과: 최고 월급 55000 = Borg(Dno 1) → Dno 1 직원은 **James E Borg** 한 명",
+        "**Q1-2** 상사의 상사가 Ssn '888665555'인 모든 직원의 이름 → 안쪽: Super_ssn = '888665555'인 직원의 Ssn(= Wong, Wallace) → 바깥: Super_ssn이 그 안에 있는 직원",
+        "· 결과: Wong의 부하 **Smith, Narayan, English** + Wallace의 부하 **Zelaya, Jabbar** — 교안 문제의 '88866555'는 9자리 '888665555'의 오타",
+        "· 정답 슬라이드는 Super_ssn = (서브쿼리)로 썼지만 서브쿼리 결과가 2명(Wong, Wallace)이라 **=** 는 오류가 날 수 있다 → **IN** 이 안전",
+        "**Q1-3** 회사에서 가장 적게 받는 직원보다 $10,000 이상 더 받는 직원의 이름 → WHERE Salary − 10000 >= (SELECT MIN(Salary) FROM EMPLOYEE)",
+        "· 결과: 최저 25000 → 35000 이상: **Wong 40000, Wallace 43000, Narayan 38000, Borg 55000**",
+      ],
+      code: "-- Q1-1\nSELECT Fname, Minit, Lname FROM EMPLOYEE\nWHERE Dno = ( SELECT Dno FROM EMPLOYEE\n              WHERE Salary = ( SELECT MAX(Salary) FROM EMPLOYEE ) );\n\n-- Q1-2 (교안은 '=', 여러 행이므로 IN 이 안전)\nSELECT Fname, Minit, Lname FROM EMPLOYEE\nWHERE Super_ssn IN ( SELECT Ssn FROM EMPLOYEE\n                     WHERE Super_ssn = '888665555' );\n\n-- Q1-3\nSELECT Fname, Minit, Lname FROM EMPLOYEE\nWHERE Salary - 10000 >= ( SELECT MIN(Salary) FROM EMPLOYEE );",
+    },
+    {
+      title: "Exercise 2 — 자연어를 SQL로 (UNIVERSITY)",
+      lines: [
+        "**Q2-1** 모든 과목이 A인(straight-A) 학생의 이름과 전공 → **A가 아닌 성적이 하나도 없다** = NOT EXISTS (Grade <> 'A')",
+        "**Q2-2** 어떤 과목에서도 A를 받지 못한 학생의 이름과 전공 → **A인 성적이 하나도 없다** = NOT EXISTS (Grade = 'A')",
+        "· 두 문제의 차이는 안쪽 조건의 **<> 'A'** 와 **= 'A'** 하나뿐 — 시험에서 헷갈리기 좋다",
+        "· 교안 DB: Smith(17)는 B, C / Brown(8)은 A, A, B, A → Q2-1 결과 **없음**(Brown에게 B가 있다), Q2-2 결과 **Smith, CS**",
+        "· 정답 슬라이드의 'NOT EXIST'는 **NOT EXISTS** 의 오타",
+      ],
+      code: "-- Q2-1 straight-A\nSELECT S.Name, S.Major FROM STUDENT AS S\nWHERE NOT EXISTS ( SELECT * FROM GRADE_REPORT AS G\n                   WHERE G.Student_number = S.Student_number\n                     AND G.Grade <> 'A' );\n\n-- Q2-2 A가 하나도 없음\nSELECT S.Name, S.Major FROM STUDENT AS S\nWHERE NOT EXISTS ( SELECT * FROM GRADE_REPORT AS G\n                   WHERE G.Student_number = S.Student_number\n                     AND G.Grade = 'A' );",
+    },
+    {
+      title: "Exercise 3·4·5 — 실행 결과와 질의 의도",
+      lines: [
+        "**Ex 3** 결과: **Computerization (Stafford), Newbenefits (Stafford)** / 의도: 'Administration' 부서가 담당하는 모든 프로젝트의 이름과 위치",
+        "**Ex 4** NOT EXISTS ( 내가 일하는 프로젝트 **EXCEPT** 내 부서가 관리하는 프로젝트 ) → 차집합이 비었다 = 내 부서 프로젝트에서만 일한다",
+        "· 결과: **John Smith, Joyce English, Ramesh Narayan, James Borg, Ahmad Jabbar, Alicia Zelaya** / 의도: 자신이 속한 부서에서 관리하는 프로젝트에만 참여하는 모든 직원의 이름과 성",
+        "· 빠지는 사람: Wong(Dno 5)은 Computerization(Dnum 4)·Reorganization(Dnum 1)에도, Wallace(Dno 4)는 Reorganization(Dnum 1)에도 참여",
+        "**Ex 5** 월급 < 자기 부서 관리자의 월급 AND 월급 > 자기 부서 평균 월급, ORDER BY Dno ASC, Salary DESC",
+        "· 계산: 5번 부서 평균 (30000+40000+38000+25000)/4 = **33250**, 관리자 Wong 40000 → 사이에 있는 **Ramesh Narayan 38000** / 4번 부서 평균 31000, 관리자 Wallace 43000 → 해당 없음 / 1번은 Borg 혼자",
+        "· 의도: 자신이 속한 부서의 평균 급여보다 높고 해당 부서 관리자의 급여보다 낮은 모든 직원의 이름·성·급여를, 부서 번호 오름차순·급여 내림차순으로",
+      ],
+      code: "-- Ex 3\nSELECT P.Pname, P.Plocation FROM PROJECT P\nWHERE P.Dnum = ( SELECT D.Dnumber FROM DEPARTMENT D\n                 WHERE D.Dname = 'Administration' );\n\n-- Ex 4\nSELECT E.Fname, E.Lname FROM EMPLOYEE AS E\nWHERE NOT EXISTS (\n  ( SELECT W.Pno FROM WORKS_ON AS W WHERE W.Essn = E.Ssn )\n  EXCEPT\n  ( SELECT P.Pnumber FROM PROJECT AS P WHERE P.Dnum = E.Dno ) );\n\n-- Ex 5\nSELECT E.Fname, E.Lname, E.Salary FROM EMPLOYEE AS E\nWHERE E.Salary < ( SELECT M.Salary FROM EMPLOYEE AS M\n                   WHERE M.Ssn = ( SELECT D.Mgr_ssn FROM DEPARTMENT AS D\n                                   WHERE D.Dnumber = E.Dno ) )\n  AND E.Salary > ( SELECT AVG(E2.Salary) FROM EMPLOYEE AS E2\n                   WHERE E2.Dno = E.Dno )\nORDER BY E.Dno ASC, E.Salary DESC;",
+    },
+    {
+      title: "Exercise 6 (1) — 오류 찾기: 0명인 프로젝트가 사라진다",
+      lines: [
+        "Q. 각 프로젝트마다 번호·이름·20시간 넘게 일하는 직원 수, 프로젝트 번호 오름차순",
+        "주어진 SQL: PROJECT **JOIN** WORKS_ON … **WHERE W.Hours >= 20** … COUNT(*) → 결과 ProductX 2, ProductY 1, ProductZ 1, Computerization 1, Newbenefits 2",
+        "**오류**: 조건을 만족하는 직원이 0명인 **Reorganization(20)** 이 결과에서 **빠진다** — 내부 조인 + WHERE가 그 프로젝트의 행을 모두 지우기 때문",
+        "**수정**: **LEFT JOIN** 으로 바꾸고 Hours 조건을 **ON 절** 안으로 옮기고, **COUNT(*)** 대신 **COUNT(W.Essn)** (NULL은 세지 않으므로 0이 나온다) → Reorganization 0이 추가",
+        "· 교안 정답도 >= 20 을 그대로 둔다. 문제 문장 'more than 20'을 엄밀히 따르면 > 20 이지만 시험엔 교안 기준",
+      ],
+      code: "-- 수정한 질의\nSELECT P.Pnumber, P.Pname, COUNT(W.Essn)\nFROM PROJECT AS P LEFT JOIN WORKS_ON AS W\n  ON (P.Pnumber = W.Pno AND W.Hours >= 20)\nGROUP BY P.Pnumber, P.Pname\nORDER BY Pnumber ASC;",
+    },
+    {
+      title: "Exercise 6 (2) — 오류 찾기: 조인 때문에 중복과 잘못된 평균",
+      lines: [
+        "Q. 프로젝트에 하나 이상 참여하고 자기 부서 평균 월급보다 많이 받는 직원의 이름·부서 번호·월급",
+        "주어진 SQL: EMPLOYEE **JOIN WORKS_ON** 으로 바깥과 서브쿼리 모두 조인 → 결과에 **Wallace 2번, Wong 4번**, Narayan 1번 (참여 프로젝트 수만큼 행이 생김)",
+        "**오류 ①** 바깥 조인 때문에 같은 직원이 프로젝트 수만큼 **중복** 출력",
+        "**오류 ②** 서브쿼리의 AVG도 조인된 행으로 계산돼서 프로젝트를 많이 하는 직원의 월급이 여러 번 들어간 **잘못된 평균**",
+        "**수정**: 프로젝트 참여 여부는 **E.Ssn IN (SELECT W.Essn FROM WORKS_ON AS W)** 로 확인하고, 평균은 **EMPLOYEE만으로** 계산 → 결과 **Wallace 43000, Wong 40000, Narayan 38000** (부서 4 평균 31000, 부서 5 평균 33250)",
+      ],
+      code: "-- 수정한 질의\nSELECT E.Fname, E.Lname, E.Dno, E.Salary\nFROM EMPLOYEE AS E\nWHERE E.Ssn IN ( SELECT W.Essn FROM WORKS_ON AS W )\n  AND E.Salary > ( SELECT AVG(E2.Salary) FROM EMPLOYEE AS E2\n                   WHERE E2.Dno = E.Dno )\nORDER BY Salary DESC;",
     },
   ],
 

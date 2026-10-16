@@ -517,4 +517,45 @@ RESULT    ← π Fname, Lname, Salary (DEP5_EMPS)`,
     example:
       "R(Essn, Pno) = {(a,1),(a,2),(b,1),(c,1),(c,2),(c,3)}, S(Pno) = {1,2} → R ÷ S = {a, c}. b는 2번 프로젝트가 없어서 빠진다.",
   },
+  {
+    id: "sql-practice3-write",
+    chapter: "sqladv",
+    title: "SQL 실습: 자연어를 SQL로",
+    en: "Practice 3 — Writing SQL from Natural Language",
+    importance: "high",
+    summary:
+      "자연어 질의를 **중첩 질의·집계·NOT EXISTS**로 옮기는 연습. '가장 ~한' → **MAX/MIN 서브쿼리**, '상사의 상사' → **서브쿼리 두 단계**, '모두 A' → **A가 아닌 게 없다(NOT EXISTS … <> 'A')**.",
+    points: [
+      "Q1-1 최고 월급 직원의 부서 사람들 → MAX(Salary) → 그 Dno → 결과 **James Borg**",
+      "Q1-2 상사의 상사가 888665555 → 결과 **Smith, Narayan, English, Zelaya, Jabbar** (서브쿼리가 여러 행이면 = 대신 **IN**)",
+      "Q1-3 최저 월급보다 10000 이상 → Salary − 10000 >= MIN → **Wong, Wallace, Narayan, Borg**",
+      "Q2-1 straight-A = NOT EXISTS (Grade **<>** 'A') / Q2-2 A가 하나도 없음 = NOT EXISTS (Grade **=** 'A') → Smith",
+    ],
+    code: `-- 모든 과목이 A인 학생
+SELECT S.Name, S.Major FROM STUDENT AS S
+WHERE NOT EXISTS ( SELECT * FROM GRADE_REPORT AS G
+                   WHERE G.Student_number = S.Student_number
+                     AND G.Grade <> 'A' );`,
+  },
+  {
+    id: "sql-practice3-errors",
+    chapter: "sqladv",
+    title: "SQL 실습: 결과 쓰기와 오류 찾기",
+    en: "Practice 3 — Inferring Output and Detecting Errors",
+    importance: "high",
+    summary:
+      "SQL을 COMPANY DB에서 손으로 실행해 결과를 쓰고 의도를 추론한다. 대표 오류 둘: **내부 조인 + WHERE 로 0인 그룹이 사라짐**(→ LEFT JOIN, 조건은 ON, COUNT(열)), **불필요한 조인으로 중복 행과 잘못된 AVG**(→ IN 서브쿼리).",
+    points: [
+      "Ex 3 Administration 부서 프로젝트 → **Computerization, Newbenefits (Stafford)**",
+      "Ex 4 NOT EXISTS (내 프로젝트 EXCEPT 내 부서 프로젝트) = 내 부서 프로젝트에만 참여 → Wong·Wallace만 빠짐",
+      "Ex 5 부서 평균 < 월급 < 부서 관리자 월급 → **Ramesh Narayan 38000** (5번 부서 평균 33250)",
+      "Ex 6-1 Reorganization(0명)이 빠지는 오류 → **LEFT JOIN … ON (… AND Hours >= 20)**, **COUNT(W.Essn)**",
+      "Ex 6-2 JOIN WORKS_ON 때문에 Wong 4번·Wallace 2번 중복, 평균도 왜곡 → **E.Ssn IN (SELECT Essn FROM WORKS_ON)**",
+    ],
+    code: `SELECT P.Pnumber, P.Pname, COUNT(W.Essn)
+FROM PROJECT AS P LEFT JOIN WORKS_ON AS W
+  ON (P.Pnumber = W.Pno AND W.Hours >= 20)
+GROUP BY P.Pnumber, P.Pname
+ORDER BY Pnumber ASC;`,
+  },
 ];
