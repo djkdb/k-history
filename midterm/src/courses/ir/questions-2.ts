@@ -3,9 +3,9 @@ import type { Question } from "@/lib/types";
 /* IIR 3 · IIR 4 */
 export const QUESTIONS_2: Question[] = [
   // dictionary
-  { kind: "mc", id: "ir-q-dc-1", concept: "dictionary", q: "용어 어휘(term vocabulary)와 사전(dictionary)의 관계로 옳은 것은?", options: ["둘은 같은 말", "어휘는 데이터, 사전은 그것을 저장하는 자료구조", "사전은 데이터, 어휘는 자료구조", "어휘는 포스팅의 다른 이름"], answer: 1, explain: "교안 정의." },
-  { kind: "mc", id: "ir-q-dc-2", concept: "dictionary", q: "고정 폭 사전 항목의 바이트 구성(term / df / pointer)은?", options: ["8 / 4 / 4", "20 / 4 / 4", "20 / 8 / 8", "12 / 4 / 4"], answer: 1, explain: "(20 + 4 + 4) × 400,000 = 11.2MB." },
-  { kind: "ox", id: "ir-q-dc-3", concept: "dictionary", q: "Tolerant retrieval deals with the case where there is no exact match between query term and document term.", answer: true, explain: "와일드카드와 철자 교정." },
+  { kind: "mc", id: "ir-q-dc-1", concept: "dictionary", q: "용어 어휘(term vocabulary)와 사전(dictionary)의 관계로 옳은 것은?", options: ["둘은 같은 말", "어휘는 데이터, 사전은 그것을 저장하는 자료구조", "사전은 데이터, 어휘는 자료구조", "어휘는 포스팅의 다른 이름"], answer: 1, explain: "== 정답: 어휘는 데이터, 사전은 그것을 저장하는 자료구조\n### 왜 정답인가요\n**용어 어휘(term vocabulary)** 는 \"어떤 단어들이 있나\"라는 **데이터**이고, **사전(dictionary)** 은 그 어휘를 저장하는 **자료구조**(배열, 해시, 트리)예요. 같은 책이라도 어느 책꽂이에 꽂느냐가 다른 것처럼요.\n### 다른 보기\n- 둘은 같은 말 / 반대 / 포스팅의 다른 이름: 교안 정의와 달라요." },
+  { kind: "mc", id: "ir-q-dc-2", concept: "dictionary", q: "고정 폭 사전 항목의 바이트 구성(term / df / pointer)은?", options: ["8 / 4 / 4", "20 / 4 / 4", "20 / 8 / 8", "12 / 4 / 4"], answer: 1, explain: "== 정답: 20 / 4 / 4\n### 풀이\n고정 폭 사전 항목 = 용어 **20바이트** + 문서 빈도 **4바이트** + 포스팅 포인터 **4바이트** = 28바이트. 로이터 40만 용어면 28 × 400,000 = **11.2MB**예요." },
+  { kind: "ox", id: "ir-q-dc-3", concept: "dictionary", q: "Tolerant retrieval deals with the case where there is no exact match between query term and document term.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n**허용 검색(tolerant retrieval)** 은 질의어와 문서 용어가 **정확히 일치하지 않을 때**도 찾아 주는 거예요. 3강에서는 **와일드카드 질의**와 **철자 교정**을 다뤄요." },
 
   // hash-tree
   { kind: "mc", id: "ir-q-ht-1", concept: "hash-tree", q: "해시 사전의 단점이 아닌 것은?", options: ["변형어(résumé) 찾기 불가", "접두사 검색 불가", "어휘 증가 시 재해싱", "조회 시간이 O(log M)"], answer: 3, explain: "해시 조회는 상수 시간. O(log M)은 트리." },
