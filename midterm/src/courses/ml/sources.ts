@@ -12,7 +12,8 @@ const F = [
   "ML-8 신경망 - I",
   "ML-8 신경망 - II",
   "ML-9 딥러닝 - I",
-  "ML-9 딥러닝 - CNN"
+  "ML-9 딥러닝 - CNN",
+  "ML-9 CNN 모델"
 ] as const;
 
 export const PDFS: string[] = [...F];
@@ -89,4 +90,13 @@ export const SOURCES: Record<string, PdfRef[]> = {
   "pooling": [{ file: F[10], from: 26, to: 28 }],
   "cnn-architecture": [{ file: F[10], from: 30, to: 30 }],
   "autodiff": [{ file: F[10], from: 33, to: 34 }],
+  "lenet-alexnet": [{ file: F[11], from: 4, to: 5 }],
+  "vggnet": [{ file: F[11], from: 6, to: 8 }],
+  "googlenet": [{ file: F[11], from: 9, to: 12 }],
+  "resnet": [{ file: F[11], from: 13, to: 16 }],
+  "densenet-dpn": [{ file: F[11], from: 17, to: 21 }],
+  "senet": [{ file: F[11], from: 22, to: 24 }],
+  "mobilenet": [{ file: F[11], from: 25, to: 31 }],
+  "efficientnet-convnext": [{ file: F[11], from: 32, to: 35 }],
+  "cnn-model-compare": [{ file: F[11], from: 36, to: 37 }],
 };

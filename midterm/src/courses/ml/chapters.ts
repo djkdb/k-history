@@ -12,4 +12,5 @@ export const CHAPTERS: Chapter[] = [
   { id: "nn2", title: "신경망 II", en: "Neural Networks II", source: "ML-8 신경망 - II", blurb: "이진·다부류·다중레이블 분류, 정수·one-hot 인코딩, MSE·교차 엔트로피, 소프트맥스" },
   { id: "dl", title: "딥러닝", en: "Deep Learning I", source: "ML-9 딥러닝 - I", blurb: "기울기 소멸과 ReLU, 가중치 초기화(Xavier·He), 규제화·드롭아웃·배치 정규화, 미니배치, 옵티마이저(모멘텀·Adagrad·RMSprop·Adam)" },
   { id: "cnn", title: "CNN", en: "Convolutional Neural Networks", source: "ML-9 딥러닝 - CNN", blurb: "컨볼루션·스트라이드·패딩·특징지도, 여러 컨볼루션, 풀링, CNN 구조와 파라미터 수, 자동 미분" },
+  { id: "cnnm", title: "CNN 모델", en: "CNN Models", source: "ML-9 CNN 모델", blurb: "LeNet·AlexNet·VGGNet(3×3)·GoogleNet(인셉션·1×1)·ResNet(잔차·지름길)·DenseNet·DPN·SENet·MobileNet(깊이별 분할)·ShuffleNet·EfficientNet·ConvNeXt, Top-1·Top-5" },
 ];
