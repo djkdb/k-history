@@ -2,7 +2,8 @@ import type { Course } from "@/lib/types";
 import { withSources } from "@/lib/sources";
 import { PDFS, SOURCES } from "./sources";
 import { withFigures } from "@/lib/figures";
-import { withEasy } from "@/lib/easy";
+import { withEasy, withExplain } from "@/lib/easy";
+import { EXPLAIN } from "./explain";
 import { CHAPTERS } from "./chapters";
 import { FIGURES } from "./figures";
 import { CONCEPTS } from "./concepts";
@@ -36,7 +37,7 @@ const course: Course = {
   color: "#10b981",
   symbol: "🛠️",
   chapters: CHAPTERS,
-  concepts: withSources(withFigures(withEasy(CONCEPTS, EASY), FIGURES), SOURCES),
+  concepts: withSources(withFigures(withExplain(withEasy(CONCEPTS, EASY), EXPLAIN), FIGURES), SOURCES),
   pdfs: PDFS,
   notesPdf: {
     "#1 Ch1 Software Quality and Principles": "notes-1.pdf",
