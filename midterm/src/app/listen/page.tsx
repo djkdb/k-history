@@ -2,13 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Check, CloudDownload, Headphones, Pause, Play, Redo2, SkipBack, SkipForward, Trash2, Undo2 } from "lucide-react";
-import { LISTEN } from "@listen";
-import { LISTEN_FULL } from "@listen-full";
-import AUDIO from "@listen-audio";
 import { Gate } from "@/components/gate";
 import { COURSE } from "@/lib/course";
-import { COURSE_ID, KEY } from "@/lib/course-id";
-import { fnv } from "@/lib/fnv";
+import { HAS_FULL, MODE_KEY, buildQueue, listFor, savedMode, type ListenMode } from "@/lib/listen-queue";
 import {
   RATES,
   playAt,
@@ -51,35 +47,13 @@ function fmt(sec: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-type Mode = "full" | "short";
-const MODE_KEY = `${KEY}:listen-mode`;
-
-function buildQueue(list: ListenScript[]): Track[] {
-  const order = COURSE.pdfs ?? [];
-  const scripts = [...list].sort((a, b) => order.indexOf(a.pdf) - order.indexOf(b.pdf));
-  const q: Track[] = [];
-  scripts.forEach((s, pdfIdx) =>
-    s.parts.forEach((p, partIdx) => {
-      const h = fnv(p.say);
-      const dur = (AUDIO as Record<string, number>)[h];
-      q.push({ pdfIdx, partIdx, pdfTitle: s.title, title: p.t, text: p.say, src: dur ? `/api/audio/${COURSE_ID}/${h}.mp3` : null, dur: dur ?? null });
-    }),
-  );
-  return q;
-}
+type Mode = ListenMode;
 
 function Inner() {
   // 완전판이 있으면 기본은 완전판 (시험 대비). 요약판은 복습·자투리 시간용
-  const hasFull = LISTEN_FULL.length > 0;
+  const hasFull = HAS_FULL;
   const [mode, setMode] = useState<Mode>(hasFull ? "full" : "short");
-  useEffect(() => {
-    try {
-      const m = localStorage.getItem(MODE_KEY);
-      if ((m === "full" && hasFull) || m === "short") setMode(m);
-    } catch {
-      /* 저장이 막힌 창 */
-    }
-  }, [hasFull]);
+  useEffect(() => setMode(savedMode()), []);
   const pick = (m: Mode) => {
     setMode(m);
     try {
@@ -88,7 +62,7 @@ function Inner() {
       /* 무시 */
     }
   };
-  const list = mode === "full" && hasFull ? LISTEN_FULL : LISTEN;
+  const list = listFor(mode);
   const queue = useMemo(() => buildQueue(list), [list]);
   const st = usePlayer();
   const cur = st.queue[st.idx];

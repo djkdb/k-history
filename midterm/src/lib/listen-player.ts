@@ -58,7 +58,16 @@ let state: PlayerState = {
   started: false,
 };
 const subs = new Set<() => void>();
+/** 이 탭에서 듣기를 켰다는 표시 — 새로고침돼도 작은 재생 막대를 되살린다 */
+const ON = `${KEY}:listen-on`;
 function set(p: Partial<PlayerState>) {
+  if (p.started && !state.started) {
+    try {
+      sessionStorage.setItem(ON, "1");
+    } catch {
+      /* 막힌 창 */
+    }
+  }
   state = { ...state, ...p };
   subs.forEach((f) => f());
 }
@@ -67,6 +76,25 @@ const subscribe = (f: () => void) => {
   return () => subs.delete(f);
 };
 const SERVER: PlayerState = state;
+
+/** 지금 상태 (훅 밖에서 읽기) */
+export function playerState(): PlayerState {
+  return state;
+}
+
+/** 이 탭에서 듣다가 새로고침됐나 */
+export function wasListening(): boolean {
+  try {
+    return sessionStorage.getItem(ON) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** 새로고침 뒤 — 저장된 자리에 멈춘 채로 작은 재생 막대만 다시 띄운다 */
+export function restoreBar() {
+  if (state.queue.length) set({ started: true });
+}
 
 export function usePlayer(): PlayerState {
   return useSyncExternalStore(subscribe, () => state, () => SERVER);

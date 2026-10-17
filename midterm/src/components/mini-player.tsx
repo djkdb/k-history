@@ -12,11 +12,15 @@ import {
   SkipForward,
   Undo2,
 } from "lucide-react";
-import { next, prev, seek, skip, toggle, usePlayer } from "@/lib/listen-player";
+import { next, prev, playerState, restoreBar, seek, setQueue, skip, toggle, usePlayer, wasListening } from "@/lib/listen-player";
 
 function clock(sec: number) {
   const s = Math.max(0, Math.floor(sec));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function queueEmpty() {
+  return playerState().queue.length === 0;
 }
 
 /** 듣기를 켜 둔 채 다른 화면으로 가도 아래에 작게 남는 재생 막대 */
@@ -25,6 +29,24 @@ export function MiniPlayer() {
   const st = usePlayer();
   const cur = st.queue[st.idx];
   const hasQueue = st.queue.length > 0;
+
+  /*
+   * 듣는 중에 화면이 새로고침되면(새 판 적용, 폰이 뒤에서 탭을 비움 등) 재생기가 비어
+   * 막대가 사라졌다. 이 탭에서 듣고 있었으면 목록을 다시 불러 그 자리에 막대를 띄운다.
+   * 브라우저는 누르기 전엔 소리를 못 내게 하므로 멈춘 채로 — 재생을 누르면 이어진다.
+   */
+  useEffect(() => {
+    if (hasQueue || path.startsWith("/listen") || !wasListening()) return;
+    let alive = true;
+    import("@/lib/listen-queue").then((m) => {
+      if (!alive || !queueEmpty()) return;
+      setQueue(m.buildQueue(m.listFor(m.savedMode())));
+      restoreBar();
+    });
+    return () => {
+      alive = false;
+    };
+  }, [hasQueue, path]);
 
   /*
    * 스페이스바 = 재생/일시정지 (넓은 화면에서 듣는 사람용).

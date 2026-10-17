@@ -1,5 +1,7 @@
 "use client";
 
+import { playerState } from "@/lib/listen-player";
+
 import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, X } from "lucide-react";
 import { withBase } from "@/lib/base";
@@ -108,7 +110,18 @@ export function SWRegister() {
    * 예전 화면이 계속 남는다(노트북에서 실제로 그랬다). 학습 기록은 그대로다.
    */
   useEffect(() => {
-    if (waiting && !location.pathname.includes("/mock/session")) apply();
+    if (!waiting || location.pathname.includes("/mock/session")) return;
+    // 듣는 중이면 새로고침이 듣기를 끊는다 — 멈춰 있을 때 켠다 (알림 띠는 그대로 보인다)
+    if (playerState().playing) {
+      const id = window.setInterval(() => {
+        if (!playerState().playing) {
+          window.clearInterval(id);
+          apply();
+        }
+      }, 5000);
+      return () => window.clearInterval(id);
+    }
+    apply();
   }, [waiting, apply]);
 
   if (!waiting || hidden) return null;
