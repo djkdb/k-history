@@ -132,6 +132,39 @@ function save(force = false) {
 
 /* ── 녹음 재생 ────────────────────────────────────── */
 let audio: HTMLAudioElement | null = null;
+/** 지금 <audio> 에 걸린 녹음의 원래 주소 (blob 주소로 틀 때도 원래 주소로 비교) */
+let loadedSrc = "";
+
+/*
+ * 다음 조각 미리 받기 — 화면이 꺼지면 폰이 망 요청·서비스 워커를 늦추거나 멈춰서,
+ * 조각이 끝난 뒤에 다음 파일을 받으려 하면 거기서 멈췄다. 지금 조각을 트는 동안
+ * 다음 조각을 통째로 받아 메모리(blob)에 두고, 끝나면 바로 그걸 튼다.
+ */
+const blobs = new Map<string, string>(); // 원래 주소 → blob 주소
+let fetching = "";
+function prefetch(idx: number) {
+  const t = state.queue[idx];
+  if (!t?.src || blobs.has(t.src) || fetching === t.src) return;
+  const src = t.src;
+  fetching = src;
+  fetch(src)
+    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+    .then((b) => {
+      blobs.set(src, URL.createObjectURL(new Blob([b], { type: "audio/mpeg" })));
+      // 지금 것과 다음 것만 남긴다
+      const keep = new Set([state.queue[state.idx]?.src, state.queue[state.idx + 1]?.src]);
+      for (const [k, u] of blobs) if (!keep.has(k)) {
+        URL.revokeObjectURL(u);
+        blobs.delete(k);
+      }
+    })
+    .catch(() => {
+      /* 못 받으면 끝날 때 평소처럼 망에서 받는다 */
+    })
+    .finally(() => {
+      if (fetching === src) fetching = "";
+    });
+}
 function el(): HTMLAudioElement {
   if (audio) return audio;
   const a = new Audio();
@@ -141,6 +174,8 @@ function el(): HTMLAudioElement {
     set({ pos: a.currentTime, len: Number.isFinite(a.duration) ? a.duration : state.len });
     save();
     positionState();
+    // 재생이 시작되면 다음 조각을 미리 받아 둔다
+    if (state.playing && a.currentTime > 2) prefetch(state.idx + 1);
   });
   a.addEventListener("loadedmetadata", () => {
     if (state.mode === "audio") set({ len: a.duration });
@@ -154,8 +189,22 @@ function el(): HTMLAudioElement {
     }
   });
   a.addEventListener("error", () => {
+    if (state.mode !== "audio") return;
+    // 미리 받은 blob 이 망가졌으면 원래 주소로 한 번 더
+    const cur = state.queue[state.idx]?.src;
+    if (cur && a.src.startsWith("blob:")) {
+      blobs.delete(cur);
+      a.src = cur;
+      a.play().catch(() => set({ playing: false }));
+      return;
+    }
+    // 화면이 꺼져 있으면 기기 음성은 어차피 안 나온다 — 멈춘 채로 두고 알린다
+    if (document.hidden) {
+      set({ playing: false, error: "다음 녹음을 받지 못했어요. 다시 눌러 주세요." });
+      return;
+    }
     // 녹음을 못 받으면(망이 끊김 등) 그 조각은 기기 음성으로 읽는다
-    if (state.mode === "audio") startTts(0);
+    startTts(0);
   });
   audio = a;
   return a;
@@ -262,14 +311,18 @@ function load(idx: number, startAt = 0, autoplay = true) {
     const a = el();
     set({ mode: "audio" });
     const url = t.src;
-    if (!a.src.endsWith(url)) a.src = url;
+    if (loadedSrc !== url) {
+      a.src = blobs.get(url) ?? url;
+      loadedSrc = url;
+    }
     a.playbackRate = state.rate;
-    const go = () => {
-      if (startAt > 0) a.currentTime = startAt;
-      if (autoplay) a.play().catch(() => set({ playing: false }));
-    };
-    if (a.readyState >= 1) go();
-    else a.addEventListener("loadedmetadata", go, { once: true });
+    // 끝난 그 자리에서 바로 play() — 메타데이터를 기다렸다 부르면 화면이 꺼진 폰은 막는다
+    if (autoplay) a.play().catch(() => set({ playing: false }));
+    if (startAt > 0) {
+      if (a.readyState >= 1) a.currentTime = startAt;
+      else a.addEventListener("loadedmetadata", () => (a.currentTime = startAt), { once: true });
+    }
+    prefetch(idx + 1);
   } else {
     audio?.pause();
     sentences = splitSentences(t.text);
@@ -317,6 +370,7 @@ export function setQueue(queue: Track[]) {
   if (t?.src) {
     const a = el();
     a.src = t.src;
+    loadedSrc = t.src;
     if (first && s.pos && i >= 0) a.addEventListener("loadedmetadata", () => (a.currentTime = s.pos!), { once: true });
     a.playbackRate = state.rate;
   }
