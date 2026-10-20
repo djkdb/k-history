@@ -4,6 +4,8 @@ import { PDFS, SOURCES } from "./sources";
 import { withFigures } from "@/lib/figures";
 import { withExplain } from "@/lib/easy";
 import { EXPLAIN } from "./explain";
+import { STORY } from "./story";
+import { withStory } from "@/lib/story";
 import { CHAPTERS } from "./chapters";
 import { CONCEPTS_1 } from "./concepts-1";
 import { CONCEPTS_2 } from "./concepts-2";
@@ -35,7 +37,7 @@ const course: Course = {
   color: "#f43f5e",
   symbol: "🔎",
   chapters: CHAPTERS,
-  concepts: withSources(withFigures(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), FIGURES), SOURCES),
+  concepts: withSources(withFigures(withStory(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), STORY), FIGURES), SOURCES),
   pdfs: PDFS,
   notesPdf: {
     "IIR 1. Boolean Retrieval (01intro)": "notes-1.pdf",
