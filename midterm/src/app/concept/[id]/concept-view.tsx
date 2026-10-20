@@ -125,7 +125,7 @@ function Inner({ id }: { id: string }) {
       <div className="mt-5">
         <ClozeBar
           on={cloze.on}
-          count={countKeys([JSON.stringify({ ...c, explain: undefined })])}
+          count={countKeys([JSON.stringify({ ...c, explain: undefined, easy: c.explain ? undefined : c.easy })])}
           onToggle={cloze.toggle}
           onRehide={cloze.rehide}
         />

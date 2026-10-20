@@ -137,7 +137,7 @@ function ReviewView() {
           </>
         ) : (
           <div className="mt-4">
-            <ConceptBody c={c} />
+            <ConceptBody c={c} compact />
           </div>
         )}
       </Card>
