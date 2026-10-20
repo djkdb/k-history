@@ -3,6 +3,7 @@
 import type { Concept } from "@/lib/types";
 import { EasyText } from "./easy-text";
 import { Figures } from "./figure";
+import { StoryView } from "./story-view";
 import { ClozeCtx, CompareTable, RichText, Sentences, SqlBlock } from "./ui";
 
 /**
@@ -23,6 +24,14 @@ export function ConceptBody({ c, compact = false }: { c: Concept; compact?: bool
 
   return (
     <div>
+      {/* 쉬운 설명 — 예시 상황 하나로 먼저 감을 잡는다 */}
+      {c.story && (
+        <>
+          <StoryView src={c.story} className="rounded-3xl border border-emerald-400/20 bg-emerald-500/[0.04] p-4 lg:p-5" />
+          <div className="my-6 h-px bg-white/10" />
+        </>
+      )}
+
       {/* 리드 — 이 개념이 무엇인지 한 번에 */}
       <p className="text-[16px] font-medium leading-[1.85] text-zinc-100 lg:text-[17px]">
         <Sentences>{c.summary}</Sentences>
@@ -44,7 +53,7 @@ export function ConceptBody({ c, compact = false }: { c: Concept; compact?: bool
           </div>
         </ClozeCtx.Provider>
       ) : (
-        c.easy && (
+        c.easy && !c.story && (
           <div className="mt-4 border-l-[3px] border-emerald-400/30 pl-4">
             <EasyText>{c.easy}</EasyText>
           </div>

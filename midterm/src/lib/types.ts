@@ -151,6 +151,8 @@ export interface Concept {
   easy?: string;
   /** 자세히 풀어보기 — 처음 보는 사람도 따라오게 말로 풀어 쓴 설명. 문단은 빈 줄로 나눈다 (선택) */
   explain?: string;
+  /** 쉬운 설명 칸 — 예시 상황 하나를 따라가는 이야기 (lib/story.ts 형식의 글) (선택) */
+  story?: string;
   /** 흐름·순서 — 단계마다 한 줄, 화살표로 이어 그린다 (선택) */
   flow?: string[];
   /** 시험엔 이렇게 — 이 개념이 문제로 나오는 모양 (선택) */

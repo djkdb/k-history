@@ -4,6 +4,8 @@ import { PDFS, SOURCES } from "./sources";
 import { withFigures } from "@/lib/figures";
 import { withEasy, withExplain } from "@/lib/easy";
 import { EXPLAIN } from "./explain";
+import { STORY } from "./story";
+import { withStory } from "@/lib/story";
 import { CHAPTERS } from "./chapters";
 import { FIGURES } from "./figures";
 import { CONCEPTS_1 } from "./concepts-1";
@@ -41,7 +43,7 @@ const course: Course = {
   color: "#0ea5e9",
   symbol: "🗄️",
   chapters: CHAPTERS,
-  concepts: withSources(withFigures(withExplain(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), EXPLAIN), FIGURES), SOURCES),
+  concepts: withSources(withFigures(withStory(withExplain(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EASY), EXPLAIN), STORY), FIGURES), SOURCES),
   pdfs: PDFS,
   notesPdf: {
     "Lecture 2. Introduction to DB Systems & ER Model": "notes-L2.pdf",

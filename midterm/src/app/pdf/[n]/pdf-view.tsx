@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Printer } from "lucide-react";
 import { ClozeBar } from "@/components/cloze-bar";
 import { EasyText } from "@/components/easy-text";
 import { Figures } from "@/components/figure";
+import { StoryView } from "@/components/story-view";
 import { FontSizeControl } from "@/components/font-size";
 import { Gate } from "@/components/gate";
 import { ClozeCtx, CompareTable, ImportanceBadge, RichText, Sentences, SqlBlock } from "@/components/ui";
@@ -206,7 +207,9 @@ function Section({ c, ref_, i }: { c: Concept; ref_: PdfRef; i: number }) {
         </p>
       </div>
 
-      {c.easy && (
+      {c.story ? (
+        <StoryView src={c.story} className="mt-6 rounded-3xl border border-emerald-400/20 bg-emerald-500/[0.04] p-4" />
+      ) : c.easy && (
         <>
           <p className="mt-5 text-[13px] font-bold text-emerald-200">💬 쉬운 설명</p>
           <div className="mt-2 border-l-[3px] border-emerald-400/30 pl-4">
