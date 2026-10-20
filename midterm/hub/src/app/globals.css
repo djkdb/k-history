@@ -41,6 +41,13 @@
   font-display: swap;
   src: url("/fonts/pretendard-700.woff2") format("woff2");
 }
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/pretendard-900.woff2") format("woff2");
+}
 
 @theme {
   --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont,

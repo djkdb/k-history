@@ -7,9 +7,11 @@
   아이폰은 애플 산돌고딕, 안드로이드는 로보토·본고딕, PC는 또 다른 것이라
   같은 화면이 기기마다 다르게 보였다.
 
-  앱에 실제로 쓰이는 글자만 남겨 굵기당 73KB로 줄였다(963자). 화면에 뜨는
-  글자는 모두 소스 안의 문자열에서 나오므로 빠지는 글자가 없고, 사용자가
-  직접 치는 것은 수식뿐이라 아스키만 있으면 된다.
+  앱에 쓰이는 글자 + 완성형 한글 2,350자만 남겨 굵기당 약 190KB로 줄였다.
+  예전엔 그때 쓰인 963자만 넣었더니, 나중에 글을 보탤 때 새로 나온 글자
+  ('편', '벡' 같은)만 다른 글꼴로 튀어 보였다. 지금은 audit 가 개념·문제 글의
+  한글이 모두 글꼴에 있는지 scripts/font-hangul.txt 로 확인한다.
+  font-black(900)도 실어 둔다 — 없으면 브라우저가 700을 억지로 두껍게 칠한다.
 
   Pretendard — SIL Open Font License 1.1 (public/fonts/OFL.txt)
 */
@@ -40,6 +42,13 @@
   font-weight: 700;
   font-display: swap;
   src: url("/fonts/pretendard-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/pretendard-900.woff2") format("woff2");
 }
 
 @theme {

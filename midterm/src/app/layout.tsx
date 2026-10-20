@@ -39,7 +39,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href={withBase("/apple-touch-icon.png")} />
         <link rel="icon" href={withBase("/icon.svg")} type="image/svg+xml" />
         <link rel="icon" href={withBase("/icon-192.png")} type="image/png" sizes="192x192" />
-        {[400, 500, 600, 700].map((w) => (
+        {[400, 700].map((w) => (
           <link
             key={w}
             rel="preload"

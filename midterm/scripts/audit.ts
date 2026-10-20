@@ -18,6 +18,8 @@ import type { Course, Figure } from "../src/lib/types";
 
 const ROOT = join(__dirname, "..");
 const LIST = JSON.parse(readFileSync(join(ROOT, "courses.json"), "utf8")) as { id: string; name: string }[];
+// 실어 둔 글꼴(public/fonts)에 들어 있는 한글 — 없는 글자는 다른 글꼴로 튀어 보인다
+const FONT_HANGUL = new Set(readFileSync(join(ROOT, "scripts", "font-hangul.txt"), "utf8"));
 let bad = 0;
 const fail = (c: string, m: string) => {
   bad++;
@@ -112,6 +114,8 @@ for (const meta of LIST) {
     }
     if (f.kind === "gantt") for (const r of f.rows) for (const sg of r.segs) if (sg.from < 0 || sg.to > f.end || sg.to <= sg.from) fail(id, `그림 '${f.title}' 구간이 이상함 ${sg.from}~${sg.to}`);
   }
+  const missing = new Set([...JSON.stringify(c)].filter((ch) => ch >= "가" && ch <= "힣" && !FONT_HANGUL.has(ch)));
+  if (missing.size) fail(id, `글꼴에 없는 한글 ${missing.size}자: ${[...missing].join("")} — 글꼴을 다시 잘라야 한다`);
   const figN = c.concepts.filter((k) => k.figures?.length).length;
 
   const noteSecs = c.notes ? Object.values(c.notes).reduce((a, n) => a + n.length, 0) : 0;
