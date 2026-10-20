@@ -4,6 +4,8 @@ import { PDFS, SOURCES } from "./sources";
 import { withFigures } from "@/lib/figures";
 import { withExplain } from "@/lib/easy";
 import { EXPLAIN } from "./explain";
+import { STORY } from "./story";
+import { withStory } from "@/lib/story";
 import { CHAPTERS } from "./chapters";
 import { FIGURES } from "./figures";
 import { CONCEPTS_1 } from "./concepts-1";
@@ -27,7 +29,7 @@ const course: Course = {
   color: "#f59e0b",
   symbol: "🖥️",
   chapters: CHAPTERS,
-  concepts: withSources(withFigures(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), FIGURES), SOURCES),
+  concepts: withSources(withFigures(withStory(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), STORY), FIGURES), SOURCES),
   pdfs: PDFS,
   questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3],
   notes: { ...NOTES_1, ...NOTES_2, ...NOTES_3 },
