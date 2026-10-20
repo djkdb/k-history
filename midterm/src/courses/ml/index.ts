@@ -15,6 +15,8 @@ import { QUESTIONS_PDF } from "./questions-pdf";
 import { EASY } from "./easy";
 import { withEasy, withExplain } from "@/lib/easy";
 import { EXPLAIN } from "./explain";
+import { STORY } from "./story";
+import { withStory } from "@/lib/story";
 import { INTRO } from "./notes/intro";
 import { CLS } from "./notes/cls";
 import { UNSUP } from "./notes/unsup";
@@ -49,7 +51,7 @@ const course: Course = {
   color: "#a855f7",
   symbol: "🤖",
   chapters: CHAPTERS,
-  concepts: withSources(withFigures(withExplain(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3, ...CONCEPTS_4], EASY), EXPLAIN), FIGURES), SOURCES),
+  concepts: withSources(withFigures(withStory(withExplain(withEasy([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3, ...CONCEPTS_4], EASY), EXPLAIN), STORY), FIGURES), SOURCES),
   pdfs: PDFS,
   // 강의 PDF 퀴즈(원문)를 먼저, 강의 내용으로 만든 추가 문제를 뒤에
   questions: [...QUESTIONS_PDF, ...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4, ...QUESTIONS_5],
