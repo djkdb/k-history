@@ -9,7 +9,7 @@ import { HubLink } from "@/components/hub-link";
 import { InstallHint } from "@/components/install-hint";
 import { ThemeToggle } from "@/components/theme";
 import { Card, ProgressBar, SectionTitle } from "@/components/ui";
-import { COURSE, conceptsOf, questionsOfChapter, termLabel } from "@/lib/course";
+import { COURSE, CONCEPT_MAP, Q_MAP, conceptsOf, questionsOfChapter, termLabel } from "@/lib/course";
 import { setQuizPreset } from "@/lib/handoff";
 import { dueCards } from "@/lib/srs";
 import { useApp } from "@/lib/store";
@@ -35,17 +35,18 @@ function HomeView() {
   const studied = useApp((s) => s.studied);
   const cards = useApp((s) => s.cards);
   const log = useApp((s) => s.log);
-  const wrongIds = useApp((s) => s.wrongIds);
-  const starred = useApp((s) => s.starred);
+  // 저장된 id 중 지금 과목에 없는 것(범위에서 뺀 장 등)은 세지 않는다
+  const wrongIds = useApp((s) => s.wrongIds).filter((id) => Q_MAP[id]);
+  const starred = useApp((s) => s.starred).filter((id) => CONCEPT_MAP[id]);
   const mocks = useApp((s) => s.mocks);
   const sureWrong = useApp((s) => s.sureWrong);
   const syncCode = useSync((s) => s.code);
-  const lucky = useApp((s) => s.lucky);
-  const nSure = Object.keys(sureWrong).length;
+  const lucky = useApp((s) => s.lucky).filter((id) => Q_MAP[id]);
+  const nSure = Object.keys(sureWrong).filter((id) => Q_MAP[id]).length;
 
   const exam = settings?.examDate ?? COURSE.examDate ?? null;
   const dday = exam ? daysUntil(exam) : null;
-  const due = useMemo(() => dueCards(cards), [cards]);
+  const due = useMemo(() => dueCards(cards).filter((c) => CONCEPT_MAP[c.sourceId]), [cards]);
   const nextConcept = COURSE.concepts.find((c) => !studied[c.id]);
   const nStudied = COURSE.concepts.filter((c) => studied[c.id]).length;
   const solved = COURSE.questions.filter((q) => log[q.id]).length;

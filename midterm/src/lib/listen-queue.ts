@@ -15,8 +15,13 @@ export type ListenMode = "full" | "short";
 export const MODE_KEY = `${KEY}:listen-mode`;
 export const HAS_FULL = LISTEN_FULL.length > 0;
 
+/** 과목 PDF 목록에 있는 강의만 — 시험 범위에서 뺀 PDF(컴시개 04-4 등)의 대본은 듣기에서도 뺀다 */
+const inScope = (list: ListenScript[]) => (COURSE.pdfs?.length ? list.filter((s) => COURSE.pdfs!.includes(s.pdf)) : list);
+const SHORT = inScope(LISTEN);
+const FULL = inScope(LISTEN_FULL);
+
 export function listFor(mode: ListenMode): ListenScript[] {
-  return mode === "full" && HAS_FULL ? LISTEN_FULL : LISTEN;
+  return mode === "full" && HAS_FULL ? FULL : SHORT;
 }
 
 /** 이 기기에 남긴 판(완전판·요약판) — 없으면 완전판 */
