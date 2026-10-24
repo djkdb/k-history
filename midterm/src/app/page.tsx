@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, BookOpen, ChevronRight, ListChecks, NotebookPen, RotateCw, Settings, Star } from "lucide-react";
+import { AlertTriangle, BookOpen, ChevronRight, ListChecks, NotebookPen, RotateCw, Settings, Star, FileText } from "lucide-react";
 import { Gate } from "@/components/gate";
 import { HubLink } from "@/components/hub-link";
 import { InstallHint } from "@/components/install-hint";
@@ -42,6 +42,7 @@ function HomeView() {
   const sureWrong = useApp((s) => s.sureWrong);
   const syncCode = useSync((s) => s.code);
   const lucky = useApp((s) => s.lucky).filter((id) => Q_MAP[id]);
+  const nNotes = Object.keys(COURSE.notesPdf ?? {}).length;
   const nSure = Object.keys(sureWrong).filter((id) => Q_MAP[id]).length;
 
   const exam = settings?.examDate ?? COURSE.examDate ?? null;
@@ -177,6 +178,18 @@ function HomeView() {
             <ChevronRight size={16} className="text-zinc-500" />
           </Card>
         </button>
+        {nNotes > 0 && (
+          <Link href="/pdf">
+            <Card className="flex items-center gap-3 border-amber-400/25">
+              <FileText size={18} className="shrink-0 text-amber-300" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold">강의 자료 한글 번역 PDF {nNotes}개</p>
+                <p className="text-[12.5px] text-zinc-400">원본 슬라이드 + 한글 번역 + 필기 · 쪽 번호 원본과 같음</p>
+              </div>
+              <ChevronRight size={16} className="text-zinc-500" />
+            </Card>
+          </Link>
+        )}
         {(wrongIds.length > 0 || nSure > 0 || lucky.length > 0) && (
           <Link href="/wrongs">
             <Card className="flex items-center gap-3">
