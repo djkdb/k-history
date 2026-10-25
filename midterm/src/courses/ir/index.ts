@@ -26,6 +26,14 @@ import { QUESTIONS_4 } from "./questions-4";
  * (Schütze) — 01intro, 02voc, 03dict, 04const, 05comp, 06score, 07system.
  * 슬라이드가 영어라 용어를 영어와 함께 보인다. 시험 날짜·교수명은 자료에 없어 비워 둔다.
  */
+/**
+ * 3강 Spelling correction(철자 교정, 교안 94~104쪽)은 수업에서 넘어가 시험 범위가 아니다
+ * (사용자가 알려 줌, 2026-10-25). 글은 지우지 않고 여기서만 뺀다. 편집 거리·Soundex는 그대로.
+ */
+const OUT_OF_SCOPE = new Set(["spelling", "kgram-spelling", "context-spelling"]);
+const OUT_NOTES = new Set(["철자 교정", "k-gram 색인으로 철자 교정", "문맥 기반 철자 교정", "철자 교정의 일반 이슈", "연습: Peter Norvig의 철자 교정기"]);
+const ALL_CONCEPTS = withSources(withFigures(withStory(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), STORY), FIGURES), SOURCES);
+
 const course: Course = {
   id: "ir",
   name: "정보검색",
@@ -37,7 +45,7 @@ const course: Course = {
   color: "#f43f5e",
   symbol: "🔎",
   chapters: CHAPTERS,
-  concepts: withSources(withFigures(withStory(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), STORY), FIGURES), SOURCES),
+  concepts: ALL_CONCEPTS.filter((k) => !OUT_OF_SCOPE.has(k.id)),
   pdfs: PDFS,
   notesPdf: {
     "IIR 1. Boolean Retrieval (01intro)": "notes-1.pdf",
@@ -48,8 +56,11 @@ const course: Course = {
     "IIR 6. Scoring, term weighting, the vector space model (06score)": "notes-6.pdf",
     "IIR 7. Scores in a complete search system (07system)": "notes-7.pdf",
   },
-  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4],
-  notes: { ...NOTES_1, ...NOTES_2, ...NOTES_3 },
+  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4].filter((q) => !OUT_OF_SCOPE.has(q.concept)),
+  notes: Object.fromEntries(
+    Object.entries({ ...NOTES_1, ...NOTES_2, ...NOTES_3 }).map(([ch, secs]) => [ch, secs.filter((sec) => !OUT_NOTES.has(sec.title))]),
+  ),
+  skipListen: ["철자 교정: 고립 단어와 케이그램", "문맥 의존 교정과 일반 쟁점"],
 };
 
 export default course;

@@ -16,7 +16,11 @@ export const MODE_KEY = `${KEY}:listen-mode`;
 export const HAS_FULL = LISTEN_FULL.length > 0;
 
 /** 과목 PDF 목록에 있는 강의만 — 시험 범위에서 뺀 PDF(컴시개 04-4 등)의 대본은 듣기에서도 뺀다 */
-const inScope = (list: ListenScript[]) => (COURSE.pdfs?.length ? list.filter((s) => COURSE.pdfs!.includes(s.pdf)) : list);
+const SKIP = new Set(COURSE.skipListen ?? []);
+const inScope = (list: ListenScript[]) =>
+  (COURSE.pdfs?.length ? list.filter((s) => COURSE.pdfs!.includes(s.pdf)) : list).map((s) =>
+    SKIP.size ? { ...s, parts: s.parts.filter((p) => !SKIP.has(p.t)) } : s,
+  );
 const SHORT = inScope(LISTEN);
 const FULL = inScope(LISTEN_FULL);
 

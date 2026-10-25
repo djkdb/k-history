@@ -276,6 +276,8 @@ export interface Course {
   notes?: Record<string, NoteSection[]>;
   /** 받은 강의 PDF 이름 — 강의 순서대로 (PDF별 요약에 쓴다) */
   pdfs?: string[];
+  /** 시험 범위에서 빠져 듣기에서도 뺄 조각 제목 (완전판·요약판 공통) */
+  skipListen?: string[];
   /** PDF 이름 → 한글 번역·필기를 덧붙인 PDF (과목 폴더 assets/<과목>/ 에 둔 파일 이름) */
   notesPdf?: Record<string, string>;
 }
