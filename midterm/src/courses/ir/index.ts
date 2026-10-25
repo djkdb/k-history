@@ -18,6 +18,7 @@ import { QUESTIONS_1 } from "./questions-1";
 import { QUESTIONS_2 } from "./questions-2";
 import { QUESTIONS_3 } from "./questions-3";
 import { QUESTIONS_4 } from "./questions-4";
+import { QUESTIONS_5 } from "./questions-5";
 
 /**
  * 정보검색 (5119006-01)
@@ -32,7 +33,19 @@ import { QUESTIONS_4 } from "./questions-4";
  */
 const OUT_OF_SCOPE = new Set(["spelling", "kgram-spelling", "context-spelling"]);
 const OUT_NOTES = new Set(["철자 교정", "k-gram 색인으로 철자 교정", "문맥 기반 철자 교정", "철자 교정의 일반 이슈", "연습: Peter Norvig의 철자 교정기"]);
-const ALL_CONCEPTS = withSources(withFigures(withStory(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), STORY), FIGURES), SOURCES);
+/** 출제 예고(친구 정보, 2026-10-25) — 개념 카드의 '시험엔' 상자 맨 앞에 띄우고 중요도를 '반드시'로 */
+const EXAM_INTEL: Record<string, string> = {
+  "vector-space": "📌 출제 예고: 6강 Documents as vectors · 벡터 공간 모델 시험에 나옴.",
+  cosine: "📌 출제 예고: 벡터 공간과 코사인 — 시험에 나옴.",
+  "cosine-example": "📌 출제 예고: cosine example 표 계산이 시험에 나옴 — 로그 tf → 길이 → 정규화 → 내적을 손으로.",
+  smart: "📌 출제 예고: cosine 표 계산(lnc.ltn 표)도 연습해 둘 것.",
+  "gamma-code": "📌 출제 예고: γ 코드 예제 같은 문제가 가끔 나옴.",
+  mapreduce: "📌 출제 예고: MapReduce 시험에 나옴.",
+  distributed: "📌 출제 예고: MapReduce(파서 = map, 인버터 = reduce) 시험에 나옴.",
+};
+const withIntel = (cs: ReturnType<typeof withSources>) =>
+  cs.map((k) => (EXAM_INTEL[k.id] ? { ...k, importance: "must" as const, exam: `${EXAM_INTEL[k.id]}\n${k.exam ?? ""}`.trim() } : k));
+const ALL_CONCEPTS = withIntel(withSources(withFigures(withStory(withExplain([...CONCEPTS_1, ...CONCEPTS_2, ...CONCEPTS_3], EXPLAIN), STORY), FIGURES), SOURCES));
 
 const course: Course = {
   id: "ir",
@@ -56,7 +69,7 @@ const course: Course = {
     "IIR 6. Scoring, term weighting, the vector space model (06score)": "notes-6.pdf",
     "IIR 7. Scores in a complete search system (07system)": "notes-7.pdf",
   },
-  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4].filter((q) => !OUT_OF_SCOPE.has(q.concept)),
+  questions: [...QUESTIONS_1, ...QUESTIONS_2, ...QUESTIONS_3, ...QUESTIONS_4, ...QUESTIONS_5].filter((q) => !OUT_OF_SCOPE.has(q.concept)),
   notes: Object.fromEntries(
     Object.entries({ ...NOTES_1, ...NOTES_2, ...NOTES_3 }).map(([ch, secs]) => [ch, secs.filter((sec) => !OUT_NOTES.has(sec.title))]),
   ),

@@ -1,0 +1,32 @@
+import type { Question } from "@/lib/types";
+
+/** 출제 예고된 유형(코사인 표 계산 · 벡터 공간 · γ 코드 · MapReduce)을 손으로 풀어 보는 계산 연습 */
+export const QUESTIONS_5: Question[] = [
+  // cosine-example — 세 소설 표 계산
+  { kind: "short", id: "ir-q-x-ce1", concept: "cosine-example", q: "세 소설 예에서 jealous의 SaS 원시 tf는 10이다. 로그 빈도 가중치는?", answers: ["2", "2.0"], hint: "숫자만", explain: "== 정답: 2\n### 풀이\n1 + log₁₀ 10 = 1 + **1** = **2**." },
+  { kind: "short", id: "ir-q-x-ce2", concept: "cosine-example", q: "WH에서 wuthering의 원시 tf는 38이다. 로그 빈도 가중치는 약? (소수 둘째 자리)", answers: ["2.58"], explain: "== 정답: 2.58\n### 풀이\n1 + log₁₀ 38 ≈ 1 + **1.58** = **2.58** (log 38은 log 10 = 1과 log 100 = 2 사이)." },
+  { kind: "short", id: "ir-q-x-ce3", concept: "cosine-example", q: "SaS의 로그 tf 벡터 (3.06, 2.0, 1.30, 0)의 길이는 약? (소수 둘째 자리)", answers: ["3.88"], explain: "== 정답: 3.88\n### 풀이\n√(3.06² + 2.0² + 1.30² + 0²) = √(9.36 + 4 + 1.69) = √15.05 ≈ **3.88**." },
+  { kind: "short", id: "ir-q-x-ce4", concept: "cosine-example", q: "SaS의 affection 3.06을 길이 3.88로 정규화하면 약? (소수 셋째 자리)", answers: ["0.789", "0.79"], explain: "== 정답: 0.789\n### 풀이\n3.06 ÷ 3.88 ≈ **0.789**. 같은 방법으로 jealous 2.0 ÷ 3.88 ≈ 0.515, gossip 1.30 ÷ 3.88 ≈ 0.335." },
+  { kind: "short", id: "ir-q-x-ce5", concept: "cosine-example", q: "SaS (0.789, 0.515, 0.335, 0)과 WH (0.524, 0.465, 0.405, 0.588)의 코사인은 약? (소수 둘째 자리)", answers: ["0.79"], explain: "== 정답: 0.79\n### 풀이\n정규화된 벡터라 코사인 = 내적\n- 0.789 × 0.524 ≈ 0.413\n- 0.515 × 0.465 ≈ 0.239\n- 0.335 × 0.405 ≈ 0.136\n- 0 × 0.588 = 0\n합 ≈ **0.79**" },
+  { kind: "short", id: "ir-q-x-ce6", concept: "cosine-example", q: "PaP (0.832, 0.555, 0, 0)과 WH (0.524, 0.465, 0.405, 0.588)의 코사인은 약? (소수 둘째 자리)", answers: ["0.69"], explain: "== 정답: 0.69\n### 풀이\n0.832 × 0.524 + 0.555 × 0.465 + 0 + 0 ≈ 0.436 + 0.258 = **0.69**. PaP에 gossip·wuthering이 0이라 두 항이 사라져요." },
+  { kind: "mc", id: "ir-q-x-ce7", concept: "cosine-example", q: "정규화된 두 벡터의 코사인을 구할 때 필요한 계산은?", options: ["유클리드 거리", "내적만", "내적 후 다시 길이로 나누기", "합집합 크기로 나누기"], answer: 1, explain: "== 정답: 내적만\n### 왜 정답인가요\n이미 길이 1로 정규화했으니 분모 |q||d| = 1 → 코사인 = **내적**.\n### 다른 보기\n- 다시 나누기: 이미 나눠서 1이라 의미 없음\n- 합집합: Jaccard" },
+  // smart — lnc.ltn 표
+  { kind: "short", id: "ir-q-x-sm1", concept: "smart", q: "lnc.ltn 예에서 N = 1,000,000, insurance의 df = 1000이면 idf는?", answers: ["3", "3.0"], hint: "숫자만", explain: "== 정답: 3\n### 풀이\nlog₁₀(10⁶ / 10³) = log₁₀ 10³ = **3**." },
+  { kind: "short", id: "ir-q-x-sm2", concept: "smart", q: "문서 'car insurance auto insurance'의 로그 tf (auto 1, best 0, car 1, insurance 1.3) 벡터 길이는 약? (소수 둘째 자리)", answers: ["1.92"], explain: "== 정답: 1.92\n### 풀이\n√(1² + 0² + 1² + 1.3²) = √(1 + 1 + 1.69) = √3.69 ≈ **1.92**." },
+  { kind: "short", id: "ir-q-x-sm3", concept: "smart", q: "같은 문서에서 insurance의 정규화 가중치는 약? (1.3 ÷ 1.92, 소수 둘째 자리)", answers: ["0.68"], explain: "== 정답: 0.68\n### 풀이\n1.3 ÷ 1.92 ≈ **0.68**. car와 auto는 1 ÷ 1.92 ≈ 0.52." },
+  { kind: "short", id: "ir-q-x-sm4", concept: "smart", q: "질의 가중치 car 2.0, insurance 3.0 · 문서 정규화 가중치 car 0.52, insurance 0.68일 때 최종 점수는?", answers: ["3.08"], explain: "== 정답: 3.08\n### 풀이\n질의와 문서에 둘 다 있는 용어만 곱해서 더해요.\n- car: 2.0 × 0.52 = 1.04\n- insurance: 3.0 × 0.68 = 2.04\n- auto(질의 0), best(문서 0)는 0\n합 = **3.08**" },
+  { kind: "mc", id: "ir-q-x-sm5", concept: "smart", q: "lnc.ltn에서 문서 쪽 lnc의 뜻은?", options: ["로그 tf · idf · 코사인 정규화", "로그 tf · idf 없음 · 코사인 정규화", "자연 tf · idf 없음 · 정규화 없음", "로그 tf · idf · 정규화 없음"], answer: 1, explain: "== 정답: 로그 tf · idf 없음 · 코사인 정규화\n### 왜 정답인가요\nddd.qqq에서 앞이 문서: **l** = logarithm tf, **n** = no idf, **c** = cosine. 질의 ltn은 로그 tf · **t** idf · 정규화 없음." },
+  // vector-space
+  { kind: "mc", id: "ir-q-x-vs1", concept: "vector-space", q: "벡터 공간 모델에서 각 축(차원)은 무엇인가?", options: ["문서", "용어(term)", "질의", "포스팅"], answer: 1, explain: "== 정답: 용어(term)\n### 왜 정답인가요\n용어 = 축, 문서 = 그 공간의 점(벡터). 차원 수 = 어휘 크기 |V|, 웹이면 수천만 차원이고 벡터는 매우 희소해요." },
+  { kind: "mc", id: "ir-q-x-vs2", concept: "vector-space", q: "문서 d를 자기 자신에 이어 붙인 d′와 d의 관계로 옳은 것은?", options: ["각도도 크고 유클리드 거리도 큼", "각도는 0인데 유클리드 거리는 클 수 있음", "각도도 0, 유클리드 거리도 0", "각도는 90°"], answer: 1, explain: "== 정답: 각도는 0인데 유클리드 거리는 클 수 있음\n### 왜 정답인가요\n의미는 같아서 방향(각도)은 같지만 길이가 2배라 끝점 사이 거리는 멀어요 → 그래서 **거리 대신 각도(코사인)**를 쓴다." },
+  { kind: "ox", id: "ir-q-x-vs3", concept: "vector-space", q: "벡터 공간 모델에서 질의도 문서와 같은 공간의 벡터로 나타낸다.", answer: true, explain: "== 정답: O (맞는 말)\n### 왜 그런가요\n핵심 아이디어 1: 질의도 고차원 공간의 벡터로. 핵심 아이디어 2: 질의와의 근접도(유사도)로 문서를 순위 매긴다." },
+  // gamma-code
+  { kind: "short", id: "ir-q-x-gm1", concept: "gamma-code", q: "24의 γ 코드는? (쉼표 없이)", answers: ["111101000"], explain: "== 정답: 111101000\n### 풀이\n24 = **11000** → 오프셋 **1000**(4비트) → 길이 4의 단항 **11110** → **11110 1000**." },
+  { kind: "short", id: "ir-q-x-gm2", concept: "gamma-code", q: "4의 γ 코드는? (쉼표 없이)", answers: ["11000"], explain: "== 정답: 11000\n### 풀이\n4 = **100** → 오프셋 **00** → 길이 2의 단항 **110** → **110 00**." },
+  { kind: "short", id: "ir-q-x-gm3", concept: "gamma-code", q: "γ 코드열 11100011110101111101000을 간격으로 풀면? (형식: a, b, c)", answers: ["9, 13, 24", "9,13,24"], explain: "== 정답: 9, 13, 24\n### 풀이\n0이 나올 때까지 1을 세면 길이, 그만큼 오프셋을 읽고 앞에 1을 붙여요.\n- **1110**·001 → 길이 3, 1001 = **9**\n- **1110**·101 → 길이 3, 1101 = **13**\n- **11110**·1000 → 길이 4, 11000 = **24**" },
+  { kind: "short", id: "ir-q-x-gm4", concept: "gamma-code", q: "간격 9, 13, 24가 docID 간격이면 실제 docID는? (형식: a, b, c)", answers: ["9, 22, 46", "9,22,46"], explain: "== 정답: 9, 22, 46\n### 풀이\n첫 번호는 그대로 9, 그다음은 누적: 9 + 13 = **22**, 22 + 24 = **46**." },
+  // mapreduce
+  { kind: "short", id: "ir-q-x-mr1", concept: "mapreduce", q: "d2: C died. d1: C came, C c'ed.를 map하면 (term, docID) 쌍은 몇 개인가?", answers: ["6"], hint: "숫자만", explain: "== 정답: 6\n### 풀이\n⟨C, d2⟩ ⟨died, d2⟩ ⟨C, d1⟩ ⟨came, d1⟩ ⟨C, d1⟩ ⟨c'ed, d1⟩ — 토큰마다 한 쌍, 중복(C, d1)도 그대로 2번." },
+  { kind: "mc", id: "ir-q-x-mr2", concept: "mapreduce", q: "MapReduce의 reduce 스키마는?", options: ["input → list(k, v)", "(k, list(v)) → output", "list(k, v) → input", "k → v"], answer: 1, explain: "== 정답: (k, list(v)) → output\n### 왜 정답인가요\nmap: input → list(k, v), **reduce: (k, list(v)) → output**. 색인에서는 (termID, list(docID)) → 포스팅 리스트." },
+  { kind: "mc", id: "ir-q-x-mr3", concept: "distributed", q: "분산 색인에서 j = 3개 용어 구간(a-f, g-p, q-z)으로 나눌 때 인버터 하나가 맡는 일은?", options: ["split 하나를 파싱", "한 용어 구간의 (term, docID) 쌍을 모아 정렬해 포스팅으로", "모든 구간을 병합", "마스터에게 작업 배정"], answer: 1, explain: "== 정답: 한 용어 구간의 쌍을 모아 정렬해 포스팅으로\n### 다른 보기\n- split 파싱: **파서**(map)\n- 작업 배정: **마스터**" },
+];
